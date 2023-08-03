@@ -1,0 +1,2 @@
+TIME_boot_wait=32
+include 'quick_shmoo_cv5_lpddr5_3_dll.ttl'

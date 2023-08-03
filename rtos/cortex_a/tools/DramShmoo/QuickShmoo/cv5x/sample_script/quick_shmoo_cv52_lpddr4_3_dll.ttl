@@ -1,0 +1,5 @@
+BEGIN_ddrc=0
+END_ddrc=0
+include 'quick_shmoo_cv5_3_read.ttl'
+include 'quick_shmoo_cv5_3_write.ttl'
+include 'quick_shmoo_cv5_3_sync.ttl'

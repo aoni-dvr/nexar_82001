@@ -1,0 +1,7 @@
+Rval = 0x00000000, AmbaDSP_ImgArchComponentIF.c, iks_arch_init_architecture(), ID = 0, description : test ik_init_mode != HARD or SOFT true case
+Rval = 0x01100001, AmbaDSP_ImgArchComponentIF.c, iks_arch_init_architecture(), ID = 1, description : test (p_iks_working_buffer_info->init_flag != 1UL) fail case
+Rval = 0x01100001, AmbaDSP_ImgArchComponentIF.c, iks_arch_init_architecture(), ID = 2, description : test (p_iks_working_buffer_info->ik_version_major != IK_VERSION_MAJOR) fail case
+Rval = 0x01100001, AmbaDSP_ImgArchComponentIF.c, iks_arch_init_architecture(), ID = 3, description : test (p_iks_working_buffer_info->ik_version_minor != IK_VERSION_MINOR) fail case
+Rval = 0x01100001, AmbaDSP_ImgArchComponentIF.c, iks_arch_init_architecture(), ID = 4, description : test (p_iks_working_buffer_info->number_of_context != context_number) fail case
+Rval = 0x01100001, AmbaDSP_ImgArchComponentIF.c, iks_arch_init_architecture(), ID = 5, description : test (p_iks_working_buffer_info->number_of_context != context_number) fail case
+Rval = 0x00000000, AmbaDSP_ImgArchComponentIF.c, iks_arch_get_context_number(), ID = 6, description : test (p_iks_working_buffer_info->init_flag == 1U) false case

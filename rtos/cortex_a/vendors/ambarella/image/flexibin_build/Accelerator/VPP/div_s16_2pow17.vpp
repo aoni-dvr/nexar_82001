@@ -1,0 +1,33 @@
+#include "vp_vas.h"
+
+#define IN_SIZE 131072
+
+DAG div8u = {
+
+	VP_input(input0, int16_t, vector(1, 1, 1, IN_SIZE));
+	
+	VP_input(input1, int16_t, vector(1, 1, 1, IN_SIZE));
+	
+//========================================
+	VP_add(input1, VP_imm("00 80", uint16_t, vector(1))
+					,VP_tensor(input1_sub, uint16_t));
+
+	VP_gather(VP_imm("recip16s.bin", float32_t, vector(1,1,1,65536))
+					,input1_sub
+					,VP_tensor(recip_o, float16_t)
+					,block_w = 1
+					,block_h = 1
+					,block_d = 1
+					,start_w = 0
+					,start_h = 0
+					,start_d = 0
+					,start_p = 0
+					,zr = 1);
+	
+	VP_mul(input0, recip_o,
+				VP_tensor(output, int16_t),
+				disable_reserved = 1);
+
+//=============================================
+	VP_output(div_output, output, dram_format = 0);
+}

@@ -1,0 +1,50 @@
+<!------------------------------------------------------------------------------------------------------------- ->
+<!- @FileName       :: iq_K351P.list                                                                        ->
+<!-                                                                                                             ->
+<!- @Copyright      :: Copyright (C) 2018 Ambarella Corporation. All rights reserved.                           ->
+<!-                                                                                                             ->
+<!-                    No part of this file may be reproduced, stored in a retrieval system,                    ->
+<!-                    or transmitted, in any form, or by any means, electronic, mechanical, photocopying,      ->
+<!-                    recording, or otherwise, without the prior consent of Ambarella Corporation.             ->
+<!-                                                                                                             ->
+<!- @Description    :: the file list for rom file system                                                        ->
+<!------------------------------------------------------------------------------------------------------------- ->
+
+<romfs>
+    <!- Relative path from the top directory of the build ->
+    <top>vendors/ambarella/image/iqtable/</top>
+    <!- K351P ->
+    <file>K351P/idspbins/Cc_bw_gamma_lin_still.bin<alias>cc3d_cc_bw_gamma_lin_still_K351P</alias></file>
+    <file>K351P/idspbins/Cc_bw_gamma_lin_video.bin<alias>cc3d_cc_bw_gamma_lin_video_K351P</alias></file>
+    <file>K351P/idspbins/Cc_Video0.bin<alias>VideoCc0_K351P</alias></file>
+    <file>K351P/idspbins/Cc_Video1.bin<alias>VideoCc1_K351P</alias></file>
+    <file>K351P/idspbins/Cc_Video2.bin<alias>VideoCc2_K351P</alias></file>
+    <file>K351P/idspbins/Cc_Video3.bin<alias>VideoCc3_K351P</alias></file>
+    <file>K351P/idspbins/Cc_Video4.bin<alias>VideoCc4_K351P</alias></file>
+    <file>K351P/idspbins/Cc_Still0.bin<alias>StillCc0_K351P</alias></file>
+    <file>K351P/idspbins/Cc_Still1.bin<alias>StillCc1_K351P</alias></file>
+    <file>K351P/idspbins/Cc_Still2.bin<alias>StillCc2_K351P</alias></file>
+    <file>K351P/idspbins/Cc_Still3.bin<alias>StillCc3_K351P</alias></file>
+    <file>K351P/idspbins/Cc_Still4.bin<alias>StillCc4_K351P</alias></file>
+    <file>K351P/bins/Adj_PhotoPreview00.bin<alias>adj_photo_default_00_K351P</alias></file>
+    <file>K351P/bins/Adj_PhotoPreview01.bin<alias>adj_photo_default_01_K351P</alias></file>
+    <file>K351P/bins/Adj_VideoPc00.bin<alias>adj_video_default_00_K351P</alias></file>
+    <file>K351P/bins/Adj_VideoPc01.bin<alias>adj_video_default_01_K351P</alias></file>
+    <file>K351P/bins/Adj_VideoPc02.bin<alias>adj_video_default_02_K351P</alias></file>
+    <file>K351P/bins/Adj_StillLIso00.bin<alias>adj_still_default_00_K351P</alias></file>
+    <file>K351P/bins/Adj_StillLIso01.bin<alias>adj_still_default_01_K351P</alias></file>
+    <file>K351P/bins/Adj_StillHIso00.bin<alias>adj_hiso_still_default_00_K351P</alias></file>
+    <file>K351P/bins/Adj_StillHIso01.bin<alias>adj_hiso_still_default_01_K351P</alias></file>
+    <file>K351P/bins/ScSet01Param.bin<alias>scene_data_s01_K351P</alias></file>
+    <file>K351P/bins/ScSet02Param.bin<alias>scene_data_s02_K351P</alias></file>
+    <file>K351P/bins/ScSet03Param.bin<alias>scene_data_s03_K351P</alias></file>
+    <file>K351P/bins/ScSet04Param.bin<alias>scene_data_s04_K351P</alias></file>
+    <file>K351P/bins/ScSet05Param.bin<alias>scene_data_s05_K351P</alias></file>
+    <file>K351P/bins/ImageParam.bin<alias>img_default_K351P</alias></file>
+    <file>K351P/bins/DefaultParams.bin<alias>aaa_default_00_K351P</alias></file>
+    <file>K351P/bins/DefaultParams.bin<alias>aaa_default_01_K351P</alias></file>
+    <file>K351P/bins/StillParam.bin<alias>adj_still_idx_K351P</alias></file>
+    <file>K351P/bins/DeVideoParam.bin<alias>de_default_video_K351P</alias></file>
+    <file>K351P/bins/DeStillParam.bin<alias>de_default_still_K351P</alias></file>
+    <file>K351P/bins/AdjTableParam.bin<alias>adj_table_param_default_K351P</alias></file>
+</romfs>

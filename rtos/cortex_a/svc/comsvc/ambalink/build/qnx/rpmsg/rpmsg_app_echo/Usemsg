@@ -1,0 +1,10 @@
+Unit test for libwrap_std.a
+Syntax:
+%C
+
+Options:
+
+    N/A
+
+Examples:
+ # -lrpmsg

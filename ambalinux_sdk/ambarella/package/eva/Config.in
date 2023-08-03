@@ -1,0 +1,48 @@
+
+menuconfig BR2_PACKAGE_EVA
+	bool "eva_apps"
+	help
+	  This is the Apps for Amba Eva.
+
+config BR2_PACKAGE_EVA_CONTROLBOX_LIB
+        bool "eva_controlbox"
+        default y
+        depends on BR2_PACKAGE_EVA
+        help
+          This is the control box lib.
+          
+config BR2_PACKAGE_EVA_CONTROLBOX_UNIT_TEST
+        bool "eva_controlbox_unit_test"
+        default y
+        depends on BR2_PACKAGE_EVA
+        help
+          This is the control box App.
+
+config BR2_PACKAGE_EVA_TCPSERVER
+        bool "eva_tcpserver"
+        default y
+        depends on BR2_PACKAGE_EVA
+        help
+          This is EVA TCP service.
+          
+config BR2_PACKAGE_EVA_LIB_TCP
+        bool "eva_lib_tcp"
+        default y
+        depends on BR2_PACKAGE_EVA
+        help
+          This is EVA TCP library.
+
+config BR2_PACKAGE_EVA_LIB_COMMON
+        bool "eva_lib_common"
+        default y
+        depends on BR2_PACKAGE_EVA
+        help
+          This is EVA Common library.
+
+config BR2_PACKAGE_EVA_LIB_SHM
+        bool "eva_lib_shm"
+        default y
+        depends on BR2_PACKAGE_EVA
+        help
+          This is EVA SHM library.
+

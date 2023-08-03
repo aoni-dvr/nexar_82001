@@ -1,0 +1,243 @@
+diff --git a/vendors/foss/wolfssl/Header/user_settings.h b/vendors/foss/wolfssl/Header/user_settings.h
+index c3b61925f..d1ae0a63f 100644
+--- a/vendors/foss/wolfssl/Header/user_settings.h
++++ b/vendors/foss/wolfssl/Header/user_settings.h
+@@ -20,6 +20,7 @@
+  */
+ 
+ /* Custom wolfSSL user settings for GCC ARM */
++/* cf. wolfssl-4.8.1/IDE/GCC-ARM/Header/user_settings.h */
+ 
+ #ifndef WOLFSSL_USER_SETTINGS_H
+ #define WOLFSSL_USER_SETTINGS_H
+@@ -28,22 +29,57 @@
+ extern "C" {
+ #endif
+ 
++#ifndef CONFIG_CC_USESTD
++#include <AmbaCWrap.h>
++#endif
+ 
+ /* ------------------------------------------------------------------------- */
+ /* Platform */
+ /* ------------------------------------------------------------------------- */
++#undef WOLFSSL_AARCH64_BUILD
++#ifdef CONFIG_ARM64
++#define WOLFSSL_AARCH64_BUILD
++#endif
++
++#undef THREADX
++#define THREADX
++
++// Using ARM crypto instructions.
++#undef WOLFSSL_ARMASM
++#define WOLFSSL_ARMASM
++
+ #undef  WOLFSSL_GENERAL_ALIGNMENT
+ #define WOLFSSL_GENERAL_ALIGNMENT   4
+ 
+ #undef  SINGLE_THREADED
+ #define SINGLE_THREADED
+ 
++// if WOLFSSL_STATIC_MEMORY, not define WOLFSSL_SMALL_STACK
+ #undef  WOLFSSL_SMALL_STACK
+ #define WOLFSSL_SMALL_STACK
+ 
+ #undef  WOLFSSL_USER_IO
+ #define WOLFSSL_USER_IO
+ 
++#undef WC_PTR_TYPE
++#define WC_PTR_TYPE __UINTPTR_TYPE__
++
++#undef CHAR_BIT
++#define CHAR_BIT    __CHAR_BIT__
++
++#undef ULONG_MAX
++#define ULONG_MAX __UINT32_MAX__
++
++// No ctype.h
++#undef CTYPE_USER
++#define CTYPE_USER
++
++// No time.h, using user-defined
++#define USER_TIME
++
++// No math.h for dh
++#define WOLFSSL_DH_CONST
++
+ 
+ /* ------------------------------------------------------------------------- */
+ /* Math Configuration */
+@@ -398,7 +434,7 @@ extern "C" {
+ /* ------------------------------------------------------------------------- */
+ 
+ /* Override Memory API's */
+-#if 0
++#ifndef CONFIG_CC_USESTD
+     #undef  XMALLOC_OVERRIDE
+     #define XMALLOC_OVERRIDE
+ 
+@@ -414,15 +450,23 @@ extern "C" {
+     #define XREALLOC(p, n, h, t) myRealloc(p, n, h, t)
+ #endif
+ 
++/* cf. https://www.wolfssl.com/docs/wolfssl-manual/static-buffer-allocation/
++ * And WOLFSSL_SMALL_STACK.
++ * Some features still need malloc/free
++ */
+ #if 0
+     /* Static memory requires fast math */
+     #define WOLFSSL_STATIC_MEMORY
+ 
+     /* Disable fallback malloc/free */
+     #define WOLFSSL_NO_MALLOC
+-    #if 1
++    #ifdef CONFIG_CC_USESTD
+         #define WOLFSSL_MALLOC_CHECK /* trap malloc failure */
+     #endif
++    // cf. wolfssl-4.8.1/wolfssl/wolfcrypt/ecc.h:320
++    #ifdef ALT_ECC_SIZE
++    #undef ALT_ECC_SIZE
++    #endif
+ #endif
+ 
+ /* Memory callbacks */
+@@ -436,7 +480,9 @@ extern "C" {
+         #define WOLFSSL_TRACK_MEMORY
+ 
+         #undef  WOLFSSL_DEBUG_MEMORY
++#ifdef CONFIG_CC_USESTD
+         #define WOLFSSL_DEBUG_MEMORY
++#endif
+     #endif
+ #else
+     #ifndef WOLFSSL_STATIC_MEMORY
+@@ -455,7 +501,7 @@ extern "C" {
+ #define WOLFSSL_USER_CURRTIME
+ #define WOLFSSL_GMTIME
+ #define USER_TICKS
+-extern unsigned long my_time(unsigned long* timer);
++//extern unsigned long my_time(unsigned long* timer);
+ #define XTIME my_time
+ 
+ 
+@@ -492,10 +538,10 @@ extern unsigned int my_rng_seed_gen(void);
+ /* ------------------------------------------------------------------------- */
+ /* Allows override of all standard library functions */
+ #undef STRING_USER
+-#if 0
++#ifndef CONFIG_CC_USESTD
+     #define STRING_USER
+ 
+-    #include <string.h>
++//    #include <string.h>
+ 
+     #undef  USE_WOLF_STRSEP
+     #define USE_WOLF_STRSEP
+@@ -507,20 +553,30 @@ extern unsigned int my_rng_seed_gen(void);
+ 
+     #define XSTRNSTR(s1,s2,n) mystrnstr((s1),(s2),(n))
+ 
+-    #define XMEMCPY(d,s,l)    memcpy((d),(s),(l))
+-    #define XMEMSET(b,c,l)    memset((b),(c),(l))
+-    #define XMEMCMP(s1,s2,n)  memcmp((s1),(s2),(n))
+-    #define XMEMMOVE(d,s,l)   memmove((d),(s),(l))
++    #define XMEMCPY(d,s,l)    AmbaCWrap_memcpy((d),(s),(l))
++    #define XMEMSET(b,c,l)    AmbaCWrap_memset((b),(c),(l))
++    #define XMEMCMP(s1,s2,n)  AmbaCWrap_memcmp((s1),(s2),(n))
++    #define XMEMMOVE(d,s,l)   AmbaCWrap_memmove((d),(s),(l))
+ 
+-    #define XSTRLEN(s1)       strlen((s1))
+-    #define XSTRNCPY(s1,s2,n) strncpy((s1),(s2),(n))
+-    #define XSTRSTR(s1,s2)    strstr((s1),(s2))
++    #define XSTRLEN(s1)       AmbaCWrap_strlen((s1))
++    #define XSTRNCPY(s1,s2,n) AmbaCWrap_strncpy((s1),(s2),(n))
++    #define XSTRSTR(s1,s2)    AmbaCWrap_strstr((s1),(s2))
+ 
+-    #define XSTRNCMP(s1,s2,n)     strncmp((s1),(s2),(n))
+-    #define XSTRNCAT(s1,s2,n)     strncat((s1),(s2),(n))
+-    #define XSTRNCASECMP(s1,s2,n) strncasecmp((s1),(s2),(n))
++    #define XSTRNCMP(s1,s2,n)     AmbaCWrap_strncmp((s1),(s2),(n))
++    #define XSTRNCAT(s1,s2,n)     AmbaCWrap_strncat((s1),(s2),(n))
++    #define XSTRNCASECMP(s1,s2,n) AmbaCWrap_strncasecmp((s1),(s2),(n))
+ 
++#if 0
++    #define XSNPRINTF AmbaCWrap_snprintf
++
++    #define XPRINTF AmbaCWrap_printf
++#else
++    int snprintf(char *str, size_t size, const char *format, ...);
+     #define XSNPRINTF snprintf
++
++    int printf(const char *format, ...);
++    #define XPRINTF printf
++#endif
+ #endif
+ 
+ 
+@@ -569,16 +625,16 @@ extern unsigned int my_rng_seed_gen(void);
+ /* Disable Features */
+ /* ------------------------------------------------------------------------- */
+ #undef  NO_WOLFSSL_SERVER
+-//#define NO_WOLFSSL_SERVER
++#define NO_WOLFSSL_SERVER
+ 
+ #undef  NO_WOLFSSL_CLIENT
+-//#define NO_WOLFSSL_CLIENT
++#define NO_WOLFSSL_CLIENT
+ 
+ #undef  NO_CRYPT_TEST
+-//#define NO_CRYPT_TEST
++#define NO_CRYPT_TEST
+ 
+ #undef  NO_CRYPT_BENCHMARK
+-//#define NO_CRYPT_BENCHMARK
++#define NO_CRYPT_BENCHMARK
+ 
+ #undef  WOLFCRYPT_ONLY
+ //#define WOLFCRYPT_ONLY
+diff --git a/vendors/foss/wolfssl/Source/benchmark.c b/vendors/foss/wolfssl/Source/benchmark.c
+index cc5a01e13..e96212f8e 100644
+--- a/vendors/foss/wolfssl/Source/benchmark.c
++++ b/vendors/foss/wolfssl/Source/benchmark.c
+@@ -22,6 +22,7 @@
+ 
+ /* wolfCrypt benchmark */
+ 
++#define NO_MAIN_DRIVER
+ 
+ #ifdef HAVE_CONFIG_H
+     #include <config.h>
+@@ -36,7 +37,7 @@
+ #include <wolfssl/wolfcrypt/ecc.h>
+ 
+ /* Macro to disable benchmark */
+-#ifndef NO_CRYPT_BENCHMARK
++#if 1 //ndef NO_CRYPT_BENCHMARK
+ 
+ /* only for stack size check */
+ #ifdef HAVE_STACK_SIZE
+@@ -5560,6 +5561,7 @@ void bench_ecc(int doAsync, int curveId)
+ #ifdef WOLFSSL_ASYNC_CRYPT
+     deviceID = doAsync ? devId : INVALID_DEVID;
+ #else
++    (void)doAsync;
+     deviceID = devId;
+ #endif
+ 
+diff --git a/vendors/foss/wolfssl/wolfssl-4.8.1/wolfssl/wolfcrypt/types.h b/vendors/foss/wolfssl/wolfssl-4.8.1/wolfssl/wolfcrypt/types.h
+index 54cfce686..e589b0c2f 100644
+--- a/vendors/foss/wolfssl/wolfssl-4.8.1/wolfssl/wolfcrypt/types.h
++++ b/vendors/foss/wolfssl/wolfssl-4.8.1/wolfssl/wolfcrypt/types.h
+@@ -695,6 +695,11 @@ decouple library dependencies with standard string, memory and so on.
+         #endif
+         /* needed by wolfSSL_check_domain_name() */
+         #define XTOLOWER(c)      tolower((c))
++    #else
++        #include <AmbaCWrap.h>
++
++        #define XTOUPPER(c)     AmbaCWrap_toupper((c))
++        #define XTOLOWER(c)     AmbaCWrap_tolower((c))
+     #endif
+ 
+ 

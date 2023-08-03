@@ -1,0 +1,65 @@
+reboot_on_failure = 1
+CMD_dram_test = 'diag dram 0x20000000 0x200000 task 999'
+BOOT_MESSAGE = 'AmbaShell ;)'
+BOOT_MESSAGE_POSTTIME = 5
+BOOT_TIMEOUT = 30
+
+;
+; Reboot for a clean start
+;
+call Reboot
+
+for i 0 9999
+        ;
+        ; Do DRMA test
+        ;
+        int2str s i
+        ;sendln ':: round ' s
+        sendln CMD_dram_test
+
+        ;
+        ; Wait result
+        ;
+        timeout = 99999
+        if reboot_on_failure=1 then
+            waitln BOOT_MESSAGE 'FAIL'
+        else
+            waitln BOOT_MESSAGE
+        endif
+        if result = 0 then
+            sendln '::Wait timeout'
+        elseif result = 1 then  
+            ; Got boot up message, that means system reboot automatically or by AmbaShell
+            ;int2str s result
+            ;sendln '::Get message ' s
+            pause BOOT_MESSAGE_POSTTIME
+            continue
+        else
+            ;sendln '::Reboot on failure'
+        endif
+        pause 1
+
+        ;
+        ; Reboot for a clean start
+        ;
+        call Reboot
+next
+end
+
+
+;
+; Reboot and wait function
+;
+:Reboot
+sendln 'reboot yes'
+timeout = BOOT_TIMEOUT
+waitln BOOT_MESSAGE
+if result = 0 then
+    sendln '::Wait timeout'
+else
+    ;int2str s result
+    ;sendln '::Get message ' s
+    pause BOOT_MESSAGE_POSTTIME
+endif
+return
+

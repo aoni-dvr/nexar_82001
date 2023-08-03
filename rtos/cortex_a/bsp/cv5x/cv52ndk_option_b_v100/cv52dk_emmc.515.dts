@@ -1,0 +1,215 @@
+/*
+ * board level device tree source
+ */
+
+/dts-v1/;
+
+/include/ "cv5.515.dtsi"
+
+/ {
+	model = "Ambarella CV5BUB Board";
+	compatible = "ambarella,cv5bub", "ambarella,cv5";
+
+	chosen {
+		bootargs = "ubi.mtd=5 root=ubi0:linux rootfstype=ubifs console=ttyS0 nosmp maxcpus=0";
+	};
+
+	memory {
+		device_type = "memory";
+		reg = <0x0 0x200000 0x0 0x7fe00000>;
+	};
+
+	/*specify cpu_release_addr+0x8 at amba_bld.map*/
+	/*cpus {
+		cpu@0 {
+			cpu-release-addr = <0x0 0x170>;
+			enable-method = "spin-table";
+		};
+
+		cpu@1 {
+			cpu-release-addr = <0x0 0x178>;
+			enable-method = "spin-table";
+			cpu-release-addr = <0x0 0x100002e8>;
+		};
+	};*/
+
+	ddr-controller@1000004000 {
+		burst-size = <0x40>;
+	};
+
+	apb@20e4000000 {
+
+	};
+
+	ahb@20e0000000 {
+		spi_slave@e0010000 {
+			/delete-property/pinctrl-0;
+			status = "ok";
+		};
+		nand@e0002000 {
+			amb,timing = <0x303320c 0x5050505 0x71464 0x0 0x0 0x0>;
+			status = "disabled";
+		};
+	};
+
+	sound {
+		compatible = "simple-audio-card";
+		simple-audio-card,name = "nau8822 @ AMBEVK";
+		simple-audio-card,mclk-fs = <256>;
+		simple-audio-card,widgets =
+		"Speaker", "Speaker",
+		"Microphone", "Mic Internal";
+		simple-audio-card,routing =
+		"LMICN", "Mic Internal",
+		"LMICP", "Mic Internal",
+		"RMICP", "Mic Internal",
+		"RMICP", "Mic Internal",
+		"Speaker", "LSPK",
+		"Speaker", "RSPK";
+
+		simple-audio-card,dai-link@0 {
+			format = "i2s";
+
+			cpu {
+				sound-dai = <&i2s0>;
+			};
+
+			codec {
+				sound-dai = <&nau8822>;
+			};
+		};
+	};
+
+	/* /delete-node/ psci; */
+};
+
+&i2s0 {
+	status = "ok";
+};
+
+&uart1 {
+	status = "ok";
+};
+
+&i2c0 {
+    pinctrl-0 = <&i2c0_pins>;
+	status = "ok";
+};
+
+&i2c1 {
+	pinctrl-0 = <&i2c1_pins_c>;
+	status = "ok";
+};
+
+&i2c2 {
+	pinctrl-0 = <&i2c2_pins_b>;
+	status = "ok";
+};
+
+&i2c3 {
+	pinctrl-0 = <&i2c3_pins_a>;
+	status = "ok";
+	nau8822: codec@1a {
+		compatible = "nuvoton,nau8822";
+		#sound-dai-cells = <0>;
+		reg = <0x1a>;
+	};
+};
+
+&i2c4 {
+    pinctrl-0 = <&i2c4_pins_b>;
+	status = "ok";
+};
+
+&i2cs {
+	pinctrl-0 = <&i2cs0_pins_e>;
+	status = "ok";
+
+	/* echo "slave-24c02 0x1062 > /sys/bus/i2c/devices/i2c-5/new_device */
+	/*slave-24c02@62{
+		compatible = "slave-24c02";
+		reg = <0x40000062>;
+	};*/
+};
+
+&spi0 {
+	/delete-property/pinctrl-0;
+	status = "ok";
+	cs-gpios = <&gpio 4 0>;
+};
+
+&spi3 {
+	status = "disable";
+	cs-gpios = <&gpio 104 0>;
+	spidev@0 {
+			compatible = "ambarella,spidev";
+			spi-max-frequency = <1000000>;
+			reg = <0>;
+			spi-cpha;
+			spi-cpol;
+	};
+};
+
+&spi4 {
+	pinctrl-0 = <&spi4_pins_b>;
+};
+
+&spi5 {
+	pinctrl-0 = <&spi5_pins_b>;
+};
+
+&sdmmc0 {
+	pwr-gpios = <&gpio 91 0x0>;
+	v18-gpios = <&gpio 39 0x1>;
+	post-power-on-delay-ms = <10>;
+	status = "ok";
+};
+
+&sdmmc1 {
+	pwr-gpios = <&gpio 100 0x0>;
+	v18-gpios = <&gpio 40 0x0>;
+	post-power-on-delay-ms = <10>;
+	status = "ok";
+};
+
+&sdmmc2 {
+	/*suppress "mmc2: error -22 whilst initialising SDIO card" when daughter board not connected*/
+	no-sdio;
+	pwr-gpios = <&gpio 109 0x1>;
+	v18-gpios = <&gpio 132 0x1>;
+	status = "ok";
+};
+
+&mac0 {
+	amb,tx-clk-invert;
+
+	phy@0 {
+		reg = <0>;
+		rst-gpios = <&gpio 46 0>;
+		rst-gpio-delay = <150>;
+
+	};
+};
+
+&mac1 {
+	amb,tx-clk-invert;
+
+	phy@0 {
+		reg = <0>;
+	};
+};
+
+&usb_cdnsp {
+	pinctrl-names = "default";
+	pinctrl-0 = <&usb_host0_pins_f>;
+};
+
+&hdmi {
+	amb,i2c-adapter = <2>;
+};
+
+&pciec {
+	compatible = "ambarella,cdns-pcie-host";
+	/*compatible = "ambarella,cdns-pcie-ep";*/
+};
+

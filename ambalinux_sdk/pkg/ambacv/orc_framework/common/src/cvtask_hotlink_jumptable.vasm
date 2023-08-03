@@ -1,0 +1,666 @@
+/*
+ * Copyright (c) 2017-2018 Ambarella, Inc.
+ *
+ * This file and its contents ("Software") are protected by intellectual
+ * property rights including, without limitation, U.S. and/or foreign copyrights.
+ * This Software is also the confidential and proprietary information of
+ * Ambarella, Inc. and its licensors.  You may not use, reproduce, disclose,
+ * distribute, modify, or otherwise prepare derivative works of this Software
+ * or any portion thereof except pursuant to a signed license agreement or
+ * nondisclosure agreement with Ambarella, Inc. or its authorized affiliates.
+ * In the absence of such an agreement, you agree to promptly notify and
+ * return this Software to Ambarella, Inc.
+ *
+ * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT,
+ * MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL AMBARELLA, INC. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; COMPUTER FAILURE OR MALFUNCTION;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#ifdef STANDALONE_MODE
+
+.section .cvtasklist_separator
+.align 4
+        .long   0x00000000
+        .long   0x53544d46 // FMTSTR
+        .long   0x00005254 // -/
+        .long   _fmtstring_start_offset;
+        .long   _fmtstring_end_offset;
+
+.section .coretext_sod
+.align 4
+.global _corebase_sod_start_addr
+_corebase_sod_start_addr:
+
+.section .coretext_vp
+.align 4
+.global _corebase_vp_start_addr
+_corebase_vp_start_addr:
+
+# Specialized entry : format string start address (see linker files for usage)
+.section .fmtstring_start
+.align 4
+.global _fmtstring_start_addr
+_fmtstring_start_addr:
+
+# Specialized entry : format string end address (see linker files for usage)
+.section .fmtstring_end
+.align 4
+.global _fmtstring_end_addr
+_fmtstring_end_addr:
+
+.section .text
+
+#ifdef ORCVP
+#define COREBASE_ADDR _corebase_vp_start_addr
+#endif /* ?ORCVP */
+
+.global _cvtask_printf
+_cvtask_printf:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0080)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0080)
+        l.jr    r13
+        l.nop   0
+
+.global _error_printf
+_error_printf:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0088)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0088)
+        l.jr    r13
+        l.nop   0
+
+.global _perf_printf
+_perf_printf:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0090)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0090)
+        l.jr    r13
+        l.nop   0
+
+.global _sched_printf
+_sched_printf:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0098)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0098)
+        l.jr    r13
+        l.nop   0
+
+.global _cvtask_get_debug_level
+_cvtask_get_debug_level:
+        l.movhi r13, hi(COREBASE_ADDR + 0x00a0)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x00a0)
+        l.jr    r13
+        l.nop   0
+
+.global _cvtask_get_input_size
+_cvtask_get_input_size:
+        l.movhi r13, hi(COREBASE_ADDR + 0x00a8)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x00a8)
+        l.jr    r13
+        l.nop   0
+
+.global _cvtask_get_feedback_size
+_cvtask_get_feedback_size:
+        l.movhi r13, hi(COREBASE_ADDR + 0x00b0)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x00b0)
+        l.jr    r13
+        l.nop   0
+
+.global _cvtask_get_output_size
+_cvtask_get_output_size:
+        l.movhi r13, hi(COREBASE_ADDR + 0x00b8)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x00b8)
+        l.jr    r13
+        l.nop   0
+
+.global _cvtask_get_name
+_cvtask_get_name:
+        l.movhi r13, hi(COREBASE_ADDR + 0x00c0)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x00c0)
+        l.jr    r13
+        l.nop   0
+
+.global _cvtask_get_sysflow_index_list
+_cvtask_get_sysflow_index_list:
+        l.movhi r13, hi(COREBASE_ADDR + 0x00c8)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x00c8)
+        l.jr    r13
+        l.nop   0
+
+.global _cvtask_get_sysflow_index_by_UUID
+_cvtask_get_sysflow_index_by_UUID:
+        l.movhi r13, hi(COREBASE_ADDR + 0x00d0)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x00d0)
+        l.jr    r13
+        l.nop   0
+
+##################################################################################################
+# Unmapped - entry 11 (+0x0d8) to entry 15 (0x0f8)
+##################################################################################################
+
+.global _cvtask_message_create
+_cvtask_message_create:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0100)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0100)
+        l.jr    r13
+        l.nop   0
+
+.global _cvtask_message_send
+_cvtask_message_send:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0108)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0108)
+        l.jr    r13
+        l.nop   0
+
+.global _cvtask_message_send_at_time
+_cvtask_message_send_at_time:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0110)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0110)
+        l.jr    r13
+        l.nop   0
+
+.global _cvtask_default_message_send
+_cvtask_default_message_send:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0118)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0118)
+        l.jr    r13
+        l.nop   0
+
+.global _cvtask_default_message_send_at_time
+_cvtask_default_message_send_at_time:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0120)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0120)
+        l.jr    r13
+        l.nop   0
+
+.global _cvtask_message_bulk_send
+_cvtask_message_bulk_send:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0128)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0128)
+        l.jr    r13
+        l.nop   0
+
+##################################################################################################
+# Unmapped - entry 22 (+0x130) to entry 30 (0x170)
+##################################################################################################
+
+.global _cvtask_get_private_msg
+_cvtask_get_private_msg:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0178)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0178)
+        l.jr    r13
+        l.nop   0
+
+.global _cvtask_set_debug_level
+_cvtask_set_debug_level:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0180)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0180)
+        l.jr    r13
+        l.nop   0
+
+.global _cvtask_set_frequency
+_cvtask_set_frequency:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0188)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0188)
+        l.jr    r13
+        l.nop   0
+
+.global _cvtask_set_frequency_at_time
+_cvtask_set_frequency_at_time:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0190)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0190)
+        l.jr    r13
+        l.nop   0
+
+.global _cvtask_set_frequency_at_frameset_id
+_cvtask_set_frequency_at_frameset_id:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0198)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0198)
+        l.jr    r13
+        l.nop   0
+
+##################################################################################################
+# Unmapped - entry 36 (+0x1a0) to entry 46 (0x1f0)
+##################################################################################################
+.global _cvtask_check_yield
+_cvtask_check_yield:
+        l.movhi r13, hi(COREBASE_ADDR + 0x01f8)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x01f8)
+        l.jr    r13
+        l.nop   0
+
+.global _cvtable_find
+_cvtable_find:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0200)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0200)
+        l.jr    r13
+        l.nop   0
+
+.global _cvtask_metadata_find
+_cvtask_metadata_find:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0208)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0208)
+        l.jr    r13
+        l.nop   0
+
+.global _cvtask_make_output_available_early
+_cvtask_make_output_available_early:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0210)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0210)
+        l.jr    r13
+        l.nop   0
+
+.global _cvtable_suppress_notfound_print
+_cvtable_suppress_notfound_print:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0218)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0218)
+        l.jr    r13
+        l.nop   0
+
+##################################################################################################
+# Unmapped - entry 52 (+0x220) to entry 183 (0x638)
+##################################################################################################
+
+.global _cvtask_prof_new_action
+_cvtask_prof_new_action:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0640)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0640)
+        l.jr    r13
+        l.nop   0
+
+.global _cvtask_prof_unit_on
+_cvtask_prof_unit_on:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0648)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0648)
+        l.jr    r13
+        l.nop   0
+
+.global _cvtask_prof_unit_off
+_cvtask_prof_unit_off:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0650)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0650)
+        l.jr    r13
+        l.nop   0
+
+##################################################################################################
+# Unmapped - entry 187 (+0x658) to entry 191 (0x678)
+##################################################################################################
+
+.global _vp_init
+_vp_init:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0680)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0680)
+        l.jr    r13
+        l.nop   0
+
+.global _vp_load_dag
+_vp_load_dag:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0688)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0688)
+        l.jr    r13
+        l.nop   0
+
+.global _vp_process_dag_rc
+_vp_process_dag_rc:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0690)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0690)
+        l.jr    r13
+        l.nop   0
+
+.global _vp_load_rc_sw_dbufs
+_vp_load_rc_sw_dbufs:
+        l.movhi r13, hi(COREBASE_ADDR + 0x0698)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0698)
+        l.jr    r13
+        l.nop   0
+
+.global _vp_add_offset_in_vmem
+_vp_add_offset_in_vmem:
+        l.movhi r13, hi(COREBASE_ADDR + 0x06a0)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x06a0)
+        l.jr    r13
+        l.nop   0
+
+.global _vp_gen_scaling_warp_field
+_vp_gen_scaling_warp_field:
+        l.movhi r13, hi(COREBASE_ADDR + 0x06a8)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x06a8)
+        l.jr    r13
+        l.nop   0
+
+.global _vp_gen_frac_scaling_warp_field
+_vp_gen_frac_scaling_warp_field:
+        l.movhi r13, hi(COREBASE_ADDR + 0x06b0)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x06b0)
+        l.jr    r13
+        l.nop   0
+
+.global _vp_load_buf
+_vp_load_buf:
+        l.movhi r13, hi(COREBASE_ADDR + 0x06b8)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x06b8)
+        l.jr    r13
+        l.nop   0
+
+.global _vp_store_buf
+_vp_store_buf:
+        l.movhi r13, hi(COREBASE_ADDR + 0x06c0)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x06c0)
+        l.jr    r13
+        l.nop   0
+
+.global _vp_enable_hang_detect
+_vp_enable_hang_detect:
+        l.movhi r13, hi(COREBASE_ADDR + 0x06c8)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x06c8)
+        l.jr    r13
+        l.nop   0
+
+.global _vp_hang_detect
+_vp_hang_detect:
+        l.movhi r13, hi(COREBASE_ADDR + 0x06d0)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x06d0)
+        l.jr    r13
+        l.nop   0
+
+.global _visorc_load_dag_to_vmem
+_visorc_load_dag_to_vmem:
+        l.movhi r13, hi(COREBASE_ADDR + 0x06d8)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x06d8)
+        l.jr    r13
+        l.nop   0
+
+.global _vp_load_buf_nowait
+_vp_load_buf_nowait:
+        l.movhi r13, hi(COREBASE_ADDR + 0x06e0)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x06e0)
+        l.jr    r13
+        l.nop   0
+
+.global _vp_check_reserved_vmem
+_vp_check_reserved_vmem:
+        l.movhi r13, hi(COREBASE_ADDR + 0x06e8)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x06e8)
+        l.jr    r13
+        l.nop   0
+
+.global _visorc_set_preferred_dram_transfer_size
+_visorc_set_preferred_dram_transfer_size:
+        l.movhi r13, hi(COREBASE_ADDR + 0x06f0)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x06f0)
+        l.jr    r13
+        l.nop   0
+
+.global _vp_decode_status
+_vp_decode_status:
+        l.movhi r13, hi(COREBASE_ADDR + 0x06f8)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x06f8)
+        l.jr    r13
+        l.nop   0
+
+##################################################################################################
+# Unmapped - entry 208 (+0x700) to entry 223 (0x778)
+##################################################################################################
+
+.global _visorc_sec_get_unique_id
+_visorc_sec_get_unique_id:
+        l.movhi r13, hi(COREBASE_ADDR + 0x780)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0780)
+        l.jr    r13
+        l.nop   0
+
+.global _visorc_sec_get_product_id
+_visorc_sec_get_product_id:
+        l.movhi r13, hi(COREBASE_ADDR + 0x788)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x0788)
+        l.jr    r13
+        l.nop   0
+
+##################################################################################################
+# Unmapped - entry 226 (+0x790) to entry 229 (0x7a8)
+##################################################################################################
+.global _visorc_memclr_dma
+_visorc_memclr_dma:
+        l.movhi r13, hi(COREBASE_ADDR + 0x07b0)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x07b0)
+        l.jr    r13
+        l.nop   0
+
+.global _visorc_memset_dword_dma
+_visorc_memset_dword_dma:
+        l.movhi r13, hi(COREBASE_ADDR + 0x7b8)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x07b8)
+        l.jr    r13
+        l.nop   0
+
+.global _visorc_strcpy
+_visorc_strcpy:
+        l.movhi r13, hi(COREBASE_ADDR + 0x7c0)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x07c0)
+        l.jr    r13
+        l.nop   0
+
+.global _visorc_memcpy
+_visorc_memcpy:
+        l.movhi r13, hi(COREBASE_ADDR + 0x07c8)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x07c8)
+        l.jr    r13
+        l.nop   0
+
+.global _visorc_memclr
+_visorc_memclr:
+        l.movhi r13, hi(COREBASE_ADDR + 0x07d0)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x07d0)
+        l.jr    r13
+        l.nop   0
+
+.global _visorc_v2p
+_visorc_v2p:
+        l.movhi r13, hi(COREBASE_ADDR + 0x07d8)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x07d8)
+        l.jr    r13
+        l.nop   0
+
+##################################################################################################
+# Unmapped - entry 236 (+0x7e0) to entry 237 (0x7e8)
+##################################################################################################
+
+.global _visorc_event_wake_feeders
+_visorc_event_wake_feeders:
+        l.movhi r13, hi(COREBASE_ADDR + 0x07f0)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x07f0)
+        l.jr    r13
+        l.nop   0
+
+.global _visorc_event_finish_simulation
+_visorc_event_finish_simulation:
+        l.movhi r13, hi(COREBASE_ADDR + 0x07f8)
+        l.ori   r13, r13, LO(COREBASE_ADDR + 0x07f8)
+        l.jr    r13
+        l.nop   0
+
+
+/* Additional defines to stub all AMALGAM backdoor functions */
+
+.global _bdoor_loadbinary
+_bdoor_loadbinary:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_loadbinary_seq
+_bdoor_loadbinary_seq:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_loadimage
+_bdoor_loadimage:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_loadimage_no_header
+_bdoor_loadimage_no_header:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_loadimage_seq_no_header
+_bdoor_loadimage_seq_no_header:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_loadapf_component
+_bdoor_loadapf_component:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_storebinary
+_bdoor_storebinary:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_storebinary_seq
+_bdoor_storebinary_seq:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_storeimage
+_bdoor_storeimage:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_storeimage_seq
+_bdoor_storeimage_seq:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_storeimage_no_header
+_bdoor_storeimage_no_header:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_storeimage_seq_no_header
+_bdoor_storeimage_seq_no_header:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_storeapf
+_bdoor_storeapf:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_storeapf_y_8_420
+_bdoor_storeapf_y_8_420:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_storeapf_uv_8_420
+_bdoor_storeapf_uv_8_420:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_storeapf_y_10_420
+_bdoor_storeapf_y_10_420:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_storeapf_uv_10_420
+_bdoor_storeapf_uv_10_420:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_storeapf_uv_16_420
+_bdoor_storeapf_uv_16_420:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_storeapf_y_8_422
+_bdoor_storeapf_y_8_422:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_storeapf_uv_8_422
+_bdoor_storeapf_uv_8_422:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_storeapf_y_10_422
+_bdoor_storeapf_y_10_422:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_storeapf_uv_10_422
+_bdoor_storeapf_uv_10_422:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_storeapf_uv_16_422
+_bdoor_storeapf_uv_16_422:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_storeapf_y_8_444
+_bdoor_storeapf_y_8_444:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_storeapf_uv_8_444
+_bdoor_storeapf_uv_8_444:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_storeapf_y_10_444
+_bdoor_storeapf_y_10_444:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_storeapf_uv_10_444
+_bdoor_storeapf_uv_10_444:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_storeapf_uv_16_444
+_bdoor_storeapf_uv_16_444:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_me_dumpfile
+_bdoor_me_dumpfile:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_stack_limit
+_bdoor_stack_limit:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_gettimeofday
+_bdoor_gettimeofday:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_get_file_size
+_bdoor_get_file_size:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_get_file_size_seq
+_bdoor_get_file_size_seq:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_run_idsp_section
+_bdoor_run_idsp_section:
+        l.jr    r9
+        l.nop   0
+
+.global _bdoor_get_dram_size
+_bdoor_get_dram_size:
+        l.jr    r9
+        l.nop   0
+
+#endif /* ?STANDALONE_MODE */
+

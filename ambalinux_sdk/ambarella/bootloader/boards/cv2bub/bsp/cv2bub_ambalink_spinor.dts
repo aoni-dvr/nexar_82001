@@ -1,0 +1,183 @@
+/*
+ * Copyright (C) 2013 Ambarella,Inc. - http://www.ambarella.com/
+ * Author: Cao Rongrong <rrcao@ambarella.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+/dts-v1/;
+
+/include/ "ambarella-cv2-ambalink.dtsi"
+
+/ {
+	model = "Ambarella CV2BUB Board";
+	compatible = "ambarella,cv2bub", "ambarella,cv2";
+
+	chosen {
+	};
+
+	n_apb@e4000000 {
+		uart0: uart@e4000000 {
+			status = "disabled";
+		};
+	};
+
+	n_ahb@e0000000 {
+		nand0: nand@e0002000 {
+			status = "disabled";
+		};
+
+#if 1 /* For using DMA-engine/IRQ mode */
+		spinor0: spinor@e0001000 {
+			/* MUST re-use DMA setting of RTOS && start from ch-0 */
+			dmas = <&dma1 5>, <&dma1 6>;
+			dma-names = "tx", "rx";
+			status = "ok";
+		};
+#else /* For Polling mode */
+		spinor0: spinor@e0001000 {
+			/* MUST re-use DMA setting of RTOS && start from ch-0 */
+			reg = <0xE0001000 0x2FF>, /* spi nor controller */
+			      <0xE000A300 0x20>;  /* Reuse DMA0 with RTOS */
+			status = "ok";
+		};
+#endif
+
+		sdmmc0: sdmmc0@e0004000 {
+			/*pwr-gpios = <&gpio 109 0x1>;*/
+			/*v18-gpios = <&gpio 162 0x1>;*/
+			status = "disabled";
+		};
+
+		sdmmc2: sdmmc2@e0005000 { /* SDXC rather than SDIO */
+			/*pwr-gpios = <&gpio 110 0x1>;*/
+			/*v18-gpios = <&gpio 163 0x1>;*/
+			keep-power-in-suspend;
+			no-1-8-v;
+			max-frequency = <50000000>;
+			status = "ok";
+		};
+
+		dma0: dma@e000a000 {
+			/* amb,dma-startchannel = <2>; */ /* Prevent conflict between RTOS. */
+			status = "disabled";
+		};
+
+		dma1: dma@e000b000 {
+			/* amb,dma-startchannel = <2>; */ /* Prevent conflict between RTOS. */
+			status = "ok";
+		};
+
+		mac0: ethernet@e000e000 {
+			amb,tx-clk-invert;
+#if 0
+			pinctrl-0 = <&rgmii_pins &ahb_mdio_pins>;
+			amb,ahb-12mhz-div = <1>;
+#endif
+			phy@0 {
+				reg = <0>;
+				/*rst-gpios = <&pca9539 11 0>;*/
+			};
+		};
+		/*
+		mac0: ethernet@e000e000 {
+			device_type 	= "network";
+			compatible	= "st,stih416-dwmac", "snps,dwmac", "snps,dwmac-3.710";
+			status 		= "ok";
+			reg		= <0xe000e000 0x8000>;
+			reg-names	= "stmmaceth";
+			interrupts = <0 58 0x4>;
+			interrupt-names = "macirq";
+			snps,pbl 	= <32>;
+			snps,mixed-burst;
+			snps,scr-regmap = <&scratchpad_syscon>;
+			phy-handle = <&ethernet_phy>;
+			mdio {
+				compatible = "snps,dwmac-mdio";
+				ethernet_phy: ethernet-phy@0 {
+					reg = <0>;
+					compatible = "ethernet-phy-id0007.0570";
+				};
+			};
+		};
+		*/
+
+		uart1: uart@e0016000 {
+			pinctrl-0 = <&uart1_pins &uart1_flow_pins>;
+			/*/delete-property/amb,msr-used;*/
+			/*amb,txdma-used;*/
+			/*amb,rxdma-used;*/
+			/*dmas = <&dma0 8>, <&dma0 9>;*/
+			/*dma-names = "tx", "rx";*/
+			status = "ok";
+		};
+
+		uart2: uart@e0017000 {
+			pinctrl-0 = <&uart2_pins &uart2_flow_pins>;
+			/*/delete-property/amb,msr-used;*/
+			/*amb,txdma-used;*/
+			/*amb,rxdma-used;*/
+			/*dmas = <&dma1 12>, <&dma1 13>;*/
+			/*dma-names = "tx", "rx";*/
+			status = "ok";
+		};
+
+		uart3: uart@e0018000 {
+			pinctrl-0 = <&uart3_pins &uart3_flow_pins>;
+			/*/delete-property/amb,msr-used;*/
+			/*amb,txdma-used;*/
+			/*amb,rxdma-used;*/
+			/*dmas = <&dma1 14>, <&dma1 15>;*/
+			/*dma-names = "tx", "rx";*/
+			status = "ok";
+		};
+
+		uart4: uart@e0019000 {
+			pinctrl-0 = <&uart4_pins &uart4_flow_pins>;
+			/*/delete-property/amb,msr-used;*/
+			/*amb,txdma-used;*/
+			/*amb,rxdma-used;*/
+			/*dmas = <&dma1 16>, <&dma1 17>;*/
+			/*dma-names = "tx", "rx";*/
+			status = "ok";
+		};
+
+	};
+
+	rct@ed080000 {
+		usbphy: usbphy@ed080050 {
+			/* high will trigger the ocp interrupt */
+			amb,ocp-polarity = <0>;
+			pinctrl-names = "default";
+			pinctrl-0 = <&usb_host0_pins_a>;
+			/*status = "disabled";*/
+		};
+	};
+
+	/* for profiling, see aipc_profile.c */
+	profile_timer {
+		compatible = "ambarella,timer19";
+		reg = <0xe4006088 0x4>;
+	};
+
+	ambalink {
+		compatible = "simple-bus";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		aipc_mutex: ambarella-ipc-mutex {
+			compatible = "ambarella,ipc-mutex";
+			interrupts = <0 96 0x4>;
+			amb,scr-regmap = <&scratchpad_syscon>;
+		};
+
+		/* must be consistent with ambalink_cfg.h */
+		rproc0: ambarella-rproc {
+			compatible = "ambarella,rproc";
+			interrupts = <0 91 0x4>,	/* rvq_rx_irq, get rvq kick from rtos */
+				     <0 92 0x4>;	/* svq_rx_irq, get svq ack from rtos */
+			amb,scr-regmap = <&scratchpad_syscon>;
+		};
+	};
+};

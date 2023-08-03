@@ -1,0 +1,15 @@
+# player function
+ifeq ($(CONFIG_BUILD_COMSVC_RECODER), y)
+
+COMAMBA_CODEC_RECORDER_SRC = lib/src/common/recorder
+
+libcomsvc_codec-objs += $(COMAMBA_CODEC_RECORDER_SRC)/AmbaRbxMP4.o
+libcomsvc_codec-objs += $(COMAMBA_CODEC_RECORDER_SRC)/AmbaRdtEmgEvt.o
+libcomsvc_codec-objs += $(COMAMBA_CODEC_RECORDER_SRC)/AmbaRdtFile.o
+libcomsvc_codec-objs += $(COMAMBA_CODEC_RECORDER_SRC)/AmbaRdtNmlEvt.o
+libcomsvc_codec-objs += $(COMAMBA_CODEC_RECORDER_SRC)/AmbaRecMaster.o
+libcomsvc_codec-objs += $(COMAMBA_CODEC_RECORDER_SRC)/AmbaRscData.o
+libcomsvc_codec-objs += $(COMAMBA_CODEC_RECORDER_SRC)/AmbaRscVA.o
+libcomsvc_codec-objs += $(COMAMBA_CODEC_RECORDER_SRC)/AmbaRdtNet.o
+
+endif

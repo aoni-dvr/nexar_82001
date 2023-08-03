@@ -1,0 +1,241 @@
+#include <vp_vas.h>
+
+
+#define max_in_width        640
+#define max_in_height       480
+#define default_resp_threshold      100
+#define nms_win_h           15
+#define nms_win_w           15
+
+DAG Harris_prim = {
+
+  //----------------------- input ----------------------- 
+	VP_input(img, uint8_t, vector(1, 1, max_in_height, max_in_width));
+  
+  	VP_scalar(in_resp_threshold, data_format(0,1,0,0), default_resp_threshold);
+  	VP_typecast(
+		in_resp_threshold,
+		VP_tensor(resp_threshold, data_format(0,1,15,0), vector(1, 1, 1, 1))
+  );
+
+  //----------------------- start ----------------------- 
+  // grad: [-1, 0, 1]
+	VP_conv2i(
+		img, 
+		VP_const_tensor_using_file("./grad.bin", data_format(1,0,2,0), vector(1, 1, 1, 3)), 
+		VP_tensor(Ix_tmp, data_format(1,0,0,0), vector(1, 1, max_in_height, max_in_width)),
+		start_w = 0,
+		start_h = 0,
+		stride_w = 1,
+		stride_h = 1,
+		out_w = max_in_width,
+    	out_h = max_in_height,
+		zr = 1,
+		disable_reserved = 1,
+    	strong_zero = 1
+	);	
+
+  // grad: [-1, 0, 1]  
+	VP_conv2i(
+		img, 
+		VP_const_tensor_using_file("./grad.bin", data_format(1,0,2,0), vector(1, 1, 3, 1)), 
+		VP_tensor(Iy_tmp, data_format(1,0,0,0), vector(1, 1, max_in_height, max_in_width)),
+		start_w = 0,
+		start_h = 0,
+		stride_w = 1,
+		stride_h = 1,
+		out_w = max_in_width,
+    	out_h = max_in_height,
+		zr = 1,
+		disable_reserved = 1,
+    	strong_zero = 1
+	);
+
+  VP_typecast(
+		Ix_tmp,
+		VP_tensor(Ix, data_format(1,0,7,0), vector(1, 1, max_in_height, max_in_width))
+  );
+
+  VP_typecast(
+		Iy_tmp,
+		VP_tensor(Iy, data_format(1,0,7,0), vector(1, 1, max_in_height, max_in_width))
+  );
+ 
+	VP_mul(
+		Ix, Ix, 
+		VP_tensor(Ixx, data_format(0,1,15,0), vector(1, 1, max_in_height, max_in_width)),
+		disable_reserved = 1,
+    	strong_zero = 1
+	);	
+
+	VP_mul(
+		Iy, Iy, 
+		VP_tensor(Iyy, data_format(0,1,15,0), vector(1, 1, max_in_height, max_in_width)),
+		disable_reserved = 1,
+    	strong_zero = 1
+	);	
+
+	VP_mul(
+		Ix, Iy, 
+		VP_tensor(Ixy, data_format(1,1,15,0), vector(1, 1, max_in_height, max_in_width)),
+		disable_reserved = 1,
+    	strong_zero = 1
+	);	
+  
+	VP_conv2i(
+		Ixx, 
+		VP_const_tensor_using_file("./gaussian.bin", data_format(0,0,10,0), vector(1, 1, 7, 7)), 
+		VP_tensor(Mxx, data_format(0,1,15,0), vector(1, 1, max_in_height, max_in_width)),
+		start_w = 0,
+		start_h = 0,
+		stride_w = 1,
+		stride_h = 1,
+		out_w = max_in_width,
+		out_h = max_in_height,
+		zr = 1,
+		disable_reserved = 1,
+    	strong_zero = 1
+	);
+
+	VP_conv2i(
+		Iyy, 
+		VP_const_tensor_using_file("./gaussian.bin", data_format(0,0,10,0), vector(1, 1, 7, 7)), 
+		VP_tensor(Myy, data_format(0,1,15,0), vector(1, 1, max_in_height, max_in_width)),
+		start_w = 0,
+		start_h = 0,
+		stride_w = 1,
+		stride_h = 1,
+		out_w = max_in_width,
+    	out_h = max_in_height,
+		zr = 1,
+		disable_reserved = 1,
+    	strong_zero = 1
+	);
+
+ 	VP_conv2i(
+		Ixy, 
+		VP_const_tensor_using_file("./gaussian.bin", data_format(0,0,10,0), vector(1, 1, 7, 7)), 
+		VP_tensor(Mxy, data_format(1,1,15,0), vector(1, 1, max_in_height, max_in_width)),
+		start_w = 0,
+		start_h = 0,
+		stride_w = 1,
+		stride_h = 1,
+		out_w = max_in_width,
+    	out_h = max_in_height,
+		zr = 1,
+		disable_reserved = 1,
+    	strong_zero = 1
+	);
+  
+	VP_mul(
+		Mxy, Mxy, 
+		VP_tensor(MxyMxy, data_format(0,1,15,0), vector(1, 1, max_in_height, max_in_width)),
+		disable_reserved = 1,
+		strong_zero = 1
+	);	
+
+	VP_mul(
+		Mxx, Myy, 
+		VP_tensor(MxxMyy, data_format(0,1,15,0), vector(1, 1, max_in_height, max_in_width)),
+		disable_reserved = 1,
+		strong_zero = 1
+	);
+
+	// Harris_Det = Mxx*Myy - MxyMxy
+	VP_sub(
+		MxxMyy, MxyMxy, 
+		VP_tensor(Harris_Det, data_format(0,1,15,0), vector(1, 1, max_in_height, max_in_width)),
+		disable_reserved = 1,
+	  	strong_zero = 1
+	);
+
+	// Harris_trace = Mxx + Myy
+	VP_add(
+		Mxx, Myy, 
+		VP_tensor(Harris_trace, data_format(0,1,15,0), vector(1, 1, max_in_height, max_in_width)),
+		disable_reserved = 1,
+	  	strong_zero = 1
+	);
+
+	VP_mul(
+		Harris_trace, Harris_trace, 
+		VP_tensor(Harris_trace_square, data_format(0,1,15,0), vector(1, 1, max_in_height, max_in_width)),
+		disable_reserved = 1,
+		strong_zero = 1
+	);
+  
+	// k*trace^2
+	VP_mul(
+		Harris_trace_square, 
+		VP_const_tensor("A4", data_format(0,0,12,0), vector(1, 1, 1, 1)), // 164 >> 12 ~= 0.04
+		VP_tensor(k_Harris_trace_square, data_format(0,1,15,0), vector(1, 1, max_in_height, max_in_width)),
+		disable_reserved = 1,
+		strong_zero = 1
+	);
+
+	// Harris_Det = Det(M) - k*trace^2
+	VP_sub(
+		Harris_Det, k_Harris_trace_square, 
+		VP_tensor(Harris_resp, data_format(0,1,15,0), vector(1, 1, max_in_height, max_in_width)),
+		disable_reserved = 1,
+	  	strong_zero = 1
+	);
+  
+	// Max_Harris_resp_out
+	VP_mmrwh(
+		Harris_resp,
+		VP_tensor(Max_Harris_resp, data_format(0,1,15,0), vector(1)),
+		VP_auto_tensor(Max_Harris_resp_out_position),
+		op = 1 //max
+	);	
+
+  // relu(resp_threshold - Harris_resp)
+	VP_sub(
+	    resp_threshold,
+	    Harris_resp,
+		VP_tensor(th_minus_Harris_resp, data_format(0,1,15,0), vector(1, 1, max_in_height, max_in_width)),
+		disable_reserved = 1,
+		strong_zero = 1
+	);
+
+	VP_mmwnd(
+		Harris_resp, 
+		VP_tensor(Harris_max_pool, data_format(0,1,15,0), vector(1, 1, max_in_height, max_in_width)),
+		op = 1, //max
+		window_w = nms_win_w,
+		window_h = nms_win_h,
+		stride_w = 1,
+		stride_h = 1,
+		out_w = max_in_width,
+		out_h = max_in_height,
+	);	
+  
+	// Harris_det_by_NMS = Harris_max_pool - Harris_resp
+	VP_sub(
+		Harris_max_pool, 
+		Harris_resp,
+		VP_tensor(Harris_det_by_NMS, data_format(0,1,15,0), vector(1, 1, max_in_height, max_in_width)),
+		disable_reserved = 1,
+		strong_zero = 1
+	);
+
+	// Harris_det_by_NMS_thresh = relu(resp_threshold - Harris_resp) + Harris_det_by_NMS
+	VP_add(
+		th_minus_Harris_resp, 
+		Harris_det_by_NMS,
+		VP_tensor(Harris_det_by_NMS_thresh, data_format(0,1,15,0), vector(1, 1, max_in_height, max_in_width)),
+		disable_reserved = 1,
+		strong_zero = 1
+	);
+
+	// Harris_bit = (Harris_det_by_NMS_thresh == 0)
+	VP_eqib(
+		Harris_det_by_NMS_thresh, 
+		VP_const_tensor("00", uint8_t, vector(1, 1, 1, 1)),
+		VP_tensor(Harris_bit, uint8_t, vector(1, 1, max_in_height, max_in_width), bitvector = 1)
+	);
+
+	VP_output(Harris_bit_out, Harris_bit);
+	VP_output(Harris_resp_out, Harris_resp);
+}
+

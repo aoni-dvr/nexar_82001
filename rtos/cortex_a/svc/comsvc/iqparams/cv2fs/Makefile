@@ -1,0 +1,74 @@
+################################################################
+#                    ThreadX / Linux                           #
+################################################################
+ifdef CONFIG_LINUX
+obj-y += IMX290/
+obj-y += AR0144/
+obj-y += IMX390SHDR3ADAS/
+obj-y += IMX390SHDR3_24/
+obj-y += IMX390SHDR3RCCB/
+obj-y += IMX424SHDR3/
+obj-y += IMX424SHDR3_CAR53_ADAS/
+obj-y += IMX424SHDR3_CAR53_ADAS_REBEL/
+obj-y += IMX424SHDR3_CAR53_STEREO/
+obj-y += IMX577/
+obj-y += IMX577HDR2/
+obj-y += AR0233SHDR2_12bTo20b/
+obj-y += AR0233SHDR2/
+obj-y += AR0233/
+obj-y += AR0233HJ6068A/
+obj-y += AR0239/
+obj-y += IMX490SHDR4/
+obj-y += IMX490SHDR4_CAR53/
+obj-y += IMX490SHDR4_CAR53_ADAS/
+obj-y += AR0239HDR2/
+obj-y += OV2312/
+obj-y += AR0820RCCB/
+obj-y += AR0820SHDR3RCCB/
+obj-y += OV2312_HJ6074L_IR_ONLY/
+obj-y += OV2312_SIMULTANEOUS_RGBIR_HJ6074L/
+obj-y += OV2312_SIMULTANEOUS_IR_HJ6074L/
+obj-y += OV2312_TIMEDIVISION_RGBIR_HJ6074L/
+obj-y += OV2312_TIMEDIVISION_IR_HJ6074L/
+obj-y += OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/
+obj-y += OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/
+obj-y += VG1762DOUTPUT_IR/
+obj-y += VG1762DOUTPUT_SHDR2/
+obj-y += VG1762SHDR2/
+obj-y += OX03CSHDR4/
+else
+obj-y += iqparams/$(AMBA_CHIP_ID)/IMX290/
+obj-y += iqparams/$(AMBA_CHIP_ID)/AR0144/
+obj-y += iqparams/$(AMBA_CHIP_ID)/IMX390SHDR3ADAS/
+obj-y += iqparams/$(AMBA_CHIP_ID)/IMX390SHDR3_24/
+obj-y += iqparams/$(AMBA_CHIP_ID)/IMX390SHDR3RCCB/
+obj-y += iqparams/$(AMBA_CHIP_ID)/IMX424SHDR3/
+obj-y += iqparams/$(AMBA_CHIP_ID)/IMX424SHDR3_CAR53_ADAS/
+obj-y += iqparams/$(AMBA_CHIP_ID)/IMX424SHDR3_CAR53_ADAS_REBEL/
+obj-y += iqparams/$(AMBA_CHIP_ID)/IMX424SHDR3_CAR53_STEREO/
+obj-y += iqparams/$(AMBA_CHIP_ID)/IMX577/
+obj-y += iqparams/$(AMBA_CHIP_ID)/IMX577HDR2/
+obj-y += iqparams/$(AMBA_CHIP_ID)/AR0233SHDR2_12bTo20b/
+obj-y += iqparams/$(AMBA_CHIP_ID)/AR0233SHDR2/
+obj-y += iqparams/$(AMBA_CHIP_ID)/AR0233/
+obj-y += iqparams/$(AMBA_CHIP_ID)/AR0233HJ6068A/
+obj-y += iqparams/$(AMBA_CHIP_ID)/AR0239/
+obj-y += iqparams/$(AMBA_CHIP_ID)/IMX490SHDR4/
+obj-y += iqparams/$(AMBA_CHIP_ID)/IMX490SHDR4_CAR53/
+obj-y += iqparams/$(AMBA_CHIP_ID)/IMX490SHDR4_CAR53_ADAS/
+obj-y += iqparams/$(AMBA_CHIP_ID)/AR0239HDR2/
+obj-y += iqparams/$(AMBA_CHIP_ID)/OV2312/
+obj-y += iqparams/$(AMBA_CHIP_ID)/AR0820RCCB/
+obj-y += iqparams/$(AMBA_CHIP_ID)/AR0820SHDR3RCCB/
+obj-y += iqparams/$(AMBA_CHIP_ID)/OV2312_HJ6074L_IR_ONLY/
+obj-y += iqparams/$(AMBA_CHIP_ID)/OV2312_SIMULTANEOUS_RGBIR_HJ6074L/
+obj-y += iqparams/$(AMBA_CHIP_ID)/OV2312_SIMULTANEOUS_IR_HJ6074L/
+obj-y += iqparams/$(AMBA_CHIP_ID)/OV2312_TIMEDIVISION_RGBIR_HJ6074L/
+obj-y += iqparams/$(AMBA_CHIP_ID)/OV2312_TIMEDIVISION_IR_HJ6074L/
+obj-y += iqparams/$(AMBA_CHIP_ID)/OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/
+obj-y += iqparams/$(AMBA_CHIP_ID)/OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/
+obj-y += iqparams/$(AMBA_CHIP_ID)/VG1762DOUTPUT_IR/
+obj-y += iqparams/$(AMBA_CHIP_ID)/VG1762DOUTPUT_SHDR2/
+obj-y += iqparams/$(AMBA_CHIP_ID)/VG1762SHDR2/
+obj-y += iqparams/$(AMBA_CHIP_ID)/OX03CSHDR4/
+endif

@@ -1,0 +1,4 @@
+menuconfig BR2_PACKAGE_AMBA_RTSP
+	bool "amba_rtsp"
+	help
+	  This is Amba's implementation for RTSP Service.

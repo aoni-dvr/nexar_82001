@@ -1,0 +1,281 @@
+// startup macro (DDR Controller initialization) for h32 Bring Up Board
+
+execute Ambarella-H32.def
+
+// dram pll setting (TO BE EDITED AS NEEDED)
+MWriteS32 PLL_DDR_CTRL_REG      0x12100000//0x12100000
+MWriteS32 PLL_DDR_CTRL2_REG     0x40520000
+//MWriteS32 PLL_DDR_CTRL3_REG     0x00088004
+MWriteS32 PLL_DDR_CTRL3_REG     0x00068302
+MWriteS32 PLL_DDR_CTRL_REG      0x12100001//0x12100001
+MWriteS32 PLL_DDR_CTRL_REG      0x12100000//0x12100000
+
+// setup DDRIO dll Control settings (TO BE EDITED AS NEEDED)
+MWriteS32 DDRIO_DLL0_DDRC0              0x022600
+MWriteS32 DDRIO_DLL1_DDRC0              0x022600
+MWriteS32 DDRIO_DLL2_DDRC0              0x022600
+MWriteS32 DDRIO_DLL3_DDRC0              0x022600
+MWriteS32 DDRIO_DLL_CTRL_MISC_DDRC0              0x400000
+MWriteS32 DDRIO_DLL_CTRL_SEL0_DDRC0              0x41b9b1
+MWriteS32 DDRIO_DLL_CTRL_SEL1_DDRC0              0x41b9b1
+MWriteS32 DDRIO_DLL_CTRL_SEL2_DDRC0              0x41b9b1
+MWriteS32 DDRIO_DLL_CTRL_SEL3_DDRC0              0x41b9b1
+MWriteS32 DDRIO_DLL_SYNC_CTRL_SEL0_DDRC0              0xb0041
+MWriteS32 DDRIO_DLL_SYNC_CTRL_SEL1_DDRC0              0xb0041
+MWriteS32 DDRIO_DLL_SYNC_CTRL_SEL2_DDRC0              0xb0041
+MWriteS32 DDRIO_DLL_SYNC_CTRL_SEL3_DDRC0              0xb0041
+Wait 2.ms
+
+
+Wait 1.ms
+
+// 
+
+// wait for clean clock 200 us 
+Wait 1.ms
+
+// ---------------------------------------------------------------------
+// Starting Initialization sequence for DDRC lane 0 (base Addr = 0xdffe0800) 
+// ----------------------------------------------------------------------
+// Reset Dram 
+MWriteS32 DRAM_CONTROL_DDRC0          0x6ec00600
+
+// issue DLL RST command in order to lock on the slow clock
+MWriteS32 DRAM_INIT_CTL_DDRC0         0x00000008
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_INIT_CTL_DDRC0)&0x8)!=0x0)
+(
+)
+
+// program DRAM_RSVD_SPACE
+MWriteS32 DRAM_RSVD_SPACE_DDRC0       0x00000000
+
+// disable DQS SYNC initially
+MWriteS32 DRAM_DQS_SYNC_DDRC0         0x00001ea0
+
+// write to DRAM_CFG reg 
+MWriteS32 DRAM_CONFIG_DDRC0           0x702863b4
+
+// write to DRAM_TIMING reg 
+MWriteS32 DRAM_TIMING1_DDRC0          0x222e38c2
+
+// write to DRAM_TIMING2 reg
+MWriteS32 DRAM_TIMING2_DDRC0          0x10509066
+
+// write to DRAM_TIMING3 reg
+MWriteS32 DRAM_TIMING3_DDRC0          0x00000060
+
+// write to DRAM_TIMING4 reg
+MWriteS32 DRAM_TIMING4_DDRC0          0x10cc248e
+
+// write to DRAM_TIMING5_LP4TRAIN
+MWriteS32 DRAM_TIMING5_LP4TRAIN_DDRC0   0x24588000
+
+// write to PAD TERM
+MWriteS32 DRAM_PAD_TERM_DDRC0         0x0002001c
+
+// write to DRAM_PAD_TERM2
+MWriteS32 DRAM_PAD_TERM2_DDRC0        0x050d5d0d
+
+// write to DRAM_PAD_TERM3
+MWriteS32 DRAM_PAD_TERM3_DDRC0        0x00d05000
+
+// write to DRAM_BYTE_MAP
+MWriteS32 DRAM_BYTE_MAP_DDRC0         0x000000e4
+
+// write to LPDDR4_DQ_WRITE_DLY
+//MWriteS32 LPDDR4_DQ_WRITE_DLY_DDRC0   0xc2a54a95
+MWriteS32 LPDDR4_DQ_WRITE_DLY_DDRC0   0xc2a54a95
+//011010
+MWriteS32 LPDDR4_DQ_WRITE_DLY_DDRC0   0xc6ad5ab5
+
+// write to LPDDR4_DQS_WRITE_DLY
+MWriteS32 LPDDR4_DQS_WRITE_DLY_DDRC0   0x00000000
+
+// write DRAM_ZQ_CALIB config to set T_ZQC_SEL_POR_MDDR4 for DDR ZQ Calibration 
+MWriteS32 DRAM_ZQ_CALIB_DDRC0         0x00000060
+
+// write to LPDDR4_TRAIN_MPC_RDLY
+MWriteS32 LPDDR4_TRAIN_MPC_RDLY_DDRC0   0x00000022
+
+// wait 10 ns to allow RESET/CKE PAD to start driving after DDS is set to non-0 value
+Wait 1.ms
+
+//  Disbale DRAM Reset - disable AUTO REFRESH
+MWriteS32 DRAM_CONTROL_DDRC0          0x6ec00608
+
+// wait 2 ms (tINIT3)
+Wait 1.ms
+
+//  Set CKE  
+MWriteS32 DRAM_CONTROL_DDRC0          0x6ec0060c
+
+// wait 2 us (tINIT5)
+Wait 1.ms
+
+//  **** SET MODE REGISTERS FOR FSP0 *** 
+//  Program MR13 -- set FS_WR to 0
+MWriteS32 DRAM_MODE_REG_DDRC0         0x010d0000
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_MODE_REG_DDRC0)&0x80000000)!=0x0)
+(
+)
+
+//  Program MR3 
+MWriteS32 DRAM_MODE_REG_DDRC0         0x01030031
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_MODE_REG_DDRC0)&0x80000000)!=0x0)
+(
+)
+
+//  Program MR2 
+MWriteS32 DRAM_MODE_REG_DDRC0         0x01020049
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_MODE_REG_DDRC0)&0x80000000)!=0x0)
+(
+)
+
+//  Program MR1 
+MWriteS32 DRAM_MODE_REG_DDRC0         0x01010094
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_MODE_REG_DDRC0)&0x80000000)!=0x0)
+(
+)
+
+//  Program MR11 
+MWriteS32 DRAM_MODE_REG_DDRC0         0x010b0000
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_MODE_REG_DDRC0)&0x80000000)!=0x0)
+(
+)
+
+//  **** SET MODE REGISTERS FOR FSP1 *** 
+//  Program MR13 -- set FS_WR to 1
+MWriteS32 DRAM_MODE_REG_DDRC0         0x010d0040
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_MODE_REG_DDRC0)&0x80000000)!=0x0)
+(
+)
+
+//  Program MR3 
+MWriteS32 DRAM_MODE_REG_DDRC0         0x01030031
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_MODE_REG_DDRC0)&0x80000000)!=0x0)
+(
+)
+
+//  Program MR2 
+MWriteS32 DRAM_MODE_REG_DDRC0         0x01020049
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_MODE_REG_DDRC0)&0x80000000)!=0x0)
+(
+)
+
+//  Program MR1 
+MWriteS32 DRAM_MODE_REG_DDRC0         0x01010094
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_MODE_REG_DDRC0)&0x80000000)!=0x0)
+(
+)
+
+//  Program MR11 
+MWriteS32 DRAM_MODE_REG_DDRC0         0x010b0000
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_MODE_REG_DDRC0)&0x80000000)!=0x0)
+(
+)
+
+// Set CS_CNTRL to Select die 0 only
+MWriteS32 DRAM_CONTROL_DDRC0          0x2ec0060c
+
+// issue Manual DDR ZQ CALIB command
+MWriteS32 DRAM_INIT_CTL_DDRC0         0x00000010
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_INIT_CTL_DDRC0)&0x10)!=0x0)
+(
+)
+
+// Set CS_CNTRL to Select die 1 only
+MWriteS32 DRAM_CONTROL_DDRC0          0x4ec0060c
+
+// issue Manual DDR ZQ CALIB command
+MWriteS32 DRAM_INIT_CTL_DDRC0         0x00000010
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_INIT_CTL_DDRC0)&0x10)!=0x0)
+(
+)
+
+// Set CS_MODE back to default
+MWriteS32 DRAM_CONTROL_DDRC0          0x6ec0060c
+
+// wait 30 ns (tZQLAT)
+Wait 1.ms
+
+// issue SHORT PAD CALIB command
+MWriteS32 DRAM_INIT_CTL_DDRC0         0x00000020
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_INIT_CTL_DDRC0)&0x20)!=0x0)
+(
+)
+
+// issue GET_RTT_EN command
+MWriteS32 DRAM_INIT_CTL_DDRC0         0x00000004
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_INIT_CTL_DDRC0)&0x4)!=0x0)
+(
+)
+
+// write DRAM_DQS_SYNC config
+MWriteS32 DRAM_DQS_SYNC_DDRC0         0x00001e40
+
+// write  DRAM_ZQ_CALIB config
+MWriteS32 DRAM_ZQ_CALIB_DDRC0         0x00000060
+
+// write DRAM_DLL_CALIB config
+MWriteS32 DRAM_DLL_CALIB_DDRC0        0x001e3204
+
+// write to selfRefresh register
+MWriteS32 DRAM_SELF_REFRESH_DDRC0     0x00000001
+
+// write to AUTO power down register
+MWriteS32 DRAM_POWER_DOWN_DDRC0       0x00000030
+
+// Enable AUTO Refresh and set DRAM_ENABLE
+MWriteS32 DRAM_CONTROL_DDRC0          0x6ec0060f
+
+// Initialization Done
+// Let DDRC building up AR credit before sending requests (AR_CREDIT_MAX * tRFC)
+Wait 1.ms
+
+print "Memory initialized"
+ENDEXE

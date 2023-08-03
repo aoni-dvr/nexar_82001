@@ -1,0 +1,34 @@
+#include "vp_vas.h"
+#include "idsp_top_globals.h"
+
+DAG conv8u = {
+    VP_input(input0, uint8_t, vector( 1, 1, IN1_HEIGHT, IN1_WIDTH), vp_interleave_mode = 2);
+
+    VP_input(input1, float16_t, vector( 1, 1, 1, IN2_LENGTH_ALIGN), vp_interleave_mode = 2);
+	
+	VP_crop(input1, VP_tensor(croped_input1),
+			w = IN2_LENGTH,
+			h = 1,
+			d = 1,
+			p = 1,
+			start_w = 0,
+			start_h = 0,
+			start_d = 0,
+			start_p = 0,
+			zr = 1
+	);
+
+	VP_reshape(croped_input1, VP_tensor(kerenl_nxn, float16_t, vector(1,1,IN2_HEIGHT,IN2_WIDTH)),
+			w = IN2_WIDTH,
+			h = IN2_HEIGHT,
+			d = 1,
+			p = 1
+	);
+
+    VP_conv2( input0, kerenl_nxn,
+        VP_tensor( output_temp, uint8_t),
+        start_w = 0, start_h = 0, stride_w = 1, stride_h = 1,
+        out_w = OUT_WIDTH, out_h = OUT_HEIGHT, zr0 = 1, zr1 = 1, disable_reserved=1
+    );
+    VP_output(output, output_temp);
+}

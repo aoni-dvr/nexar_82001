@@ -1,0 +1,43 @@
+
+menu "Board Support Package"
+
+source build/kconfigs/bsp/cv2/Kconfig
+source build/kconfigs/bsp/cv22/Kconfig
+source build/kconfigs/bsp/cv25/Kconfig
+source build/kconfigs/bsp/h32/Kconfig
+source build/kconfigs/bsp/cv2fs/Kconfig
+source build/kconfigs/bsp/cv22fs/Kconfig
+source build/kconfigs/bsp/cv28/Kconfig
+source build/kconfigs/bsp/cv5x/Kconfig
+
+config AUTO_DRAM_TRAINING
+	bool "Enable automatic dram training"
+	default y
+	help
+		Execute dram training automatically at 1st boot.
+
+comment "Don't edit following"
+config BSP_NAME
+    string "BSP folder name"
+    default "cv2bub_option_a_v300"   if BSP_CV2BUB_OPTION_A_V300
+    default "cv2dk"                  if BSP_CV2DK
+    default "cv2dk_d"                if BSP_CV2DK_D_REWORK
+    default "cv22bub_option_a_v300"  if BSP_CV22BUB_OPTION_A_V300
+    default "cv22dk"                 if BSP_CV22DK
+    default "cv25bub_option_a_v300"  if BSP_CV25BUB_OPTION_A_V300
+    default "cv25bub_option_a_v200"  if BSP_CV25BUB_OPTION_A_V200
+    default "cv25dk_v100"            if BSP_CV25DK_V100
+    default "cv25dk_8layer_v110"     if BSP_CV25DK_8LAYER_V110
+    default "h32bub_option_a_v200"   if BSP_H32BUB_OPTION_A_V200
+    default "h32bub_option_a_v300"   if BSP_H32BUB_OPTION_A_V300
+    default "h32aqbub_option_a_v100" if BSP_H32AQBUB_OPTION_A_V100
+    default "h32dk_v100"             if BSP_H32DK_V100
+    default "h32aqdk_option_b_v100"  if BSP_H32AQDK_OPTION_B_V100
+    default "h32bub_option_b_v200"   if BSP_H32BUB_OPTION_B_V200
+    default "cv2fsbub_option_a_v100" if BSP_CV2FSBUB_OPTION_A_V100
+	default "cv28bub_option_a_v100"  if BSP_CV28BUB_OPTION_A_V100
+    default "cv28dk_8layer_a_v100"   if BSP_CV28DK_8LAYER_A_V100
+    default "cv28dk_option_b_v100"   if BSP_CV28DK_OPTION_B_V100
+	default "cv5bub_option_a_v100"   if BSP_CV5BUB_OPTION_A_V100
+    default "cv5dk_option_a_v100"    if BSP_CV5DK_OPTION_A_V100
+endmenu

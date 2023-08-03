@@ -1,0 +1,61 @@
+; For Ambarella CV2 JTAG configuration
+MULtiCore.PORT 20002
+
+GLOBAL &QC_cpu
+GLOBAL &QC_jtag_cfg
+
+
+&QC_cpu="CORTEXA53"
+&QC_jtag_cfg="chain"
+
+; Ambarella configuration, DONOT delete
+; Amba:LogLevel 3
+; Amba:MemMap 0xEC000000 0x01000000 IO
+; Amba:Aarch  64
+
+CPUTYPE CORTEXA53
+;OPTION.JTAGCLOCK      20.000000Mhz
+OPTION.JTAGCLOCK      500000.
+
+OPTION.InterruptRESet
+OPTION.InterruptDisable ASMSTEP
+OPTION.InterruptDisable CSTEP
+
+;JTAG Setting
+MULtiCore.DEBUGACCESSPORT 0.
+MULtiCore.IRPOST      8.
+MULtiCore.DRPost      2.
+MULtiCore.IRPRE       0.
+MULtiCore.DRPre       0.
+MULtiCore.DAPIRPOST   0.
+MULtiCore.DAPDRPOST   0.
+MULtiCore.DAPIRPRE    0.
+MULtiCore.DAPDRPRE    0.
+MULtiCore.COUNT       4.
+MULtiCore.COREBASE    0x80010000 0x80110000 0x80210000 0x80310000 
+MULtiCore.CTIBASE     0x80020000 0x80120000 0x80220000 0x80320000 
+MULtiCore.ETMBASE     0x80040000 0x80140000 0x80240000 0x80340000 
+
+SYStem.OPTION EnReset       OFF
+SYStem.OPTION TRST          OFF
+SYStem.OPTION ResBreak      OFF
+SYStem.OPTION PCZero        OFF
+SYStem.OPTION RegisterInit  OFF
+SYStem.OPTION BigEndian     OFF
+
+VectorCatch.RESET           OFF
+VectorCatch.PABORT          OFF
+VectorCatch.DABORT          OFF
+VectorCatch.UNDEF           OFF
+
+MapBusWidth32 0x00000000++0xFFFFFFFF
+
+connectAttach
+wait 100.ms
+
+break;
+register.view
+
+print "CPU=&QC_cpu,JTAG=&QC_jtag_cfg"
+
+ENDEXE

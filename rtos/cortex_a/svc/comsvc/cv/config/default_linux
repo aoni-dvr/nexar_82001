@@ -1,0 +1,52 @@
+#
+# This file is used to customize the build of ambacv module.
+# It is included in both Makfile and link bash script, so please follow the
+#   syntax carefully. Whitespace and quote DO mater .
+#
+
+# cvtasks to be built from source code
+ifneq ($(CONFIG_DISABLE_ARM_CVTASK),y)
+CVTASK_AS_SRC="HLMobilenetSSD"
+endif
+
+# add algo cvtasks if it exists
+cvtRoot = $(srctree)/$(CV_COMSVC_DIR)/arm_framework/cvtask
+cvtDirs = $(patsubst $(cvtRoot)/%/,%,$(wildcard $(cvtRoot)/*/))
+cvtAlgo = " AmbanetOsd AmbanetConfig AmbaOdARM AmbaOdv4ARM AmbaTracker "
+CVTASK_AS_SRC+=$(filter $(cvtAlgo),$(cvtDirs))
+
+# cvtask to be linked by binary
+CVTASK_AS_BIN=""
+
+# application-specific tbar manifest file(s)
+# can have zero/single/multiple file names, whitespace separated
+# can be ommited if not needed
+APP_MNFT_FILES=""
+
+# application-specific csv files
+# can have zero/single/multiple file names, whitespace separated
+# can be ommited if not needed
+APP_CSV_FILES=""
+
+CVAPP_AS_SRC = "vputils_$(PROJECT)"
+CVAPP_AS_SRC += "protection"
+CVAPP_AS_SRC += "FlexidagAmbaFetchChipInfo"
+CVAPP_AS_SRC += "SCAOpenOD"
+CVAPP_AS_SRC += "SCAOpenSeg"
+
+ifeq ($(CONFIG_CV_FLEXIDAG_UT),y)
+CVAPP_AS_SRC += "FlexidagUt"
+endif
+
+ifeq ($(CONFIG_BUILD_COMMON_SERVICE_CV),y)
+CVAPP_AS_SRC += "SvcCvAlgoUtil"
+endif
+
+ifeq ($(CONFIG_CVALGO_CT_SAMPLE),y)
+CVAPP_AS_SRC += "CtSingleFD"
+CVAPP_AS_SRC += "CtSSD"
+CVAPP_AS_SRC += "CtDetCls"
+CVAPP_AS_SRC += "CtUtils"
+CVAPP_AS_SRC += "CtFrcnnProc"
+CVAPP_AS_SRC += "CtSingleFDHeader"
+endif

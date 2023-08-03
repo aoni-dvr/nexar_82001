@@ -1,0 +1,8 @@
+config BR2_PACKAGE_RTSP_SERVER
+	bool "rtsp_server"
+    select BR2_PACKAGE_USAGE_ENVIRONMENT
+    select BR2_PACKAGE_BASIC_USAGE_ENVIRONMENT
+    select BR2_PACKAGE_GROUPSOCK
+    select BR2_PACKAGE_LIVE_MEDIA
+	help
+	  This is the live555 rtsp server.

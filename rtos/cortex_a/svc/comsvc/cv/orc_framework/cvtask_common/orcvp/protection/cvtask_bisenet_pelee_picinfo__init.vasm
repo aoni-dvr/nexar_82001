@@ -1,0 +1,3 @@
+.section .cvtasklist_entry
+.align 4
+	.long _bisenet_pelee_picinfo__prim_cvtask_register

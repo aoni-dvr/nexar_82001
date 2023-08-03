@@ -1,0 +1,24 @@
+config BR2_PACKAGE_RTL8189ES
+	bool "RTL8189ES"
+	help
+		Realtek RTL8189ES with WoW support.
+
+if BR2_PACKAGE_RTL8189ES
+
+config BR2_PACKAGE_RTL8189ES_WOWLAN_EN
+	bool "Enable WoWLAN with GPIO"
+	help
+	  Enable WoWLAN by GPIO.
+
+config BR2_PACKAGE_RTL8189ES_REDUCE_TX_CPU_LOADING
+	bool "Reduce cpu loading when Tx"
+	default n
+	help
+	  Enable function of reducing CPU loading when Tx.
+	  For slower clock or worse performance CPU,
+	  this function would help.
+	  For higher clock or better performance CPU,
+	  this function would not help and even make throughput worse.
+
+endif # BR2_PACKAGE_RTL8189ES
+

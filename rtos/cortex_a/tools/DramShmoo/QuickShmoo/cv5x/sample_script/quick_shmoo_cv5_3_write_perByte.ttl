@@ -1,0 +1,2 @@
+shmoo_per_byte=1
+include 'quick_shmoo_cv5_3_write.ttl'

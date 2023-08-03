@@ -1,0 +1,45 @@
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_query_flow_control_memory_size(), ID = 0, description : test null ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_query_flow_tbl_memory_size(), ID = 1, description : test null ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_query_flow_tbl_list_memory_size(), ID = 2, description : test null ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_query_crc_data_memory_size(), ID = 3, description : test null ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_prepare_flow_control_memory(), ID = 4, description : test p_flow_mem null ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_prepare_flow_control_memory(), ID = 5, description : test mem_addr null ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_prepare_flow_control_memory(), ID = 6, description : test size null ptr fail case
+Rval = 0x01100007, AmbaDSP_ImgConfigComponentIF.c, img_cfg_prepare_flow_control_memory(), ID = 7, description : test (flow_ctrl_size < size) fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_prepare_flow_tbl_memory(), ID = 8, description : test p_flow_tbl_mem null ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_prepare_flow_tbl_memory(), ID = 9, description : test mem_addr null ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_prepare_flow_tbl_memory(), ID = 10, description : test size null ptr fail case
+Rval = 0x01100007, AmbaDSP_ImgConfigComponentIF.c, img_cfg_prepare_flow_tbl_memory(), ID = 11, description : test (flow_tbl_size < size) fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_prepare_flow_tbl_list_memory(), ID = 12, description : test p_flow_tbl_list_mem null ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_prepare_flow_tbl_list_memory(), ID = 13, description : test mem_addr null ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_prepare_flow_tbl_list_memory(), ID = 14, description : test size null ptr fail case
+Rval = 0x01100007, AmbaDSP_ImgConfigComponentIF.c, img_cfg_prepare_flow_tbl_list_memory(), ID = 15, description : test (flow_tbl_list_size < size) fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_prepare_crc_data_memory(), ID = 16, description : test p_crc_data_mem null ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_prepare_crc_data_memory(), ID = 17, description : test mem_addr null ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_prepare_crc_data_memory(), ID = 18, description : test size null ptr fail case
+Rval = 0x01100007, AmbaDSP_ImgConfigComponentIF.c, img_cfg_prepare_crc_data_memory(), ID = 19, description : test (crc_data_size < size) fail case
+Rval = 0x01100008, AmbaDSP_ImgConfigComponentIF.c, img_cfg_set_idsp_step_info(), ID = 20, description : test (p_ability->pipe == AMBA_IK_PIPE_VIDEO) false case
+Rval = 0x01100008, AmbaDSP_ImgConfigComponentIF.c, img_cfg_set_idsp_step_info(), ID = 21, description : test switch default fail case
+Rval = 0x00000000, AmbaDSP_ImgConfigComponentIF.c, img_cfg_set_idsp_step_info(), ID = 22, description : test test pipe != video or still fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_init_flow_control(), ID = 23, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_init_flow_control(), ID = 24, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_init_flow_tbl(), ID = 25, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_init_flow_tbl(), ID = 26, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_init_flow_tbl(), ID = 27, description : test NULL ptr fail case
+Rval = 0x01100008, AmbaDSP_ImgConfigComponentIF.c, img_cfg_init_flow_tbl(), ID = 28, description : test (p_ability->pipe == AMBA_IK_PIPE_VIDEO) false case
+Rval = 0x01100008, AmbaDSP_ImgConfigComponentIF.c, img_cfg_init_flow_tbl(), ID = 29, description : test (p_ability->video_pipe < AMBA_IK_VIDEO_MAX) false case
+Rval = 0x00000000, AmbaDSP_ImgConfigComponentIF.c, img_cfg_init_flow_tbl(), ID = 30, description : test (p_ability->pipe == AMBA_IK_PIPE_STILL) false case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_init_flow_tbl_list(), ID = 31, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_init_flow_tbl_list(), ID = 32, description : test NULL ptr fail case
+Rval = 0x01100008, AmbaDSP_ImgConfigComponentIF.c, img_cfg_init_flow_tbl_list(), ID = 33, description : test (p_ability->pipe == AMBA_IK_PIPE_VIDEO) false case
+Rval = 0x01100008, AmbaDSP_ImgConfigComponentIF.c, img_cfg_init_flow_tbl_list(), ID = 34, description : test (p_ability->video_pipe < AMBA_IK_VIDEO_MAX) false case
+Rval = 0x00000000, AmbaDSP_ImgConfigComponentIF.c, img_cfg_init_flow_tbl_list(), ID = 35, description : test (p_ability->pipe == AMBA_IK_PIPE_STILL) false case
+Rval = 0x00000000, AmbaDSP_ImgConfigComponentIF.c, img_cfg_amalgam_data_update(), ID = 36, description : test some CR lists are NULL case
+Rval = 0x01100003, AmbaDSP_ImgConfigComponentIF.c, img_cfg_amalgam_data_ctx_update(), ID = 37, description : test get ctx fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_query_debug_flow_data_size(), ID = 38, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_set_cr_memory_fence(), ID = 39, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_set_cr_memory_fence(), ID = 40, description : test NULL ptr fail case
+Rval = 0x01100008, AmbaDSP_ImgConfigComponentIF.c, img_cfg_set_cr_memory_fence(), ID = 41, description : test (p_ability->pipe == AMBA_IK_PIPE_VIDEO) false case
+Rval = 0x01100008, AmbaDSP_ImgConfigComponentIF.c, img_cfg_set_cr_memory_fence(), ID = 42, description : test (p_ability->video_pipe < AMBA_IK_VIDEO_MAX) false case
+Rval = 0x00000000, AmbaDSP_ImgConfigComponentIF.c, img_cfg_set_cr_memory_fence(), ID = 43, description : test (p_ability->pipe == AMBA_IK_PIPE_STILL) false case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, img_cfg_init_cr_memory_fence(), ID = 44, description : test NULL ptr fail case

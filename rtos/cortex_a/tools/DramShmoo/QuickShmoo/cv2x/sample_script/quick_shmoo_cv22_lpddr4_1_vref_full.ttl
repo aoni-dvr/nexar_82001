@@ -1,0 +1,2 @@
+reboot_on_failure=0
+include 'quick_shmoo_cv22_lpddr4_1_vref.ttl'

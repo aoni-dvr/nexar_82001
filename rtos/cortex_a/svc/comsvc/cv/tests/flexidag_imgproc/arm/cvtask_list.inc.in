@@ -1,0 +1,8 @@
+# to compile everything
+#TMP0 := $(wildcard $(FMWDIR)/cvtask/*)
+#TMP1 := $(TMP0:$(FMWDIR)/cvtask/%=%)
+#CVTASK_MODULES := $(filter-out makefile,$(TMP1))
+
+CVTASK_MODULES := 
+CVLIB_MODULES := AmbaCV_Flexidag
+

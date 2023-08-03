@@ -1,0 +1,9 @@
+menuconfig BR2_PACKAGE_LIBNETFIFO
+	bool "libnetfifo"
+	help
+	  This is the LIBNETFIFO implementation.
+      config BR2_PACKAGE_LIBNETFIFO_DIRECT
+      bool "using direct ambaipc (support single client process)"
+      depends on BR2_PACKAGE_LIBNETFIFO
+      help
+        This is the libnetfifo using direct ambaipc(better performance), but this only support one client process

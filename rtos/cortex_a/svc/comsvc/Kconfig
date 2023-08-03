@@ -1,0 +1,164 @@
+menu "Common Service"
+
+menuconfig BUILD_SVC_COMMON_SERVICE
+    bool "Build Common Service library"
+    default y
+
+if BUILD_SVC_COMMON_SERVICE
+
+config BUILD_COMMON_SERVICE_PRINTF
+	bool "Build printf functions"
+    default y
+
+if BUILD_COMMON_SERVICE_PRINTF
+source svc/comsvc/print/Kconfig
+endif
+
+config BUILD_COMMON_SERVICE_SHELL
+	bool "Build shell functions"
+    default y
+
+if BUILD_COMMON_SERVICE_SHELL
+source svc/comsvc/shell/Kconfig
+endif
+
+config BUILD_COMMON_SERVICE_CV
+	bool "Build cv functions"
+    default y
+
+if BUILD_COMMON_SERVICE_CV
+source svc/comsvc/cv/Kconfig
+endif
+
+menuconfig BUILD_COMSVC_IMGFRW
+	bool "Build imgfrw functions"
+    default y
+
+if BUILD_COMSVC_IMGFRW
+source svc/comsvc/imgfrw/Kconfig
+endif
+
+menuconfig BUILD_COMSVC_MONFRW
+	bool "Build monfrw functions"
+    default y
+
+if BUILD_COMSVC_MONFRW
+source svc/comsvc/monfrw/Kconfig
+endif
+
+if BUILD_SSP_ENET || LINUX
+source svc/comsvc/net/Kconfig
+endif
+
+config BUILD_COMMON_TUNE_ITUNER
+	bool "Build ituner functions"
+    default y
+
+if BUILD_COMMON_TUNE_ITUNER
+source svc/comsvc/tune/ituner/Kconfig
+endif
+
+config BUILD_COMMON_TUNE_CTUNER
+	bool "Build ctuner functions"
+    default y
+
+if BUILD_COMMON_TUNE_CTUNER
+source svc/comsvc/tune/ctuner/Kconfig
+endif
+
+config BUILD_COMMON_WARP_UTILITY
+	bool "Build warputility functions"
+    default y
+
+if BUILD_COMMON_WARP_UTILITY
+source svc/comsvc/warputility/Kconfig
+endif
+
+config BUILD_COMMON_STEREO_UTILITY
+	bool "Build stereoutility functions"
+	default n
+
+if BUILD_COMMON_STEREO_UTILITY
+source svc/comsvc/stereoutility/Kconfig
+endif
+
+menuconfig BUILD_COMMON_SERVICE_CODEC
+    bool "Build codec functions"
+    default y
+
+if BUILD_COMMON_SERVICE_CODEC
+source svc/comsvc/codec/Kconfig
+endif
+
+config BUILD_COMMON_SERVICE_DRAW
+	bool "Build draw functions"
+    default y
+
+config BUILD_COMMON_SERVICE_CFS
+	bool "Build cfs functions"
+    default y
+
+config BUILD_COMMON_SERVICE_ANIM
+	bool "Build anim functions"
+    default n
+
+config BUILD_COMMON_SERVICE_EXIF
+	bool "Build exif functions"
+    default y
+
+menuconfig BUILD_COMMON_SERVICE_DCF
+    bool "Build dcf functions"
+    default y
+
+if BUILD_COMMON_SERVICE_DCF
+source svc/comsvc/dcf/Kconfig
+endif
+
+menuconfig BUILD_COMMON_SERVICE_ADAS
+    bool "Build adas functions"
+    default y if !SVC_APPS_ICAM
+
+if BUILD_COMMON_SERVICE_ADAS
+source svc/comsvc/adas/Kconfig
+endif
+
+menuconfig BUILD_COMMON_SERVICE_USB
+    bool "Build usb functions"
+    default y
+source svc/comsvc/usb/Kconfig
+
+
+config BUILD_COMMON_SERVICE_IMUMGR
+    bool "Build imumanager functions"
+    default n
+
+config BUILD_COMMON_SERVICE_AF
+	bool "Build af functions"
+    default n
+
+config BUILD_COMSVC_IMGAAA
+	bool "Build imgaaa functions"
+    default y
+
+config BUILD_COMSVC_IMGALGO
+	bool "Build imgalgo functions"
+    default y
+
+config BUILD_COMSVC_IQPARAM
+	bool "Build iq parameters"
+    default y
+
+config BUILD_IP_MONITOR
+	bool "Build ip monitor functions"
+    default n
+
+if BUILD_IP_MONITOR
+source svc/comsvc/imgproc/Kconfig
+endif
+
+config BUILD_COMSVC_DRAMSHMOO
+    bool "Build dram shmoo"
+    default y if (SOC_CV5 || SOC_CV52)
+
+endif
+endmenu

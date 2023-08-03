@@ -1,0 +1,129 @@
+#!gmake
+
+SRCDIR			= @srcdir@
+CV_COMMON_DIR		= @cv_common_dir@
+TEST_SRCDIR		= @test_srcdir@
+
+USER_DATA_RULE := 1
+USER_CHECKDATA_RULE := 1
+USER_CHECK_RULE := 1
+USER_CODE_RULE := 1
+USER_CHECKRTL_RULE := 1
+USER_RUNRTL_RULE := 1
+
+ifeq (@use_ace_platform@, 0)
+DUMP_OUT_DIR = ./amalgam
+endif
+#DUMP_OUT_DIR is defined by ace/Makefile.in when use_ace_platform=1
+
+# jobs for code build
+j = 2
+
+##############################################################################
+
+
+FLOWTABLE_BASE_NAME := @superdag@_superdag
+FLEXIDAG_NAME := @superdag@
+
+
+##############################################################################
+
+CHECKDATA_TO_CLEAN :=
+RESULTS_TO_CLEAN   :=
+
+##############################################################################
+
+# data
+
+DATA_TARGETS :=
+
+DATA_TO_CLEAN := $(DATA_TARGETS)
+
+##############################################################################
+
+CHECKDATA_TO_CLEAN +=
+
+##############################################################################
+
+##############################################################################
+
+##############################################################################
+
+# clean
+
+CLEAN_DATA_FILES = $(DATA_TO_CLEAN) $(CHECKDATA_TO_CLEAN) $(RESULTS_TO_CLEAN)
+
+##############################################################################
+
+include $(SRCDIR)/../../Makefile.run
+
+###############################################################################
+
+
+# the only way in which this is non-standard is that it passes -j to submake
+code:
+	@echo ""
+	@echo "========================>>> Building Flexidag #0 <<<========================"
+	@echo ""
+	mkdir -p build
+	$(MAKE) -j$(j) -C build
+
+###############################################################################
+# make data
+###############################################################################
+
+.PHONY: data_targets
+
+data: force
+	@echo ""
+	@echo "Building data"
+	@echo ""
+	$(MAKE) -j$(j) data_targets
+	$(MAKE) -j$(j) -C build data
+	@echo "Done building data."
+
+data_targets: $(DATA_TARGETS) $(FLOWTABLE_BASE_NAME).sfb
+
+$(FLOWTABLE_BASE_NAME).sfb : $(SRCDIR)/$(FLOWTABLE_BASE_NAME).csv
+	@echo "  Building system flow table $@"
+	$(SFC_TOOL) -I csv -O sfb $< > build/$@
+	mkdir -p build/pdf
+	$(SFC_TOOL) -I csv -O dot $< | dot -Tpdf >> build/pdf/$(basename $@).pdf
+
+include $(CV_COMMON_DIR)/util/flexibin/include.mk
+
+flexibin: $(FLOWTABLE_BASE_NAME).sfb  build/orcvp_slot0.bin build/orcvp_patchup.bin $(FBC_TOOL)
+	@echo ""
+	@echo "Building flexibin"
+	@echo ""
+	$(FBC_TOOL) -v -o flexibin0.bin -t build/visorc_cvtable.tbar -t $(APP_TBAR) -f build/$(FLOWTABLE_BASE_NAME).sfb -n $(FLEXIDAG_NAME) -c build/orcvp_slot0.bin -p build/orcvp_patchup.bin
+
+# Use this if manifest is in the source directory.  If the data files
+# are in the data directory, however, then make the manifest a .in
+# file so it gets copied to the build directory, and then remove the
+# "$(SRCDIR)/" from the manifest path.
+unittest_cvtable.tbar : diag_manifest.mnft
+	@echo "Generating archive file $@"
+	table_ar -c build/$@ -a $< $(TABLE_AR_FLAGS)
+
+###############################################################################
+# make check
+###############################################################################
+
+check:
+	@echo "Nothing to check"
+
+###############################################################################
+# make checkrtl
+###############################################################################
+
+checkrtl:
+	@echo "Nothing to check"
+
+###############################################################################
+# make runrtl
+###############################################################################
+
+runrtl:
+	@echo "Nothing to run"
+

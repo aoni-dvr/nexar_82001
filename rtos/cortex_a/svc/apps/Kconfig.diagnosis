@@ -1,0 +1,66 @@
+if SVC_APPS_DIAGNOSIS
+
+menu "Diagnosis Project"
+    choice
+        prompt "TestItem"
+        default BUILD_HWSCAN
+        help
+            Select application in diagnosis
+
+        config BUILD_HWSCAN
+            bool "Hardware scan"
+
+        config BUILD_DSPCFG
+            bool "Dsp configuration"
+
+        config BUILD_DSPSTATE
+            bool "Dsp state test"
+
+    endchoice
+
+    config TEST_ITEM_NAME
+        string "Test item folder name"
+        default "hwscan" if BUILD_HWSCAN
+        default "dspcfg" if BUILD_DSPCFG
+        default "dspcfg" if BUILD_DSPSTATE
+
+    config DSP_WORK_SIZE
+    hex "dsp work buffer size"
+    default 0x0
+
+    config DSP_DATA_BUF_SIZE
+    hex "dsp protocol buffer size"
+    default 0x0
+
+    config DSP_SUB_PART
+    hex "dsp sub part number, When cv2xfs, 0x0 imply to cv2fs; 0x1 imply to cv22fs"
+    default 0x0
+
+    config ENABLE_DSP_DATA_BUF
+    bool "Enable dsp data buffer"
+    default y
+
+    config BUILD_ENGINEERING_DIAG
+    bool "Engineering Diag"
+    default n
+if SOC_CV2FS || SOC_CV22FS
+    menuconfig ENABLE_UCODE_BIST
+            bool "Enable ucode bist"
+            default n
+
+    if ENABLE_UCODE_BIST
+        choice
+            prompt "Test data location"
+            default UC_BIST_DATA_SDCARD
+            help
+              Select test data location.
+        config UC_BIST_DATA_SDCARD
+            bool "sdcard"
+        config UC_BIST_DATA_NVM
+            bool "nvm"
+        endchoice
+    endif
+endif
+endmenu
+
+endif

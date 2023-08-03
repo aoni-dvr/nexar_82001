@@ -1,0 +1,167 @@
+From 59949bd64ea73e42d3611c6fca24eeade135ae36 Mon Sep 17 00:00:00 2001
+From: Sam <hrsyu@ambarella.com>
+Date: Wed, 5 May 2021 17:06:16 +0800
+Subject: [PATCH] 9901-SPI-switch-between-doms
+
+---
+ xen/arch/arm/irq.c     | 42 ++++++++++++++++++++++++++++++++++++++----
+ xen/arch/arm/vgic-v2.c |  2 +-
+ xen/arch/arm/vgic.c    | 13 ++++++++++---
+ xen/include/xen/irq.h  |  1 +
+ 4 files changed, 50 insertions(+), 8 deletions(-)
+
+diff --git a/xen/arch/arm/irq.c b/xen/arch/arm/irq.c
+index 3877657..b105180 100644
+--- a/xen/arch/arm/irq.c
++++ b/xen/arch/arm/irq.c
+@@ -91,6 +91,7 @@ static int __init init_irq_data(void)
+         init_one_irq_desc(desc);
+         desc->irq = irq;
+         desc->action  = NULL;
++        desc->guest_domain_id  = DOMID_INVALID;
+     }
+ 
+     return 0;
+@@ -108,6 +109,7 @@ static int init_local_irq_data(void)
+         init_one_irq_desc(desc);
+         desc->irq = irq;
+         desc->action  = NULL;
++        desc->guest_domain_id  = DOMID_INVALID;
+ 
+         /* PPIs are included in local_irqs, we copy the IRQ type from
+          * local_irqs_type when bringing up local IRQ for this CPU in
+@@ -228,7 +230,7 @@ void do_IRQ(struct cpu_user_regs *regs, unsigned int irq, int is_fiq)
+ 
+     if ( test_bit(_IRQ_GUEST, &desc->status) )
+     {
+-        struct irq_guest *info = irq_get_guest_info(desc);
++        struct irq_guest *info = NULL;
+ 
+         perfc_incr(guest_irqs);
+         desc->handler->end(desc);
+@@ -239,7 +241,15 @@ void do_IRQ(struct cpu_user_regs *regs, unsigned int irq, int is_fiq)
+          * The irq cannot be a PPI, we only support delivery of SPIs to
+          * guests.
+          */
+-        vgic_inject_irq(info->d, NULL, info->virq, true);
++        action = desc->action;
++        do
++        {
++            info = action->dev_id;
++            if((info != NULL) && (info->d->domain_id == desc->guest_domain_id)) {
++                vgic_inject_irq(info->d, NULL, info->virq, true);
++            }
++            action = action->next;
++        } while ( action );
+         goto out_no_end;
+     }
+ 
+@@ -342,6 +352,22 @@ static int __setup_irq(struct irq_desc *desc, unsigned int irqflags,
+     return 0;
+ }
+ 
++int __setup_irq_next(struct irq_desc *desc, struct irqaction *new)
++{
++    ASSERT(new != NULL);
++    if ( desc->action == NULL)
++        return -EINVAL;
++    if ( new->dev_id == NULL )
++        return -EINVAL;
++
++    new->next = NULL;
++    dsb(ish);
++    desc->action->next = new;
++    dsb(ish);
++
++    return 0;
++}
++
+ int setup_irq(unsigned int irq, unsigned int irqflags, struct irqaction *new)
+ {
+     int rc;
+@@ -485,9 +511,16 @@ int route_irq_to_guest(struct domain *d, unsigned int virq,
+ 
+             if ( d != ad )
+             {
+-                printk(XENLOG_G_ERR "IRQ %u is already used by domain %u\n",
++                printk("IRQ %u is already used by domain %u\n",
+                        irq, ad->domain_id);
+-                retval = -EBUSY;
++                retval = __setup_irq_next(desc, action);
++                if ( retval )
++                    goto out;
++                retval = vgic_connect_hw_irq(d, NULL, virq, desc, true);
++                if ( retval )
++                    goto out;
++                spin_unlock_irqrestore(&desc->lock, flags);
++                return 0;
+             }
+             else if ( irq_get_guest_info(desc)->virq != virq )
+             {
+@@ -506,6 +539,7 @@ int route_irq_to_guest(struct domain *d, unsigned int virq,
+     }
+ 
+     retval = __setup_irq(desc, 0, action);
++    desc->guest_domain_id = d->domain_id;
+     if ( retval )
+         goto out;
+ 
+diff --git a/xen/arch/arm/vgic-v2.c b/xen/arch/arm/vgic-v2.c
+index 64b141f..77aff84 100644
+--- a/xen/arch/arm/vgic-v2.c
++++ b/xen/arch/arm/vgic-v2.c
+@@ -455,7 +455,7 @@ static int vgic_v2_distr_mmio_write(struct vcpu *v, mmio_info_t *info,
+         vgic_lock_rank(v, rank, flags);
+         tr = rank->ienable;
+         vreg_reg32_setbits(&rank->ienable, r, info);
+-        vgic_enable_irqs(v, (rank->ienable) & (~tr), rank->index);
++        vgic_enable_irqs(v, rank->ienable, rank->index);
+         vgic_unlock_rank(v, rank, flags);
+         return 1;
+ 
+diff --git a/xen/arch/arm/vgic.c b/xen/arch/arm/vgic.c
+index 82f524a..bcaac50 100644
+--- a/xen/arch/arm/vgic.c
++++ b/xen/arch/arm/vgic.c
+@@ -407,16 +407,23 @@ void vgic_enable_irqs(struct vcpu *v, uint32_t r, int n)
+         spin_unlock_irqrestore(&v_target->arch.vgic.lock, flags);
+         if ( p->desc != NULL )
+         {
+-            irq_set_affinity(p->desc, cpumask_of(v_target->processor));
+             spin_lock_irqsave(&p->desc->lock, flags);
++            irq_set_affinity(p->desc, cpumask_of(v_target->processor));
+             /*
+              * The irq cannot be a PPI, we only support delivery of SPIs
+              * to guests.
+              */
+             ASSERT(irq >= 32);
+-            if ( irq_type_set_by_domain(d) )
+-                gic_set_irq_type(p->desc, vgic_get_virq_type(v, n, i));
++            if ( irq_type_set_by_domain(d) ) {
++                if(test_bit(_IRQ_DISABLED, &p->desc->status)) {
++                    gic_set_irq_type(p->desc, vgic_get_virq_type(v, n, i));
++                }
++            }
+             p->desc->handler->enable(p->desc);
++            if(p->desc->guest_domain_id != v->domain->domain_id) {
++                gprintk(XENLOG_INFO, "irq (%d) switch from dom(%d) to dom(%d) \n", irq,p->desc->guest_domain_id,v->domain->domain_id);
++                p->desc->guest_domain_id = v->domain->domain_id;
++            }
+             spin_unlock_irqrestore(&p->desc->lock, flags);
+         }
+         i++;
+diff --git a/xen/include/xen/irq.h b/xen/include/xen/irq.h
+index 43d567f..d251e66 100644
+--- a/xen/include/xen/irq.h
++++ b/xen/include/xen/irq.h
+@@ -97,6 +97,7 @@ typedef struct irq_desc {
+     s_time_t rl_quantum_start;
+     unsigned int rl_cnt;
+     struct list_head rl_link;
++    unsigned int guest_domain_id;
+ } __cacheline_aligned irq_desc_t;
+ 
+ #ifndef irq_to_desc
+-- 
+2.17.1
+

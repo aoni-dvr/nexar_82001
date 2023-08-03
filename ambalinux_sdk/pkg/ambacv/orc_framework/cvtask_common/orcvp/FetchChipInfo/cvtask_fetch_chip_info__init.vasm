@@ -1,0 +1,3 @@
+.section .cvtasklist_entry
+.align 4
+	.long _fetch_chip_info_cvtask_register

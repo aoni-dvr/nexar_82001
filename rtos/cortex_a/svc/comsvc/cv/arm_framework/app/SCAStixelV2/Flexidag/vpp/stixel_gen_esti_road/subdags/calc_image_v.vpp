@@ -1,0 +1,75 @@
+DAG Calc_Image_V =
+{
+	arg=
+	{
+		$in_world_y=0,
+		$in_world_z=0,
+		$sin_pitch=0,
+		$cos_pitch=0,
+		$focal_length=0,
+		$camera_v0=0,
+						
+		$image_v_out=0,
+	};
+
+	// Image V = camera.fv * (Y * cosTilt - Z * sinTilt) / (Y * sinTilt + Z * cosTilt) + camera.v0;
+
+	VP_mul(
+		$in_world_y,
+		$cos_pitch,
+		VP_auto(world_y_mul_cos_pitch, float16_t)
+	);
+
+	VP_mul(
+		$in_world_z,
+		$sin_pitch,
+		VP_auto(world_z_mul_sin_pitch, float16_t)
+	);
+
+	VP_sub(
+		world_y_mul_cos_pitch,
+		world_z_mul_sin_pitch,
+		VP_auto(tmp1, float16_t)
+	);
+
+	VP_mul(
+		$in_world_y,
+		$sin_pitch,
+		VP_auto(world_y_mul_sin_pitch, float16_t)
+	);
+
+	VP_mul(
+		$in_world_z,
+		$cos_pitch,
+		VP_auto(world_z_mul_cos_pitch, float16_t)
+	);
+
+	VP_add(
+		world_y_mul_sin_pitch,
+		world_z_mul_cos_pitch,
+		VP_auto(tmp2, float16_t)
+	);
+
+	VP_mul(
+		$focal_length,
+		tmp1,
+		VP_auto(f_mul_tmp1, float16_t)
+	);
+
+	VP_recip(
+		tmp2,
+		VP_auto(inv_tmp2, float16_t)
+	);
+
+	VP_mul(
+		f_mul_tmp1,
+		inv_tmp2,
+		VP_auto(tmp3, float16_t)
+	);
+
+	VP_add(
+		tmp3,
+		$camera_v0,
+		VP_auto($image_v_out, float16_t)
+	);
+}

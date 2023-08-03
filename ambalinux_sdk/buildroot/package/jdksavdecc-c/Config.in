@@ -1,0 +1,7 @@
+config BR2_PACKAGE_JDKSAVDECC_C
+	bool "jdksavdecc-c"
+	help
+	  A library for the AVDECC protocol in the C programming language.
+
+	  http://avb.statusbar.com/page/code/jdksavdecc-c/
+

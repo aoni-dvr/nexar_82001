@@ -1,0 +1,188 @@
+/*
+ * board level device tree source
+ */
+
+/dts-v1/;
+
+/include/ "ambarella-cv5-ambalink.dtsi"
+
+/ {
+	model = "Ambarella CV5BUB Board";
+	compatible = "ambarella,cv5bub", "ambarella,cv5";
+
+	aliases {
+		flexidag_sys = &cv_sys_mem;
+		flexidag_rtos = &cv_rtos_mem;
+		scheduler = &sub_scheduler;
+		emmc = &sdmmc0;
+	};
+
+	amba_mal {
+		compatible = "ambarella,mal";
+		amb_mal_node@0 {
+			amb_mal_id = <0>;
+			memory-region = <&cv_sys_mem>;
+		};
+
+		amb_mal_node@1 {
+			amb_mal_id = <1>;
+			memory-region = <&cv_rtos_mem>;
+		};
+	};
+
+	chosen {
+		/*to be overwritten*/
+		bootargs = "ubi.mtd=5 root=ubi0:linux rootfstype=ubifs console=ttyS1 nosmp maxcpus=0";
+	};
+
+	memory {
+		device_type = "memory";
+		/*to be overwritten*/
+		reg = <0x0 0x200000 0x0 0x7fe00000>;
+	};
+
+	sub_scheduler: sub_scheduler0 {
+		compatible = "ambarella,sub-scheduler";
+		interrupts = <0x0 0xa9 0x4>;
+		memory-region = <&cv_sys_mem>;
+		memory-region1 = <&cv_rtos_mem>;
+	};
+
+	reserved-memory {
+		#address-cells = <0x2>;
+		#size-cells = <0x2>;
+		ranges;
+		device_type = "reserved-memory";
+		cv_sys_mem: flexidag_sys {
+		};
+		cv_rtos_mem: flexidag_rtos {
+		};
+	};
+
+	cpus {
+		cpu@0 {
+			cpu-release-addr = <0x0 0x170>;
+			enable-method = "spin-table";
+		};
+
+		cpu@1 {
+			cpu-release-addr = <0x0 0x178>;
+			enable-method = "spin-table";
+		};
+	};
+
+	ddr-controller@1000004000 {
+		burst-size = <0x40>;
+	};
+
+	apb@20e4000000 {
+
+	};
+
+	ahb@20e0000000 {
+		nand@e0002000 {
+			amb,timing = <0x303320c 0x5050505 0x71464 0x0 0x0 0x0>;
+		};
+	};
+
+	ppm2 {
+		/*to be overwritten*/
+		reg = <0x0 0x200000>;
+		device_type = "ppm2";
+	};
+
+	shm {
+		/*to be overwritten*/
+		reg = <0x78000000 0x600000>;
+		device_type = "shm";
+	};
+
+	/delete-node/ psci;
+};
+
+&uart0 {
+	status = "disabled";
+};
+
+&uart1 {
+	status = "ok";
+};
+
+&i2c0 {
+	status = "ok";
+};
+
+&i2c1 {
+	pinctrl-0 = <&i2c1_pins_a>;
+};
+
+&i2c2 {
+	pinctrl-0 = <&i2c2_pins_a>;
+};
+
+&spi4 {
+	pinctrl-0 = <&spi4_pins_b>;
+};
+
+&spi5 {
+	pinctrl-0 = <&spi5_pins_b>;
+};
+
+&sdmmc0 {
+	/*pwr-gpios = <&gpio 91 0x1>;*/
+	/*v18-gpios = <&gpio 129 0x1>;*/
+	/*amb,fixed-cd = <1>;*/
+    /* Recommended for eMMC. */
+//	non-removable;
+
+	//Modify start byte addr and size to 64bits.
+	#address-cells = <2>;
+	#size-cells = <2>;
+	sdhci,auto-cmd12;
+	/* NEED: match to RTOS, CONFIG_ENABLE_EMMC_HS200 */
+//	no-1-8-v;
+	/* NEED: match to RTOS, CONFIG_EMMC_ACCESS_[1,4,8]BIT */
+	bus-width = <8>;
+
+	max-frequency = <24000000>;
+	status = "ok";
+};
+
+&sdmmc1 {
+	/*pwr-gpios = <&gpio 100 0x1>;*/
+	/*v18-gpios = <&gpio 130 0x1>;*/
+/*
+	status = "ok";
+ */
+};
+
+&sdmmc2 {
+	pwr-gpios = <&gpio 109 0x1>;
+	v18-gpios = <&gpio 132 0x1>;
+/*
+	status = "ok";
+ */
+};
+
+&mac0 {
+	amb,tx-clk-invert;
+
+	phy@0 {
+		reg = <0>;
+	};
+};
+
+&mac1 {
+	amb,tx-clk-invert;
+
+	phy@0 {
+		reg = <0>;
+	};
+};
+
+&usbphy {
+	/* high will trigger the ocp interrupt */
+	amb,ocp-polarity = <0>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&usb_host0_pins_a>;
+};

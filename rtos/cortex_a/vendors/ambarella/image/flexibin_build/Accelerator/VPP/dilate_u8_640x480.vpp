@@ -1,0 +1,57 @@
+#include "vp_vas.h"
+#define IN_WIDTH            640
+#define IN_HEIGHT           480
+#define IN_KERNEL_WIDE      5
+
+DAG dilate = {
+	
+	VP_input(input, uint8_t, vector(1, 1, IN_HEIGHT, IN_WIDTH));
+	
+	VP_input(kernel, uint8_t, vector(1, 1, 1, 32), dram_rotate = 6, rt_config = 1);
+	
+//=============================================
+	VP_crop(kernel, VP_tensor(croped_kernel, uint8_t),
+			w = IN_KERNEL_WIDE*IN_KERNEL_WIDE,
+			h = 1,
+			d = 1,
+			p = 1,
+			start_w = 32-(IN_KERNEL_WIDE*IN_KERNEL_WIDE),
+			start_h = 0,
+			start_d = 0,
+			start_p = 0,
+			zr = 1
+			);
+	VP_reshape(croped_kernel, VP_tensor(kerenl5x5, uint8_t),
+			w = IN_KERNEL_WIDE,
+			h = IN_KERNEL_WIDE,
+			d = 1,
+			p = 1
+			);
+	VP_muli(input, VP_imm("80 80 80 3b", float32_t, vector(1)),
+			VP_tensor(input_binary, uint8_t),
+			disable_reserved = 1);
+	
+	VP_conv2(input_binary, kerenl5x5,
+			VP_tensor(convoluted_img, uint8_t),
+			start_w = 0,
+			start_h = 0,
+			stride_w = 1,
+			stride_h = 1,
+			out_w = IN_WIDTH,
+			out_h = IN_HEIGHT,
+			zr0 = 0,
+			zr1 = 0,
+			strong_zero = 1,
+			disable_reserved = 1
+			);				
+	
+	VP_neib(convoluted_img, VP_imm("00", uint8_t, vector(1)), VP_tensor(neib, uint8_t));
+	
+	VP_muxb(VP_imm("ff", uint8_t, vector(1)), VP_imm("00", uint8_t, vector(1)), neib, 
+			VP_tensor(output, uint8_t));
+	
+	
+//=============================================
+	VP_output(dilate_output, output);
+
+}

@@ -1,0 +1,6 @@
+menuconfig BR2_PACKAGE_YOUTUBE_LIVESTREAM
+	bool "youtube_livestream"
+    select BR2_PACKAGE_OPENSSL
+    select BR2_PACKAGE_FFMPEG
+	help
+	  This is the Examples for Amba Youtube livestreaming.

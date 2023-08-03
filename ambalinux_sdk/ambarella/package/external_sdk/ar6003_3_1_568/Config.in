@@ -1,0 +1,5 @@
+config BR2_PACKAGE_AR6003_3_1_568
+	bool "ar6003_3_1_568"
+	help
+		Atheros AR6003 SDK 3.1.568
+

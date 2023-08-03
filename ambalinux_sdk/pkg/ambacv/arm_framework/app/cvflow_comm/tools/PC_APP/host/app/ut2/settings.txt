@@ -1,0 +1,4 @@
+INPUT0 ./data_pad32.bin
+OUTPUT0 ./please_fill_the_file_name_of_golden_data0.out
+OUTPUT1 ./please_fill_the_file_name_of_golden_data1.out
+DUMPRX 0

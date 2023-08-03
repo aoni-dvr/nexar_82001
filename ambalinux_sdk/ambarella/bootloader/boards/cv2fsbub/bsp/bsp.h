@@ -1,0 +1,118 @@
+/*
+ * History:
+ *	Author: Cao Rongrong <rrcao@ambarella.com>
+ *
+ * Copyright (c) 2017 Ambarella, Inc.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef __BSP_H__
+#define __BSP_H__
+
+#ifdef CONFIG_BOOT_MEDIA_SPINOR
+#include "partition/spinor.h"
+#elif defined(CONFIG_AMBARELLA_ROOTFS_CPIO)
+#include "partition/cpio.h"
+#elif defined(CONFIG_BOOT_MEDIA_EMMC)
+#include "partition/emmc.h"
+#else
+#define AMBOOT_BST_SIZE		(AMBOOT_BST_FIXED_SIZE)
+#define AMBOOT_BLD_SIZE		(AMBOOT_MIN_PART_SIZE * 8)
+#define AMBOOT_PTB_SIZE		(AMBOOT_MIN_PART_SIZE * 7)
+#define AMBOOT_ATF_SIZE		(AMBOOT_MIN_PART_SIZE * 8)
+#define AMBOOT_PBA_SIZE		(16 * 1024 * 1024)
+#define AMBOOT_PRI_SIZE		(16 * 1024 * 1024)
+#define AMBOOT_SEC_SIZE		(0  * 1024 * 1024)
+#define AMBOOT_BAK_SIZE		(0  * 1024 * 1024)
+#define AMBOOT_RMD_SIZE		(0  * 1024 * 1024)
+#define AMBOOT_ROM_SIZE		(0  * 1024 * 1024)
+#define AMBOOT_DSP_SIZE		(0  * 1024 * 1024)
+#define AMBOOT_LNX_SIZE		(128 * 1024 * 1024)
+#define AMBOOT_SWP_SIZE		(0  * 1024 * 1024)
+#define AMBOOT_ADD_SIZE		(12  * 1024 * 1024)
+#define AMBOOT_ADC_SIZE		(0  * 1024 * 1024)
+#endif
+
+#define DRAM_SIZE		0x80000000
+
+#define	DEFAULT_GPIO0_AFSEL	0x7FFFFE7F
+#define	DEFAULT_GPIO0_DIR	0x00000180
+#define	DEFAULT_GPIO0_MASK	0x80000180
+#define	DEFAULT_GPIO0_DATA	0x80000000
+#define	DEFAULT_GPIO1_AFSEL	0xFFC0FFFB
+#define	DEFAULT_GPIO1_DIR	0x00270004
+#define	DEFAULT_GPIO1_MASK	0x003F0004
+#define	DEFAULT_GPIO1_DATA	0x00280004
+#define	DEFAULT_GPIO2_AFSEL	0xFFFFFFFF
+#define	DEFAULT_GPIO2_DIR	0x00000000
+#define	DEFAULT_GPIO2_MASK	0x00000000
+#define	DEFAULT_GPIO2_DATA	0x00000000
+#define	DEFAULT_GPIO3_AFSEL	0xFFF9FFFF
+#define	DEFAULT_GPIO3_DIR	0x00020000
+#define	DEFAULT_GPIO3_MASK	0x00060000
+#define	DEFAULT_GPIO3_DATA	0x00000000
+#define	DEFAULT_GPIO4_AFSEL	0x3FC83FFF
+#define	DEFAULT_GPIO4_DIR	0x00000000
+#define	DEFAULT_GPIO4_MASK	0xC037C000
+#define	DEFAULT_GPIO4_DATA	0x00340000
+
+#define	DEFAULT_GPIO0_CTRL_ENA	0x80000180
+#define	DEFAULT_GPIO0_CTRL_DIR	0x80000000
+#define	DEFAULT_GPIO1_CTRL_ENA	0x003F0004
+#define	DEFAULT_GPIO1_CTRL_DIR	0x00280004
+#define	DEFAULT_GPIO2_CTRL_ENA	0x00000000
+#define	DEFAULT_GPIO2_CTRL_DIR	0x00000000
+#define	DEFAULT_GPIO3_CTRL_ENA	0x00060000
+#define	DEFAULT_GPIO3_CTRL_DIR	0x00000000
+#define	DEFAULT_GPIO4_CTRL_ENA	0xC037C000
+#define	DEFAULT_GPIO4_CTRL_DIR	0x00340000
+
+#define	DEFAULT_IOMUX_REG0_0	0x7FFFFE00
+#define	DEFAULT_IOMUX_REG0_1	0x0000067F
+#define	DEFAULT_IOMUX_REG0_2	0x00000000
+#define	DEFAULT_IOMUX_REG1_0	0x0000FFFB
+#define	DEFAULT_IOMUX_REG1_1	0x00000028
+#define	DEFAULT_IOMUX_REG1_2	0xFFC00003
+#if defined(CONFIG_BOOT_MEDIA_SPINOR)
+#define	DEFAULT_IOMUX_REG2_0	0x00FFE187
+#define	DEFAULT_IOMUX_REG2_1	0xFFFFFFC4
+#define	DEFAULT_IOMUX_REG2_2	0x0000003B
+#else
+#define	DEFAULT_IOMUX_REG2_0	0x00000007
+#define	DEFAULT_IOMUX_REG2_1	0xFFFFFFC4
+#define	DEFAULT_IOMUX_REG2_2	0x0000003B
+#endif
+#define	DEFAULT_IOMUX_REG3_0	0xFFF98000
+#define	DEFAULT_IOMUX_REG3_1	0x00007FFF
+#define	DEFAULT_IOMUX_REG3_2	0x00000000
+#define	DEFAULT_IOMUX_REG4_0	0x3FC03FFF
+#define	DEFAULT_IOMUX_REG4_1	0x00080000
+#define	DEFAULT_IOMUX_REG4_2	0x00000000
+
+#define	DEFAULT_GPIO_DS0_REG_0	0xFFFFFFFF
+#define	DEFAULT_GPIO_DS1_REG_0	0xFFFFFFFF
+#define	DEFAULT_GPIO_DS0_REG_1	0xFFFFFFFF
+#define	DEFAULT_GPIO_DS1_REG_1	0xFFFFFFFF
+#define	DEFAULT_GPIO_DS0_REG_2	0xFFFFFFFF
+#define	DEFAULT_GPIO_DS1_REG_2	0xFFFFFFFF
+#define	DEFAULT_GPIO_DS0_REG_3	0xFFFFFFFF
+#define	DEFAULT_GPIO_DS1_REG_3	0xFFFFFFFF
+#define	DEFAULT_GPIO_DS0_REG_4	0xFFFFFFFF
+#define	DEFAULT_GPIO_DS1_REG_4	0xFFFFFFFF
+
+#define DEAFULT_PHY_ADDR	(3)
+
+#endif /* __BSP_H__ */

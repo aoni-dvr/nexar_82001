@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<module name="fs-etfs-ambarella">
+	<type>Element</type>
+	<classification>Driver</classification>
+
+	<description>
+		<short>ETFS driver for NAND flash device on Ambarella paltform</short>
+		<abstract>
+			<![CDATA[The fs-etfs-ambarella driver is a NAND flash driver to support the ETFS file system for QNX Neutrino on the Ambarella platform.]]>
+		</abstract>
+	</description>
+
+	<supports>
+		<!-- as this is a board specific variant, we will just list the
+			variant that is available ...  -->
+		<availability>
+			<cpu isa="arm"><byteOrder>le.v7</byteOrder></cpu>
+		</availability>
+	</supports>
+
+	<source available="true">
+		<location type="">.</location>
+	</source>
+
+	<GroupOwner>hw</GroupOwner>
+
+	<RuntimeComponent>Neutrino RTOS</RuntimeComponent>
+
+	<contents>
+		<component id="fs-etfs-ambarella" generated="true">
+			<location basedir="{cpu}/{o|endian}"
+				 runtime="true">fs-etfs-ambarella</location>
+		</component>
+	</contents>
+
+	<requires>
+		<!-- libetfs && etfs.h should be part of the standard install -->
+	</requires>
+
+</module>

@@ -1,0 +1,2 @@
+CMD_shmoo='lp4mr12'
+include 'quick_shmoo_cv5_main.ttl'

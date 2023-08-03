@@ -1,0 +1,124 @@
+menuconfig BR2_PACKAGE_AMBA_EXAMPLES
+	bool "amba_examples"
+	help
+	  This is the Examples for Amba libraries.
+
+config BR2_PACKAGE_AMBA_EVENTNOTIFIER_EXAMPLE
+	bool "amba_eventnotifier_example"
+	default y
+	depends on BR2_PACKAGE_AMBA_EXAMPLES && BR2_PACKAGE_AMBAIPC
+	help
+	  This is the Example for Amba Event Notificatier.
+
+config BR2_PACKAGE_AMBA_TRANSFER_EXAMPLE
+	bool "amba_transfer_example"
+	default y
+	depends on BR2_PACKAGE_AMBA_EXAMPLES && BR2_PACKAGE_AMBAIPC
+	help
+	  This is the Example for Amba Transfer.
+
+config BR2_PACKAGE_AMBA_FLEXIDAGIO_EXAMPLE
+	bool "amba_flexidagio_example"
+	default y
+	depends on BR2_PACKAGE_AMBA_EXAMPLES
+	help
+	  This is the Example for Amba FlexidagIO.
+
+config BR2_PACKAGE_AMBA_EXAMPLE_FRAMER
+	bool "amba_example_framer"
+	default y
+	depends on BR2_PACKAGE_AMBA_EXAMPLES  && BR2_PACKAGE_AMBAIPC
+	help
+	  This is the Example for Amba NetFiFo.
+
+config BR2_PACKAGE_AMBA_EXAMPLE_SOCKET_CLIENT
+	bool "example_socket_client"
+	default y if BR2_PACKAGE_AMBAMAL
+	default n
+	depends on BR2_PACKAGE_AMBA_EXAMPLES && BR2_PACKAGE_AMBAMAL
+	help
+	  This is the Example for Amba socket client.
+
+
+config BR2_PACKAGE_AMBA_EXAMPLE_SHAREPREVIEW
+	bool "amba_example_sharepreview"
+	default y
+	depends on BR2_PACKAGE_AMBA_EXAMPLES  && BR2_PACKAGE_AMBAIPC
+	help
+	  This is the Example to share Preview data with Linux for APPLib/VA.
+
+config BR2_PACKAGE_AMBA_EXAMPLE_RTOS_API
+	bool "example_rtos_api"
+	default y
+	depends on BR2_PACKAGE_AMBA_EXAMPLES
+	help
+	  This is the Example for rtos api
+
+config BR2_PACKAGE_AMBA_EXAMPLE_FRAMESHARE
+	bool "amba_example_frameshare"
+	default y
+	depends on BR2_PACKAGE_AMBA_EXAMPLES  && BR2_PACKAGE_AMBAIPC
+	help
+	  This is the Example to share Frame data with Linux for SSP.
+
+config BR2_PACKAGE_AMBA_EXAMPLE_STREAMIN
+	bool "amba_example_streamin"
+	default y
+	depends on BR2_PACKAGE_AMBA_EXAMPLES && BR2_PACKAGE_AMBAIPC
+	help
+	  This is the Example for feed frame data to RTOS through Amba NetFifo
+
+config BR2_PACKAGE_AMBA_EXAMPLE_CAMCTRL_SERVER
+	bool "amba_example_camctrl_server"
+	default n
+	depends on BR2_PACKAGE_AMBA_EXAMPLES && BR2_PACKAGE_AMBAIPC
+	help
+	  This is the Example to send camctrl message.
+
+config BR2_PACKAGE_AMBA_EXAMPLE_AMBAPRINT
+	bool "amba_example_ambaprint"
+	default n
+	depends on BR2_PACKAGE_AMBA_EXAMPLES
+	help
+	  This is the Example to handle AmbaPrint message.
+
+config BR2_PACKAGE_AMBA_EXAMPLE_AMBAPRINT_TTY
+	string "set tty port for amba print"
+	default "/dev/ttyS1"
+	depends on BR2_PACKAGE_AMBA_EXAMPLE_AMBAPRINT
+	help
+	  Set tty port (= UART port+1).
+
+config BR2_PACKAGE_AMBA_EXAMPLE_BBXHANDLER
+	bool "amba_example_bbxhandler"
+	default n
+	depends on BR2_PACKAGE_AMBA_EXAMPLES && BR2_PACKAGE_AMBAIPC
+	help
+	  This is the Example for Amba Bounding Box handler library.
+
+config BR2_PACKAGE_AMBA_EXAMPLE_OSDDRAW
+	bool "amba_example_osddraw"
+	default n
+	depends on BR2_PACKAGE_AMBA_EXAMPLES && BR2_PACKAGE_AMBAIPC
+	help
+	  This is the Example to generate osd buffer by opencv.
+
+config BR2_PACKAGE_AMBA_EXAMPLE_FRAMESHARE_RTSP
+	bool "amba_example_frameshare_rtsp"
+	default n
+	depends on ((BR2_PACKAGE_AMBA_EXAMPLES && BR2_PACKAGE_AMBAIPC) || (BR2_PACKAGE_AMBA_EXAMPLES && BR2_PACKAGE_AMBA_CAMERA))
+
+config BR2_PACKAGE_AMBA_EXAMPLE_ROMFS
+	bool "amba_example_romfs"
+	default n
+	depends on BR2_PACKAGE_AMBA_EXAMPLES
+	help
+	  This is the Example code to access RTOS romfs
+
+
+config BR2_PACKAGE_AMBA_EXAMPLE_AUDIO
+	bool "amba_example_audio"
+	default n
+	depends on BR2_PACKAGE_AMBA_EXAMPLES
+	help
+	  This is the Example code to access audio service

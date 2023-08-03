@@ -1,0 +1,73 @@
+menu "Container Service Config"
+depends on BUILD_COMSVC_CONTAINER
+
+config BUILD_COMSVC_MUXER
+    depends on BUILD_COMSVC_CONTAINER
+    bool "Build Container Muxer"
+    default y
+
+menu "Muxing Format"
+    depends on BUILD_COMSVC_CONTAINER
+
+config BUILD_COMSVC_MX_FMP4
+    depends on BUILD_COMSVC_CONTAINER
+    bool "Build Container FMP4 Muxing Format"
+    default y
+config BUILD_COMSVC_MX_EXIF
+    depends on BUILD_COMSVC_CONTAINER
+    bool "Build Container EXIF Muxing Format"
+    default y
+
+endmenu
+
+config BUILD_COMSVC_DEMUXER
+    depends on BUILD_COMSVC_MUXER
+    bool "Build Container Demuxer"
+    default y
+
+menu "Demuxing Format"
+    depends on BUILD_COMSVC_DEMUXER
+
+config BUILD_COMSVC_DX_FMP4
+    depends on BUILD_COMSVC_DEMUXER
+    bool "Build Container FMP4 Demuxing Format"
+    default y
+
+config BUILD_COMSVC_DX_MP4
+    depends on BUILD_COMSVC_DEMUXER
+    bool "Build Container MP4 Demuxing Format"
+    default y
+
+config BUILD_COMSVC_DX_EXIF
+    depends on BUILD_COMSVC_DEMUXER
+    bool "Build Container EXIF Demuxing Format"
+    default y
+
+endmenu
+
+config BUILD_COMSVC_STREAM
+    depends on BUILD_COMSVC_CONTAINER
+    bool "Build Container Stream"
+    default y
+
+menu "I/O Stream"
+    depends on BUILD_COMSVC_STREAM
+
+config BUILD_COMSVC_FILE
+    depends on BUILD_COMSVC_STREAM
+    bool "Build Container File Stream"
+    default y
+
+endmenu
+
+config SUPPORT_SDK7_SVC_CLIPS
+    depends on BUILD_COMSVC_CONTAINER
+    bool "Support SDK7 SVC Clips"
+    default n
+
+config ENABLE_CAPTURE_TIME_MODE
+    depends on BUILD_COMSVC_CONTAINER
+    bool "Enable Capture Time Mode"
+    default n
+
+endmenu

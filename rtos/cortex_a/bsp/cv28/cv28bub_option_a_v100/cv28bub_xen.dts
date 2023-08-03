@@ -1,0 +1,99 @@
+/*
+ * board level device tree source
+ */
+
+/dts-v1/;
+
+/include/ "../cv28.dtsi"
+
+/ {
+	model = "Ambarella CV28BUB Board";
+	compatible = "ambarella,cv28bub", "ambarella,cv28";
+
+	memory {
+		/* TODO: cf. CONFIG_DDR_SIZE */
+		reg = <0x00040000 0x3FFC0000>;
+	};
+
+
+	chosen {
+		stdout-path = &uart0;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		xen,xen-bootargs = "dom0_mem=256M bootscrub=0 dom0_max_vcpus=1 dom0_vcpus_pin timer_slop=0";
+		module@0 {
+			compatible = "xen,linux-zimage", "xen,multiboot-module";
+			reg = <0x0 0x0>;
+			vpl011;
+/*
+			bootargs = "root=/dev/mtdblock21 rootfstype=squashfs rdinit=/sbin/init console=hvc0 earlycon=xenboot quiet";
+*/
+			bootargs = "root=/dev/ram0 rw rdinit=/sbin/init console=hvc0 earlycon=xenboot ";
+		};
+
+		domu_tx {
+			#address-cells = <1>;
+			#size-cells = <1>;
+			compatible = "xen,domain";
+			memory = <0x0 0x0>;
+			cpus = <1>;
+			vpl011;
+
+			module@0 {
+				compatible = "multiboot,kernel", "multiboot,module";
+				reg = <0x0 0x0>;
+			};
+
+			/*
+			 * Amba private
+			 */
+			/* apb, ahb, rct */
+			domu_tx_iomem {
+				compatible = "amba,xen,iomem";
+				reg = <0xE0000000 0x04000000
+				       0xE4000000 0x04000000
+				       0xED080000 0x00001000>;
+			};
+
+			domu_tx_irqs@0 {
+				compatible = "amba,xen,irqs";
+				reg = <92>;
+			};
+		};
+
+		domu_lx {
+			#address-cells = <1>;
+			#size-cells = <1>;
+			compatible = "xen,domain";
+			memory = <0x0 0x0>;
+			cpus = <1>;
+			vpl011;
+/*
+			bootargs = "root=/dev/mtdblock16 rootfstype=squashfs rdinit=/sbin/init console=hvc0 earlycon=xenboot quiet";
+*/
+			module@0 {
+				compatible = "multiboot,kernel", "multiboot,module";
+				reg = <0x0 0x0>;
+			};
+		};
+	};
+
+	n_ahb@e0000000 {
+		nand0: nand@e0002000 {
+			status = "ok";
+		};
+
+		mac0: ethernet@e000e000 {
+			amb,tx-clk-invert;
+			phy@0 {
+				reg = <0>;
+			};
+		};
+
+		uart2: uart@e0018000 {
+			xen,passthrough;
+			status = "disabled";
+		};
+	};
+};
+

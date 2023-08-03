@@ -1,0 +1,18 @@
+
+# The filename Kbuild has precedence over Makefile
+kbuild-dir := $(if $(filter /%,$(src)),$(src),$(srctree)/$(src))
+
+# But
+# We do not use Kbuild
+#
+#include $(if $(wildcard $(kbuild-dir)/Kbuild), $(kbuild-dir)/Kbuild, $(kbuild-dir)/Makefile)
+
+kbuild-dir := $(shell readlink -f $(kbuild-dir))
+srctree-dir := $(shell readlink -f $(srctree))
+kbuild_output := $(if $(KBUILD_OUTPUT), $(shell readlink -f $(KBUILD_OUTPUT)), $(srctree-dir))
+ifneq ($(kbuild-dir),$(srctree-dir))
+	ifneq ($(kbuild-dir),$(kbuild_output))
+include $(kbuild-dir)/Makefile
+	endif
+endif
+

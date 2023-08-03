@@ -1,0 +1,6433 @@
+/**
+ *  @file AmbaDSP_EncodeAPI.c
+ *
+ * Copyright (c) 2020 Ambarella International LP
+ *
+ * This file and its contents ("Software") are protected by intellectual
+ * property rights including, without limitation, U.S. and/or foreign
+ * copyrights. This Software is also the confidential and proprietary
+ * information of Ambarella International LP and its licensors. You may not use, reproduce,
+ * disclose, distribute, modify, or otherwise prepare derivative works of this
+ * Software or any portion thereof except pursuant to a signed license agreement
+ * or nondisclosure agreement with Ambarella International LP or its authorized affiliates.
+ * In the absence of such an agreement, you agree to promptly notify and return
+ * this Software to Ambarella International LP.
+ *
+ * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT,
+ * MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL AMBARELLA INTERNATIONAL LP OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; COMPUTER FAILURE OR MALFUNCTION; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ *  @details Implementation of SSP Encode internal API
+ *
+ */
+
+#include "AmbaDSP_Cmds.h"
+#include "AmbaDSP_Log.h"
+#include "AmbaDSP_ArmComm.h"
+#include "AmbaDSP_EncodeAPI.h"
+#include "AmbaDSP_EventCtrl.h"
+#include "AmbaDSP_MsgDispatcher.h"
+
+//const UINT16 HL_MaxVprocPinOutputWidthMap[DSP_VPROC_PIN_NUM] = {
+//    [DSP_VPROC_PIN_PREVC] = PREVC_MAX_WIDTH,
+//    [DSP_VPROC_PIN_PREVA] = PREVA_MAX_WIDTH,
+//    [DSP_VPROC_PIN_PREVB] = PREVB_MAX_WIDTH,
+//    [DSP_VPROC_PIN_MAIN]  = MAIN_MAX_WIDTH,
+//};
+
+//const UINT16 HL_MaxVprocPinOutput2XWidthMap[DSP_VPROC_PIN_NUM] = {
+//    [DSP_VPROC_PIN_PREVC] = PREVC_2X_MAX_WIDTH,
+//    [DSP_VPROC_PIN_PREVA] = PREVA_2X_MAX_WIDTH,
+//    [DSP_VPROC_PIN_PREVB] = PREVB_2X_MAX_WIDTH,
+//    [DSP_VPROC_PIN_MAIN]  = MAIN_MAX_WIDTH,
+//};
+
+const UINT16 HL_MaxVprocPinOutputRatioMap[DSP_VPROC_PIN_NUM] = {
+    [DSP_VPROC_PIN_PREVC] = PREV_MAX_RATIO_32X,
+    [DSP_VPROC_PIN_PREVA] = PREV_MAX_RATIO_32X,
+    [DSP_VPROC_PIN_PREVB] = PREV_MAX_RATIO_8X,
+    [DSP_VPROC_PIN_MAIN]  = PREV_MAX_RATIO_8X,
+};
+
+/* PrevC can't have upscale */
+//const UINT8 HL_VprocPinUpscaleCapabilityMap[DSP_VPROC_PIN_NUM] = {
+//    [DSP_VPROC_PIN_PREVC] = 0,
+//    [DSP_VPROC_PIN_PREVA] = 1,
+//    [DSP_VPROC_PIN_PREVB] = 1,
+//    [DSP_VPROC_PIN_MAIN]  = 1,
+//};
+
+const UINT16 HL_CtxVprocPinDspPrevMap[DSP_VPROC_PIN_MAIN] = {
+    [DSP_VPROC_PIN_PREVC] = DSP_VPROC_PREV_C,
+    [DSP_VPROC_PIN_PREVA] = DSP_VPROC_PREV_A,
+    [DSP_VPROC_PIN_PREVB] = DSP_VPROC_PREV_B,
+};
+
+const UINT16 HL_DspPrevCtxVprocPinMap[DSP_VPROC_PREV_D] = {
+    [DSP_VPROC_PREV_A] = DSP_VPROC_PIN_PREVA,
+    [DSP_VPROC_PREV_B] = DSP_VPROC_PIN_PREVB,
+    [DSP_VPROC_PREV_C] = DSP_VPROC_PIN_PREVC,
+};
+
+const UINT16 HL_CtxVprocPinDspPinMap[DSP_VPROC_PIN_NUM] = {
+    [DSP_VPROC_PIN_PREVC] = DSP_VPROC_OUT_STRM_PREV_C,
+    [DSP_VPROC_PIN_PREVA] = DSP_VPROC_OUT_STRM_PREV_A,
+    [DSP_VPROC_PIN_PREVB] = DSP_VPROC_OUT_STRM_PREV_B,
+    [DSP_VPROC_PIN_MAIN]  = DSP_VPROC_OUT_STRM_MAIN,
+};
+
+//const UINT16 HL_VprocMemTypeVprocPinMap[MAX_VPROC_EXT_MEM_TYPE_NUM] = {
+//    [VPROC_EXT_MEM_TYPE_MAIN]       = DSP_VPROC_PIN_MAIN,
+//    [VPROC_EXT_MEM_TYPE_PREV_A]     = DSP_VPROC_PIN_PREVA,
+//    [VPROC_EXT_MEM_TYPE_PREV_B]     = DSP_VPROC_PIN_PREVB,
+//    [VPROC_EXT_MEM_TYPE_PREV_C]     = DSP_VPROC_PIN_PREVC,
+//    [VPROC_EXT_MEM_TYPE_LN_DEC]     = DSP_VPROC_PIN_MAIN,   //TBD
+//    [VPROC_EXT_MEM_TYPE_HIER_0]     = DSP_VPROC_PIN_MAIN,   //TBD
+//    [VPROC_EXT_MEM_TYPE_COMP_RAW]   = DSP_VPROC_PIN_MAIN,   //TBD
+//    [VPROC_EXT_MEM_TYPE_MAIN_ME]    = DSP_VPROC_PIN_MAIN,   //TBD
+//    [VPROC_EXT_MEM_TYPE_PIP_ME]     = DSP_VPROC_PIN_MAIN,   //TBD
+//    [VPROC_EXT_MEM_TYPE_HIER_Y12]   = DSP_VPROC_PIN_MAIN,   //TBD
+//    [VPROC_EXT_MEM_TYPE_C2Y_Y12]    = DSP_VPROC_PIN_MAIN,   //TBD
+//};
+
+//const UINT16 HL_VprocPinVprocMemBitMap[DSP_VPROC_PIN_NUM] = {
+//    [DSP_VPROC_PIN_PREVC]   = DSP_BIT_POS_EXT_PREV_C,
+//    [DSP_VPROC_PIN_PREVA]   = DSP_BIT_POS_EXT_PREV_A,
+//    [DSP_VPROC_PIN_PREVB]   = DSP_BIT_POS_EXT_PREV_B,
+//    [DSP_VPROC_PIN_MAIN]    = DSP_BIT_POS_EXT_MCTS,      //Actual Main is MctsLumaOut+MctfChroma
+//};
+
+const UINT16 HL_VprocMemBitMemTypeMap[DSP_BIT_POS_EXT_NUM] = {
+    [DSP_BIT_POS_EXT_MAIN]      = VPROC_EXT_MEM_TYPE_MAIN,
+    [DSP_BIT_POS_EXT_PREV_A]    = VPROC_EXT_MEM_TYPE_PREV_A,
+    [DSP_BIT_POS_EXT_PREV_B]    = VPROC_EXT_MEM_TYPE_PREV_B,
+    [DSP_BIT_POS_EXT_PREV_C]    = VPROC_EXT_MEM_TYPE_PREV_C,
+    [DSP_BIT_POS_EXT_LN_DEC]    = VPROC_EXT_MEM_TYPE_LN_DEC,
+    [DSP_BIT_POS_EXT_HIER_0]    = VPROC_EXT_MEM_TYPE_HIER_0,
+    [DSP_BIT_POS_EXT_COMP_RAW]  = VPROC_EXT_MEM_TYPE_COMP_RAW,
+    [DSP_BIT_POS_EXT_MAIN_ME]   = VPROC_EXT_MEM_TYPE_MAIN_ME,
+    [DSP_BIT_POS_EXT_PREV_A_ME] = VPROC_EXT_MEM_TYPE_PIP_ME,
+    [DSP_BIT_POS_EXT_PREV_B_ME] = VPROC_EXT_MEM_TYPE_PREV_B_ME,
+    [DSP_BIT_POS_EXT_PREV_C_ME] = VPROC_EXT_MEM_TYPE_PREV_C_ME,
+    [DSP_BIT_POS_EXT_MCTS]      = VPROC_EXT_MEM_TYPE_MAIN/*FIXME*/,
+    [DSP_BIT_POS_EXT_MCTF]      = VPROC_EXT_MEM_TYPE_MAIN/*FIXME*/,
+    [DSP_BIT_POS_EXT_HIER_Y12]  = VPROC_EXT_MEM_TYPE_HIER_Y12,
+    [DSP_BIT_POS_EXT_C2Y_Y12]   = VPROC_EXT_MEM_TYPE_C2Y_Y12,
+    [DSP_BIT_POS_EXT_PREV_D_ME] = VPROC_EXT_MEM_TYPE_PREV_D_ME,
+    [DSP_BIT_POS_VPROC_RPT]     = MAX_VPROC_EXT_MEM_TYPE_NUM,
+    [DSP_BIT_POS_VPROC_SKIP]    = MAX_VPROC_EXT_MEM_TYPE_NUM,
+    [DSP_BIT_POS_ENC_START]     = MAX_VPROC_EXT_MEM_TYPE_NUM,
+    [DSP_BIT_POS_ENC_STOP]      = MAX_VPROC_EXT_MEM_TYPE_NUM,
+    [DSP_BIT_POS_EXT_IR]        = VPROC_EXT_MEM_TYPE_IR,
+};
+
+const UINT16 HL_VprocPinVprocMemTypePoolMap[DSP_VPROC_PIN_NUM] = {
+    [DSP_VPROC_PIN_PREVC]   = VPROC_EXT_MEM_TYPE_PREV_C,
+    [DSP_VPROC_PIN_PREVA]   = VPROC_EXT_MEM_TYPE_PREV_A,
+    [DSP_VPROC_PIN_PREVB]   = VPROC_EXT_MEM_TYPE_PREV_B,
+    [DSP_VPROC_PIN_MAIN]    = VPROC_EXT_MEM_TYPE_MAIN,      //Mctf/Mctf/Main both share same memory pool
+};
+
+const UINT16 HL_VprocPinVprocMemMeTypeMap[DSP_VPROC_PIN_NUM] = {
+    [DSP_VPROC_PIN_PREVC]   = VPROC_EXT_MEM_TYPE_PREV_C_ME,
+    [DSP_VPROC_PIN_PREVA]   = VPROC_EXT_MEM_TYPE_PIP_ME,
+    [DSP_VPROC_PIN_PREVB]   = VPROC_EXT_MEM_TYPE_PREV_B_ME,
+    [DSP_VPROC_PIN_MAIN]    = VPROC_EXT_MEM_TYPE_MAIN_ME,
+};
+
+const UINT16 HL_VprocPinVinAttachBitMap[DSP_VPROC_PIN_NUM] = {
+    [DSP_VPROC_PIN_PREVC]   = DSP_BIT_POS_EXT_PREV_C,
+    [DSP_VPROC_PIN_PREVA]   = DSP_BIT_POS_EXT_PREV_A,
+    [DSP_VPROC_PIN_PREVB]   = DSP_BIT_POS_EXT_PREV_B,
+    [DSP_VPROC_PIN_MAIN]    = DSP_BIT_POS_EXT_MCTS,      //Mctf/Mctf/Main both share same memory pool
+};
+
+const UINT16 HL_VprocPinVinAttachMeBitMap[DSP_VPROC_PIN_NUM] = {
+    [DSP_VPROC_PIN_PREVC]   = DSP_BIT_POS_EXT_PREV_C_ME,
+    [DSP_VPROC_PIN_PREVA]   = DSP_BIT_POS_EXT_PREV_A_ME,
+    [DSP_VPROC_PIN_PREVB]   = DSP_BIT_POS_EXT_PREV_B_ME,
+    [DSP_VPROC_PIN_MAIN]    = DSP_BIT_POS_EXT_MAIN_ME,
+};
+
+const UINT16 HL_VprocPinPrevSyncMap[DSP_VPROC_PIN_NUM] = {
+    [DSP_VPROC_PIN_PREVC]   = DSP_VPROC_PIN_C_SYNC_TO_ENC,
+    [DSP_VPROC_PIN_PREVA]   = DSP_VPROC_PIN_A_SYNC_TO_ENC,
+    [DSP_VPROC_PIN_PREVB]   = DSP_VPROC_PIN_B_SYNC_TO_ENC,
+    [DSP_VPROC_PIN_MAIN]    = DSP_VPROC_PIN_NOT_SYNC_TO_ENC,
+};
+
+const RAW_CMPT_RATE_t RawCmptRateTable[RAW_COMPACT_NUM] = {
+    [RAW_COMPACT_OFF]   = {.Mantissa =  0U, .Block = 0U},
+    [RAW_COMPACT_8BIT]  = {.Mantissa =  5U, .Block = 0xFFU}, // No 8bit in CV2, but will be 5 when CV2FS
+    [RAW_COMPACT_10BIT] = {.Mantissa =  4U, .Block = 0xFFU},
+    [RAW_COMPACT_12BIT] = {.Mantissa =  2U, .Block = 0xFFU},
+    [RAW_COMPACT_14BIT] = {.Mantissa =  3U, .Block = 0xFFU},
+};
+
+const UINT16 HL_HierUserIdx2VprocIdx[AMBA_DSP_MAX_HIER_NUM] = {
+    [0U] = 0U,
+    [1U] = 1U,
+    [2U] = 3U,
+    [3U] = 5U,
+    [4U] = 2U,
+    [5U] = 4U,
+    [6U] = 6U,
+};
+
+const UINT8 HL_RotateFlipMap[AMBA_DSP_ROTATE_NUM] = {
+    [AMBA_DSP_ROTATE_0]             = DSP_EFCT_ROT_NONE,
+    [AMBA_DSP_ROTATE_0_HORZ_FLIP]   = DSP_EFCT_ROTATE_NONE_HFLIP,
+    [AMBA_DSP_ROTATE_90]            = DSP_EFCT_ROT_90_DEGREE,
+    [AMBA_DSP_ROTATE_90_VERT_FLIP]  = DSP_EFCT_ROTATE_90_VFLIP,
+    [AMBA_DSP_ROTATE_180]           = DSP_EFCT_ROT_180_DEGREE,
+    [AMBA_DSP_ROTATE_180_HORZ_FLIP] = DSP_EFCT_ROTATE_NONE_VFLIP,
+    [AMBA_DSP_ROTATE_270]           = DSP_EFCT_ROT_270_DEGREE,
+    [AMBA_DSP_ROTATE_270_VERT_FLIP] = DSP_EFCT_ROTATE_90_HFLIP,
+};
+
+const UINT16 HL_Hier2ShiftNumSqrt[AMBA_DSP_MAX_HIER_NUM] = {
+    [DSP_HIER_0] = 0U,
+    [DSP_HIER_1] = 0U,
+    [DSP_HIER_2] = 1U,
+    [DSP_HIER_3] = 1U,
+    [DSP_HIER_4] = 2U,
+    [DSP_HIER_5] = 2U,
+    [DSP_HIER_6] = 3U,
+};
+
+const UINT8 YuvFmtTable[3U] = {
+    [AMBA_DSP_YUV420 ] = DSP_YUV_420,
+    [AMBA_DSP_YUV422 ] = DSP_YUV_422,
+    [AMBA_DSP_YUV400 ] = DSP_YUV_MONO,
+};
+
+const UINT8 HL_DecCodec2DspDecCodec[AMBA_DSP_DEC_BITS_FORMAT_NUM] = {
+    [AMBA_DSP_DEC_BITS_FORMAT_JPEG] = DSP_DEC_TYPE_JPEG,
+    [AMBA_DSP_DEC_BITS_FORMAT_H264] = DSP_DEC_TYPE_H264,
+    [AMBA_DSP_DEC_BITS_FORMAT_H265] = DSP_DEC_TYPE_H265,
+};
+
+UINT32 HL_PollingEncodeTimerMode(UINT8 VinId, UINT8 WriteMode, UINT8 TimerScale, UINT32 WaitMs, UINT8 WaitType)
+{
+    UINT32 Rval = OK;
+    UINT8 VinState;
+
+(void)TimerScale;
+
+    VinState = DSP_GetVinState(VinId);
+
+    if (VinState != DSP_RAW_CAP_STATUS_TIMER) {
+        UINT8 CmdBufferId = 0U; void *CmdBufferAddr = NULL;
+        cmd_vin_idle_t *VinIdle = HL_DefCtxCmdBufPtrVinIdle;
+
+        HL_AcqCmdBuffer(&CmdBufferId, &CmdBufferAddr);
+        dsp_osal_typecast(&VinIdle, &CmdBufferAddr);
+        VinIdle->vin_id = VinId;
+        (void)AmbaHL_CmdVinIdle(WriteMode, VinIdle);
+        HL_RelCmdBuffer(CmdBufferId);
+
+        if (WaitType == 0U) {
+            if (OK != DSP_WaitVinState(VinId, DSP_RAW_CAP_STATUS_TIMER, WaitMs)) {
+                AmbaLL_LogUInt5("Polling TimerMode Fail", 0U, 0U, 0U, 0U, 0U);
+                Rval = DSP_ERR_0000;
+            }
+        } else {
+            //no support
+        }
+    } else {
+        // do nothing
+    }
+
+    return Rval;
+}
+
+#if 0
+UINT32 HL_FrameRateConvert(UINT32 Interlace, UINT32 Den, UINT32 Num)
+{
+    UINT32 FrameRate;
+
+    FrameRate = ((Interlace << 31U) | (((Den == 1001U) ? (UINT32)1U: (UINT32)0U) << 30UL) | Num);
+
+    return FrameRate;
+}
+#endif
+
+UINT32 HL_GetViewZoneLocalIndexOnVin(UINT16 ViewZoneId)
+{
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    UINT16 i = 0, VinIdx = 0, LocalIndex = 0, ViewZoneVinId;
+    UINT8 IsDec2Vproc;
+    UINT8 IsRecon2Vproc;
+#ifdef DUPLEX_DEC_SHARE_VIRT_VIN
+    CTX_DSP_INST_INFO_s DspInstInfo = {0};
+#endif
+
+    HL_GetResourcePtr(&Resource);
+    HL_GetViewZoneInfoPtr(ViewZoneId, &ViewZoneInfo);
+    IsDec2Vproc = (ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_DEC)? (UINT8)1U: (UINT8)0U;
+    IsRecon2Vproc = (ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_RECON)? (UINT8)1U: (UINT8)0U;
+#ifdef DUPLEX_DEC_SHARE_VIRT_VIN
+    HL_GetDspInstance(HL_MTX_OPT_ALL, &DspInstInfo);
+#endif
+
+    (void)HL_GetViewZoneVinId(ViewZoneId, &VinIdx);
+
+    if (ViewZoneId == 0U) {
+        LocalIndex = ViewZoneId;
+    } else {
+        for (i = 0U; i < ViewZoneId; i++) {
+            if (0U == DSP_GetBit(Resource->ViewZoneActiveBit, i, 1U)) {
+                continue;
+            }
+            HL_GetViewZoneInfoPtr(i, &ViewZoneInfo);
+#ifdef DUPLEX_DEC_SHARE_VIRT_VIN
+            if (ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_RECON) {
+                continue;
+            }
+
+            if (IsDec2Vproc == (UINT8)1U) {
+                if ((ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_DEC) &&
+                    (DspInstInfo.DecSharedVirtVinId != DSP_VIRT_VIN_IDX_INVALID)) {
+                    LocalIndex++;
+                }
+            } else {
+                (void)HL_GetViewZoneVinId(i, &ViewZoneVinId);
+                if ((ViewZoneVinId == VinIdx) &&
+                    (VinIdx != VIN_IDX_INVALID)) {
+                    LocalIndex++;
+                }
+            }
+#else
+            if ((ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_DEC) ||
+                (ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_RECON)) {
+                continue;
+            }
+
+            if ((IsDec2Vproc == (UINT8)0U) &&
+                (IsRecon2Vproc == (UINT8)0U)) {
+                (void)HL_GetViewZoneVinId(i, &ViewZoneVinId);
+                if ((ViewZoneVinId == VinIdx) &&
+                    (VinIdx != VIN_IDX_INVALID)) {
+                    LocalIndex++;
+                }
+            }
+#endif
+        }
+    }
+
+    return LocalIndex;
+}
+
+UINT32 HL_GetViewZoneNumOnVin(UINT16 VinId)
+{
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    UINT16 i, ViewZoneVinId;
+    UINT32 ViewZonNum = 0;
+#ifdef DUPLEX_DEC_SHARE_VIRT_VIN
+    CTX_DSP_INST_INFO_s DspInstInfo = {0};
+#endif
+
+    HL_GetResourcePtr(&Resource);
+#ifdef DUPLEX_DEC_SHARE_VIRT_VIN
+    HL_GetDspInstance(HL_MTX_OPT_ALL, &DspInstInfo);
+#endif
+
+    for (i = 0U; i < Resource->MaxViewZoneNum; i++) {
+        if (0U == DSP_GetBit(Resource->ViewZoneActiveBit, i, 1U)) {
+            continue;
+        }
+        HL_GetViewZoneInfoPtr(i, &ViewZoneInfo);
+
+        if (ViewZoneInfo->Pipe == DSP_DRAM_PIPE_RAW_ONLY) {
+            continue;
+        }
+
+#ifdef DUPLEX_DEC_SHARE_VIRT_VIN
+        if (ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_RECON) {
+            continue;
+        }
+
+        if (ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_DEC) {
+            if ((DspInstInfo.DecSharedVirtVinId != DSP_VIRT_VIN_IDX_INVALID) &&
+                ((DspInstInfo.DecSharedVirtVinId + AMBA_DSP_MAX_VIN_NUM) == VinId)) {
+                ViewZonNum++;
+            }
+        } else {
+            (void)HL_GetViewZoneVinId(i, &ViewZoneVinId);
+            if (ViewZoneVinId == VinId) {
+                ViewZonNum++;
+            }
+        }
+#else
+        if ((ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_DEC) ||
+            (ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_RECON)) {
+            continue;
+        }
+        (void)HL_GetViewZoneVinId(i, &ViewZoneVinId);
+        if (ViewZoneVinId == VinId) {
+            ViewZonNum++;
+        }
+#endif
+    }
+
+    return ViewZonNum;
+}
+
+UINT32 HL_GetVoutTotalBit(void)
+{
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    CTX_YUV_STRM_INFO_s *YuvStrmInfo = HL_CtxYuvStrmInfoPtr;
+    UINT16 i, VoutIdx = 0U;
+    UINT32 VoutBitMask = 0U;
+    UINT16 VoutPhysId = 0U;
+
+    HL_GetResourcePtr(&Resource);
+
+    for (i = 0U; i < Resource->YuvStrmNum; i++) {
+        HL_GetYuvStrmInfoPtr(i, &YuvStrmInfo);
+        if (1U == DSP_GetU16Bit(YuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_VOUT_IDX, 1U)) {
+            if (YuvStrmInfo->DestVout > 0U) {
+                DSP_Bit2U16Idx((UINT32)YuvStrmInfo->DestVout, &VoutIdx);
+                (void)HL_GetVoutPhysId(VoutIdx, &VoutPhysId);
+                DSP_SetBit(&VoutBitMask, VoutIdx);
+            }
+        }
+    }
+
+    /* Display */
+    for (i = 0U; i < AMBA_DSP_MAX_VOUT_NUM; i++) {
+        /* only consider physical vout */
+        if ((Resource->MaxVoutWidth[i] > 0U) || \
+            (Resource->MaxOsdBufWidth[i] > 0U)) {
+            DSP_SetBit(&VoutBitMask, i);
+        }
+    }
+    return VoutBitMask;
+}
+
+UINT32 HL_GetVoutRotateRescRow(UINT16 Height, UINT8 *pRow)
+{
+/* 20200507,
+ * Row[6] can pass 1280x720 rotate
+ * Row[9] can pass 1080x1080 rotate
+ * Row[16] can pass 1080x1920 rotate */
+#define VOUT_DISP_720_ROT_MAX_ROW   (6U)
+#define VOUT_DISP_1080_ROT_MAX_ROW  (9U)
+#define VOUT_DISP_1920_ROT_MAX_ROW  (16U)
+
+    UINT32 Rval = OK;
+
+    if (pRow == NULL) {
+        Rval = DSP_ERR_0000;
+    } else {
+        if (Height <= 720U) {
+            *pRow = (UINT8)VOUT_DISP_720_ROT_MAX_ROW;
+        } else if (Height <= 1080U) {
+            *pRow = (UINT8)VOUT_DISP_1080_ROT_MAX_ROW;
+        } else {
+            *pRow = (UINT8)VOUT_DISP_1920_ROT_MAX_ROW;
+        }
+    }
+
+    return Rval;
+}
+
+UINT32 HL_GetEncFmtTotalBit(void)
+{
+    CTX_RESOURCE_INFO_s *pResource = HL_CtxResInfoPtr;
+    UINT16 i;
+    UINT32 EncFmtBitMask = 0U;
+
+    HL_GetResourcePtr(&pResource);
+
+    for (i = 0U; i<pResource->MaxEncodeStream; i++) {
+        if (1U == DSP_GetU8Bit(pResource->MaxStrmFmt[i], 0U/*H264*/ , 1U)) {
+            DSP_SetBit(&EncFmtBitMask, 0U);
+        }
+        if (1U == DSP_GetU8Bit(pResource->MaxStrmFmt[i], 1U/*H265*/ , 1U)) {
+            DSP_SetBit(&EncFmtBitMask, 1U);
+        }
+        if (1U == DSP_GetU8Bit(pResource->MaxStrmFmt[i], 2U/*JPG*/ , 1U)) {
+            DSP_SetBit(&EncFmtBitMask, 2U);
+        }
+    }
+    return EncFmtBitMask;
+}
+
+UINT32 HL_GetEncMaxWindow(UINT16 Type, UINT16 *pWidth, UINT16 *pHeight)
+{
+    UINT32 Rval = OK;
+    CTX_RESOURCE_INFO_s *pResource = HL_CtxResInfoPtr;
+    CTX_YUV_STRM_INFO_s *pYuvStrmInfo = HL_CtxYuvStrmInfoPtr;
+    UINT16 i = 0U, EncIdx = 0U, EncW, EncH;
+
+    if ((pWidth == NULL) || (pHeight == NULL)) {
+        Rval = DSP_ERR_0000;
+    } else if (Type >= ENC_MAX_WIN_TYPE_NUM) {
+        Rval = DSP_ERR_0001;
+    } else {
+        HL_GetResourcePtr(&pResource);
+
+        for (i = 0U; i < pResource->YuvStrmNum; i++) {
+            HL_GetYuvStrmInfoPtr(i, &pYuvStrmInfo);
+            if (1U == DSP_GetU16Bit(pYuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_ENCODE_IDX, 1U)) {
+                DSP_Bit2U16Idx((UINT32)pYuvStrmInfo->DestEnc, &EncIdx);
+
+                EncW = 0U;
+                EncH = 0U;
+                if (Type == ENC_MAX_WIN_TYPE_AVC) {
+                    if (1U == DSP_GetU8Bit(pResource->MaxStrmFmt[EncIdx], 0U/*H264*/ , 1U)) {
+                        EncW = pYuvStrmInfo->MaxWidth;
+                        EncH = pYuvStrmInfo->MaxHeight;
+                    }
+                } else if (Type == ENC_MAX_WIN_TYPE_HEVC) {
+                    if (1U == DSP_GetU8Bit(pResource->MaxStrmFmt[EncIdx], 1U/*H265*/ , 1U)) {
+                        EncW = pYuvStrmInfo->MaxWidth;
+                        EncH = pYuvStrmInfo->MaxHeight;
+                    }
+                } else if (Type == ENC_MAX_WIN_TYPE_JPG) {
+                    if (1U == DSP_GetU8Bit(pResource->MaxStrmFmt[EncIdx], 2U/*JPG*/ , 1U)) {
+                        EncW = pYuvStrmInfo->MaxWidth;
+                        EncH = pYuvStrmInfo->MaxHeight;
+                    }
+                } else {
+                    EncW = pYuvStrmInfo->MaxWidth;
+                    EncH = pYuvStrmInfo->MaxHeight;
+                }
+
+                *pWidth = (*pWidth > EncW)? *pWidth: EncW;
+                *pHeight = (*pHeight > EncH)? *pHeight: EncH;
+            }
+        }
+    }
+
+    return Rval;
+}
+
+static inline void HL_GetLevelIdcAvc(const AMBA_DSP_VIDEO_ENC_STRM_CONFIG_s *StrmCfg,
+                                     UINT8 *pLevelIdc)
+{
+    UINT32 FrameSize, TotalMbCntPerSec;
+    UINT32 MaxBR = StrmCfg->EncConfig.BitRateCfg.BitRate;
+    UINT32 CbpBrVclFactor = 1250; //assume HighProfile
+    UINT32 W = ALIGN_NUM((UINT32)StrmCfg->Window.Width, 16U);
+    UINT32 H = ALIGN_NUM((UINT32)StrmCfg->Window.Height, 16U);
+
+    FrameSize = (W >> 4U) * (H >> 4U);
+    TotalMbCntPerSec = FrameSize * (StrmCfg->FrameRate.TimeScale / StrmCfg->FrameRate.NumUnitsInTick);
+
+    /* Table A-1, Annex A.3 */
+    if (TotalMbCntPerSec > 8355840U) {
+        *pLevelIdc = 62U;
+    } else if (TotalMbCntPerSec > 4177920U) {
+        *pLevelIdc = 61U;
+    } else if (TotalMbCntPerSec > 2073600U) {
+        *pLevelIdc = 60U;
+    } else if (TotalMbCntPerSec > 983040U) {
+        *pLevelIdc = 52U;
+    } else if (TotalMbCntPerSec > 589824U) {
+        *pLevelIdc = 51U;
+        if (MaxBR > (240000U*CbpBrVclFactor)) {
+            *pLevelIdc = 52U;
+        }
+    } else if (TotalMbCntPerSec > 522240U) {
+        *pLevelIdc = 50U;
+        if (MaxBR > (135000U*CbpBrVclFactor)) {
+            *pLevelIdc = 51U;
+        }
+    } else if (TotalMbCntPerSec > 245760U) {
+        *pLevelIdc = 42U;
+        if (MaxBR > (50000U*CbpBrVclFactor)) {
+            *pLevelIdc = 50U;
+        }
+    } else {
+        if (MaxBR > (50000U*CbpBrVclFactor)) {
+            *pLevelIdc = 50U;
+        }
+    }
+
+    if ((FrameSize > 22080U) &&
+        (*pLevelIdc <= 50U)) {
+        *pLevelIdc = 51U;
+    } else if ((FrameSize > 8704U) &&
+               (*pLevelIdc <= 42U)) {
+        *pLevelIdc = 50U;
+    } else {
+        //TBD
+    }
+}
+
+static inline void HL_GetLevelIdcHevcTinyPic(const UINT32 CbpRate,
+                                             const UINT32 CbpFactor,
+                                             UINT8 *pLevelIdc,
+                                             UINT8 *pTierIdc)
+{
+    *pTierIdc = 0U;
+
+    if (CbpRate <= (10000U*CbpFactor)) {
+        *pLevelIdc = 31U;
+    }
+    if (CbpRate <= (6000U*CbpFactor)) {
+        *pLevelIdc = 30U;
+    }
+    if (CbpRate <= (3000U*CbpFactor)) {
+        *pLevelIdc = 21U;
+    }
+    if (CbpRate <= (1500U*CbpFactor)) {
+        *pLevelIdc = 20U;
+    }
+    if (CbpRate <= (128U*CbpFactor)) {
+        *pLevelIdc = 1U;
+    }
+}
+
+static inline void HL_GetLevelIdcHevcSmallPic(const UINT32 CbpRate,
+                                              const UINT32 CbpFactor,
+                                              UINT8 *pLevelIdc,
+                                              UINT8 *pTierIdc)
+{
+    if (CbpRate <= (20000U*CbpFactor)) {
+        *pTierIdc = 0U;
+        *pLevelIdc = 41U;
+        if (CbpRate <= (12000U*CbpFactor)) {
+            *pLevelIdc = 40U;
+        }
+    } else {
+        *pTierIdc = 1U;
+        *pLevelIdc = 41U;
+        if (CbpRate <= (30000U*CbpFactor)) {
+            *pLevelIdc = 40U;
+        }
+    }
+}
+
+static inline void HL_GetLevelIdcHevcMidPic(const UINT32 CbpRate,
+                                            const UINT32 CbpFactor,
+                                            UINT8 *pLevelIdc,
+                                            UINT8 *pTierIdc)
+{
+    if (CbpRate <= (60000U*CbpFactor)) {
+        *pTierIdc = 0U;
+        *pLevelIdc = 52U;
+        if (CbpRate <= (25000U*CbpFactor)) {
+            *pLevelIdc = 50U;
+        } else if (CbpRate <= (40000U*CbpFactor)) {
+            *pLevelIdc = 51U;
+        } else {
+            //TBD
+        }
+    } else {
+        *pTierIdc = 1U;
+        *pLevelIdc = 52U;
+        if (CbpRate <= (100000U*CbpFactor)) {
+            *pLevelIdc = 50U;
+        } else if (CbpRate <= (160000U*CbpFactor)) {
+            *pLevelIdc = 51U;
+        } else {
+            //TBD
+        }
+    }
+}
+
+static inline void HL_GetLevelIdcHevcLargePic(const UINT32 CbpRate,
+                                              const UINT32 CbpFactor,
+                                              UINT8 *pLevelIdc,
+                                              UINT8 *pTierIdc)
+{
+    if (CbpRate <= (240000U*CbpFactor)) {
+        *pTierIdc = 0U;
+        *pLevelIdc = 62U;
+        if (CbpRate < (60000U*CbpFactor)) {
+            *pLevelIdc = 60U;
+        } else if (CbpRate < (120000U*CbpFactor)) {
+            *pLevelIdc = 61U;
+        } else {
+            //TBD
+        }
+    } else {
+        *pTierIdc = 1U;
+        *pLevelIdc = 62U;
+        if (CbpRate < (240000U*CbpFactor)) {
+            *pLevelIdc = 60U;
+        } else if (CbpRate < (480000U*CbpFactor)) {
+            *pLevelIdc = 61U;
+        } else {
+            //TBD
+        }
+    }
+}
+
+static inline void HL_GetLevelIdcHevcSamleRate(const UINT32 SamplePerSecond,
+                                               UINT8 *pLevelIdc)
+{
+    if ((SamplePerSecond > 2139095040U) &&
+       (*pLevelIdc <= 61U)) {
+       *pLevelIdc = 62U;
+    } else if ((SamplePerSecond > 1069547520U) &&
+              (*pLevelIdc <= 60U)) {
+       *pLevelIdc = 61U;
+    } else if ((SamplePerSecond > 534773760U) &&
+              (*pLevelIdc <= 51U)) {
+       *pLevelIdc = 52U;
+    } else if ((SamplePerSecond > 267386880U) &&
+              (*pLevelIdc <= 50U)) {
+       *pLevelIdc = 51U;
+    } else if ((SamplePerSecond > 133693440U) &&
+              (*pLevelIdc <= 41U)) {
+       *pLevelIdc = 50U;
+    } else if ((SamplePerSecond > 66846720U) &&
+              (*pLevelIdc <= 40U)) {
+       *pLevelIdc = 41U;
+    } else {
+       //TBD
+    }
+}
+
+static inline void HL_GetLevelIdcHevc(const AMBA_DSP_VIDEO_ENC_STRM_CONFIG_s *StrmCfg,
+                                      UINT8 *pLevelIdc,
+                                      UINT8 *pTierIdc)
+{
+    UINT32 W = ALIGN_NUM((UINT32)StrmCfg->Window.Width, 16U);
+    UINT32 H = ALIGN_NUM((UINT32)StrmCfg->Window.Height, 16U);
+    UINT32 PicSize = W*H;
+    UINT32 SamplePerSecond;
+    UINT32 CbpRate = StrmCfg->EncConfig.BitRateCfg.BitRate;
+    UINT32 CbpFactor = 1000U;
+
+    SamplePerSecond = PicSize*(StrmCfg->FrameRate.TimeScale / StrmCfg->FrameRate.NumUnitsInTick);
+
+    /* level/tier (Table A.1) */
+    if (PicSize <= 983040U) {
+        HL_GetLevelIdcHevcTinyPic(CbpRate, CbpFactor, pLevelIdc, pTierIdc);
+    } else if (PicSize <= 2228224U) {
+        HL_GetLevelIdcHevcSmallPic(CbpRate, CbpFactor, pLevelIdc, pTierIdc);
+    } else if (PicSize <= 8912896U) {
+        HL_GetLevelIdcHevcMidPic(CbpRate, CbpFactor, pLevelIdc, pTierIdc);
+    } else {
+        HL_GetLevelIdcHevcLargePic(CbpRate, CbpFactor, pLevelIdc, pTierIdc);
+    }
+
+    /* Table A.2 */
+    HL_GetLevelIdcHevcSamleRate(SamplePerSecond, pLevelIdc);
+}
+
+UINT32 HL_GetLevelIdc(const AMBA_DSP_VIDEO_ENC_STRM_CONFIG_s *StrmCfg, UINT8 *pLevelIdc, UINT8 *pTierIdc)
+{
+    UINT32 Rval = OK;
+
+    if (StrmCfg->CodingFmt == AMBA_DSP_ENC_CODING_TYPE_H264) {
+        HL_GetLevelIdcAvc(StrmCfg, pLevelIdc);
+    } else {
+        HL_GetLevelIdcHevc(StrmCfg, pLevelIdc, pTierIdc);
+    }
+
+    return Rval;
+}
+
+UINT32 HL_GetHevcMaxTileNum(UINT8 *TileNum, UINT16 EncodeWidth)
+{
+    const UINT16 MaxTileWidth = 256; //From HEVC Standard
+
+    /*
+     * According to Shihao, HEVC-encode's tile number must between 1 to 3.
+     * 3 has better performance but may have artifact in tile boundary
+     * 4K must run tile = 3 due to performance issue
+     * only use tile = 1 in the following case:
+     *  - encode size <= CIF (352*288)
+     *  - aaa complains bad quality in tile boundary
+     *  - when some resolutions can not afford multiple tile number
+     */
+
+    *TileNum = (UINT8)(EncodeWidth/MaxTileWidth);
+    if (*TileNum > 3U) {
+        *TileNum = 3U;
+    } else if (*TileNum == 0U) {
+        *TileNum = 1U;
+    } else {
+        // Keep the same value
+    }
+    return OK;
+}
+
+static inline void HL_CommPinBufMaxWindow(UINT16 PinId, UINT16 *pWidth, UINT16 *pHeight)
+{
+    UINT8 ExitILoop;
+    UINT8 IsEfctYuvStrm, IsVoutPurpose, IsEncPurpose;
+    UINT16 i;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    CTX_YUV_STRM_INFO_s *YuvStrmInfo = HL_CtxYuvStrmInfoPtr;
+    CTX_VPROC_INFO_s VprocInfo = {0};
+
+    HL_GetResourcePtr(&Resource);
+    ExitILoop = 0U;
+    for (i=0U; i<Resource->YuvStrmNum; i++) {
+        HL_GetYuvStrmInfoPtr(i, &YuvStrmInfo);
+        IsEfctYuvStrm = (1U == HL_GetEffectEnableOnYuvStrm(i))? 1U: 0U;
+        IsVoutPurpose = (1U == DSP_GetU16Bit(YuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_VOUT_IDX, 1U))? 1U: 0U;
+        IsEncPurpose = (1U == DSP_GetU16Bit(YuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_ENCODE_IDX, 1U))? 1U: 0U;
+
+        // Only effect channels use postp buffers
+        if (0U == IsEfctYuvStrm) {
+            continue;
+        }
+        if ((PinId == DSP_VPROC_PIN_MAIN) && (IsVoutPurpose == 0U)) {
+            HL_GetVprocInfo(HL_MTX_OPT_ALL, YuvStrmInfo->Layout.ChanCfg[0U].ViewZoneId, &VprocInfo);
+            if (VprocInfo.PinUsage[DSP_VPROC_PIN_MAIN] > 0U) {
+                if (1U == DSP_GetBit(VprocInfo.PinUsage[DSP_VPROC_PIN_MAIN], i, 1U)) {
+                    *pWidth = YuvStrmInfo->MaxWidth;
+                    *pHeight = YuvStrmInfo->MaxHeight;
+
+                    ExitILoop = 1U;
+                }
+            }
+        } else if (PinId == DSP_VPROC_PIN_PREVA) {
+            HL_GetVprocInfo(HL_MTX_OPT_ALL, YuvStrmInfo->Layout.ChanCfg[0U].ViewZoneId, &VprocInfo);
+            if (VprocInfo.PinUsage[DSP_VPROC_PIN_PREVA] > 0U) {
+                if (1U == DSP_GetBit(VprocInfo.PinUsage[DSP_VPROC_PIN_PREVA], i, 1U)) {
+                    *pWidth = YuvStrmInfo->MaxWidth;
+                    *pHeight = YuvStrmInfo->MaxHeight;
+                    ExitILoop = 1U;
+                }
+            }
+        } else {
+            // DO NOTHING
+        }
+
+        /* AVC need 16 alignment */
+        if (IsEncPurpose == 1U) {
+            *pHeight = ALIGN_NUM16(*pHeight, 16U);
+        }
+
+        if (ExitILoop == 1U) {
+            break;
+        }
+    }
+}
+
+static inline void HL_CommDestBufMaxWindow(UINT16 Dest, UINT16 *pWidth, UINT16 *pHeight)
+{
+    UINT8 IsEfctYuvStrm;
+    UINT16 i;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    CTX_YUV_STRM_INFO_s *YuvStrmInfo = HL_CtxYuvStrmInfoPtr;
+    UINT8 ExitILoop = 0U;
+#if defined(UCODE_SUPPORT_EFFECT_PREV_BC_REARRANGE) || defined(UCODE_SUPPORT_EFFECT_PREV_ABC_REARRANGE)
+#ifndef UCODE_SUPPORT_EFFECT_SHARE_NONEFFECT_BUF_LOGIC
+    CTX_VPROC_INFO_s VprocInfo = {0};
+#endif
+#endif
+    UINT16 VoutId = 0U, VoutPhysId = 0U;
+
+    HL_GetResourcePtr(&Resource);
+    for (i=0U; i<Resource->YuvStrmNum; i++) {
+        HL_GetYuvStrmInfoPtr(i, &YuvStrmInfo);
+        IsEfctYuvStrm = (1U == HL_GetEffectEnableOnYuvStrm(i))? (UINT8)1U: (UINT8)0U;
+(void)IsEfctYuvStrm;
+
+        // Only Vout YuvStreams use common buffers
+        if (0U == DSP_GetU16Bit(YuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_VOUT_IDX, 1U)) {
+            continue;
+        }
+
+        DSP_Bit2U16Idx((UINT32)YuvStrmInfo->DestVout, &VoutId);
+        (void)HL_GetVoutPhysId(VoutId, &VoutPhysId);
+
+#if defined(UCODE_SUPPORT_EFFECT_PREV_ABC_REARRANGE)
+        /*
+         * 20190619, In CVx current design
+         * PostP_XX_ and Prev_comX_ have different meaning
+         * NonEffect Pipeline
+         *   - means the YuvBuffer to Destination
+         * Effect Pipeline
+         *   - means the YuvBuffer from which VprocPin
+         *     postp_main_ : From Main
+         *     postp_Pip_ : From PrevA
+         *     prev_com0(DEST_VOUT0) : From PrevC
+         *     prev_com1(DEST_VOUT1) : From PrevB
+         *
+         * 20210611, In CV5, Effect share same logic as NonEffect
+         */
+
+#ifndef UCODE_SUPPORT_EFFECT_SHARE_NONEFFECT_BUF_LOGIC
+        if (1U == IsEfctYuvStrm) {
+            if ((1U == DSP_GetU16Bit(YuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_VOUT_IDX, 1U)) &&
+                (Dest == AMBA_DSP_PREV_DEST_VOUT0)) {
+                HL_GetVprocInfo(HL_MTX_OPT_ALL, YuvStrmInfo->Layout.ChanCfg[0U].ViewZoneId, &VprocInfo);
+                if (VprocInfo.PinUsage[DSP_VPROC_PIN_PREVC] > 0U) {
+                    if (1U == DSP_GetBit(VprocInfo.PinUsage[DSP_VPROC_PIN_PREVC], i, 1U)) {
+                        *pWidth = YuvStrmInfo->MaxWidth;
+                        *pHeight = YuvStrmInfo->MaxHeight;
+                        ExitILoop = (UINT8)1U;
+                    }
+                }
+            } else if ((1U == DSP_GetU16Bit(YuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_VOUT_IDX, 1U)) &&
+                       (Dest == AMBA_DSP_PREV_DEST_VOUT1)) {
+                HL_GetVprocInfo(HL_MTX_OPT_ALL, YuvStrmInfo->Layout.ChanCfg[0U].ViewZoneId, &VprocInfo);
+                if (VprocInfo.PinUsage[DSP_VPROC_PIN_PREVB] > 0U) {
+                    if (1U == DSP_GetBit(VprocInfo.PinUsage[DSP_VPROC_PIN_PREVB], i, 1U)) {
+                        *pWidth = YuvStrmInfo->MaxWidth;
+                        *pHeight = YuvStrmInfo->MaxHeight;
+                        ExitILoop = (UINT8)1U;
+                    }
+                }
+            } else {
+                // DO NOTHING
+            }
+        } else
+#endif
+        {
+            if ((VoutPhysId == VOUT_IDX_A) &&
+                (Dest == AMBA_DSP_PREV_DEST_VOUT0)) {
+                *pWidth = YuvStrmInfo->MaxWidth;
+                *pHeight = YuvStrmInfo->MaxHeight;
+                ExitILoop = (UINT8)1U;
+            } else if ((VoutPhysId == VOUT_IDX_B) &&
+                       (Dest == AMBA_DSP_PREV_DEST_VOUT1)) {
+                *pWidth = YuvStrmInfo->MaxWidth;
+                *pHeight = YuvStrmInfo->MaxHeight;
+                ExitILoop = (UINT8)1U;
+            } else {
+                // DO NOTHING
+            }
+        }
+
+#elif defined(UCODE_SUPPORT_EFFECT_PREV_BC_REARRANGE)
+        /*
+         * 20190619, In CVx current design
+         * PostP_XX_ and Prev_comX_ have different meaning
+         * NonEffect Pipeline
+         *   - means the YuvBuffer to Destination
+         * Effect Pipeline
+         *   - means the YuvBuffer from which VprocPin
+         *     postp_main_ : From Main
+         *     postp_Pip_ : From PrevA
+         *     prev_com0(DEST_VOUT0) : From PrevC
+         *     prev_com1(DEST_VOUT1) : From PrevB
+         *
+         * 20210611, In CV5, Effect share same logic as NonEffect
+         */
+
+#ifndef UCODE_SUPPORT_EFFECT_SHARE_NONEFFECT_BUF_LOGIC
+        if (1U == IsEfctYuvStrm) {
+            if ((1U == DSP_GetU16Bit(YuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_VOUT_IDX, 1U)) &&
+                (Dest == AMBA_DSP_PREV_DEST_VOUT0)) {
+                HL_GetVprocInfo(HL_MTX_OPT_ALL, YuvStrmInfo->Layout.ChanCfg[0U].ViewZoneId, &VprocInfo);
+                if (VprocInfo.PinUsage[DSP_VPROC_PIN_PREVC] > 0U) {
+                    if (1U == DSP_GetBit(VprocInfo.PinUsage[DSP_VPROC_PIN_PREVC], i, 1U)) {
+                        *pWidth = YuvStrmInfo->MaxWidth;
+                        *pHeight = YuvStrmInfo->MaxHeight;
+                        ExitILoop = (UINT8)1U;
+                    }
+                }
+            } else if ((1U == DSP_GetU16Bit(YuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_VOUT_IDX, 1U)) &&
+                       (Dest == AMBA_DSP_PREV_DEST_VOUT1)) {
+                HL_GetVprocInfo(HL_MTX_OPT_ALL, YuvStrmInfo->Layout.ChanCfg[0U].ViewZoneId, &VprocInfo);
+                if (VprocInfo.PinUsage[DSP_VPROC_PIN_PREVB] > 0U) {
+                    if (1U == DSP_GetBit(VprocInfo.PinUsage[DSP_VPROC_PIN_PREVB], i, 1U)) {
+                        *pWidth = YuvStrmInfo->MaxWidth;
+                        *pHeight = YuvStrmInfo->MaxHeight;
+                        ExitILoop = (UINT8)1U;
+                    }
+                }
+            } else {
+                // DO NOTHING
+            }
+        } else
+#endif
+        {
+            if ((VoutPhysId == VOUT_IDX_A) &&
+                (Dest == AMBA_DSP_PREV_DEST_VOUT0)) {
+                *pWidth = YuvStrmInfo->MaxWidth;
+                *pHeight = YuvStrmInfo->MaxHeight;
+                ExitILoop = (UINT8)1U;
+            } else if ((VoutPhysId == VOUT_IDX_B) &&
+                       (Dest == AMBA_DSP_PREV_DEST_VOUT1)) {
+                *pWidth = YuvStrmInfo->MaxWidth;
+                *pHeight = YuvStrmInfo->MaxHeight;
+                ExitILoop = (UINT8)1U;
+            } else {
+                // DO NOTHING
+            }
+        }
+#else
+        if ((VoutPhysId == VOUT_IDX_A) &&
+            (Dest == AMBA_DSP_PREV_DEST_VOUT0)) {
+            *pWidth = YuvStrmInfo->MaxWidth;
+            *pHeight = YuvStrmInfo->MaxHeight;
+            ExitILoop = (UINT8)1U;
+        } else if ((VoutPhysId == VOUT_IDX_B) &&
+                   (Dest == AMBA_DSP_PREV_DEST_VOUT1)) {
+            *pWidth = YuvStrmInfo->MaxWidth;
+            *pHeight = YuvStrmInfo->MaxHeight;
+            ExitILoop = (UINT8)1U;
+        } else {
+            // DO NOTHING
+        }
+#endif
+        if (ExitILoop == 1U) {
+            break;
+        }
+    }
+}
+
+UINT32 HL_GetCommBufMaxWindow(UINT16 Dest, UINT16 PinId, UINT16 *pWidth, UINT16 *pHeight)
+{
+    UINT32 Rval = OK;
+
+    if ((pWidth == NULL) || (pHeight == NULL)) {
+        Rval = DSP_ERR_0000;
+    } else {
+        if (Dest == AMBA_DSP_PREV_DEST_PIN) {
+            HL_CommPinBufMaxWindow(PinId, pWidth, pHeight);
+        } else {
+            HL_CommDestBufMaxWindow(Dest, pWidth, pHeight);
+        }
+    }
+
+    return Rval;
+}
+
+UINT32 HL_GetEffectEnableOnYuvStrm(const UINT16 YuvStrmId)
+{
+    UINT32 Enable = 0U;
+    CTX_YUV_STRM_INFO_s *pYuvStrm = HL_CtxYuvStrmInfoPtr;
+
+    if (YuvStrmId < AMBA_DSP_MAX_YUVSTRM_NUM) {
+        HL_GetYuvStrmInfoPtr(YuvStrmId, &pYuvStrm);
+        if (pYuvStrm->MaxChanNum > 1U) {
+            Enable = 1U;
+        } else if (pYuvStrm->MaxChanNum == 1U) {
+            if ((pYuvStrm->Layout.ChanCfg[0U].Window.OffsetX > 0U) ||
+                (pYuvStrm->Layout.ChanCfg[0U].Window.OffsetY > 0U)) {
+                Enable = 1U;
+            }
+        } else {
+            //TBD
+        }
+    }
+
+    return Enable;
+}
+
+UINT32 HL_GetEffectChannelEnable(void)
+{
+    UINT16 i;
+    UINT32 Enable = 0U;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+
+    HL_GetResourcePtr(&Resource);
+    for (i=0; i<Resource->YuvStrmNum; i++) {
+        if (1U == HL_GetEffectEnableOnYuvStrm(i)) {
+            Enable = 1U;
+            break;
+        }
+    }
+    return Enable;
+}
+
+UINT8 HL_GetDefaultRawEnable(void)
+{
+    UINT8 Enable = 0U;
+    UINT16 i;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+
+    HL_GetResourcePtr(&Resource);
+    //if any vin support timeout, then use independent y2y buffer for every chan
+    for (i=0; i<AMBA_DSP_MAX_VIN_NUM; i++) {
+        if (Resource->DefaultRawBuf[i].BaseAddr != 0U) {
+            Enable = 1U;
+            break;
+        }
+    }
+    return Enable;
+}
+
+UINT32 HL_GetProcRawDramOutEnable(UINT8 *pEnable, UINT8 *pStlRawInEn)
+{
+    UINT32 Rval = OK;
+    UINT16 i;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    CTX_STILL_INFO_s StlInfo = {0};
+
+    HL_GetResourcePtr(&Resource);
+    for (i = 0U; i<Resource->MaxViewZoneNum; i++) {
+        HL_GetViewZoneInfoPtr(i, &ViewZoneInfo);
+        if (ViewZoneInfo->IsProcRawDramOut == (UINT8)1U) {
+            *pEnable = 1U;
+            break;
+        }
+    }
+    HL_GetStlInfo(HL_MTX_OPT_ALL, &StlInfo);
+    if (StlInfo.RawInVprocId != DSP_VPROC_IDX_INVALID) {
+        *pEnable = 1U;
+        *pStlRawInEn = 1U;
+    }
+
+    return Rval;
+}
+
+UINT32 HL_GetEffectChannelPostBlendNum(UINT16 YuvStrmIdx, const CTX_YUV_STRM_LAYOUT_s *pYuvStrmLayout, UINT16 *TotalPostBldNum)
+{
+    UINT16 i;
+    UINT32 Rval = OK;
+
+(void)YuvStrmIdx;
+    *TotalPostBldNum = 0U;
+
+    /*
+     * Except for user-defined blending jobs, SSP handles rotation by an extra blending,
+     * thus when there is a rotation-only channel, it actually contains a blending job
+     * */
+    for (i=0; i<pYuvStrmLayout->NumChan; i++) {
+        if (pYuvStrmLayout->ChanCfg[i].BlendNum > 0U) {
+            *TotalPostBldNum += pYuvStrmLayout->ChanCfg[i].BlendNum;
+        } else if ((pYuvStrmLayout->ChanCfg[i].RotateFlip == AMBA_DSP_ROTATE_90) ||
+                   (pYuvStrmLayout->ChanCfg[i].RotateFlip == AMBA_DSP_ROTATE_270) ||
+                   (pYuvStrmLayout->ChanCfg[i].RotateFlip == AMBA_DSP_ROTATE_180)) {
+            *TotalPostBldNum += 1U;
+        } else {
+            // No increment
+        }
+    }
+
+    return Rval;
+}
+
+#if defined(UCODE_SUPPORT_EFFECT_PREV_BC_REARRANGE) || defined(UCODE_SUPPORT_EFFECT_PREV_ABC_REARRANGE)
+UINT32 HL_GetEffectChannelVprocPin(UINT16 Purpose,
+                                   UINT16 DestVout,
+                                   UINT32 DestEnc,
+                                   UINT16 *pCandNum,
+                                   UINT16 *pCandPinId,
+                                   UINT8 IsDramMipiYuv,
+                                   UINT8 ChromaFmt)
+{
+    UINT32 Rval = OK;
+    UINT8 IsEncPurpose, IsVoutPurpose, IsVoutDestA, IsVoutDestB;
+    UINT16 Num = 0U;
+    UINT16 VoutId = 0U, VoutPhysId = 0U;
+
+    (void)DestEnc;
+    (void)IsDramMipiYuv;
+    (void)ChromaFmt;
+    IsEncPurpose =(1U == DSP_GetU16Bit(Purpose, DSP_LV_STRM_PURPOSE_ENCODE_IDX, 1U))? 1U: 0U;
+    IsVoutPurpose = (1U == DSP_GetU16Bit(Purpose, DSP_LV_STRM_PURPOSE_VOUT_IDX, 1U))? 1U: 0U;
+    if (IsEncPurpose == 1U) {
+        /*
+         * Under Efect.
+         * PIN_MAIN are not limited to 1st enc stream, so does PIN_PREVA
+         * but PIN_MAIN can't have ROI and rescale
+         */
+        /* Filling in size increment order */
+        pCandPinId[Num] = DSP_VPROC_PIN_PREVA;
+        Num++;
+        pCandPinId[Num] = DSP_VPROC_PIN_MAIN;
+        Num++;
+    } else if (IsVoutPurpose == 1U) {
+#if defined(UCODE_SUPPORT_EFFECT_PREV_ABC_REARRANGE)
+        DSP_Bit2U16Idx((UINT32)DestVout, &VoutId);
+        (void)HL_GetVoutPhysId(VoutId, &VoutPhysId);
+        IsVoutDestA = (VoutId == VOUT_IDX_A)? 1U: 0U;
+        IsVoutDestB = (VoutId == VOUT_IDX_B)? 1U: 0U;
+
+        if ((1U == IsVoutDestA) ||
+            (1U == IsVoutDestB)) {
+            /* Filling in size increment order */
+            if (IsDramMipiYuv == 0U) {
+                pCandPinId[Num] = DSP_VPROC_PIN_PREVC;
+                Num++;
+                pCandPinId[Num] = DSP_VPROC_PIN_PREVB;
+                Num++;
+                if (ChromaFmt == AMBA_DSP_YUV420) {
+                    pCandPinId[Num] = DSP_VPROC_PIN_PREVA;
+                    Num++;
+                }
+            } else {
+                pCandPinId[Num] = DSP_VPROC_PIN_PREVA;
+                Num++;
+            }
+        } else {
+            pCandPinId[0U] = DSP_VPROC_PIN_NUM;
+        }
+#else
+        DSP_Bit2U16Idx((UINT32)DestVout, &VoutId);
+        (void)HL_GetVoutPhysId(VoutId, &VoutPhysId);
+        IsVoutDestA = (VoutId == VOUT_IDX_A)? 1U: 0U;
+        IsVoutDestB = (VoutId == VOUT_IDX_B)? 1U: 0U;
+
+        if ((1U == IsVoutDestA) ||
+            (1U == IsVoutDestB)) {
+            /* Filling in size increment order */
+            pCandPinId[Num] = DSP_VPROC_PIN_PREVC;
+            Num++;
+            pCandPinId[Num] = DSP_VPROC_PIN_PREVB;
+            Num++;
+        } else {
+            pCandPinId[0U] = DSP_VPROC_PIN_NUM;
+        }
+#endif
+    } else {
+        pCandPinId[0U] = DSP_VPROC_PIN_NUM;
+    }
+    *pCandNum = Num;
+
+    return Rval;
+}
+#else
+UINT32 HL_GetEffectChannelVprocPin(UINT16 Purpose,
+                                   UINT16 DestVout,
+                                   UINT32 DestEnc,
+                                   UINT16 *pPinId,
+                                   UINT8 IsDramMipiYuv)
+{
+    UINT32 Rval = OK;
+    UINT8 IsEncPurpose, IsVoutPurpose;
+    UINT16 VoutId = 0U, VoutPhysId = 0U;
+
+    IsEncPurpose =(1U == DSP_GetU16Bit(Purpose, DSP_LV_STRM_PURPOSE_ENCODE_IDX, 1U))? 1U: 0U;
+    IsVoutPurpose = (1U == DSP_GetU16Bit(Purpose, DSP_LV_STRM_PURPOSE_VOUT_IDX, 1U))? 1U: 0U;
+
+    *pPinId = DSP_VPROC_PIN_NUM;
+    if (IsEncPurpose == 1U) {
+        if (1U == DSP_GetBit(DestEnc, 0U/*MainStrm*/, 1U)) {
+            *pPinId = DSP_VPROC_PIN_MAIN;
+        } else if (1U == DSP_GetBit(DestEnc, 1U/*2ndStrm*/, 1U)) {
+            *pPinId = DSP_VPROC_PIN_PREVA;
+        } else {
+            *pPinId = DSP_VPROC_PIN_NUM;
+        }
+    }
+
+    if (IsVoutPurpose == 1U) {
+        DSP_Bit2U16Idx((UINT32)DestVout, &VoutId);
+        (void)HL_GetVoutPhysId(VoutId, &VoutPhysId);
+
+        if (VoutPhysId == VOUT_IDX_A) {
+            *pPinId = (IsDramMipiYuv == (UINT8)0U)? DSP_VPROC_PIN_PREVC: DSP_VPROC_PIN_NUM;
+        } else if (VoutPhysId == VOUT_IDX_B) {
+            *pPinId = (IsDramMipiYuv == (UINT8)0U)? DSP_VPROC_PIN_PREVB: DSP_VPROC_PIN_NUM;
+        } else {
+            *pPinId = DSP_VPROC_PIN_NUM;
+        }
+    }
+
+    return Rval;
+}
+#endif
+
+static UINT8 HL_FindOverlapeforHori(const AMBA_DSP_WINDOW_s *pWinA,
+                                     const AMBA_DSP_WINDOW_s *pWinB,
+                                     AMBA_DSP_WINDOW_s *pWinOverlap)
+{
+    UINT8 HoriOverlap = 0U;
+
+    /* search for H overlap */
+    if ((pWinB->OffsetX <= pWinA->OffsetX) &&
+        (((pWinB->OffsetX + pWinB->Width) - 1U) >= pWinA->OffsetX) &&
+        (((pWinB->OffsetX + pWinB->Width) - 1U) <= ((pWinA->OffsetX + pWinA->Width) - 1U))) {
+        pWinOverlap->OffsetX = pWinA->OffsetX;
+        pWinOverlap->Width = (pWinB->OffsetX + pWinB->Width) - pWinA->OffsetX;
+        HoriOverlap = 0x1U;
+    } else if ((pWinB->OffsetX <= pWinA->OffsetX) &&
+               (((pWinB->OffsetX + pWinB->Width) - 1U) >= ((pWinA->OffsetX + pWinA->Width) - 1U))) {
+        pWinOverlap->OffsetX = pWinA->OffsetX;
+        pWinOverlap->Width = pWinA->Width;
+        HoriOverlap = 0x2U;
+    } else if ((pWinB->OffsetX >= pWinA->OffsetX) &&
+               (((pWinB->OffsetX + pWinB->Width) - 1U) <= ((pWinA->OffsetX + pWinA->Width) - 1U))) {
+        pWinOverlap->OffsetX = pWinB->OffsetX;
+        pWinOverlap->Width = pWinB->Width;
+        HoriOverlap = 0x3U;
+    } else if ((pWinB->OffsetX >= pWinA->OffsetX) &&
+               (pWinB->OffsetX <= ((pWinA->OffsetX + pWinA->Width) - 1U)) &&
+               (((pWinB->OffsetX + pWinB->Width) - 1U) >= ((pWinA->OffsetX + pWinA->Width) - 1U))) {
+        pWinOverlap->OffsetX = pWinB->OffsetX;
+        pWinOverlap->Width = (pWinA->OffsetX + pWinA->Width) - pWinB->OffsetX;
+        HoriOverlap = 0x4U;
+    } else {
+        // DO NOTHING
+    }
+
+    return HoriOverlap;
+}
+
+static UINT8 HL_FindOverlapeforVert(const AMBA_DSP_WINDOW_s *pWinA,
+                                     const AMBA_DSP_WINDOW_s *pWinB,
+                                     AMBA_DSP_WINDOW_s *pWinOverlap)
+{
+    UINT8 VertOverlape = 0U;
+
+    /* Search for V overlap */
+    if ((pWinB->OffsetY <= pWinA->OffsetY) &&
+        (((pWinB->OffsetY + pWinB->Height) - 1U) >= pWinA->OffsetY) &&
+        (((pWinB->OffsetY + pWinB->Height) - 1U) <= (pWinA->OffsetY + pWinA->Height))) {
+        pWinOverlap->OffsetY = pWinA->OffsetY;
+        pWinOverlap->Height = (pWinB->OffsetY + pWinB->Height) - pWinA->OffsetY;
+        VertOverlape = 0x10U;
+    } else if ((pWinB->OffsetY <= pWinA->OffsetY) &&
+               (((pWinB->OffsetY + pWinB->Height) - 1U) >= ((pWinA->OffsetY + pWinA->Height) - 1U))) {
+        pWinOverlap->OffsetY = pWinA->OffsetY;
+        pWinOverlap->Height = pWinA->Height;
+        VertOverlape = 0x20U;
+    } else if ((pWinB->OffsetY >= pWinA->OffsetY) &&
+               (((pWinB->OffsetY + pWinB->Height) - 1U) <= ((pWinA->OffsetY + pWinA->Height) - 1U))) {
+        pWinOverlap->OffsetY = pWinB->OffsetY;
+        pWinOverlap->Height = pWinB->Height;
+        VertOverlape = 0x30U;
+    } else if ((pWinB->OffsetY >= pWinA->OffsetY) &&
+               (pWinB->OffsetY <= ((pWinA->OffsetY + pWinA->Height) - 1U)) &&
+               (((pWinB->OffsetY + pWinB->Height) - 1U) >= ((pWinA->OffsetY + pWinA->Height) - 1U))) {
+        pWinOverlap->OffsetY = pWinB->OffsetY;
+        pWinOverlap->Height = (pWinA->OffsetY + pWinA->Height) - pWinB->OffsetY;
+        VertOverlape = 0x40U;
+    } else {
+        // DO NOTHING
+    }
+
+    return VertOverlape;
+}
+
+static UINT32 HL_FindOverlapeRegion(const AMBA_DSP_WINDOW_s *pWinA,
+                                    const AMBA_DSP_WINDOW_s *pWinB,
+                                    AMBA_DSP_WINDOW_s *pWinOverlap,
+                                    UINT8 *pIsOverLap)
+{
+    UINT32 Rval = OK;
+    UINT8 HoriOverlap = 0U, VertOverlape = 0U;
+
+    (void)dsp_osal_memset(pWinOverlap, 0, sizeof(AMBA_DSP_WINDOW_s));
+
+    /* search for H overlap */
+    HoriOverlap = HL_FindOverlapeforHori(pWinA, pWinB, pWinOverlap);
+
+    /* Search for V overlap */
+    if (HoriOverlap > 0U) {
+        VertOverlape = HL_FindOverlapeforVert(pWinA, pWinB, pWinOverlap);
+    }
+
+    if ((HoriOverlap > 0U) &&
+        (VertOverlape > 0U)) {
+        *pIsOverLap = 1U;
+    } else {
+        *pIsOverLap = 0U;
+    }
+
+    return Rval;
+}
+
+//#define DEBUG_EFCT_JOB_CALC
+static inline UINT32 HL_CalcEffectPostPJobInit(const CTX_RESOURCE_INFO_s *pResource,
+                                               const DSP_EFFECT_BUF_DESC_s *pCurrentBufDesc,
+                                               DSP_EFFECT_BUF_DESC_s *pBufDesc,
+                                               CTX_YUV_STRM_LAYOUT_s *pYuvStrmLayout,
+                                               UINT32 *pEffectBufMask)
+{
+    UINT16 i;
+    UINT32 Rval = OK;
+
+    /* Reset */
+    for (i=0; i < pYuvStrmLayout->NumChan; i++) {
+        (void)dsp_osal_memset(&pYuvStrmLayout->BlendJobDesc[i][0U],
+                              0,
+                              sizeof(DSP_EFFECT_BLEND_JOB_s)*DSP_MAX_PP_STRM_BLEND_NUMBER_CTX);
+
+        pYuvStrmLayout->CopyJobNum[i] = 0U;
+        (void)dsp_osal_memset(&pYuvStrmLayout->CopyJobDesc[i][0U],
+                              0,
+                              sizeof(DSP_EFFECT_COPY_JOB_s)*DSP_MAX_PP_STRM_COPY_NUMBER);
+
+        /* skip reset temp buffer
+           ucoder claims that once temp buffers are initialized, they have to be used in next multi-stream-pp
+        */
+#if 0
+        /* Release BufferId linked to this YuvStream, current ucode can't support buffer id runtime change */
+        if (pCurrentBufDesc->OutputBufId != DSP_EFCT_INVALID_IDX) {
+            DSP_ClearU32ArrayBit(&EffectBufMask[0U], pCurrentBufDesc->OutputBufId, EFFECT_BUF_MASK_DEPTH);
+        }
+        if (pCurrentBufDesc->CpyBufId != DSP_EFCT_INVALID_IDX) {
+            DSP_ClearU32ArrayBit(&EffectBufMask[0U], pCurrentBufDesc->CpyBufId, EFFECT_BUF_MASK_DEPTH);
+        }
+        if (pCurrentBufDesc->Y2YBufId != DSP_EFCT_INVALID_IDX) {
+            DSP_ClearU32ArrayBit(&EffectBufMask[0U], pCurrentBufDesc->Y2YBufId, EFFECT_BUF_MASK_DEPTH);
+        }
+
+        pBufDesc->OutputBufId       = DSP_EFCT_INVALID_IDX;
+        pBufDesc->CpyBufId          = DSP_EFCT_INVALID_IDX;
+        pBufDesc->Y2YBufId          = DSP_EFCT_INVALID_IDX;
+#else
+        pBufDesc->OutputBufId       = pCurrentBufDesc->OutputBufId;
+        pBufDesc->CpyBufId          = pCurrentBufDesc->CpyBufId;
+        pBufDesc->Y2YBufId          = pCurrentBufDesc->Y2YBufId;
+#endif
+        pBufDesc->FirstPsThIdx      = DSP_EFCT_INVALID_IDX;
+        pBufDesc->FirstCpyIdx       = DSP_EFCT_INVALID_IDX;
+        pBufDesc->FirstBldIdx       = DSP_EFCT_INVALID_IDX;
+        pBufDesc->FirstY2YBldIdx    = DSP_EFCT_INVALID_IDX;
+        pBufDesc->LastPsThIdx       = DSP_EFCT_INVALID_IDX;
+        pBufDesc->LastCpyIdx        = DSP_EFCT_INVALID_IDX;
+        pBufDesc->LastBldIdx        = DSP_EFCT_INVALID_IDX;
+#ifdef PPSTRM_INDPT_INT_BLD_BUFFER
+        pBufDesc->ChannelOutputMask = 0U;
+#endif
+#ifdef PPSTRM_SWITCH_BETWEEN_PASSTHROUGH_AND_BLENDING
+        DSP_SetBit(&PassThruChanMask, i);
+#endif
+    }
+
+    if (pCurrentBufDesc->OutputBufId == DSP_EFCT_INVALID_IDX) {
+        /* Take the first available buffer as the final output buffer */
+        DSP_FindEmptyBit(pEffectBufMask,
+                         pResource->EffectLogicBufNum,
+                         &pBufDesc->OutputBufId,
+                         0U/*FindOnly*/,
+                         EFFECT_BUF_MASK_DEPTH);
+        if (pBufDesc->OutputBufId == DSP_EFCT_INVALID_IDX) {
+            AmbaLL_LogUInt5("  No Buf for EffOut 0x%X%08X%08X%08X",
+                            pEffectBufMask[3], pEffectBufMask[2],
+                            pEffectBufMask[1], pEffectBufMask[0], 0U);
+            Rval = DSP_ERR_0006;
+        } else {
+            // DO NOTHING
+#ifdef DEBUG_EFCT_JOB_CALC
+        AmbaLL_LogUInt5("FinalOut[%d]", pBufDesc->OutputBufId, 0U, 0U, 0U, 0U);
+#endif
+        }
+    }
+
+    return Rval;
+}
+
+/* Handle Blend
+ *  1. If blending window perfectly covers chanA window:
+ *     (1) output chanA to Y2Y buffer
+ *     (2) blend Y2Y buffer with the final output buffer, whom its blending target is on
+ *  2. If it does not, and only overlap to one View
+ *     (1) copy the overlap region of its blending target to Cpy buffer
+ *     (2) blend Cpy buffer with the final output buffer
+ *     Note: if its blending target has rotation, the copied content is not rotated
+ * */
+static inline UINT32 HL_CalcEffectPostPJobBldCpy(const UINT16 BldIdx,
+                                                 const CTX_RESOURCE_INFO_s *pResource,
+                                                 const AMBA_DSP_BUF_s *BldBuf,
+                                                 CTX_YUV_STRM_LAYOUT_s *pYuvStrmLayout,
+                                                 DSP_EFFECT_BUF_DESC_s *pBufDesc,
+                                                 DSP_EFFECT_BLEND_JOB_s *pBldJobDesc,
+                                                 UINT32 *pEffectBufMask)
+{
+    UINT16 CpyIdx, OverlapChanIdx;
+    UINT8 IsOverLap = 0U;
+    UINT32 Rval = OK;
+    AMBA_DSP_WINDOW_s OverLapWin;
+    DSP_EFFECT_COPY_JOB_s *pCpyJobDesc;
+
+    DSP_Bit2U16Idx((UINT32)pBldJobDesc->OverlapChan, &OverlapChanIdx);
+    (void)HL_FindOverlapeRegion(&pYuvStrmLayout->ChanCfg[OverlapChanIdx].Window,
+                                &BldBuf[BldIdx].Window,
+                                &OverLapWin,
+                                &IsOverLap);
+
+    /* Need Copy */
+    CpyIdx = pYuvStrmLayout->CopyJobNum[OverlapChanIdx];
+    pCpyJobDesc = &pYuvStrmLayout->CopyJobDesc[OverlapChanIdx][CpyIdx];
+    pCpyJobDesc->JobId = 0U; //TBD
+    pCpyJobDesc->SrcBufIdx = pBufDesc->OutputBufId;
+
+    /* Search Copy Buffer */
+    if (pBufDesc->CpyBufId == DSP_EFCT_INVALID_IDX) {
+        DSP_FindEmptyBit(pEffectBufMask,
+                         pResource->EffectLogicBufNum,
+                         &pBufDesc->CpyBufId,
+                         0U/*FindOnly*/,
+                         EFFECT_BUF_MASK_DEPTH);
+        if (pBufDesc->CpyBufId == DSP_EFCT_INVALID_IDX) {
+            AmbaLL_LogUInt5("  No Buf for CpyOut 0x%X%X%X%X",
+                            pEffectBufMask[3], pEffectBufMask[2],
+                            pEffectBufMask[1], pEffectBufMask[0], 0U);
+            Rval = DSP_ERR_0006;
+        }
+    }
+    if (Rval == OK) {
+        pCpyJobDesc->DestBufIdx = pBufDesc->CpyBufId;
+#ifdef DEBUG_EFCT_JOB_CALC
+        AmbaLL_LogUInt5("CpyBufId %d", pBufDesc->CpyBufId, 0U, 0U, 0U, 0U);
+#endif
+    }
+
+    (void)dsp_osal_memcpy(&pCpyJobDesc->SrcWin, &BldBuf[BldIdx].Window, sizeof(AMBA_DSP_WINDOW_s));
+    (void)dsp_osal_memcpy(&pCpyJobDesc->DstWin, &BldBuf[BldIdx].Window, sizeof(AMBA_DSP_WINDOW_s));
+    pYuvStrmLayout->CopyJobNum[OverlapChanIdx]++;
+
+    if ((pBufDesc->LastCpyIdx == DSP_EFCT_INVALID_IDX) ||
+        (OverlapChanIdx > pBufDesc->LastCpyIdx)) {
+        pBufDesc->LastCpyIdx = OverlapChanIdx;
+    }
+    if ((pBufDesc->FirstCpyIdx == DSP_EFCT_INVALID_IDX) ||
+        (OverlapChanIdx < pBufDesc->FirstCpyIdx)) {
+        pBufDesc->FirstCpyIdx = OverlapChanIdx;
+    }
+#ifdef PPSTRM_SWITCH_BETWEEN_PASSTHROUGH_AND_BLENDING
+    DSP_ClearBit(&PassThruChanMask, OverlapChanIdx);
+#endif
+
+    pBldJobDesc->Src0BufIdx = pBufDesc->OutputBufId;
+    pBldJobDesc->Src1BufIdx = pBufDesc->CpyBufId; //Always be copied buffer
+    pBldJobDesc->DestBufIdx = pBufDesc->OutputBufId;
+#ifdef DEBUG_EFCT_JOB_CALC
+    AmbaLL_LogUInt5("[II]BldCpy[%u] 0x%X 0x%X 0x%X", BldIdx,
+            pBldJobDesc->Src0BufIdx, pBldJobDesc->Src1BufIdx,
+            pBldJobDesc->DestBufIdx, 0U);
+#endif
+    return Rval;
+}
+
+/*
+ * Rotate is possibly implemented at two stage
+ * (1) Before Warp(when Dram2Warp pipeline), 20181005, ucode not support yet
+ *     - Vwarp table need to be consider
+ *     - Need to make sure following setting are synced when Runtime update
+ *       - BayerPattern
+ *       - VprocRotateCmd
+ *       - WarpTable
+ *       - EffectCmd
+ * (2) Extra Pass before Blend
+ *     - An intermediated buffer is need to store Yuv before Blend
+ *     - Use Dreg(DMA) for Blend input to execute input rotate
+ *
+ *  Blend directly of full area, need ExtraPass as well
+ */
+static inline UINT32 HL_CalcEffectPostPJobBldY2y(const CTX_RESOURCE_INFO_s *pResource,
+                                                 DSP_EFFECT_BUF_DESC_s *pBufDesc,
+                                                 DSP_EFFECT_BLEND_JOB_s *pBldJobDesc,
+                                                 UINT8 *pFirstY2YBuf,
+                                                 UINT32 *pEffectBufMask)
+{
+    UINT8 FirstY2YBuf = *pFirstY2YBuf;
+#ifdef PPSTRM_INDPT_INT_BLD_BUFFER
+    UINT8 AlwaysAllocIntBuffer = HL_GetDefaultRawEnable();
+#endif
+    UINT32 Rval = OK;
+
+#ifdef PPSTRM_INDPT_INT_BLD_BUFFER
+    if ((pBufDesc->Y2YBufId == DSP_EFCT_INVALID_IDX) ||
+        (AlwaysAllocIntBuffer == 1U)) {
+#else
+    if (pBufDesc->Y2YBufId == DSP_EFCT_INVALID_IDX) {
+#endif
+        DSP_FindEmptyBit(pEffectBufMask,
+                         pResource->EffectLogicBufNum,
+                         &pBufDesc->Y2YBufId,
+                         0U/*FindOnly*/,
+                         EFFECT_BUF_MASK_DEPTH);
+        if (pBufDesc->Y2YBufId == DSP_EFCT_INVALID_IDX) {
+            AmbaLL_LogUInt5("  No Buf for Y2YOut 0x%X%X%X%X",
+                            pEffectBufMask[3], pEffectBufMask[2],
+                            pEffectBufMask[1], pEffectBufMask[0], 0U);
+            Rval = DSP_ERR_0006;
+        } else {
+            pBldJobDesc->NeedY2YBuf = BLD_JOB_Y2Y_BUF_NEW_INT;
+            FirstY2YBuf = 1U;
+        }
+    } else {
+        pBldJobDesc->NeedY2YBuf = BLD_JOB_Y2Y_BUF_REUSE_INT;
+        if (FirstY2YBuf == 0U) {
+            FirstY2YBuf = 1U;
+            pBldJobDesc->NeedY2YBuf = BLD_JOB_Y2Y_BUF_NEW_INT;
+        } else {
+            pBldJobDesc->NeedY2YBuf = BLD_JOB_Y2Y_BUF_REUSE_INT;
+        }
+    }
+
+    pBldJobDesc->Src0BufIdx = pBufDesc->Y2YBufId;
+    pBldJobDesc->Src1BufIdx = pBufDesc->OutputBufId;
+    pBldJobDesc->DestBufIdx= pBufDesc->OutputBufId;
+#ifdef DEBUG_EFCT_JOB_CALC
+    AmbaLL_LogUInt5("[III]BldY2y 0x%X 0x%X 0x%X Y2Y[%d]",
+            pBldJobDesc->Src0BufIdx, pBldJobDesc->Src1BufIdx,
+            pBldJobDesc->DestBufIdx, pBldJobDesc->NeedY2YBuf, 0U);
+#endif
+
+    *pFirstY2YBuf = FirstY2YBuf;
+    return Rval;
+}
+
+static inline UINT32 HL_CalcEffectPostPJobBld(const UINT16 ChanIdx,
+                                              const CTX_RESOURCE_INFO_s *pResource,
+                                              const AMBA_DSP_LIVEVIEW_CHANNEL_WINDOW_s *pEffChan,
+                                              const AMBA_DSP_WINDOW_s *pOrigEffChanWin,
+                                              CTX_YUV_STRM_LAYOUT_s *pYuvStrmLayout,
+                                              DSP_EFFECT_BUF_DESC_s *pBufDesc,
+                                              UINT8 *pFirstY2YBuf,
+                                              UINT32 *pEffectBufMask)
+{
+    UINT16 ChanBIdx, BldIdx;
+    UINT16 OverlapNum;
+    UINT8 IsOverLap;
+    UINT32 Rval = OK, U32Val;
+    AMBA_DSP_WINDOW_s OverLapWin;
+    DSP_EFFECT_BLEND_JOB_s *pBldJobDesc;
+    const AMBA_DSP_BUF_s *BldBuf;
+    const AMBA_DSP_LIVEVIEW_CHANNEL_WINDOW_s *pChanB;
+
+    dsp_osal_typecast(&BldBuf, &pEffChan->LumaAlphaTable);
+
+    for (BldIdx=0; BldIdx < pEffChan->BlendNum; BldIdx++) {
+        pBldJobDesc = &pYuvStrmLayout->BlendJobDesc[ChanIdx][BldIdx];
+
+        for (ChanBIdx=0U; ChanBIdx<ChanIdx; ChanBIdx++) {
+            pChanB = &pYuvStrmLayout->ChanCfg[ChanBIdx];
+
+            /* Find the overlap with Blend ROI */
+            IsOverLap = 0U;
+            (void)HL_FindOverlapeRegion(&pChanB->Window,
+                                        &BldBuf[BldIdx].Window,
+                                        &OverLapWin,
+                                        &IsOverLap);
+            if (IsOverLap > 0U) {
+                U32Val = (UINT32)pBldJobDesc->OverlapChan;
+                DSP_SetBit(&U32Val, (UINT32)ChanBIdx);
+                pBldJobDesc->OverlapChan = (UINT16)U32Val;
+            }
+        }
+
+        DSP_Bit2Cnt((UINT32)pBldJobDesc->OverlapChan, &U32Val);
+        OverlapNum = (UINT16)U32Val;
+        pBldJobDesc->JobId = 0U; //TBD
+
+#ifdef DEBUG_EFCT_JOB_CALC
+        AmbaLL_LogUInt5("ChanIdx:%u OverlapNum %d Rot %d OverlapChan:%x",
+                ChanIdx, OverlapNum, pEffChan->RotateFlip, pBldJobDesc->OverlapChan, 0U);
+#endif
+        if (HL_GetDefaultRawEnable() == 0U) {
+            if ((OverlapNum == 1U) &&
+                ((BldBuf[BldIdx].Window.Width < pEffChan->Window.Width) ||
+                 (BldBuf[BldIdx].Window.Height < pEffChan->Window.Height))) {
+    #ifdef DEBUG_EFCT_JOB_CALC
+            AmbaLL_LogUInt5("ChanIdx %d BldIdx %d", ChanIdx, BldIdx, 0U, 0U, 0U);
+    #endif
+                Rval = HL_CalcEffectPostPJobBldCpy(BldIdx,
+                                                   pResource,
+                                                   BldBuf,
+                                                   pYuvStrmLayout,
+                                                   pBufDesc,
+                                                   pBldJobDesc,
+                                                   pEffectBufMask);
+                if (Rval != OK) {
+                    AmbaLL_LogUInt5("HL_CalcEffectPostPJobBldCpy:%x ChanIdx:%u BldIdx:%u",
+                            Rval, ChanIdx, BldIdx, 0U, 0U);
+                }
+            } else {
+                Rval = HL_CalcEffectPostPJobBldY2y(pResource,
+                                                   pBufDesc,
+                                                   pBldJobDesc,
+                                                   pFirstY2YBuf,
+                                                   pEffectBufMask);
+                if (Rval != OK) {
+                    AmbaLL_LogUInt5("HL_CalcEffectPostPJobBldY2y:%x ChanIdx:%u BldIdx:%u",
+                            Rval, ChanIdx, BldIdx, 0U, 0U);
+                }
+            }
+        } else {
+            Rval = HL_CalcEffectPostPJobBldY2y(pResource,
+                                               pBufDesc,
+                                               pBldJobDesc,
+                                               pFirstY2YBuf,
+                                               pEffectBufMask);
+            if (Rval != OK) {
+                AmbaLL_LogUInt5("HL_CalcEffectPostPJobBldY2y:%x ChanIdx:%u BldIdx:%u",
+                        Rval, ChanIdx, BldIdx, 0U, 0U);
+            }
+        }
+
+        /*
+           Extra Y2Y using full area instead of overlap area,
+           Put temp Yuv from starting of temp buffer to prevent memory over-write
+         */
+        if (pBldJobDesc->NeedY2YBuf > 0U) {
+            (void)dsp_osal_memcpy(&pBldJobDesc->Src0Win, pOrigEffChanWin, sizeof(AMBA_DSP_WINDOW_s));
+            if ((pBldJobDesc->NeedY2YBuf == BLD_JOB_Y2Y_BUF_NEW_INT) ||
+                (pBldJobDesc->NeedY2YBuf == BLD_JOB_Y2Y_BUF_REUSE_INT)) {
+                pBldJobDesc->Src0Win.OffsetX = 0U;
+                pBldJobDesc->Src0Win.OffsetY = 0U;
+            }
+            (void)dsp_osal_memcpy(&pBldJobDesc->Src1Win, pOrigEffChanWin, sizeof(AMBA_DSP_WINDOW_s));
+            (void)dsp_osal_memcpy(&pBldJobDesc->DestWin, &pEffChan->Window, sizeof(AMBA_DSP_WINDOW_s));
+        } else {
+            (void)dsp_osal_memcpy(&pBldJobDesc->Src0Win, &BldBuf[BldIdx].Window, sizeof(AMBA_DSP_WINDOW_s));
+            (void)dsp_osal_memcpy(&pBldJobDesc->Src1Win, &BldBuf[BldIdx].Window, sizeof(AMBA_DSP_WINDOW_s));
+            (void)dsp_osal_memcpy(&pBldJobDesc->DestWin, &BldBuf[BldIdx].Window, sizeof(AMBA_DSP_WINDOW_s));
+        }
+
+        pBldJobDesc->AlphaAddr = BldBuf[BldIdx].BaseAddr;
+        pBldJobDesc->AlphaPitch = BldBuf[BldIdx].Pitch;
+    }
+
+    if ((pBufDesc->LastBldIdx == DSP_EFCT_INVALID_IDX) ||
+        (ChanIdx > pBufDesc->LastBldIdx)) {
+        pBufDesc->LastBldIdx = ChanIdx;
+    }
+    if ((pBufDesc->FirstBldIdx == DSP_EFCT_INVALID_IDX) ||
+        (ChanIdx < pBufDesc->FirstBldIdx)) {
+        pBufDesc->FirstBldIdx = ChanIdx;
+    }
+    if ((pBufDesc->FirstY2YBldIdx == DSP_EFCT_INVALID_IDX) ||
+        (ChanIdx < pBufDesc->FirstY2YBldIdx)) {
+        pBufDesc->FirstY2YBldIdx = ChanIdx;
+    }
+#ifdef PPSTRM_SWITCH_BETWEEN_PASSTHROUGH_AND_BLENDING
+    DSP_ClearBit(&PassThruChanMask, ChanIdx);
+#endif
+
+    return Rval;
+}
+
+static inline UINT32 HL_CalcEffectPostPJobRotFlip(const UINT16 ChanIdx,
+                                                 const CTX_RESOURCE_INFO_s *pResource,
+                                                 const AMBA_DSP_LIVEVIEW_CHANNEL_WINDOW_s *pEffChan,
+                                                 const AMBA_DSP_WINDOW_s *pOrigEffChanWin,
+                                                 CTX_YUV_STRM_LAYOUT_s *pYuvStrmLayout,
+                                                 DSP_EFFECT_BUF_DESC_s *pBufDesc,
+                                                 UINT8 *pFirstY2YBuf,
+                                                 UINT32 *pEffectBufMask)
+{
+    UINT32 Rval = DSP_ERR_NONE;
+    UINT8 FirstY2YBuf = *pFirstY2YBuf;
+#ifdef PPSTRM_INDPT_INT_BLD_BUFFER
+    UINT8 AlwaysAllocIntBuffer = HL_GetDefaultRawEnable();
+#endif
+    UINT16 ChanBIdx;
+    UINT8 IsOverLap;
+    UINT16 U16Val = 0U;
+    DSP_EFFECT_BLEND_JOB_s *pBldJobDesc;
+#ifdef PPSTRM_SWITCH_BETWEEN_PASSTHROUGH_AND_BLENDING
+    UINT32 PassThruChanMask = 0U;
+#endif
+
+    // any rotation or flip needs an extra pass
+    if (pYuvStrmLayout->ChanCfg[ChanIdx].RotateFlip != AMBA_DSP_ROTATE_0) {
+        pBldJobDesc = &pYuvStrmLayout->BlendJobDesc[ChanIdx][0U];
+
+        //rotate/flip also need to consider overlap
+        for (ChanBIdx = 0U; ChanBIdx < ChanIdx; ChanBIdx++) {
+            const AMBA_DSP_LIVEVIEW_CHANNEL_WINDOW_s *pChanB;
+            AMBA_DSP_WINDOW_s OverLapWin;
+
+            pChanB = &pYuvStrmLayout->ChanCfg[ChanBIdx];
+
+            /* Find the overlap with Blend ROI */
+            IsOverLap = 0U;
+            (void)HL_FindOverlapeRegion(&pChanB->Window,
+                                        &pEffChan->Window,
+                                        &OverLapWin,
+                                        &IsOverLap);
+            if (IsOverLap > 0U) {
+                U16Val = pBldJobDesc->OverlapChan;
+                DSP_SetU16Bit(&U16Val, ChanBIdx);
+                pBldJobDesc->OverlapChan = U16Val;
+            }
+#ifdef DEBUG_EFCT_JOB_CALC
+            AmbaLL_LogUInt5("ChanIdx[%d] IsOverLap[%d] Rot[%d] OverlapChan[0x%X]",
+                    ChanIdx, IsOverLap, pEffChan->RotateFlip, pBldJobDesc->OverlapChan, 0U);
+#endif
+        }
+#ifdef PPSTRM_INDPT_INT_BLD_BUFFER
+        if ((pBufDesc->Y2YBufId == DSP_EFCT_INVALID_IDX) ||
+            (AlwaysAllocIntBuffer == 1U)) {
+#else
+        if (pBufDesc->Y2YBufId == DSP_EFCT_INVALID_IDX) {
+#endif
+            DSP_FindEmptyBit(pEffectBufMask,
+                             pResource->EffectLogicBufNum,
+                             &pBufDesc->Y2YBufId,
+                             0U/*FindOnly*/,
+                             EFFECT_BUF_MASK_DEPTH);
+            if (pBufDesc->Y2YBufId == DSP_EFCT_INVALID_IDX) {
+                AmbaLL_LogUInt5("  No Buf for Y2YOut 0x%X%08X%08X%08X",
+                                    pEffectBufMask[3], pEffectBufMask[2],
+                                    pEffectBufMask[1], pEffectBufMask[0], 0U);
+                Rval = DSP_ERR_0006;
+            } else {
+                pBldJobDesc->NeedY2YBuf = BLD_JOB_Y2Y_BUF_NEW_INT_DUMMY;
+                FirstY2YBuf = 1U;
+            }
+        } else {
+            if (FirstY2YBuf == 0U) {
+                FirstY2YBuf = 1U;
+                pBldJobDesc->NeedY2YBuf = BLD_JOB_Y2Y_BUF_NEW_INT_DUMMY;
+            } else {
+                pBldJobDesc->NeedY2YBuf = BLD_JOB_Y2Y_BUF_REUSE_INT_DUMMY;
+            }
+        }
+
+        pBldJobDesc->Src0BufIdx = pBufDesc->Y2YBufId;
+        pBldJobDesc->Src1BufIdx = pBufDesc->Y2YBufId;
+        pBldJobDesc->DestBufIdx = pBufDesc->OutputBufId;
+#ifdef DEBUG_EFCT_JOB_CALC
+        AmbaLL_LogUInt5("[IV]BldJob[%d] Src0[0x%X] Src1[0x%X] Dst[0x%X] Y2Y[%d]",
+                ChanIdx, pBldJobDesc->Src0BufIdx, pBldJobDesc->Src1BufIdx,
+                pBldJobDesc->DestBufIdx, pBldJobDesc->NeedY2YBuf);
+#endif
+        /*
+         * Extra Y2Y using full area instead of overlap area,
+         * Put temp Yuv from starting of temp buffer to prevent memory over-write
+         */
+        (void)dsp_osal_memcpy(&pBldJobDesc->Src0Win, pOrigEffChanWin, sizeof(AMBA_DSP_WINDOW_s));
+        (void)dsp_osal_memcpy(&pBldJobDesc->Src1Win, pOrigEffChanWin, sizeof(AMBA_DSP_WINDOW_s));
+        if ((pBldJobDesc->NeedY2YBuf == BLD_JOB_Y2Y_BUF_NEW_INT_DUMMY) ||
+            (pBldJobDesc->NeedY2YBuf == BLD_JOB_Y2Y_BUF_REUSE_INT_DUMMY)) {
+            pBldJobDesc->Src0Win.OffsetX = 0U;
+            pBldJobDesc->Src0Win.OffsetY = 0U;
+            pBldJobDesc->Src1Win.OffsetX = 0U;
+            pBldJobDesc->Src1Win.OffsetY = 0U;
+        }
+        (void)dsp_osal_memcpy(&pBldJobDesc->DestWin,
+                              &pEffChan->Window,
+                              sizeof(AMBA_DSP_WINDOW_s));
+
+        pBldJobDesc->AlphaAddr = 0x0U; //any dummy address
+        pBldJobDesc->AlphaPitch = pEffChan->Window.Width;
+
+        if ((pBufDesc->LastBldIdx == DSP_EFCT_INVALID_IDX) ||
+            (ChanIdx > pBufDesc->LastBldIdx)) {
+            pBufDesc->LastBldIdx = ChanIdx;
+        }
+        if ((pBufDesc->FirstBldIdx == DSP_EFCT_INVALID_IDX) ||
+            (ChanIdx < pBufDesc->FirstBldIdx)) {
+            pBufDesc->FirstBldIdx = ChanIdx;
+        }
+        if ((pBufDesc->FirstY2YBldIdx == DSP_EFCT_INVALID_IDX) ||
+            (ChanIdx < pBufDesc->FirstY2YBldIdx)) {
+            pBufDesc->FirstY2YBldIdx = ChanIdx;
+        }
+#ifdef PPSTRM_SWITCH_BETWEEN_PASSTHROUGH_AND_BLENDING
+        DSP_ClearBit(&PassThruChanMask, ChanIdx);
+#endif
+    }
+
+    *pFirstY2YBuf = FirstY2YBuf;
+    return Rval;
+}
+
+/*
+ * Currently only consider following case :
+ *  - VR case with 2 Copy 2 Blend
+ *  - AVM case with 4 copy 4 Blend
+ *  - AVM case with 2 copy 2 Blend
+ */
+UINT32 HL_CalcEffectPostPJob(UINT16 YuvStrmIdx, CTX_YUV_STRM_LAYOUT_s *pYuvStrmLayout)
+{
+    UINT8 FirstY2YBuf = 0U;
+    UINT16 ChanIdx;
+    UINT32 Rval;
+    UINT32 EffectBufMask[EFFECT_BUF_MASK_DEPTH];
+    AMBA_DSP_WINDOW_s OrigEffChanWin = {0}; //BeforeRotate
+    CTX_YUV_STRM_INFO_s *YuvStrmInfo = HL_CtxYuvStrmInfoPtr;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    DSP_EFFECT_BUF_DESC_s *pBufDesc;
+    const DSP_EFFECT_BUF_DESC_s *pCurrentBufDesc;
+    const AMBA_DSP_LIVEVIEW_CHANNEL_WINDOW_s *pEffChan;
+#ifdef PPSTRM_SWITCH_BETWEEN_PASSTHROUGH_AND_BLENDING
+    UINT32 PassThruChanMask = 0U;
+#endif
+
+    HL_GetResourcePtr(&Resource);
+    (void)dsp_osal_memcpy(EffectBufMask,
+                          &Resource->EffectLogicBufMask[0U],
+                          sizeof(UINT32)*EFFECT_BUF_MASK_DEPTH);
+
+    HL_GetYuvStrmInfoPtr(YuvStrmIdx, &YuvStrmInfo);
+    pCurrentBufDesc = &YuvStrmInfo->Layout.EffectBufDesc;
+    pBufDesc = &pYuvStrmLayout->EffectBufDesc;
+
+    Rval = HL_CalcEffectPostPJobInit(Resource,
+                                     pCurrentBufDesc,
+                                     pBufDesc,
+                                     pYuvStrmLayout,
+                                     EffectBufMask);
+    if (Rval != DSP_ERR_NONE) {
+        AmbaLL_LogUInt5("HL_CalcEffectPostPJobInit Rval[0x%X]", Rval, 0U, 0U, 0U, 0U);
+    }
+
+    if (Rval == DSP_ERR_NONE) {
+        for (ChanIdx = 0U; ChanIdx < pYuvStrmLayout->NumChan; ChanIdx++) {
+            pEffChan = &pYuvStrmLayout->ChanCfg[ChanIdx];
+
+            if (HL_GET_ROTATE(pEffChan->RotateFlip) == DSP_ROTATE_90_DEGREE) {
+                OrigEffChanWin.Width = pEffChan->Window.Height;
+                OrigEffChanWin.Height = pEffChan->Window.Width;
+                OrigEffChanWin.OffsetX = pEffChan->Window.OffsetX;
+                OrigEffChanWin.OffsetY = pEffChan->Window.OffsetY;
+            } else {
+                (void)dsp_osal_memcpy(&OrigEffChanWin,
+                                      &pEffChan->Window,
+                                      sizeof(AMBA_DSP_WINDOW_s));
+            }
+
+            if (pEffChan->BlendNum > 0U) {
+                Rval = HL_CalcEffectPostPJobBld(ChanIdx,
+                                                Resource,
+                                                pEffChan,
+                                                &OrigEffChanWin,
+                                                pYuvStrmLayout,
+                                                pBufDesc,
+                                                &FirstY2YBuf,
+                                                EffectBufMask);
+                if (Rval != DSP_ERR_NONE) {
+                    AmbaLL_LogUInt5("HL_CalcEffectPostPJobBld Rval[0x%X]", Rval, 0U, 0U, 0U, 0U);
+                }
+            } else {
+                Rval = HL_CalcEffectPostPJobRotFlip(ChanIdx,
+                                                    Resource,
+                                                    pEffChan,
+                                                    &OrigEffChanWin,
+                                                    pYuvStrmLayout,
+                                                    pBufDesc,
+                                                    &FirstY2YBuf,
+                                                    EffectBufMask);
+                if (Rval != DSP_ERR_NONE) {
+                    AmbaLL_LogUInt5("HL_CalcEffectPostPJobRotFlip Rval[0x%X]", Rval, 0U, 0U, 0U, 0U);
+                }
+            }
+#ifdef PPSTRM_SWITCH_BETWEEN_PASSTHROUGH_AND_BLENDING
+            if ((pBufDesc->FirstPsThIdx == DSP_EFCT_INVALID_IDX) ||
+                (i < pBufDesc->FirstPsThIdx)) {
+                pBufDesc->FirstPsThIdx = ChanIdx;
+            }
+            if ((pBufDesc->LastPsThIdx == DSP_EFCT_INVALID_IDX) ||
+                (i > pBufDesc->LastPsThIdx)) {
+                pBufDesc->LastPsThIdx = ChanIdx;
+            }
+#endif
+        }
+#ifdef PPSTRM_SWITCH_BETWEEN_PASSTHROUGH_AND_BLENDING
+        /* Convert First/Last Passthrough channel index */
+        DSP_Bit2U16Idx(PassThruChanMask, &pBufDesc->FirstPsThIdx);
+        DSP_ReverseBit2U16Idx(PassThruChanMask, &pBufDesc->LastPsThIdx);
+#endif
+    }
+
+    HL_GetResourceLock(&Resource);
+    (void)dsp_osal_memcpy(&Resource->EffectLogicBufMask[0U],
+                          &EffectBufMask[0U],
+                          sizeof(UINT32)*EFFECT_BUF_MASK_DEPTH);
+    HL_GetResourceUnLock();
+
+    return Rval;
+}
+
+static inline UINT32 HL_EffPostPReBaseExtraOut(const UINT16 *pYuvIdxOrder,
+                                               const UINT16 ReBaseChanId,
+                                               const UINT8 EffectLogicBufNum,
+                                               UINT32 *pEffectBufMask,
+                                               DSP_EFFECT_BUF_DESC_s *pBufDesc,
+                                               CTX_YUV_STRM_LAYOUT_s *pYuvStrmLayout)
+{
+    UINT8 TotalEff = 0U;
+    UINT8 FirstY2YBuf = 1U;
+    UINT16 CfgIdx, ChanId, ChanIdx;
+    UINT16 OutBufId = DSP_EFCT_INVALID_IDX;
+    UINT32 Rval = OK;
+    DSP_EFFECT_BLEND_JOB_s *pBldJobDesc;
+    const AMBA_DSP_LIVEVIEW_CHANNEL_WINDOW_s *pEffChan;
+
+    pBldJobDesc = &pYuvStrmLayout->BlendJobDesc[ReBaseChanId][0U];
+    for (ChanIdx=0U; ChanIdx<pYuvStrmLayout->NumChan; ChanIdx++) {
+        if (ChanIdx == ReBaseChanId) {
+            continue;
+        }
+        pEffChan = &pYuvStrmLayout->ChanCfg[ChanIdx];
+        TotalEff += pEffChan->BlendNum;
+        if (pEffChan->RotateFlip != AMBA_DSP_ROTATE_0) {
+            TotalEff++;
+        }
+    }
+    if (TotalEff > 1U) {
+        DSP_FindEmptyBit(pEffectBufMask,
+                         EffectLogicBufNum,
+                         &OutBufId,
+                         0U/*FindOnly*/,
+                         EFFECT_BUF_MASK_DEPTH);
+    } else {
+        OutBufId = pBufDesc->Y2YBufId;
+    }
+    if (OutBufId == DSP_EFCT_INVALID_IDX) {
+        AmbaLL_LogUInt5("  No Buf for Y2YOut 0x%X%X%X%X",
+                pEffectBufMask[3], pEffectBufMask[2], pEffectBufMask[1], pEffectBufMask[0], 0U);
+        Rval = DSP_ERR_0006;
+    } else {
+#ifdef DEBUG_EFCT_JOB_CALC
+        AmbaLL_LogUInt5("HL_EffPostPReBaseExtraOut ChanId %d Y2YBufId %u->%u NeedY2YBuf:%u",
+                ReBaseChanId, pBufDesc->Y2YBufId, OutBufId, pBldJobDesc->NeedY2YBuf, 0);
+#endif
+        //use pBufDesc->Y2YBufId
+        if (pBldJobDesc->NeedY2YBuf == BLD_JOB_Y2Y_BUF_NEW_INT_DUMMY) {
+            pBldJobDesc->NeedY2YBuf = BLD_JOB_Y2Y_BUF_NEW_OUT_INT_DUMMY;
+        } else {
+            pBldJobDesc->NeedY2YBuf = BLD_JOB_Y2Y_BUF_NEW_OUT_INT;
+        }
+        pBldJobDesc->ReBaseOutBufIdx = pBufDesc->Y2YBufId;
+        pBldJobDesc->Src0Win.OffsetX = 0U;
+        pBldJobDesc->Src0Win.OffsetY = 0U;
+
+        //change other chan using new Y2YBufId
+        pBufDesc->Y2YBufId = OutBufId;
+        for (CfgIdx=1U; CfgIdx<pYuvStrmLayout->NumChan; CfgIdx++) {
+            UINT16 BldIdx, BldNum;
+
+            ChanId = pYuvIdxOrder[CfgIdx];
+            BldNum = pYuvStrmLayout->ChanCfg[ChanId].BlendNum;
+            for (BldIdx=0U; BldIdx<BldNum; BldIdx++) {
+                DSP_EFFECT_BLEND_JOB_s *pOtherBldJob = &pYuvStrmLayout->BlendJobDesc[ChanId][BldIdx];
+
+                if (FirstY2YBuf == 1U) {
+                    FirstY2YBuf = 0U;
+#ifdef DEBUG_EFCT_JOB_CALC
+                    AmbaLL_LogUInt5("HL_EffPostPReBaseExtraOut change0 CfgIdx:%u ChanId:%d BldIdx:%u Src0BufIdx:%u NeedY2YBuf:%u",
+                            CfgIdx, ChanId, BldIdx, pOtherBldJob->Src0BufIdx, pOtherBldJob->NeedY2YBuf);
+#endif
+                    pOtherBldJob->NeedY2YBuf = BLD_JOB_Y2Y_BUF_NEW_INT;
+                } else {
+#ifdef DEBUG_EFCT_JOB_CALC
+                    AmbaLL_LogUInt5("HL_EffPostPReBaseExtraOut change1 CfgIdx:%u ChanId:%d BldIdx:%u Src0BufIdx:%u NeedY2YBuf:%u",
+                            CfgIdx, ChanId, BldIdx, pOtherBldJob->Src0BufIdx, pOtherBldJob->NeedY2YBuf);
+#endif
+                    pOtherBldJob->NeedY2YBuf = BLD_JOB_Y2Y_BUF_REUSE_INT;
+                }
+                pOtherBldJob->Src0BufIdx = OutBufId;
+            }
+        }
+    }
+    return Rval;
+}
+
+#ifdef PPSTRM_REBASE_CHK_OVERLAP
+static inline UINT32 HL_EffPostPReBaseBld(const UINT16 *pYuvIdxOrder,
+                                          const UINT16 ReBaseChanId,
+                                          CTX_YUV_STRM_LAYOUT_s *pYuvStrmLayout,
+                                          AMBA_DSP_LIVEVIEW_CHANNEL_WINDOW_s *pEffChan)
+{
+    UINT16 CfgIdx, ChanId, BldIdx;
+    UINT16 BldNum = pEffChan->BlendNum;
+    UINT32 Rval = OK;
+    DSP_EFFECT_BLEND_JOB_s *pBldJobDesc;
+
+    //change ReBaseChanId NeedY2YBuf
+    for (BldIdx=0U; BldIdx<BldNum; BldIdx++) {
+        pBldJobDesc = &pYuvStrmLayout->BlendJobDesc[ReBaseChanId][BldIdx];
+#ifdef DEBUG_EFCT_JOB_CALC
+        AmbaLL_LogUInt5("HL_EffPostPReBaseBld ReBaseChanId:%u BldIdx:%d NeedY2YBuf %u->%u",
+                ReBaseChanId, BldIdx, pBldJobDesc->NeedY2YBuf, BLD_JOB_Y2Y_BUF_NEW_INT, 0U);
+#endif
+        pBldJobDesc->NeedY2YBuf = BLD_JOB_Y2Y_BUF_NEW_INT;
+    }
+
+    //check other chan NeedY2YBuf
+    for (CfgIdx=1U; CfgIdx<pYuvStrmLayout->NumChan; CfgIdx++) {
+        UINT8 FirstY2YBuf = 1U;
+
+        ChanId = pYuvIdxOrder[CfgIdx];
+        BldNum = pYuvStrmLayout->ChanCfg[ChanId].BlendNum;
+        for (BldIdx=0U; BldIdx<BldNum; BldIdx++) {
+            DSP_EFFECT_BLEND_JOB_s *pOtherBldJob = &pYuvStrmLayout->BlendJobDesc[ChanId][BldIdx];
+
+            if (FirstY2YBuf == 1U) {
+                FirstY2YBuf = 0U;
+#ifdef DEBUG_EFCT_JOB_CALC
+                AmbaLL_LogUInt5("HL_EffPostPReBaseBld change0 CfgIdx:%u ChanId:%d BldIdx:%u Src0BufIdx:%u NeedY2YBuf:%u",
+                        CfgIdx, ChanId, BldIdx, pOtherBldJob->Src0BufIdx, pOtherBldJob->NeedY2YBuf);
+#endif
+                pOtherBldJob->NeedY2YBuf = BLD_JOB_Y2Y_BUF_NEW_INT;
+            } else {
+#ifdef DEBUG_EFCT_JOB_CALC
+                AmbaLL_LogUInt5("HL_EffPostPReBaseBld change1 CfgIdx:%u ChanId:%d BldIdx:%u Src0BufIdx:%u NeedY2YBuf:%u",
+                        CfgIdx, ChanId, BldIdx, pOtherBldJob->Src0BufIdx, pOtherBldJob->NeedY2YBuf);
+#endif
+                pOtherBldJob->NeedY2YBuf = BLD_JOB_Y2Y_BUF_REUSE_INT;
+            }
+        }
+    }
+
+    return Rval;
+}
+#endif
+
+UINT32 HL_EffPostPReBase(UINT16 YuvStrmIdx,
+                         const UINT16 *pYuvIdxOrder,
+                         CTX_YUV_STRM_LAYOUT_s *pYuvStrmLayout)
+{
+    UINT16 CfgIdx, ReBaseChanId;
+    UINT32 Rval = OK;
+    UINT32 EffectBufMask[EFFECT_BUF_MASK_DEPTH];
+    CTX_YUV_STRM_INFO_s *YuvStrmInfo = HL_CtxYuvStrmInfoPtr;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    DSP_EFFECT_BUF_DESC_s *pBufDesc;
+    const AMBA_DSP_LIVEVIEW_CHANNEL_WINDOW_s *pEffChan;
+#ifdef PPSTRM_REBASE_CHK_OVERLAP
+    AMBA_DSP_WINDOW_s OverLapWin = {0};
+    UINT8 IsOverLap = 0U;
+#endif
+
+    HL_GetYuvStrmInfoPtr(YuvStrmIdx, &YuvStrmInfo);
+    pBufDesc = &pYuvStrmLayout->EffectBufDesc;
+
+    CfgIdx = 0U;
+    ReBaseChanId = pYuvIdxOrder[CfgIdx];
+    pEffChan = &pYuvStrmLayout->ChanCfg[ReBaseChanId];
+#ifdef DEBUG_EFCT_JOB_CALC
+    AmbaLL_LogUInt5("HL_EffPostPReBase CfgIdx:%u ChanId %d Rot %d BlendNum:%u",
+            CfgIdx, ReBaseChanId, pEffChan->RotateFlip, pEffChan->BlendNum, 0U);
+#endif
+
+    HL_GetResourcePtr(&Resource);
+    (void)dsp_osal_memcpy(EffectBufMask,
+                          &Resource->EffectLogicBufMask[0U],
+                          sizeof(UINT32)*EFFECT_BUF_MASK_DEPTH);
+#ifdef PPSTRM_REBASE_CHK_OVERLAP
+    //check chan0 overlap
+    for (CfgIdx=1U; CfgIdx<pYuvStrmLayout->NumChan; CfgIdx++) {
+        ChanId = pYuvIdxOrder[CfgIdx];
+        (void)HL_FindOverlapeRegion(&pYuvStrmLayout->ChanCfg[ReBaseChanId].Window,
+                                    &pYuvStrmLayout->ChanCfg[ChanId].Window,
+                                    &OverLapWin,
+                                    &IsOverLap);
+        if (IsOverLap > 0U) {
+            AmbaLL_LogUInt5("HL_EffPostPReBase OverLap ChanId %d OverLapWin: %u %u %u %u",
+                    ChanId,
+                    OverLapWin.OffsetX, OverLapWin.OffsetY,
+                    OverLapWin.Width, OverLapWin.Height);
+        }
+    }
+
+    if (IsOverLap > 0U) {   //output to new y2y buffer
+        Rval = HL_EffPostPReBaseExtraOut(pYuvIdxOrder,
+                                         ReBaseChanId,
+                                         Resource->EffectLogicBufNum,
+                                         EffectBufMask,
+                                         pBufDesc,
+                                         pYuvStrmLayout);
+    } else if (pEffChan->BlendNum > 0U) { //if no overlap, but has rot/flip
+        Rval = HL_EffPostPReBaseBld(pYuvIdxOrder,
+                                    ReBaseChanId,
+                                    pYuvStrmLayout,
+                                    pEffChan);
+
+    } else if (pEffChan->RotateFlip != AMBA_DSP_ROTATE_0) {   //if no overlap, but has bld job, erase it
+        //TBD
+    } else {
+        //direct out, do nothing
+    }
+#endif
+
+    if ((pEffChan->BlendNum > 0U) ||
+        (pEffChan->RotateFlip != AMBA_DSP_ROTATE_0)) {   //output to new y2y buffer
+        Rval = HL_EffPostPReBaseExtraOut(pYuvIdxOrder,
+                                         ReBaseChanId,
+                                         Resource->EffectLogicBufNum,
+                                         EffectBufMask,
+                                         pBufDesc,
+                                         pYuvStrmLayout);
+    } else {
+        //direct out, do nothing
+    }
+
+    if (Rval == OK) {
+        HL_GetResourceLock(&Resource);
+        (void)dsp_osal_memcpy(&Resource->EffectLogicBufMask[0U],
+                              &EffectBufMask[0U],
+                              sizeof(UINT32)*EFFECT_BUF_MASK_DEPTH);
+        HL_GetResourceUnLock();
+    }
+
+    return Rval;
+}
+
+UINT32 HL_ComposeEfctSyncJobId(DSP_EFCT_SYNC_JOB_ID_s *JobId, UINT16 YuvStrmIdx, UINT16 SeqIndx, UINT16 TypeBit, UINT16 SubJobIdx)
+{
+    UINT32 Rval = OK;
+
+    if (JobId == NULL) {
+        Rval = DSP_ERR_0000;
+    } else {
+        if (YuvStrmIdx != EFCT_SYNC_JOB_ID_DONTCARE) {
+            JobId->YuvStrmId = (UINT8)YuvStrmIdx;
+        }
+        if (SeqIndx != EFCT_SYNC_JOB_ID_DONTCARE) {
+            JobId->SeqIdx = (UINT8)SeqIndx;
+        }
+        if (TypeBit != EFCT_SYNC_JOB_ID_DONTCARE) {
+            JobId->JobTypeBit = (UINT8)TypeBit;
+        }
+        if (SubJobIdx != EFCT_SYNC_JOB_ID_DONTCARE) {
+            JobId->SubJobIdx = (UINT8)SubJobIdx;
+        }
+#if 0
+        {
+            UINT32 U32Val;
+            (void)dsp_osal_memcpy(&U32Val , JobId, sizeof(UINT32));
+            AmbaLL_LogUInt5("  Compose SyncJobId 0x%X", U32Val, 0U, 0U, 0U, 0U);
+        }
+#endif
+    }
+
+    return Rval;
+}
+
+UINT32 HL_IsVirtualVinIdx(UINT16 VinId, UINT8 *IsVirtVin)
+{
+    UINT32 Rval = OK;
+
+    if (VinId == DSP_VIRT_VIN_IDX_INVALID) {
+        *IsVirtVin= (UINT8)0U;
+    } else {
+        if (VinId >= DSP_VIN_MAX_NUM) {
+            *IsVirtVin= (UINT8)0U;
+            Rval = DSP_ERR_0001;
+        } else {
+            if (VinId >= AMBA_DSP_MAX_VIN_NUM) {
+                *IsVirtVin = (UINT8)1U;
+            } else {
+                *IsVirtVin = (UINT8)0U;
+            }
+        }
+    }
+
+    return Rval;
+}
+
+void HL_GetVirtualVinNum(UINT16 *pVirtVinNum, UINT16 *pTdVirtVinNum)
+{
+    UINT32 Cnt = 0U, TdCnt = 0U;
+    CTX_DSP_INST_INFO_s DspInstInfo = {0};
+    UINT32 TdVinMask;
+
+    /*
+     * Following features may need VirtualVin
+     * 1) PIV Raw2Yuv
+     * 2) PIV Yuv2Yuv
+     * 3) Yuv2Jpg, Yuv2Hevc, Yuv2Avc
+     * 4) RawEncode regression
+     * 5) AVM to have transparent chassis
+     * 6) VOUT Pip with arbitrary YuvInput
+     * 7) Vin TimeDivision (last group)
+     * 8) dec to vproc
+     * 9) TestEnc
+     */
+
+    HL_GetDspInstance(HL_MTX_OPT_ALL, &DspInstInfo);
+    DSP_Bit2Cnt(DspInstInfo.VirtVinBitMask, &Cnt);
+    if (DspInstInfo.TdStartVirtVinId != DSP_VIRT_VIN_IDX_INVALID) {
+        TdVinMask = DspInstInfo.VirtVinBitMask >> DspInstInfo.TdStartVirtVinId;
+        DSP_Bit2Cnt(TdVinMask, &TdCnt);
+        *pTdVirtVinNum = (UINT16)TdCnt;
+    }
+    *pVirtVinNum = (UINT16)(Cnt - TdCnt);
+}
+
+UINT32 HL_GetTimeDivisionVirtVinInfo(UINT16 VinId, UINT16 *PhysicalVin)
+{
+    UINT8 IsVirtVin = 0U, ExitILoop;
+    UINT16 i, j, VinExist;
+    UINT32 Rval = OK;
+    CTX_VIN_INFO_s VinInfo = {0};
+
+    (void)HL_IsVirtualVinIdx(VinId, &IsVirtVin);
+    if (IsVirtVin > 0U) {
+        ExitILoop = 0U;
+        for (i = 0; i < AMBA_DSP_MAX_VIN_NUM; i++) {
+            VinExist = 0U;
+            HL_GetVinExistence(i, &VinExist);
+            if (VinExist > 0U) {
+                HL_GetVinInfo(HL_MTX_OPT_ALL, i, &VinInfo);
+                if (VinInfo.TimeDivisionNum[0U] > 1U) {
+                    for (j = 1U; j < VinInfo.TimeDivisionNum[0U]; j++) {
+                        if (VinId == (VinInfo.TimeDivisionVinId[0U][j] + AMBA_DSP_MAX_VIN_NUM)) {
+                            ExitILoop = 1U;
+                            *PhysicalVin = i;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (ExitILoop == 1U) {
+                break;
+            }
+        }
+    } else {
+        *PhysicalVin = DSP_VIRT_VIN_IDX_INVALID;
+    }
+
+    return Rval;
+}
+
+UINT32 HL_GetVprocNum(UINT16 *Num)
+{
+    UINT32 Rval = OK, Cnt = 0U;
+    CTX_DSP_INST_INFO_s DspInstInfo = {0};
+
+    HL_GetDspInstance(HL_MTX_OPT_ALL, &DspInstInfo);
+    DSP_Bit2Cnt(DspInstInfo.VprocBitMask, &Cnt);
+    *Num = (UINT16)Cnt;
+    return Rval;
+}
+
+UINT32 HL_GetDramMipiYuvEnable(void)
+{
+    UINT32 Enable = 0U;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    UINT16 i;
+
+    HL_GetResourcePtr(&Resource);
+    for (i=0U; i<Resource->MaxViewZoneNum; i++) {
+        HL_GetViewZoneInfoPtr(i, &ViewZoneInfo);
+
+        if (ViewZoneInfo->Pipe == (UINT8)DSP_DRAM_PIPE_MIPI_YUV) {
+            Enable = 1U;
+            break;
+        }
+    }
+
+    return Enable;
+}
+
+UINT32 HL_IsSliceMode(UINT8 *IsSliceMode)
+{
+    UINT32 Rval = OK;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    UINT16 i;
+    UINT8 BitMask;
+
+    HL_GetResourcePtr(&Resource);
+
+    BitMask = *IsSliceMode;
+    for (i=0U; i<Resource->MaxViewZoneNum; i++) {
+        HL_GetViewZoneInfoPtr(i, &ViewZoneInfo);
+
+        if (ViewZoneInfo->SliceNumCol > (UINT8)1U) {
+            DSP_SetU8Bit(&BitMask, SLICE_MODE_HOR_IDX);
+        }
+        if (ViewZoneInfo->SliceNumRow > (UINT8)1U) {
+            DSP_SetU8Bit(&BitMask, SLICE_MODE_VER_IDX);
+        }
+    }
+    *IsSliceMode = BitMask;
+
+    return Rval;
+}
+
+UINT32 HL_IsTileMode(UINT8 *pIsTileMode)
+{
+    UINT8 IsSliceMode = (UINT8)0U;
+    UINT16 MaxVinWidth = 0U, MaxVinHeight = 0U;
+    UINT16 MaxMainWidth = 0U, MaxMainHeight = 0U;
+    UINT32 Rval = OK;
+
+    (void)HL_IsSliceMode(&IsSliceMode);
+    HL_GetSystemVprocInputMaxWindow(&MaxVinWidth, &MaxVinHeight);
+    (void)HL_GetSystemVprocPinMaxWindow(DSP_VPROC_PIN_MAIN, &MaxMainWidth, &MaxMainHeight);
+
+    // Simple Rule of tile : Vin > 1920 or MainW > 1920
+    if ((MaxVinWidth > SEC2_MAX_IN_WIDTH) ||
+        (MaxMainWidth > SEC2_MAX_OUT_WIDTH) ||
+        (IsSliceMode > (UINT8)0U)) {
+        *pIsTileMode = 1U;
+    } else {
+        *pIsTileMode = 0U;
+    }
+
+    return Rval;
+}
+
+UINT32 HL_FillSliceCapLine(UINT16 ViewZoneId, UINT16 *pCapLineCfg, UINT16 IntcNumMinusOne)
+{
+    UINT32 Rval = OK;
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    UINT16 i, SliceHeight = 0U;
+    UINT16 ExtraCapLine;
+    UINT16 Factor = IntcNumMinusOne + 1U;
+
+    if (pCapLineCfg == NULL) {
+        Rval = DSP_ERR_0000;
+    } else {
+        HL_GetViewZoneInfoPtr(ViewZoneId, &ViewZoneInfo);
+
+        ExtraCapLine = (ViewZoneInfo->VinDragLine > 0U)? ViewZoneInfo->VinDragLine: CV2X_EXTRA_SLICE_CAP_LINE;
+
+//FIXME, YUYV case
+        (void)HL_CalcVideoTileHeight(ViewZoneInfo->CapWindow.Height, ViewZoneInfo->SliceNumRow, &SliceHeight);
+        if (ViewZoneInfo->HdrBlendNumMinusOne > 0U) {
+            UINT16 HdrOffset, HdrFrmNum;
+
+            HdrOffset = (UINT16)ViewZoneInfo->HdrRawYOffset[ViewZoneInfo->HdrBlendNumMinusOne];
+            HdrFrmNum = (UINT16)ViewZoneInfo->HdrBlendNumMinusOne + 1U;
+            for (i = 0U; i < ViewZoneInfo->SliceNumRow; i++) {
+                if (i == ((UINT16)ViewZoneInfo->SliceNumRow - 1U)) {
+                    pCapLineCfg[i] = HdrOffset;
+                    pCapLineCfg[i] += ((ViewZoneInfo->CapWindow.OffsetY + ViewZoneInfo->CapWindow.Height)*HdrFrmNum);
+                    pCapLineCfg[i] -= 1U;
+                } else {
+                    pCapLineCfg[i] = HdrOffset;
+                    pCapLineCfg[i] += (((ViewZoneInfo->CapWindow.OffsetY + (SliceHeight*(i+1U))) + ExtraCapLine)*HdrFrmNum);
+                    pCapLineCfg[i] -= 1U;
+                }
+                pCapLineCfg[i] *= Factor;
+            }
+        } else {
+            for (i = 0U; i < ViewZoneInfo->SliceNumRow; i++) {
+                if (i == ((UINT16)ViewZoneInfo->SliceNumRow - 1U)) {
+                    pCapLineCfg[i] = ViewZoneInfo->CapWindow.OffsetY + ViewZoneInfo->CapWindow.Height;
+                } else {
+                    pCapLineCfg[i] = (ViewZoneInfo->CapWindow.OffsetY + (SliceHeight*(i+1U))) + ExtraCapLine;
+                }
+                pCapLineCfg[i] *= Factor;
+            }
+        }
+    }
+
+    return Rval;
+}
+
+#ifdef SUPPORT_DSP_LDY_SLICE
+UINT32 HL_FillSliceLayoutCfg(UINT16 ColNum, UINT16 RowNum, UINT16 Width, UINT16 Height, DSP_SLICE_LAYOUT_s *pSliceLayout)
+{
+    UINT32 Rval = OK;
+    UINT16 i, j, LayoutIdx;
+
+    if ((ColNum == 0U) ||
+        (RowNum == 0U) ||
+        (Width == 0U) ||
+        (Height == 0U)) {
+        Rval = DSP_ERR_0001;
+    } else if (pSliceLayout == NULL) {
+        Rval = DSP_ERR_0000;
+    } else {
+        for (j=0U; j<RowNum; j++) {
+            for (i=0U; i<ColNum; i++) {
+                LayoutIdx = (j*ColNum) + i;
+
+                pSliceLayout[LayoutIdx].TileColIdx = (UINT8)i;
+                pSliceLayout[LayoutIdx].TileRowIdx = (UINT8)j;
+                //FIXME consider overlap
+                (void)HL_CalcVideoTileWidth(Width,
+                                            ColNum,
+                                            &pSliceLayout[LayoutIdx].TileColWidth);
+                (void)HL_CalcVideoTileHeight(Height, RowNum, &pSliceLayout[LayoutIdx].TileRowHeight);
+                pSliceLayout[LayoutIdx].TileRowHeight = ALIGN_NUM16(pSliceLayout[LayoutIdx].TileRowHeight, 16U);
+
+                pSliceLayout[LayoutIdx].TileColStart = i*pSliceLayout[LayoutIdx].TileColWidth;
+                pSliceLayout[LayoutIdx].TileRowStart = j*pSliceLayout[LayoutIdx].TileRowHeight;
+
+                if (i == (ColNum - 1U)) {
+                    pSliceLayout[LayoutIdx].TileColWidth = Width - pSliceLayout[LayoutIdx].TileColStart;
+                }
+
+                if (j == (RowNum - 1U)) {
+                    pSliceLayout[LayoutIdx].TileRowHeight = Height - pSliceLayout[LayoutIdx].TileRowStart;
+                }
+
+                //AmbaLL_LogUInt5("SliceLayout[%d][%d] LayoutIdx[%d]", i, j, LayoutIdx, 0U, 0U);
+                //AmbaLL_LogUInt5("     Idx[%d][%d]", pSliceLayout[LayoutIdx].TileColIdx, pSliceLayout[LayoutIdx].TileRowIdx,
+                //                                    0U, 0U, 0U);
+                //AmbaLL_LogUInt5("     Win[%d %d] Offset[%d %d]", pSliceLayout[LayoutIdx].TileColWidth, pSliceLayout[LayoutIdx].TileRowHeight,
+                //                                    pSliceLayout[LayoutIdx].TileColStart, pSliceLayout[LayoutIdx].TileRowStart, 0U);
+
+            }
+        }
+    }
+
+    return Rval;
+}
+#endif
+
+UINT32 HL_GetReconPostStatus(UINT16 StrmIdx, UINT16 *Status)
+{
+    UINT32 Rval = OK;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    UINT16 i, Idx;
+
+    HL_GetResourcePtr(&Resource);
+
+    for (i=0U; i<Resource->MaxViewZoneNum; i++) {
+        HL_GetViewZoneInfoPtr(i, &ViewZoneInfo);
+        if (ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_RECON) {
+            DSP_Bit2U16Idx(ViewZoneInfo->SourceVin, &Idx);
+            if (StrmIdx == Idx) {
+                DSP_SetU16Bit(Status, RECON_POST_2_VPROC_BIT);
+                break;
+            }
+        }
+    }
+
+    return Rval;
+}
+
+UINT32 HL_ComposeStlProcJobId(DSP_STL_PROC_JOB_ID_s *JobId, UINT16 DatFmt, UINT16 OutputPinMask, UINT16 IsExtMem, UINT16 VprocId)
+{
+    UINT32 Rval = OK;
+
+    if (JobId == NULL) {
+        Rval = DSP_ERR_0000;
+    } else {
+        if (DatFmt != STL_PROC_JOB_ID_DONTCARE) {
+            JobId->DataFmt = (UINT8)DatFmt;
+        }
+        if (OutputPinMask != STL_PROC_JOB_ID_DONTCARE) {
+            JobId->OutputPin = (UINT8)OutputPinMask;
+        }
+        if (IsExtMem != STL_PROC_JOB_ID_DONTCARE) {
+            JobId->ExtMem = (UINT8)IsExtMem;
+        }
+        if (VprocId != STL_PROC_JOB_ID_DONTCARE) {
+            JobId->VprocId = (UINT8)VprocId;
+        }
+#if 0
+        {
+            UINT32 U32Val;
+            (void)dsp_osal_memcpy(&U32Val , JobId, sizeof(UINT32));
+            AmbaLL_LogUInt5("  Compose StlProcJobId 0x%X", U32Val, 0U, 0U, 0U, 0U);
+        }
+#endif
+    }
+
+    return Rval;
+}
+
+UINT32 HL_GetSystemVinMaxViewZoneNum(UINT16 VinId)
+{
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    CTX_VID_DEC_INFO_s VidDecInfo = {0};
+    UINT16 i, ViewZoneVinId;
+    UINT32 ViewZonNum = 0;
+    UINT16 DecId;
+
+    HL_GetResourcePtr(&Resource);
+
+    for (i = 0U; i < Resource->MaxViewZoneNum; i++) {
+        HL_GetViewZoneInfoPtr(i, &ViewZoneInfo);
+
+        if (ViewZoneInfo->Pipe == DSP_DRAM_PIPE_RAW_ONLY) {
+            continue;
+        }
+
+        if ((ViewZoneInfo->InputFromMemory != VIN_SRC_FROM_DEC) &&
+            (ViewZoneInfo->InputFromMemory != VIN_SRC_FROM_RECON)) {
+            (void)HL_GetViewZoneVinId(i, &ViewZoneVinId);
+            if (ViewZoneVinId == VinId) {
+                ViewZonNum++;
+            }
+        } else if (ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_DEC) {
+            DSP_Bit2U16Idx(ViewZoneInfo->SourceVin, &DecId);
+            HL_GetVidDecInfo(HL_MTX_OPT_ALL, DecId, &VidDecInfo);
+            if ((VidDecInfo.YuvInVirtVinId != DSP_VIRT_VIN_IDX_INVALID) &&
+                (VidDecInfo.YuvInVirtVinId == (VinId - AMBA_DSP_MAX_VIN_NUM))) {
+            #ifdef DUPLEX_DEC_SHARE_VIRT_VIN
+                ViewZonNum++;
+            #else
+                ViewZonNum = 1U;
+                break;
+            #endif
+            }
+        } else {
+            // DO NOTHING
+        }
+    }
+
+    return ViewZonNum;
+}
+
+void HL_GetVinExistence(UINT16 VinId, UINT16 *Exist)
+{
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    CTX_DSP_INST_INFO_s DspInstInfo = {0};
+
+    HL_GetResourcePtr(&Resource);
+    HL_GetDspInstance(HL_MTX_OPT_ALL, &DspInstInfo);
+
+    *Exist = 0U;
+    if (VinId < AMBA_DSP_MAX_VIN_NUM) {
+        if (1U == DSP_GetU16Bit(Resource->MaxVinBit, VinId, 1U)) {
+            *Exist = 1U;
+        }
+    } else {
+        if (1U == DSP_GetBit(DspInstInfo.VirtVinBitMask, ((UINT32)VinId - AMBA_DSP_MAX_VIN_NUM), 1U)) {
+            *Exist = 1U;
+        }
+    }
+}
+
+void HL_GetSystemVprocInputMaxWindow(UINT16 *pWidth, UINT16 *pHeight)
+{
+    CTX_RESOURCE_INFO_s *pResource = HL_CtxResInfoPtr;
+    CTX_DSP_INST_INFO_s DspInstInfo = {0};
+    CTX_VIN_INFO_s VinInfo = {0};
+    UINT16 i = 0U, VirtVinId;
+    UINT16 RescVinHeight;
+    CTX_VIEWZONE_INFO_s *pViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    UINT32 VinOI = 0U;
+    UINT16 ViewZoneVinId;
+
+    HL_GetResourcePtr(&pResource);
+    HL_GetDspInstance(HL_MTX_OPT_ALL, &DspInstInfo);
+
+    *pWidth = 0U;
+    *pHeight = 0U;
+
+    /*
+     * Check viewzone has MaxInput setting,
+     *   if YES, use it
+     *      NOT, use its Vin Window setting
+     */
+    for (i = 0U; i < pResource->ViewZoneNum; i++) {
+        HL_GetViewZoneInfoPtr(i, &pViewZoneInfo);
+        ViewZoneVinId = 0xFFFFU;
+        (void)HL_GetViewZoneVinId(i, &ViewZoneVinId);
+        if (pViewZoneInfo->Pipe == DSP_DRAM_PIPE_RAW_ONLY) {
+            if (ViewZoneVinId != 0xFFFFU) {
+                *pWidth = MAX2_16(*pWidth, CV5X_VPROC_DUMMY_SIZE);
+                *pHeight = MAX2_16(*pHeight, CV5X_VPROC_DUMMY_SIZE);
+            }
+        } else {
+            if ((pResource->MaxInputWidth[i] > 0U) &&
+                (pResource->MaxInputHeight[i] > 0U)) {
+                *pWidth = MAX2_16(*pWidth, pResource->MaxInputWidth[i]);
+                *pHeight = MAX2_16(*pHeight, pResource->MaxInputHeight[i]);
+            } else {
+                if (ViewZoneVinId != 0xFFFFU) {
+                    DSP_SetBit(&VinOI, ViewZoneVinId);
+                }
+            }
+        }
+    }
+
+    for (i = 0U; i < DSP_VIN_MAX_NUM; i++) {
+        if (i < AMBA_DSP_MAX_VIN_NUM) {
+            if (1U == DSP_GetU16Bit(pResource->MaxVinBit, i, 1U)) {
+                if (1U == DSP_GetBit(VinOI, i, 1U)) {
+                    HL_GetVinInfo(HL_MTX_OPT_ALL, i, &VinInfo);
+
+                    *pWidth = MAX2_16(*pWidth, pResource->MaxVinVirtChanWidth[i][0U]);
+
+                    RescVinHeight = pResource->MaxVinVirtChanHeight[i][0U];
+                    if ((VinInfo.Option[0U] == AMBA_DSP_VIN_CAP_OPT_INTC) &&
+                        (VinInfo.IntcNum[0U] > 1U)) {
+                        RescVinHeight /= VinInfo.IntcNum[0U];
+                    }
+                    *pHeight = MAX2_16(*pHeight, RescVinHeight);
+                    if (pResource->MaxProcessFormat > 0U) {
+                        *pWidth = MAX2_16(*pWidth, pResource->MaxStlVinWidth[i][0U]);
+                        *pHeight = MAX2_16(*pHeight, pResource->MaxStlVinHeight[i][0U]);
+                    }
+                }
+            }
+        } else {
+            VirtVinId = i - AMBA_DSP_MAX_VIN_NUM;
+            if (1U == DSP_GetBit(DspInstInfo.VirtVinBitMask, (UINT32)VirtVinId, 1U)) {
+                *pWidth = MAX2_16(*pWidth, pResource->MaxVirtVinWidth[i - AMBA_DSP_MAX_VIN_NUM]);
+                *pHeight = MAX2_16(*pHeight, pResource->MaxVirtVinHeight[i - AMBA_DSP_MAX_VIN_NUM]);
+            }
+        }
+    }
+
+    /* StlProc */
+    if (pResource->MaxProcessFormat > 0U) {
+        *pWidth = MAX2_16(*pWidth, pResource->MaxStlRawInputWidth);
+        *pWidth = MAX2_16(*pWidth, pResource->MaxStlYuvInputWidth);
+
+        *pHeight = MAX2_16(*pHeight, pResource->MaxStlRawInputHeight);
+        *pHeight = MAX2_16(*pHeight, pResource->MaxStlYuvInputHeight);
+    }
+}
+
+UINT32 HL_GetSystemVprocPinMaxWindow(UINT8 PinType, UINT16 *Width, UINT16 *Height)
+{
+    UINT32 Rval = OK;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    UINT16 i = 0U;
+    UINT16 PinOutWidth = 0U, PinOutHeight = 0U;
+
+    if ((Width == NULL) || (Height == NULL)) {
+        Rval = DSP_ERR_0000;
+    } else if (PinType > DSP_VPROC_PIN_MAIN) {
+        Rval = DSP_ERR_0001;
+    } else {
+        HL_GetResourcePtr(&Resource);
+
+        for (i=0U; i<Resource->MaxViewZoneNum; i++) {
+            Rval = HL_GetViewZoneVprocPinMaxWin(i, PinType, &PinOutWidth, &PinOutHeight);
+            *Width = MAX2_16(*Width, PinOutWidth);
+            *Height = MAX2_16(*Height, PinOutHeight);
+        }
+
+        /* Consider StlProc */
+        if ((Resource->MaxProcessFormat > 0U) &&
+            ((PinType == (UINT8)DSP_VPROC_PIN_PREVB) ||
+             (PinType == (UINT8)DSP_VPROC_PIN_PREVA) ||
+             (PinType == (UINT8)DSP_VPROC_PIN_MAIN))) {
+            *Width = MAX2_16(*Width, Resource->MaxStlMainWidth);
+            *Height = MAX2_16(*Height, Resource->MaxStlMainHeight);
+        }
+
+        /* prev_out_w/h in prev_setup asked for 32-aligned when the prev-out is for encode,
+         * so prev_x_w/h_max should also be 32-aligned */
+        if (PinType != DSP_VPROC_PIN_MAIN) {
+            *Width = ALIGN_NUM16(*Width, 32U);
+            *Height = ALIGN_NUM16(*Height, 32U);
+        }
+    }
+
+    return Rval;
+}
+
+UINT32 HL_GetViewZoneVprocPinMaxWin(UINT16 ViewZoneId, UINT16 VprocPin, UINT16 *Width, UINT16 *Height)
+{
+    UINT32 Rval = OK;
+    CTX_VPROC_INFO_s VprocInfo = {0};
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    CTX_YUV_STRM_INFO_s *YuvStrmInfo = HL_CtxYuvStrmInfoPtr;
+    UINT16 YuvStrmIdx = 0U;
+    UINT8 IsEfctYuvStrm = 0U;
+    UINT8 IsEncPurpose = 0U;
+
+    HL_GetVprocInfo(HL_MTX_OPT_ALL, ViewZoneId, &VprocInfo);
+    HL_GetViewZoneInfoPtr(ViewZoneId, &ViewZoneInfo);
+
+    if (ViewZoneInfo->Pipe == DSP_DRAM_PIPE_RAW_ONLY) {
+        *Width = CV5X_VPROC_DUMMY_SIZE;
+        *Height = CV5X_VPROC_DUMMY_SIZE;
+    } else {
+        if (VprocInfo.PinUsage[VprocPin] > 0U) {
+            //Use First Linked YuvStrm
+            DSP_Bit2U16Idx(VprocInfo.PinUsage[VprocPin], &YuvStrmIdx);
+
+            HL_GetYuvStrmInfoPtr(YuvStrmIdx, &YuvStrmInfo);
+            IsEfctYuvStrm = (1U == HL_GetEffectEnableOnYuvStrm(YuvStrmIdx))? (UINT8)1U: (UINT8)0U;
+            IsEncPurpose = (1U == DSP_GetU16Bit(YuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_ENCODE_IDX, 1U))? 1U: 0U;
+        }
+
+        /* Check this Pin is linked to EffectStrm or not */
+        if (IsEfctYuvStrm > 0U) {
+    //FIXME, calc union window
+            if (VprocPin == DSP_VPROC_PIN_MAIN) {
+                *Width = ViewZoneInfo->Main.Width;
+                *Height = ViewZoneInfo->Main.Height;
+            } else {
+                HL_GetYuvStrmInfoPtr(YuvStrmIdx, &YuvStrmInfo);
+                *Width = MAX2_16(YuvStrmInfo->MaxWidth, ViewZoneInfo->PinMaxWindow[VprocPin].Width);
+                *Height = MAX2_16(YuvStrmInfo->MaxHeight, ViewZoneInfo->PinMaxWindow[VprocPin].Height);
+            }
+        } else {
+            if (VprocPin == DSP_VPROC_PIN_MAIN) {
+                if (VprocInfo.PinUsage[VprocPin] > 0U) {
+                    HL_GetYuvStrmInfoPtr(YuvStrmIdx, &YuvStrmInfo);
+                    *Width = MAX2_16(ViewZoneInfo->Main.Width, YuvStrmInfo->MaxWidth);
+                    *Height = MAX2_16(ViewZoneInfo->Main.Height, YuvStrmInfo->MaxHeight);
+                } else {
+                    *Width = ViewZoneInfo->Main.Width;
+                    *Height = ViewZoneInfo->Main.Height;
+                }
+            } else {
+                *Width = ViewZoneInfo->PinMaxWindow[VprocPin].Width;
+                *Height = ViewZoneInfo->PinMaxWindow[VprocPin].Height;
+                /* prev_out_w/h in prev_setup asked for 32-aligned when the prev-out is for encode,
+                 * so prev_x_w/h_max should also be 32-aligned */
+                *Width = ALIGN_NUM16(*Width, 32U);
+                *Height = ALIGN_NUM16(*Height, 32U);
+            }
+        }
+
+        /* AVC need 16 alignment */
+        if (IsEncPurpose == 1U) {
+            *Height = ALIGN_NUM16(*Height, 16U);
+        }
+    }
+
+    return Rval;
+}
+
+UINT32 HL_GetVprocPinMaxWidth(UINT16 PrevIdx, const AMBA_DSP_WINDOW_s *Input, const AMBA_DSP_WINDOW_s *Output, UINT16 *MaxWidth)
+{
+    static const UINT16 HL_MaxVprocPinOutputWidthMap[DSP_VPROC_PIN_NUM] = {
+            [DSP_VPROC_PIN_PREVC] = PREVC_MAX_WIDTH,
+            [DSP_VPROC_PIN_PREVA] = PREVA_MAX_WIDTH,
+            [DSP_VPROC_PIN_PREVB] = PREVB_MAX_WIDTH,
+            [DSP_VPROC_PIN_MAIN]  = MAIN_MAX_WIDTH,
+    };
+    static const UINT16 HL_MaxVprocPinOutput2XWidthMap[DSP_VPROC_PIN_NUM] = {
+            [DSP_VPROC_PIN_PREVC] = PREVC_2X_MAX_WIDTH,
+            [DSP_VPROC_PIN_PREVA] = PREVA_2X_MAX_WIDTH,
+            [DSP_VPROC_PIN_PREVB] = PREVB_2X_MAX_WIDTH,
+            [DSP_VPROC_PIN_MAIN]  = MAIN_MAX_WIDTH,
+    };
+    UINT32 Rval = OK;
+    UINT8 IsExtra2x = 0U;
+    UINT16 HorRatio, VerRatio;
+
+    if (PrevIdx != DSP_VPROC_PIN_MAIN) {
+        if (Input->Width > Output->Width) {
+            HorRatio = Input->Width/Output->Width;
+        } else {
+            HorRatio = Output->Width/Input->Width;
+        }
+
+        if (Input->Height > Output->Height) {
+            VerRatio = Input->Height/Output->Height;
+        } else {
+            VerRatio = Output->Height/Input->Height;
+        }
+
+#ifdef SUPPORT_VOUT_16XDS_TRUNCATE_TRICK
+        /* Only support 2 pixel truncate */
+        if ((HL_MaxVprocPinOutputRatioMap[PrevIdx] == PREV_MAX_RATIO_16X) &&
+            (Input->Width >= Output->Width)) {
+            if (Input->Width == (Output->Width*PREV_MAX_RATIO_16X)) {
+                HorRatio = (Input->Width - VOUT_16XDS_TRUNCATE_LINE_NUM)/Output->Width;
+            }
+        }
+#endif
+
+        if ((HorRatio >= HL_MaxVprocPinOutputRatioMap[PrevIdx]) ||
+            (VerRatio >= HL_MaxVprocPinOutputRatioMap[PrevIdx])) {
+            AmbaLL_LogUInt5("  Exceed Resampling ratio[%d][%d %d]", PrevIdx, HorRatio, VerRatio, 0U, 0U);
+            Rval = DSP_ERR_0001;
+        } else {
+            if ((HorRatio >= PREV_MAX_RATIO_8X) ||
+                (VerRatio >= PREV_MAX_RATIO_8X)) {
+                IsExtra2x = 1U;
+            }
+
+            if (IsExtra2x > 0U) {
+                *MaxWidth = (UINT16)(HL_MaxVprocPinOutput2XWidthMap[PrevIdx]);
+            } else {
+                *MaxWidth = (UINT16)(HL_MaxVprocPinOutputWidthMap[PrevIdx]);
+            }
+        }
+    } else {
+        *MaxWidth = (UINT16)(HL_MaxVprocPinOutputWidthMap[PrevIdx]);
+    }
+
+    return Rval;
+}
+
+UINT32 HL_VprocUpscaleCheck(UINT16 PrevIdx,
+                            const AMBA_DSP_WINDOW_s *In,
+                            const AMBA_DSP_WINDOW_s *Out,
+                            UINT8 *pCheckPass,
+                            UINT8 IsDecVout)
+{
+    /* PrevC can't have upscale */
+    static const UINT8 HL_VprocPinUpscaleCapabilityMap[DSP_VPROC_PIN_NUM] = {
+        [DSP_VPROC_PIN_PREVC] = 0,
+        [DSP_VPROC_PIN_PREVA] = 1,
+        [DSP_VPROC_PIN_PREVB] = 1,
+        [DSP_VPROC_PIN_MAIN]  = 1,
+    };
+    UINT32 Rval = OK;
+
+    /* Reset */
+    *pCheckPass = 0;
+
+    if (0U == HL_VprocPinUpscaleCapabilityMap[PrevIdx]) {
+        /*
+         * 2022/10/19
+         * In single decode flow,
+         * it may have chance that smaller resolution(like HD) need FHD VOUT.
+         * if we bind prev at very first that may use small-output-capability one.
+         * it may require preview upscale.
+         */
+        if (IsDecVout == 1U) {
+            *pCheckPass = 0;
+        } else {
+            if ((In->Width < Out->Width) || (In->Height < Out->Height)) {
+                *pCheckPass = 0;
+            } else {
+                *pCheckPass = 1;
+            }
+        }
+    } else {
+        *pCheckPass = 1;
+    }
+
+    return Rval;
+}
+
+//#define DEBUG_BINDING_WIDTH
+inline static UINT32 CheckEveryTileOutput(UINT16 MainWidth,
+                                          UINT16 ROIWidth,
+                                          UINT16 ROIOffsetX,
+                                          UINT16 PrevOutWidth,
+                                          UINT16 MaxPinOutWidth,
+                                          UINT16 TileNum,
+                                          UINT16 Overlap)
+{
+    UINT32 Rval = OK;
+    UINT16 i;
+    UINT16 TileStart, TileEnd, ROIWidthInTile, MaxSrcWidthInTile, TileOut = 0U;
+    UINT16 SingleTileW = MainWidth/TileNum;
+
+    MaxSrcWidthInTile = (UINT16)((MaxPinOutWidth*ROIWidth)/PrevOutWidth);
+    for (i=0U; i<TileNum; i++) {
+        TileStart = (i == 0U)? 0U: TRUNCATE_16((UINT16)(SingleTileW*i) - Overlap, TILE_WIDTH_ALIGN);
+        TileEnd = (i == (TileNum - 1U))? MainWidth: ALIGN_NUM16((UINT16)(SingleTileW*(i+1U)) + Overlap, TILE_WIDTH_ALIGN);
+
+        if (ROIOffsetX <= TileStart) {
+            if ((ROIOffsetX+ROIWidth) > TileEnd) {
+                ROIWidthInTile = TileEnd - TileStart;
+            } else if ((ROIOffsetX+ROIWidth) > TileStart) {
+                ROIWidthInTile = ROIOffsetX + ROIWidth - TileStart;
+            } else {
+                ROIWidthInTile = 0U;
+            }
+        } else if (ROIOffsetX <= TileEnd){
+            if ((ROIOffsetX+ROIWidth) > TileEnd) {
+                ROIWidthInTile = TileEnd - ROIOffsetX;
+            } else {
+                ROIWidthInTile = ROIWidth;
+            }
+        } else {
+            ROIWidthInTile = 0U;
+        }
+        TileOut = (ROIWidthInTile*PrevOutWidth)/ROIWidth;
+#ifdef DEBUG_BINDING_WIDTH
+        AmbaLL_LogUInt5("Tile[%d]   (S, E) = (%d, %d) ", i, TileStart, TileEnd, 0U, 0U);
+        AmbaLL_LogUInt5("   ROI    (X, W) = (%d, %d) ", ROIOffsetX, ROIWidth, 0U, 0U, 0U);
+        AmbaLL_LogUInt5("   ROIInTileW %d MaxSrc %d TiledOutW %d MaxPinOut %d",
+                        ROIWidthInTile, MaxSrcWidthInTile, TileOut, MaxPinOutWidth, 0U);
+#endif
+        if (ROIWidthInTile > MaxSrcWidthInTile) {
+            Rval = DSP_ERR_0001;
+        }
+        if (TileOut > MaxPinOutWidth) {
+            Rval = DSP_ERR_0001;
+        }
+        if (Rval != OK) {
+            break;
+        }
+    }
+
+    return Rval;
+}
+
+UINT32 HL_FindMinimalVprocPin(const AMBA_DSP_WINDOW_s *Output,
+                              const AMBA_DSP_WINDOW_s *ROI,
+                              UINT16 MaxTileNum,
+                              UINT16 VprocId,
+                              UINT16 *VprocPin,
+                              UINT8 *pFound,
+                              UINT16 LowDlyPurpose,
+                              UINT8 IsEncSync,
+                              UINT8 IsDramMipiYuv,
+                              UINT8 IsSingleDecVoutPurpose)
+{
+    UINT8 Found = 0U;
+    UINT8 UpscaleChkPass;
+    UINT8 IsLowDlyEncPurpose;
+    UINT16 TileOverlapX;
+    UINT16 PrevIdx, MaxPinOutWidth = 0U;
+    UINT32 Rval = OK;
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    CTX_VPROC_INFO_s VprocInfo = {0};
+
+    HL_GetViewZoneInfoPtr(VprocId, &ViewZoneInfo);
+    HL_GetVprocInfo(HL_MTX_OPT_ALL, VprocId, &VprocInfo);
+
+    IsLowDlyEncPurpose = (1U == DSP_GetU16Bit(LowDlyPurpose, DSP_LV_STRM_PURPOSE_ENCODE_IDX, 1U))? 1U: 0U;
+
+    (void)HL_GetViewZoneWarpOverlapX(VprocId, &TileOverlapX);
+    for (PrevIdx = DSP_VPROC_PIN_PREVC; PrevIdx<=DSP_VPROC_PIN_PREVB; PrevIdx++) {
+        if ((IsDramMipiYuv == 1U) &&
+            ((PrevIdx == DSP_VPROC_PIN_PREVC) ||
+            (PrevIdx == DSP_VPROC_PIN_PREVB))) {
+            continue;
+        }
+
+        if ((0U == IsLowDlyEncPurpose) &&
+            (1U == IsEncSync) &&
+            (PrevIdx == DSP_VPROC_PIN_PREVB)) {
+            /* PrevB is reserved for LowDelay encode strm */
+            continue;
+        } else {
+#ifdef SUPPORT_RESAMPLING_CHECK
+            if (0U != VprocInfo.PinUsage[PrevIdx]) {
+                continue;
+            }
+#ifdef DEBUG_BINDING_WIDTH
+            AmbaLL_LogUInt5("VprocId %d PrevIdx %d ", VprocId, PrevIdx, 0U, 0U, 0U);
+#endif
+            (void)HL_GetVprocPinMaxWidth(PrevIdx, ROI, Output, &MaxPinOutWidth);
+            Rval = CheckEveryTileOutput(ViewZoneInfo->Main.Width,
+                                        ROI->Width, ROI->OffsetX,
+                                        Output->Width,
+                                        MaxPinOutWidth,
+                                        MaxTileNum, TileOverlapX);
+            if (Rval == OK) {
+                if ((1U == IsLowDlyEncPurpose) &&
+                    (1U == IsEncSync) &&
+                    (PrevIdx == DSP_VPROC_PIN_PREVB)) {
+                    *VprocPin = PrevIdx;
+                    Found = 1U;
+                } else {
+                    (void)HL_VprocUpscaleCheck(PrevIdx,
+                                               ROI,
+                                               Output,
+                                               &UpscaleChkPass,
+                                               IsSingleDecVoutPurpose);
+                    if (UpscaleChkPass == 1U) {
+                        *VprocPin = PrevIdx;
+                        Found = 1U;
+                    } else {
+                        Found = 0U;
+                    }
+                }
+            } else {
+                Found = 0U;
+            }
+#else
+                if (PrevIdx != DSP_VPROC_PIN_MAIN) {
+                    MaxPinOutWidth = (UINT16)(HL_MaxVprocPinOutputWidthMap[PrevIdx]*MaxTileNum);
+                } else {
+                    MaxPinOutWidth = (UINT16)(HL_MaxVprocPinOutputWidthMap[PrevIdx]);
+                }
+                MaxPinOutWidth = (UINT16)(HL_MaxVprocPinOutputWidthMap[PrevIdx]*MaxTileNum);
+#endif
+        }
+
+        if (Found == 1U) {
+            break;
+        }
+    }
+
+    /* Every tile is within the maximal pin width */
+    *pFound = Found;
+    if (Found == 0U) {
+        Rval = DSP_ERR_0006;
+    }
+
+    return Rval;
+}
+
+#ifdef SUPPORT_VPROC_GROUPING
+#ifdef PPSTRM_SWITCH_CHANGE_INPUTS_NUM
+static inline UINT32 HL_GetVprocGroupNumImplEffChg(const CTX_RESOURCE_INFO_s *pResource,
+                                                   UINT16 *pNum,
+                                                   UINT32 *pViewZoneActiveBit)
+{
+    UINT8 IsEfctYuvStrm;
+    UINT16 Num = *pNum;
+    UINT16 i, j;
+    UINT32 Rval = OK;
+    UINT32 ViewZoneActiveBit = *pViewZoneActiveBit;
+    UINT16 ViewZoneIdx = 0U;
+    UINT16 NumVprocInGrp = 0U;
+    UINT32 YuvStrmMaxChanBit = 0U;
+    CTX_YUV_STRM_INFO_s *pYuvStrmInfo = HL_CtxYuvStrmInfoPtr;
+    CTX_VIEWZONE_INFO_s *pViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    const CTX_YUV_STRM_LAYOUT_s *pYuvStrmLayout;
+
+    /*
+     * Groups for Effect-channel
+     * Classify effect-channel components to the same group
+     * */
+    for (i = 0; i < pResource->YuvStrmNum; i++) {
+        IsEfctYuvStrm = (1U == HL_GetEffectEnableOnYuvStrm(i))? (UINT8)1U: (UINT8)0U;
+        HL_GetYuvStrmInfoPtr(i, &pYuvStrmInfo);
+        YuvStrmMaxChanBit = pYuvStrmInfo->MaxChanBitMask;
+        NumVprocInGrp = 0U;
+
+        if (0U == IsEfctYuvStrm) {
+            continue;
+        }
+
+        if (Num >= NUM_VPROC_MAX_GROUP) {
+            AmbaLL_LogUInt5("HL_GetVprocGroupNumImplEffChg GroupId[%d] is out of range[%d]",
+                    Num, NUM_VPROC_MAX_GROUP, 0U, 0U, 0U);
+            Rval = DSP_ERR_0000;
+            break;
+        }
+        pYuvStrmLayout = &pYuvStrmInfo->Layout;
+
+        /* Active */
+        for (j = 0; j < pYuvStrmLayout->NumChan; j++) {
+            ViewZoneIdx = pYuvStrmLayout->ChanCfg[j].ViewZoneId;
+            if (0U == DSP_GetBit(ViewZoneActiveBit, ViewZoneIdx, 1U)) {
+                continue;
+            }
+            NumVprocInGrp++;
+
+            DSP_ClearBit(&ViewZoneActiveBit, ViewZoneIdx);
+            DSP_ClearBit(&YuvStrmMaxChanBit, ViewZoneIdx);
+
+            HL_GetViewZoneInfoLock(ViewZoneIdx, &pViewZoneInfo);
+            pViewZoneInfo->VprocGrpId = Num;
+            HL_GetViewZoneInfoUnLock(ViewZoneIdx);
+        }
+
+        /* Potential */
+        if (YuvStrmMaxChanBit > 0U) {
+            for (j = 0; j < pYuvStrmInfo->MaxChanNum; j++) {
+                DSP_Bit2U16Idx(YuvStrmMaxChanBit, &ViewZoneIdx);
+                if (0U == DSP_GetBit(ViewZoneActiveBit, ViewZoneIdx, 1U)) {
+                    continue;
+                }
+                NumVprocInGrp++;
+
+                DSP_ClearBit(&ViewZoneActiveBit, ViewZoneIdx);
+                DSP_ClearBit(&YuvStrmMaxChanBit, ViewZoneIdx);
+
+                HL_GetViewZoneInfoLock(ViewZoneIdx, &pViewZoneInfo);
+                pViewZoneInfo->VprocGrpId = Num;
+                HL_GetViewZoneInfoUnLock(ViewZoneIdx);
+            }
+        }
+
+        if (NumVprocInGrp > 0U) {
+            Num++;
+        }
+    }
+
+    *pNum = Num;
+    *pViewZoneActiveBit = ViewZoneActiveBit;
+
+    return Rval;
+}
+#else
+
+static inline UINT32 HL_GetVprocGroupNumImplEffNoChg(const CTX_RESOURCE_INFO_s *pResource,
+                                                     UINT16 *pNum,
+                                                     UINT32 *pViewZoneActiveBit)
+{
+    UINT8 IsEfctYuvStrm;
+    UINT16 Num = *pNum;
+    UINT16 i, j;
+    UINT32 Rval = OK;
+    UINT32 ViewZoneActiveBit = *pViewZoneActiveBit;
+#ifndef SUPPORT_EFCT_UNION_GRP
+    UINT16 ViewZoneIdx = 0U;
+    UINT16 NumVprocInGrp = 0U;
+    UINT32 YuvStrmMaxChanBit = 0U;
+#endif
+    CTX_YUV_STRM_INFO_s *pYuvStrmInfo = HL_CtxYuvStrmInfoPtr;
+    CTX_VIEWZONE_INFO_s *pViewZoneInfo = HL_CtxViewZoneInfoPtr;
+#ifdef SUPPORT_EFCT_UNION_GRP
+    CTX_YUV_STRM_INFO_s *pTmpYuvStrmInfo = HL_CtxYuvStrmInfoPtr;
+    UINT32 YuvStrmOI = 0U, YuvStrmBitsInGrp = 0U;
+    UINT32 ViewZoneBitInGrp = 0U;
+    UINT32 PendingViewZoneBits, NewPendingBits = 0U;
+    UINT16 TargetYuvStrmId, TargetViewZoneId;
+#endif
+
+#ifdef SUPPORT_EFCT_UNION_GRP
+    /* Search all EffectYuvStrm */
+    for (i = 0; i < pResource->YuvStrmNum; i++) {
+        IsEfctYuvStrm = (1U == HL_GetEffectEnableOnYuvStrm(i))? (UINT8)1U: (UINT8)0U;
+        if (0U == IsEfctYuvStrm) {
+            continue;
+        }
+        DSP_SetBit(&YuvStrmOI, i);
+    }
+
+    for (i = 0U; i < pResource->YuvStrmNum; i++) {
+        if (YuvStrmOI > 0U) {
+            if (Num >= NUM_VPROC_MAX_GROUP) {
+                AmbaLL_LogUInt5("HL_GetVprocGroupNumImplEffNoChg GroupId[%d] is out of range[%d]",
+                        Num, NUM_VPROC_MAX_GROUP, 0U, 0U, 0U);
+                Rval = DSP_ERR_0000;
+                break;
+            }
+
+            DSP_Bit2U16Idx(YuvStrmOI, &TargetYuvStrmId);
+            HL_GetYuvStrmInfoPtr(TargetYuvStrmId, &pYuvStrmInfo);
+            ViewZoneBitInGrp = pYuvStrmInfo->MaxChanBitMask;
+            PendingViewZoneBits = pYuvStrmInfo->MaxChanBitMask;
+            DSP_SetBit(&YuvStrmBitsInGrp, TargetYuvStrmId);
+            while (PendingViewZoneBits > 0U) {
+                DSP_Bit2U16Idx(PendingViewZoneBits, &TargetViewZoneId);
+                for (j = (TargetYuvStrmId + 1U); j < pResource->YuvStrmNum; j++) {
+                    if (1U == DSP_GetBit(YuvStrmOI, j, 1U)) {
+                        HL_GetYuvStrmInfoPtr(j, &pTmpYuvStrmInfo);
+                        if (1U == DSP_GetBit(pTmpYuvStrmInfo->MaxChanBitMask, TargetViewZoneId, 1U)) {
+                            NewPendingBits = pTmpYuvStrmInfo->MaxChanBitMask;
+                            NewPendingBits &= ~ViewZoneBitInGrp;
+                            DSP_SetBit(&YuvStrmBitsInGrp, j);
+                        }
+                    }
+                }
+                DSP_SetBit(&ViewZoneBitInGrp, TargetViewZoneId);
+                PendingViewZoneBits |= NewPendingBits;
+                NewPendingBits = 0U;
+                DSP_ClearBit(&PendingViewZoneBits, TargetViewZoneId);
+
+                HL_GetViewZoneInfoLock(TargetViewZoneId, &pViewZoneInfo);
+                pViewZoneInfo->VprocGrpId = (UINT8)Num;
+                HL_GetViewZoneInfoUnLock(TargetViewZoneId);
+            }
+
+            YuvStrmOI &= ~YuvStrmBitsInGrp;
+            ViewZoneActiveBit &= ~ViewZoneBitInGrp;
+            Num += 1U;
+        }
+    }
+
+#else
+    /*
+     * Groups for Effect-channel
+     * Classify effect-channel components to the same group
+     * */
+    for (i = 0; i < pResource->YuvStrmNum; i++) {
+        HL_GetYuvStrmInfoPtr(i, &pYuvStrmInfo);
+        IsEfctYuvStrm = (1U == HL_GetEffectEnableOnYuvStrm(i))? (UINT8)1U: (UINT8)0U;
+        YuvStrmMaxChanBit = pYuvStrmInfo->MaxChanBitMask;
+        NumVprocInGrp = 0U;
+
+        if (0U == IsEfctYuvStrm) {
+            continue;
+        }
+        if (Num >= NUM_VPROC_MAX_GROUP) {
+            AmbaLL_LogUInt5("HL_GetVprocGroupNumImplEffNoChg GroupId[%d] is out of range[%d]",
+                    Num, NUM_VPROC_MAX_GROUP, 0U, 0U, 0U);
+            Rval = DSP_ERR_0000;
+            break;
+        }
+
+        if (YuvStrmMaxChanBit > 0U) {
+            for (j = 0; j < AMBA_DSP_MAX_YUVSTRM_VIEW_NUM; j++) {
+                DSP_Bit2U16Idx(YuvStrmMaxChanBit, &ViewZoneIdx);
+                if (0U == DSP_GetBit(ViewZoneActiveBit, ViewZoneIdx, 1U)) {
+                    continue;
+                }
+
+                NumVprocInGrp++;
+
+                DSP_ClearBit(&ViewZoneActiveBit, ViewZoneIdx);
+                DSP_ClearBit(&YuvStrmMaxChanBit, ViewZoneIdx);
+
+                HL_GetViewZoneInfoLock(ViewZoneIdx, &pViewZoneInfo);
+                pViewZoneInfo->VprocGrpId = Num;
+                HL_GetViewZoneInfoUnLock(ViewZoneIdx);
+            }
+        }
+        if (NumVprocInGrp > 0U) {
+            Num += 1U;
+        }
+    }
+#endif
+    *pNum = Num;
+    *pViewZoneActiveBit = ViewZoneActiveBit;
+
+    return Rval;
+}
+#endif
+
+static inline UINT32 HL_GetVprocGroupNumImplEff(const CTX_RESOURCE_INFO_s *pResource,
+                                                UINT16 *pNum,
+                                                UINT32 *pViewZoneActiveBit)
+{
+    UINT32 Rval = OK;
+
+#ifdef PPSTRM_SWITCH_CHANGE_INPUTS_NUM
+    Rval = HL_GetVprocGroupNumImplEffChg(pResource,
+                                  pNum,
+                                  pViewZoneActiveBit);
+#else
+    Rval = HL_GetVprocGroupNumImplEffNoChg(pResource,
+                                    pNum,
+                                    pViewZoneActiveBit);
+#endif
+
+    return Rval;
+}
+
+#ifdef SUPPORT_VPROC_INDEPENDENT_WITHIN_GROUPING
+static inline UINT32 HL_GetVidGrpNumImplVzNonEfct(const CTX_RESOURCE_INFO_s *pResource,
+                                                  UINT16 *pNum,
+                                                  UINT32 *pViewZoneActiveBit,
+                                                  UINT16 *pFreeRunBit)
+{
+    UINT32 Rval = OK;
+    UINT16 Num = *pNum;
+    UINT16 NumVprocInGrp = 0U, FreeRunBit = *pFreeRunBit;
+    UINT16 i;
+    UINT32 ViewZoneActiveBit = *pViewZoneActiveBit;
+    CTX_VIEWZONE_INFO_s *pViewZoneInfo = HL_CtxViewZoneInfoPtr;
+
+    NumVprocInGrp = 0U;
+    for (i = 0U; i < pResource->MaxViewZoneNum; i++) {
+        HL_GetViewZoneInfoPtr(i, &pViewZoneInfo);
+        if ((0U == DSP_GetBit(ViewZoneActiveBit, i, 1U)) ||
+            (pViewZoneInfo->InputFromMemory != VIN_SRC_FROM_HW)) {
+            continue;
+        }
+        if (Num >= NUM_VPROC_MAX_GROUP) {
+            AmbaLL_LogUInt5("HL_GetVidGrpNumImplVzNonEfct GroupId[%d] is out of range[%d]",
+                    Num, NUM_VPROC_MAX_GROUP, 0U, 0U, 0U);
+            Rval = DSP_ERR_0000;
+        }
+        if (NumVprocInGrp >= NUM_VPROC_MAX_CHAN) {
+            AmbaLL_LogUInt5("HL_GetVidGrpNumImplVzNonEfct VprocOrderId[%d] is out of range[%d]",
+                    NumVprocInGrp, NUM_VPROC_MAX_CHAN, 0U, 0U, 0U);
+            Rval = DSP_ERR_0000;
+        }
+
+        if(Rval != OK) {
+            break;
+        }
+
+        NumVprocInGrp++;
+        DSP_ClearBit(&ViewZoneActiveBit, i);
+        HL_GetViewZoneInfoLock(i, &pViewZoneInfo);
+        pViewZoneInfo->VprocGrpId = (UINT8)Num;
+        HL_GetViewZoneInfoUnLock(i);
+    }
+    if (NumVprocInGrp > 0U) {
+        DSP_SetU16Bit(&FreeRunBit, Num);
+        Num += 1U;
+    }
+
+    *pNum = Num;
+    *pViewZoneActiveBit = ViewZoneActiveBit;
+    *pFreeRunBit = FreeRunBit;
+
+    return Rval;
+}
+#else
+
+static inline UINT32 HL_GetVidGrpNumImplVzEfct(const CTX_RESOURCE_INFO_s *pResource,
+                                               UINT16 *pNum,
+                                               UINT32 *pViewZoneActiveBit)
+{
+    UINT32 Rval = OK;
+    UINT8 MasterVinDecimation;
+    UINT16 Num = *pNum;
+    UINT16 NumVprocInGrp = 0U;
+    UINT16 i, j, k, VinIdx = 0U;
+    UINT32 ViewZoneActiveBit = *pViewZoneActiveBit;
+    CTX_VIEWZONE_INFO_s *pViewZoneInfo = HL_CtxViewZoneInfoPtr;
+
+    for (i = 0; i < AMBA_DSP_MAX_VIN_NUM; i++) {
+        if (0U == DSP_GetBit(pResource->VinBit, i, 1U)) {
+            continue;
+        }
+
+        for (j = 0; j < pResource->MaxViewZoneNum; j++) {
+            NumVprocInGrp = 0U;
+            HL_GetViewZoneInfoPtr(j, &pViewZoneInfo);
+            DSP_Bit2U16Idx(pViewZoneInfo->SourceVin, &VinIdx);
+            if ((0U == DSP_GetBit(ViewZoneActiveBit, j, 1U)) ||
+                (pViewZoneInfo->InputFromMemory != VIN_SRC_FROM_HW) ||
+                (VinIdx != i)) {
+                continue;
+            }
+
+            MasterVinDecimation = pViewZoneInfo->VinDecimationRate;
+            for (k = j; k < pResource->MaxViewZoneNum; k++) {
+                HL_GetViewZoneInfoPtr(k, &pViewZoneInfo);
+                DSP_Bit2U16Idx(pViewZoneInfo->SourceVin, &VinIdx);
+                if ((0U == DSP_GetBit(ViewZoneActiveBit, k, 1U)) ||
+                    (pViewZoneInfo->InputFromMemory != VIN_SRC_FROM_HW) ||
+                    (VinIdx != i) ||
+                    (MasterVinDecimation != pViewZoneInfo->VinDecimationRate)) {
+                    continue;
+                }
+                if (Num >= NUM_VPROC_MAX_GROUP) {
+                    AmbaLL_LogUInt5("HL_GetVidGrpNumImplVzEfct GroupId[%d] is out of range[%d]",
+                            Num, NUM_VPROC_MAX_GROUP, 0U, 0U, 0U);
+                    Rval = DSP_ERR_0000;
+                    break;
+                }
+                if (NumVprocInGrp >= NUM_VPROC_MAX_CHAN) {
+                    AmbaLL_LogUInt5("HL_GetVidGrpNumImplVzEfct VprocOrderId[%d] is out of range[%d]",
+                            NumVprocInGrp, NUM_VPROC_MAX_CHAN, 0U, 0U, 0U);
+                    Rval = DSP_ERR_0000;
+                    break;
+                }
+
+                NumVprocInGrp++;
+                DSP_ClearBit(&ViewZoneActiveBit, k);
+                HL_GetViewZoneInfoLock(k, &pViewZoneInfo);
+                pViewZoneInfo->VprocGrpId = Num;
+                HL_GetViewZoneInfoUnLock(k);
+            }
+            if (NumVprocInGrp > 0U) {
+                Num += 1U;
+            }
+        }
+    }
+    *pNum = Num;
+    *pViewZoneActiveBit = ViewZoneActiveBit;
+
+    return Rval;
+}
+#endif
+
+static inline UINT32 HL_GetVprocGroupNumImplVz(const CTX_RESOURCE_INFO_s *pResource,
+                                               UINT16 *pNum,
+                                               UINT32 *pViewZoneActiveBit,
+                                               UINT16 *pFreeRunBit)
+{
+    UINT32 Rval = OK;
+
+    /*
+     * Groups for ViewZone
+     * Rule_1 : Different Vin use different group
+     * Rule_2 : Different DecimationRate in same Vin use different Group
+     * 20191213, since MaxGrpNum = 4 inside uCode.
+     *   for the case multi-vin but no effect,
+     *   we can put differnt vin into same grp and ENABLE free_run bit
+     *   after that, ucode will treat those vproc as independent channel
+     */
+
+#ifdef SUPPORT_VPROC_INDEPENDENT_WITHIN_GROUPING
+    Rval = HL_GetVidGrpNumImplVzNonEfct(pResource, pNum, pViewZoneActiveBit, pFreeRunBit);
+#else
+    (void)pFreeRunBit;
+    Rval = HL_GetVidGrpNumImplVzEfct(pResource, pNum, pViewZoneActiveBit);
+#endif
+
+    return Rval;
+}
+
+static inline UINT32 HL_GetVprocGroupNumImplDp(const CTX_RESOURCE_INFO_s *pResource,
+                                               UINT16 *pNum,
+                                               UINT32 *pViewZoneActiveBit,
+                                               UINT16 *pFreeRunBit)
+{
+    UINT16 Num = *pNum, FreeRunBit = *pFreeRunBit;
+    UINT16 i;
+    UINT16 NumVprocInGrp;
+    UINT32 Rval = OK;
+    UINT32 ViewZoneActiveBit = *pViewZoneActiveBit;
+    CTX_VIEWZONE_INFO_s *pViewZoneInfo = HL_CtxViewZoneInfoPtr;
+
+    /* Groups for duplex */
+    if (HL_HasDecResource() == 1U) {
+        NumVprocInGrp = 0U;
+        for (i = 0U; i < pResource->MaxViewZoneNum; i++) {
+            HL_GetViewZoneInfoPtr(i, &pViewZoneInfo);
+            if ((0U == DSP_GetBit(ViewZoneActiveBit, i, 1U)) ||
+                (pViewZoneInfo->InputFromMemory != VIN_SRC_FROM_DEC)) {
+                continue;
+            }
+            if (Num >= NUM_VPROC_MAX_GROUP) {
+                AmbaLL_LogUInt5("HL_GetVprocGroupNumImplDp GroupId[%d] is out of range[%d]",
+                            Num, NUM_VPROC_MAX_GROUP, 0U, 0U, 0U);
+                Rval = DSP_ERR_0000;
+            }
+            if (NumVprocInGrp >= NUM_VPROC_MAX_CHAN) {
+                AmbaLL_LogUInt5("HL_GetVprocGroupNumImplDp VprocOrderId[%d] is out of range[%d]",
+                        NumVprocInGrp, NUM_VPROC_MAX_CHAN, 0U, 0U, 0U);
+                Rval = DSP_ERR_0000;
+            }
+            if(Rval != OK) {
+                break;
+            }
+
+            NumVprocInGrp++;
+            DSP_ClearBit(&ViewZoneActiveBit, i);
+            HL_GetViewZoneInfoLock(i, &pViewZoneInfo);
+            pViewZoneInfo->VprocGrpId = (UINT8)Num;
+            HL_GetViewZoneInfoUnLock(i);
+        }
+        if (NumVprocInGrp > 0U) {
+            /* duplex group member should go free */
+            DSP_SetU16Bit(&FreeRunBit, Num);
+            Num += 1U;
+        }
+    }
+
+    *pNum = Num;
+    *pViewZoneActiveBit = ViewZoneActiveBit;
+    *pFreeRunBit = FreeRunBit;
+
+    return Rval;
+}
+
+static inline UINT32 HL_GetVprocGroupNumImplMem(const CTX_RESOURCE_INFO_s *pResource,
+                                                UINT16 *pNum,
+                                                UINT32 *pViewZoneActiveBit,
+                                                UINT16 *pFreeRunBit)
+{
+    UINT16 Num = *pNum, FreeRunBit = *pFreeRunBit;
+    UINT16 i, NumVprocInGrp;
+    UINT32 Rval = OK;
+    UINT32 ViewZoneActiveBit = *pViewZoneActiveBit;
+    CTX_VIEWZONE_INFO_s *pViewZoneInfo = HL_CtxViewZoneInfoPtr;
+
+    /* Groups for MemInput */
+    NumVprocInGrp = 0U;
+    for (i = 0U; i < pResource->ViewZoneNum; i++) {
+        if (0U == DSP_GetBit(ViewZoneActiveBit, i, 1U)) {
+            continue;
+        }
+        HL_GetViewZoneInfoPtr(i, &pViewZoneInfo);
+        if ((pViewZoneInfo->InputFromMemory == VIN_SRC_FROM_DRAM) ||
+            (pViewZoneInfo->InputFromMemory == VIN_SRC_FROM_DRAM_422) ||
+            (pViewZoneInfo->InputFromMemory == VIN_SRC_FROM_DRAM_420)) {
+            if (Num >= NUM_VPROC_MAX_GROUP) {
+                AmbaLL_LogUInt5("HL_GetVprocGroupNumImplMem GroupId[%d] is out of range[%d]",
+                            Num, NUM_VPROC_MAX_GROUP, 0U, 0U, 0U);
+                Rval = DSP_ERR_0000;
+            }
+            if (NumVprocInGrp >= NUM_VPROC_MAX_CHAN) {
+                AmbaLL_LogUInt5("HL_GetVprocGroupNumImplMem VprocOrderId[%d] is out of range[%d]",
+                        NumVprocInGrp, NUM_VPROC_MAX_CHAN, 0U, 0U, 0U);
+                Rval = DSP_ERR_0000;
+            }
+            if(Rval != OK) {
+                break;
+            }
+            NumVprocInGrp++;
+            DSP_ClearBit(&ViewZoneActiveBit, i);
+            HL_GetViewZoneInfoLock(i, &pViewZoneInfo);
+            pViewZoneInfo->VprocGrpId = (UINT8)Num;
+            HL_GetViewZoneInfoUnLock(i);
+        }
+    }
+    if (NumVprocInGrp > 0U) {
+        /* MemInput group member should go free */
+        DSP_SetU16Bit(&FreeRunBit, Num);
+        Num += 1U;
+    }
+
+    *pViewZoneActiveBit = ViewZoneActiveBit;
+    *pNum = Num;
+    *pFreeRunBit = FreeRunBit;
+
+    return Rval;
+}
+
+static inline UINT32 HL_GetVprocGroupNumImplRecon(const CTX_RESOURCE_INFO_s *pResource,
+                                                  UINT16 *pNum,
+                                                  UINT32 *pViewZoneActiveBit)
+{
+    UINT16 Num = *pNum;
+    UINT16 i;
+    UINT32 Rval = OK;
+    UINT32 ViewZoneActiveBit = *pViewZoneActiveBit;
+    CTX_VIEWZONE_INFO_s *pViewZoneInfo = HL_CtxViewZoneInfoPtr;
+
+    /* Groups for Recon */
+    for (i = 0U; i < pResource->ViewZoneNum; i++) {
+        if (0U == DSP_GetBit(ViewZoneActiveBit, i, 1U)) {
+            continue;
+        }
+        HL_GetViewZoneInfoPtr(i, &pViewZoneInfo);
+        if (pViewZoneInfo->InputFromMemory == VIN_SRC_FROM_RECON) {
+            if (Num >= NUM_VPROC_MAX_GROUP) {
+                AmbaLL_LogUInt5("HL_GetVprocGroupNumImplRecon GroupId[%d] is out of range[%d]",
+                            Num, NUM_VPROC_MAX_GROUP, 0U, 0U, 0U);
+                Rval = DSP_ERR_0000;
+                break;
+            }
+
+            DSP_ClearBit(&ViewZoneActiveBit, i);
+            HL_GetViewZoneInfoLock(i, &pViewZoneInfo);
+            pViewZoneInfo->VprocGrpId = (UINT8)Num;
+            HL_GetViewZoneInfoUnLock(i);
+
+            /* Recon use different group for each decoder */
+            Num += 1U;
+        }
+    }
+
+    *pViewZoneActiveBit = ViewZoneActiveBit;
+    *pNum = Num;
+
+    return Rval;
+}
+
+static inline UINT32 HL_GetVprocGroupNumImplPiv(UINT16 *pNum)
+{
+    UINT16 Num = *pNum;
+    UINT16 i, NumVprocInGrp;
+    UINT32 Rval = OK;
+    CTX_DSP_INST_INFO_s DspInstInfo = {0};
+    CTX_VIEWZONE_INFO_s *pViewZoneInfo = HL_CtxViewZoneInfoPtr;
+
+    /* Groups for PIV  */
+    HL_GetDspInstance(HL_MTX_OPT_ALL, &DspInstInfo);
+    NumVprocInGrp = 0U;
+    for (i = 0U; i < DspInstInfo.MaxVpocNum; i++) {
+        /* StlProc is the last Vproc Group */
+        if (DspInstInfo.VprocPurpose[i] == VPROC_PURPOSE_STILL) {
+            if (Num >= NUM_VPROC_MAX_GROUP) {
+                AmbaLL_LogUInt5("HL_GetVprocGroupNumImplPiv GroupId[%d] is out of range[%d]",
+                            Num, NUM_VPROC_MAX_GROUP, 0U, 0U, 0U);
+                Rval = DSP_ERR_0000;
+            }
+            if (NumVprocInGrp >= NUM_VPROC_MAX_CHAN) {
+                AmbaLL_LogUInt5("HL_GetVprocGroupNumImplPiv VprocOrderId[%d] is out of range[%d]",
+                        NumVprocInGrp, NUM_VPROC_MAX_CHAN, 0U, 0U, 0U);
+                Rval = DSP_ERR_0000;
+            }
+            if(Rval != OK) {
+                break;
+            }
+            NumVprocInGrp++;
+            HL_GetViewZoneInfoLock(i, &pViewZoneInfo);
+            pViewZoneInfo->VprocGrpId = (UINT8)Num;
+            HL_GetViewZoneInfoUnLock(i);
+        }
+    }
+    if (NumVprocInGrp > 0U) {
+        Num += 1U;
+    }
+
+    *pNum = Num;
+
+    return Rval;
+}
+
+static inline UINT32 HL_GetVprocGroupNumImpl(UINT16 *pNum, UINT16 *pFreeRunBit)
+{
+    UINT16 Num = 0U, FreeRunBit = 0x0U;
+    UINT32 Rval;
+    UINT32 ViewZoneActiveBit;
+    CTX_RESOURCE_INFO_s *pResource = HL_CtxResInfoPtr;
+
+    HL_GetResourcePtr(&pResource);
+    ViewZoneActiveBit = pResource->ViewZoneActiveBit;
+
+    /* [1] Groups for Effect-channel */
+    Rval = HL_GetVprocGroupNumImplEff(pResource, &Num, &ViewZoneActiveBit);
+    if (Rval != OK) {
+        AmbaLL_LogUInt5("HL_GetVprocGroupNumImplEff Num[%d] Rval[0x%X]", Num, Rval, 0U, 0U, 0U);
+    }
+
+    /* [2] Groups for ViewZone */
+    Rval = HL_GetVprocGroupNumImplVz(pResource, &Num, &ViewZoneActiveBit, &FreeRunBit);
+    if (Rval != OK) {
+        AmbaLL_LogUInt5("HL_GetVprocGroupNumImplVz Num[%d] Rval[0x%X]", Num, Rval, 0U, 0U, 0U);
+    }
+
+    /* [3] Groups for Duplex */
+    Rval = HL_GetVprocGroupNumImplDp(pResource, &Num, &ViewZoneActiveBit, &FreeRunBit);
+    if (Rval != OK) {
+        AmbaLL_LogUInt5("HL_GetVprocGroupNumImplDp Num[%d] Rval[0x%X]", Num, Rval, 0U, 0U, 0U);
+    }
+
+    /* [4] Groups for MemInput */
+    Rval = HL_GetVprocGroupNumImplMem(pResource, &Num, &ViewZoneActiveBit, &FreeRunBit);
+    if (Rval != OK) {
+        AmbaLL_LogUInt5("HL_GetVprocGroupNumImplMem Num[%d] Rval[0x%X]", Num, Rval, 0U, 0U, 0U);
+    }
+
+    /* [5] Groups for Recon */
+    Rval = HL_GetVprocGroupNumImplRecon(pResource, &Num, &ViewZoneActiveBit);
+    if (Rval != OK) {
+        AmbaLL_LogUInt5("HL_GetVprocGroupNumImplRecon Num[%d] Rval[0x%X]", Num, Rval, 0U, 0U, 0U);
+    }
+
+    /* [6] Groups for PIV */
+    /* StlProc is the last Vproc Group */
+    Rval = HL_GetVprocGroupNumImplPiv(&Num);
+    if (Rval != OK) {
+        AmbaLL_LogUInt5("HL_GetVprocGroupNumImplPiv Num[%d] Rval[0x%X]", Num, Rval, 0U, 0U, 0U);
+    }
+
+    /* Check if number of group excesses the limit */
+    if (Num > NUM_VPROC_MAX_GROUP) {
+        AmbaLL_LogUInt5("Number of groups (%d) is out of range ", Num, 0U, 0U, 0U, 0U);
+        Rval = DSP_ERR_0000;
+    }
+
+    *pNum = Num;
+    *pFreeRunBit = FreeRunBit;
+    return Rval;
+}
+#endif
+
+UINT32 HL_CalcVprocGroupNum(void)
+{
+    UINT32 Rval;
+    CTX_RESOURCE_INFO_s *pResource = HL_CtxResInfoPtr;
+    UINT16 GrpNum = 0U, FreeRunBit = 0U;
+
+#ifdef SUPPORT_VPROC_GROUPING
+    Rval = HL_GetVprocGroupNumImpl(&GrpNum, &FreeRunBit);
+    if (Rval != OK) {
+        AmbaLL_LogUInt5("HL_GetVprocGroupNumImpl Error[0x%X]", Rval, 0U, 0U, 0U, 0U);
+    }
+#endif
+    HL_GetResourceLock(&pResource);
+    pResource->VprocGrpNum = GrpNum;
+    pResource->VprocGrpFreeRunBit = FreeRunBit;
+    HL_GetResourceUnLock();
+
+    return Rval;
+}
+
+UINT32 HL_GetVprocGroupNum(UINT16 *Num)
+{
+    UINT32 Rval = OK;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+
+    HL_GetResourcePtr(&Resource);
+    *Num = Resource->VprocGrpNum;
+
+    return Rval;
+}
+
+UINT32 HL_GetVprocGroupFreeRun(UINT16 *pFreeRunBit)
+{
+    UINT32 Rval = OK;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+
+    HL_GetResourcePtr(&Resource);
+    *pFreeRunBit = Resource->VprocGrpFreeRunBit;
+
+    return Rval;
+}
+
+static inline UINT8 HL_IsViewzoneFromVinId(const UINT32 ViewZoneActiveBit,
+                                           const UINT16 ViewZoneId,
+                                           const UINT16 VinIdx)
+{
+    UINT8 IsSkippedVz = 0U;
+    UINT16 VzVinIdx = 0U;
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+
+    if (0U == DSP_GetBit(ViewZoneActiveBit, ViewZoneId, 1U)) {
+        IsSkippedVz = 1U;
+    }
+
+    if (IsSkippedVz == 0U) {
+        HL_GetViewZoneInfoPtr(ViewZoneId, &ViewZoneInfo);
+        DSP_Bit2U16Idx(ViewZoneInfo->SourceVin, &VzVinIdx);
+        if ((ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_DEC) ||
+            (ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_RECON) ||
+            (VzVinIdx != VinIdx)) {
+            IsSkippedVz = 1U;
+        }
+    }
+
+    return IsSkippedVz;
+}
+
+static inline UINT8 HL_IsViewzoneFromVinIdDeci(const UINT32 ViewZoneActiveBit,
+                                               const UINT16 ViewZoneId,
+                                               const UINT16 VinIdx,
+                                               const UINT8 DecimationRate)
+{
+    UINT8 IsSkippedVz = 0U;
+    UINT16 VzVinIdx = 0U;
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+
+    if (0U == DSP_GetBit(ViewZoneActiveBit, ViewZoneId, 1U)) {
+        IsSkippedVz = 1U;
+    }
+
+    if (IsSkippedVz == 0U) {
+        HL_GetViewZoneInfoPtr(ViewZoneId, &ViewZoneInfo);
+        DSP_Bit2U16Idx(ViewZoneInfo->SourceVin, &VzVinIdx);
+        if ((ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_DEC) ||
+            (ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_RECON) ||
+            (ViewZoneInfo->VinDecimationRate != DecimationRate) ||
+            (VzVinIdx != VinIdx)) {
+            IsSkippedVz = 1U;
+        }
+    }
+
+    return IsSkippedVz;
+}
+
+UINT32 HL_GetVprocGroupIdx(UINT16 VprocId, UINT16 *pIdx, UINT8 IsStlProc)
+{
+    UINT32 Rval = OK;
+    CTX_RESOURCE_INFO_s *pResource = HL_CtxResInfoPtr;
+    CTX_VIEWZONE_INFO_s *pViewZoneInfo = HL_CtxViewZoneInfoPtr;
+
+    *pIdx = 0U;
+    HL_GetResourcePtr(&pResource);
+    if (IsStlProc > 0U) {
+        /* StlProc is the last Vproc Group */
+        if (pResource->VprocGrpNum > 0U) {
+            *pIdx = pResource->VprocGrpNum - 1U;
+        }
+    } else {
+        HL_GetViewZoneInfoPtr(VprocId, &pViewZoneInfo);
+        *pIdx = (UINT16)pViewZoneInfo->VprocGrpId;
+    }
+
+    return Rval;
+}
+
+UINT32 HL_GetViewZonePrevDest(UINT16 ViewZoneId, UINT16 VprocPin, UINT16 *pDest, UINT32 *pDestIdBit)
+{
+    UINT32 Rval = OK;
+#ifdef UCODE_SUPPORT_PREVFILTER_REARRANGE
+    CTX_VPROC_INFO_s VprocInfo = {0};
+    CTX_YUV_STRM_INFO_s *YuvStrmInfo = HL_CtxYuvStrmInfoPtr;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    UINT8 IsEncPurpose = 0U, IsVoutPurpose = 0U, IsMemPurpose = 0U;
+    UINT16 YuvStrmIdx = 0U;
+    UINT16 VoutId = 0U, VoutPhysId = 0U;
+
+    HL_GetVprocInfo(HL_MTX_OPT_ALL, ViewZoneId, &VprocInfo);
+    HL_GetResourcePtr(&Resource);
+    if (VprocInfo.PinUsage[VprocPin] > 0U) {
+        DSP_Bit2U16Idx(VprocInfo.PinUsage[VprocPin], &YuvStrmIdx);
+        HL_GetYuvStrmInfoPtr(YuvStrmIdx, &YuvStrmInfo);
+
+        IsEncPurpose =(1U == DSP_GetU16Bit(YuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_ENCODE_IDX, 1U))? 1U: 0U;
+        IsVoutPurpose = (1U == DSP_GetU16Bit(YuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_VOUT_IDX, 1U))? 1U: 0U;
+        IsMemPurpose = (1U == DSP_GetU16Bit(YuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_MEMORY_IDX, 1U))? 1U: 0U;
+
+        if (IsEncPurpose > 0U) {
+            *pDest = AMBA_DSP_PREV_DEST_PIN;
+            *pDestIdBit = YuvStrmInfo->DestEnc;
+        } else if (IsVoutPurpose > 0U) {
+            DSP_Bit2U16Idx((UINT32)YuvStrmInfo->DestVout, &VoutId);
+            (void)HL_GetVoutPhysId(VoutId, &VoutPhysId);
+            if (VoutPhysId == VOUT_IDX_A) {
+                *pDest = AMBA_DSP_PREV_DEST_VOUT0;
+                *pDestIdBit = (UINT32)YuvStrmInfo->DestVout;
+            } else if (VoutPhysId == VOUT_IDX_B) {
+                *pDest = AMBA_DSP_PREV_DEST_VOUT1;
+                *pDestIdBit = (UINT32)YuvStrmInfo->DestVout;
+            } else {
+                *pDest = AMBA_DSP_PREV_DEST_DUMMY;
+                *pDestIdBit = 0U;
+            }
+        } else if (IsMemPurpose > 0U) {
+            *pDest = AMBA_DSP_PREV_DEST_PIN;
+            *pDestIdBit = 0U;
+        } else {
+            *pDest = AMBA_DSP_PREV_DEST_DUMMY;
+            *pDestIdBit = 0U;
+        }
+    } else {
+        *pDest = AMBA_DSP_PREV_DEST_DUMMY;
+        *pDestIdBit = 0U;
+    }
+#else
+    if (VprocPin == DSP_VPROC_PIN_PREVA) {
+        *pDest = AMBA_DSP_PREV_DEST_PIN;
+        *pDestIdBit = YuvStrmInfo->DestEnc;
+    } else if (VprocPin == DSP_VPROC_PIN_PREVB) {
+        *pDest = AMBA_DSP_PREV_DEST_VOUT1;
+        *pDestIdBit = YuvStrmInfo->DestVout;
+    } else { //PrevC
+        *pDest = AMBA_DSP_PREV_DEST_VOUT0;
+        *pDestIdBit = YuvStrmInfo->DestVout;
+    }
+#endif
+    return Rval;
+}
+
+UINT32 HL_GetViewZonePrevSync(UINT16 ViewZoneId, UINT8 *pPrevSync, UINT8 *pPrevVoutPreSend)
+{
+    UINT32 Rval = OK;
+    UINT16 i;
+    CTX_VPROC_INFO_s VprocInfo = {0};
+    CTX_YUV_STRM_INFO_s *pYuvStrmInfo = HL_CtxYuvStrmInfoPtr;
+    UINT8 IsEncPurpose = 0U, IsVoutPurpose = 0U, IsLdPurpose = 0U, VoutPresendBit = (UINT8)0U;
+    UINT16 YuvStrmIdx = 0U;
+
+    HL_GetVprocInfo(HL_MTX_OPT_ALL, ViewZoneId, &VprocInfo);
+    *pPrevSync = DSP_VPROC_PIN_NOT_SYNC_TO_ENC;
+    *pPrevVoutPreSend = (UINT8)0U;
+
+    for (i = 0U; i < DSP_VPROC_PIN_NUM; i++) {
+        if (VprocInfo.PinUsage[i] > 0U) {
+            DSP_Bit2U16Idx(VprocInfo.PinUsage[i], &YuvStrmIdx);
+            HL_GetYuvStrmInfoPtr(YuvStrmIdx, &pYuvStrmInfo);
+
+            IsEncPurpose =(1U == DSP_GetU16Bit(pYuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_ENCODE_IDX, 1U))? 1U: 0U;
+            IsVoutPurpose =(1U == DSP_GetU16Bit(pYuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_VOUT_IDX, 1U))? 1U: 0U;
+            IsLdPurpose = (1U == DSP_GetU16Bit(pYuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_LD_IDX, 1U))? 1U: 0U;
+
+            if ((IsEncPurpose > 0U) &&
+                (IsLdPurpose > 0U)) {
+                *pPrevSync = (UINT8)HL_VprocPinPrevSyncMap[i];
+            } else if ((IsVoutPurpose > 0U) &&
+                       (IsLdPurpose > 0U)) {
+                DSP_SetU8Bit(&VoutPresendBit, i);
+            } else {
+                // DO NOTHING
+            }
+        }
+    }
+
+    *pPrevVoutPreSend = VoutPresendBit;
+
+    return Rval;
+}
+
+static inline void HL_GetPinOutDestBufNumPin(UINT16 VprocPin,
+                                             UINT16 *pNum,
+                                             UINT16 *pAuxNum)
+{
+    UINT8 IsEfctYuvStrm, IsVoutPurpose;
+    UINT16 i, MaxNum = 0U, MaxAuxNum = 0U;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    CTX_YUV_STRM_INFO_s *YuvStrmInfo = HL_CtxYuvStrmInfoPtr;
+    CTX_VPROC_INFO_s VprocInfo = {0};
+
+    HL_GetResourcePtr(&Resource);
+    for (i=0U; i<Resource->YuvStrmNum; i++) {
+        HL_GetYuvStrmInfoPtr(i, &YuvStrmInfo);
+        IsEfctYuvStrm = (1U == HL_GetEffectEnableOnYuvStrm(i))? (UINT8)1U: (UINT8)0U;
+        IsVoutPurpose = (1U == DSP_GetU16Bit(YuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_VOUT_IDX, 1U))? (UINT8)1U: (UINT8)0U;
+
+        // Only effect channels use postp buffers
+        if (0U == IsEfctYuvStrm) {
+            continue;
+        }
+        if ((VprocPin == DSP_VPROC_PIN_MAIN) && (IsVoutPurpose == 0U)) {
+            HL_GetVprocInfo(HL_MTX_OPT_ALL, YuvStrmInfo->Layout.ChanCfg[0U].ViewZoneId, &VprocInfo);
+            if (VprocInfo.PinUsage[DSP_VPROC_PIN_MAIN] > 0U) {
+                if (1U == DSP_GetBit(VprocInfo.PinUsage[DSP_VPROC_PIN_MAIN], i, 1U)) {
+                    if (YuvStrmInfo->BufNum > 0U) {
+                        MaxNum = MAX2_16(MaxNum, YuvStrmInfo->BufNum);
+                    } else {
+                        MaxNum = MAX2_16(MaxNum, CV2X_MAX_PREV_FB_NUM);
+                    }
+                    MaxAuxNum = MaxNum;
+                }
+            }
+        } else if (VprocPin == DSP_VPROC_PIN_PREVA) {
+            HL_GetVprocInfo(HL_MTX_OPT_ALL, YuvStrmInfo->Layout.ChanCfg[0U].ViewZoneId, &VprocInfo);
+            if (VprocInfo.PinUsage[DSP_VPROC_PIN_PREVA] > 0U) {
+                if (1U == DSP_GetBit(VprocInfo.PinUsage[DSP_VPROC_PIN_PREVA], i, 1U)) {
+                    if (YuvStrmInfo->BufNum > 0U) {
+                        MaxNum = MAX2_16(MaxNum, YuvStrmInfo->BufNum);
+                    } else {
+                        MaxNum = MAX2_16(MaxNum, CV2X_MAX_PREV_FB_NUM);
+                    }
+//FIXME, uCode DONT support disable AuxBuf yet when vout purpose
+                    //MaxAuxNum = 0U;
+                    MaxAuxNum = MaxNum;
+                }
+            }
+        } else {
+            // keep MaxNum the same
+        }
+    }
+    *pNum = MaxNum;
+    *pAuxNum = MaxAuxNum;
+
+}
+
+
+#if defined(UCODE_SUPPORT_EFFECT_PREV_ABC_REARRANGE)
+static inline void HL_GetPinOutDestBufNumVoutImp(UINT8 IsEfctYuvStrm, UINT16 Dest, UINT16 YuvStrmId, UINT16 *pMaxNum, UINT16 *pMaxAuxNum,
+                                                 CTX_VPROC_INFO_s *pVprocInfo, const CTX_YUV_STRM_INFO_s *pYuvStrmInfo)
+{
+    UINT16 VoutId = 0U, VoutPhysId = 0U;
+(void)IsEfctYuvStrm;
+(void)YuvStrmId;
+(void)pVprocInfo;
+
+#ifndef UCODE_SUPPORT_EFFECT_SHARE_NONEFFECT_BUF_LOGIC
+    if (1U == IsEfctYuvStrm) {
+        if ((1U == DSP_GetU16Bit(pYuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_VOUT_IDX, 1U)) &&
+            (Dest == AMBA_DSP_PREV_DEST_VOUT0)) {
+            HL_GetVprocInfo(HL_MTX_OPT_ALL, pYuvStrmInfo->Layout.ChanCfg[0U].ViewZoneId, pVprocInfo);
+            if (pVprocInfo->PinUsage[DSP_VPROC_PIN_PREVC] > 0U) {
+                if (1U == DSP_GetBit(pVprocInfo->PinUsage[DSP_VPROC_PIN_PREVC], YuvStrmId, 1U)) {
+                    if (pYuvStrmInfo->BufNum > 0U) {
+                        *pMaxNum = MAX2_16(*pMaxNum, pYuvStrmInfo->BufNum);
+                    } else {
+                        *pMaxNum = MAX2_16(*pMaxNum, CV2X_MAX_PREV_FB_NUM);
+                    }
+                    *pMaxAuxNum = *pMaxNum;
+                }
+            }
+        } else if ((1U == DSP_GetU16Bit(pYuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_VOUT_IDX, 1U)) &&
+                   (Dest == AMBA_DSP_PREV_DEST_VOUT1)) {
+            HL_GetVprocInfo(HL_MTX_OPT_ALL, pYuvStrmInfo->Layout.ChanCfg[0U].ViewZoneId, pVprocInfo);
+            if (pVprocInfo->PinUsage[DSP_VPROC_PIN_PREVB] > 0U) {
+                if (1U == DSP_GetBit(pVprocInfo->PinUsage[DSP_VPROC_PIN_PREVB], YuvStrmId, 1U)) {
+                    if (pYuvStrmInfo->BufNum > 0U) {
+                        *pMaxNum = MAX2_16(*pMaxNum, pYuvStrmInfo->BufNum);
+                    } else {
+                        *pMaxNum = MAX2_16(*pMaxNum, CV2X_MAX_PREV_FB_NUM);
+                    }
+                    *pMaxAuxNum = *pMaxNum;
+                }
+            }
+        } else {
+            // keep MaxNum the same
+        }
+    } else
+#endif
+    {
+        DSP_Bit2U16Idx((UINT32)pYuvStrmInfo->DestVout, &VoutId);
+        (void)HL_GetVoutPhysId(VoutId, &VoutPhysId);
+        if ((VoutPhysId == VOUT_IDX_A) &&
+            (Dest == AMBA_DSP_PREV_DEST_VOUT0)) {
+            if (pYuvStrmInfo->BufNum > 0U) {
+                *pMaxNum = MAX2_16(*pMaxNum, pYuvStrmInfo->BufNum);
+            } else {
+                *pMaxNum = MAX2_16(*pMaxNum, CV2X_MAX_PREV_FB_NUM);
+            }
+            *pMaxAuxNum = *pMaxNum;
+        } else if ((VoutPhysId == VOUT_IDX_B) &&
+                   (Dest == AMBA_DSP_PREV_DEST_VOUT1)) {
+            if (pYuvStrmInfo->BufNum > 0U) {
+                *pMaxNum = MAX2_16(*pMaxNum, pYuvStrmInfo->BufNum);
+            } else {
+                *pMaxNum = MAX2_16(*pMaxNum, CV2X_MAX_PREV_FB_NUM);
+            }
+            *pMaxAuxNum = *pMaxNum;
+        } else {
+            // keep MaxNum the same
+        }
+    }
+}
+#endif
+
+#if defined(UCODE_SUPPORT_EFFECT_PREV_BC_REARRANGE)
+static inline void HL_GetEfctBcReArngDestBufNumVout(const UINT16 YuvStrmId,
+                                                    const CTX_YUV_STRM_INFO_s *pYuvStrmInfo,
+                                                    const UINT16 Dest,
+                                                    const UINT16 VoutPhysId,
+                                                    UINT16 *pMaxNum,
+                                                    UINT16 *pMaxAuxNum,
+                                                    UINT8 *pEfctSharedMode)
+{
+    CTX_VPROC_INFO_s VprocInfo = {0};
+
+    if ((1U == DSP_GetU16Bit(pYuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_VOUT_IDX, 1U)) &&
+        (Dest == AMBA_DSP_PREV_DEST_VOUT0) &&
+        (VoutPhysId == VOUT_IDX_A)) {
+        HL_GetVprocInfo(HL_MTX_OPT_ALL, pYuvStrmInfo->Layout.ChanCfg[0U].ViewZoneId, &VprocInfo);
+#ifndef UCODE_SUPPORT_EFFECT_SHARE_NONEFFECT_BUF_LOGIC
+        if (VprocInfo.PinUsage[DSP_VPROC_PIN_PREVC] > 0U) {
+            if (1U == DSP_GetBit(VprocInfo.PinUsage[DSP_VPROC_PIN_PREVC], YuvStrmId, 1U)) {
+                if (pYuvStrmInfo->BufNum > 0U) {
+                    *pMaxNum = MAX2_16(*pMaxNum, pYuvStrmInfo->BufNum);
+                } else {
+                    *pMaxNum = MAX2_16(*pMaxNum, CV2X_MAX_PREV_FB_NUM);
+                }
+                *pMaxAuxNum = *pMaxNum;
+            }
+        }
+#else
+        if (pYuvStrmInfo->BufNum > 0U) {
+            *pMaxNum = MAX2_16(*pMaxNum, pYuvStrmInfo->BufNum);
+        } else {
+            *pMaxNum = MAX2_16(*pMaxNum, CV2X_MAX_PREV_FB_NUM);
+        }
+        *pMaxAuxNum = *pMaxNum;
+        if (VprocInfo.PinUsage[DSP_VPROC_PIN_PREVB] > 0U) {
+            if (1U == DSP_GetBit(VprocInfo.PinUsage[DSP_VPROC_PIN_PREVB], YuvStrmId, 1U)) {
+                *pEfctSharedMode = DSP_EFCT_SHARE_PREVB_TO_VOUT0;
+            }
+        }
+#endif
+    } else if ((1U == DSP_GetU16Bit(pYuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_VOUT_IDX, 1U)) &&
+               (Dest == AMBA_DSP_PREV_DEST_VOUT1) &&
+               (VoutPhysId == VOUT_IDX_B)) {
+        HL_GetVprocInfo(HL_MTX_OPT_ALL, pYuvStrmInfo->Layout.ChanCfg[0U].ViewZoneId, &VprocInfo);
+#ifndef UCODE_SUPPORT_EFFECT_SHARE_NONEFFECT_BUF_LOGIC
+        if (VprocInfo.PinUsage[DSP_VPROC_PIN_PREVB] > 0U) {
+            if (1U == DSP_GetBit(VprocInfo.PinUsage[DSP_VPROC_PIN_PREVB], YuvStrmId, 1U)) {
+                if (pYuvStrmInfo->BufNum > 0U) {
+                    *pMaxNum = MAX2_16(*pMaxNum, pYuvStrmInfo->BufNum);
+                } else {
+                    *pMaxNum = MAX2_16(*pMaxNum, CV2X_MAX_PREV_FB_NUM);
+                }
+                *pMaxAuxNum = *pMaxNum;
+            }
+        }
+#else
+        if (pYuvStrmInfo->BufNum > 0U) {
+            *pMaxNum = MAX2_16(*pMaxNum, pYuvStrmInfo->BufNum);
+        } else {
+            *pMaxNum = MAX2_16(*pMaxNum, CV2X_MAX_PREV_FB_NUM);
+        }
+        *pMaxAuxNum = *pMaxNum;
+        if (VprocInfo.PinUsage[DSP_VPROC_PIN_PREVC] > 0U) {
+            if (1U == DSP_GetBit(VprocInfo.PinUsage[DSP_VPROC_PIN_PREVC], YuvStrmId, 1U)) {
+                *pEfctSharedMode = DSP_EFCT_SHARE_PREVC_TO_VOUT1;
+            }
+        }
+#endif
+    } else {
+        // keep MaxNum the same
+    }
+
+}
+
+static inline void HL_GetNonEfctBcReArngDestBufNumVout(const CTX_YUV_STRM_INFO_s *pYuvStrmInfo,
+                                                       const UINT16 Dest,
+                                                       const UINT16 VoutPhysId,
+                                                       UINT16 *pMaxNum,
+                                                       UINT16 *pMaxAuxNum)
+
+{
+    if ((VoutPhysId == VOUT_IDX_A) &&
+        (Dest == AMBA_DSP_PREV_DEST_VOUT0)) {
+        if (pYuvStrmInfo->BufNum > 0U) {
+            *pMaxNum = MAX2_16(*pMaxNum, pYuvStrmInfo->BufNum);
+        } else {
+            *pMaxNum = MAX2_16(*pMaxNum, CV2X_MAX_PREV_FB_NUM);
+        }
+        *pMaxAuxNum = *pMaxNum;
+    } else if ((VoutPhysId == VOUT_IDX_B) &&
+               (Dest == AMBA_DSP_PREV_DEST_VOUT1)) {
+        if (pYuvStrmInfo->BufNum > 0U) {
+            *pMaxNum = MAX2_16(*pMaxNum, pYuvStrmInfo->BufNum);
+        } else {
+            *pMaxNum = MAX2_16(*pMaxNum, CV2X_MAX_PREV_FB_NUM);
+        }
+        *pMaxAuxNum = *pMaxNum;
+    } else {
+        // keep MaxNum the same
+    }
+}
+#endif
+
+static inline void HL_GetPinOutDestBufNumVout(UINT16 Dest,
+                                              UINT16 *pNum,
+                                              UINT16 *pAuxNum,
+                                              UINT8 *pEfctSharedMode)
+{
+    UINT8 IsEfctYuvStrm;
+    UINT16 i, MaxNum = 0U, MaxAuxNum = 0U;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    CTX_YUV_STRM_INFO_s *YuvStrmInfo = HL_CtxYuvStrmInfoPtr;
+#if defined(UCODE_SUPPORT_EFFECT_PREV_ABC_REARRANGE)
+    CTX_VPROC_INFO_s VprocInfo = {0};
+#endif
+#if !defined (UCODE_SUPPORT_EFFECT_PREV_ABC_REARRANGE)
+    UINT16 VoutId = 0U, VoutPhysId = 0U;
+#endif
+
+    HL_GetResourcePtr(&Resource);
+    for (i = 0U; i < Resource->YuvStrmNum; i++) {
+        HL_GetYuvStrmInfoPtr(i, &YuvStrmInfo);
+        IsEfctYuvStrm = (UINT8)HL_GetEffectEnableOnYuvStrm(i);
+(void)IsEfctYuvStrm;
+
+        // Only Vout YuvStreams use common buffers
+        if (0U == DSP_GetU16Bit(YuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_VOUT_IDX, 1U)) {
+            continue;
+        }
+
+#if defined(UCODE_SUPPORT_EFFECT_PREV_ABC_REARRANGE)
+        /*
+         * 20190619, In CVx current design
+         * PostP_XX_ and Prev_comX_ have different meaning
+         * NonEffect Pipeline
+         *   - means the YuvBuffer to Destination
+         * Effect Pipeline
+         *   - means the YuvBuffer from which VprocPin
+         *     postp_main_ : From Main
+         *     postp_Pip_ : From PrevA
+         *     prev_com0(DEST_VOUT0) : From PrevC
+         *     prev_com1(DEST_VOUT1) : From PrevB
+         *
+         * 20210611, In CV5, Effect share same logic as NonEffect
+         */
+
+        HL_GetPinOutDestBufNumVoutImp(IsEfctYuvStrm, Dest, i, &MaxNum, &MaxAuxNum, &VprocInfo, YuvStrmInfo);
+
+#elif defined(UCODE_SUPPORT_EFFECT_PREV_BC_REARRANGE)
+        /*
+         * 20190619, In CVx current design
+         * PostP_XX_ and Prev_comX_ have different meaning
+         * NonEffect Pipeline
+         *   - means the YuvBuffer to Destination
+         * Effect Pipeline
+         *   - means the YuvBuffer from which VprocPin
+         *     postp_main_ : From Main
+         *     postp_Pip_ : From PrevA
+         *     prev_com0(DEST_VOUT0) : From PrevC
+         *     prev_com1(DEST_VOUT1) : From PrevB
+         *
+         * 20210611, In CV5, Effect share same logic as NonEffect
+         */
+
+        DSP_Bit2U16Idx((UINT32)YuvStrmInfo->DestVout, &VoutId);
+        (void)HL_GetVoutPhysId(VoutId, &VoutPhysId);
+
+        if (1U == IsEfctYuvStrm) {
+            HL_GetEfctBcReArngDestBufNumVout(i,
+                                             YuvStrmInfo,
+                                             Dest,
+                                             VoutPhysId,
+                                             &MaxNum,
+                                             &MaxAuxNum,
+                                             pEfctSharedMode);
+        } else {
+            HL_GetNonEfctBcReArngDestBufNumVout(YuvStrmInfo,
+                                                Dest,
+                                                VoutPhysId,
+                                                &MaxNum,
+                                                &MaxAuxNum);
+        }
+#else
+        DSP_Bit2U16Idx((UINT32)YuvStrmInfo->DestVout, &VoutId);
+        (void)HL_GetVoutPhysId(VoutId, &VoutPhysId);
+        if ((VoutPhysId == VOUT_IDX_A) &&
+            (Dest == AMBA_DSP_PREV_DEST_VOUT0)) {
+            if (YuvStrmInfo->BufNum > 0U) {
+                MaxNum = MAX2_16(MaxNum, YuvStrmInfo->BufNum);
+            } else {
+                MaxNum = MAX2_16(MaxNum, CV2X_MAX_PREV_FB_NUM);
+            }
+            MaxAuxNum = MaxNum;
+        } else if ((VoutPhysId == VOUT_IDX_B) &&
+                   (Dest == AMBA_DSP_PREV_DEST_VOUT1)) {
+            if (YuvStrmInfo->BufNum > 0U) {
+                MaxNum = MAX2_16(MaxNum, YuvStrmInfo->BufNum);
+            } else {
+                MaxNum = MAX2_16(MaxNum, CV2X_MAX_PREV_FB_NUM);
+            }
+            MaxAuxNum = MaxNum;
+        } else {
+            // keep MaxNum the same
+        }
+#endif
+    }
+    *pNum = MaxNum;
+    *pAuxNum = MaxAuxNum;
+}
+
+UINT32 HL_GetPinOutDestBufNum(UINT16 Dest, UINT16 VprocPin, UINT16 *pNum, UINT16 *pAuxNum, UINT8 *pEfctSharedMode)
+{
+    //AMBA_DSP_PREV_DEST_NULL / AMBA_DSP_PREV_DEST_DUMMY
+    if ((Dest != AMBA_DSP_PREV_DEST_VOUT0) &&
+        (Dest != AMBA_DSP_PREV_DEST_VOUT1) &&
+        (Dest != AMBA_DSP_PREV_DEST_PIN)) {
+        *pNum = DSP_VPROC_FB_NUM_DISABLE;
+        *pAuxNum = DSP_VPROC_FB_NUM_DISABLE;
+    //AMBA_DSP_PREV_DEST_PIN
+    } else if (Dest == AMBA_DSP_PREV_DEST_PIN) {
+        HL_GetPinOutDestBufNumPin(VprocPin, pNum, pAuxNum);
+    //AMBA_DSP_PREV_DEST_VOUT0 / AMBA_DSP_PREV_DEST_VOUT1
+    } else {
+        HL_GetPinOutDestBufNumVout(Dest, pNum, pAuxNum, pEfctSharedMode);
+    }
+
+    return OK;
+}
+
+UINT32 HL_GetPinOutDestChFmt(UINT16 Dest, UINT16 VprocPin, UINT8 *pFmt)
+{
+    UINT16 VoutId = 0U, VoutPhysId = 0U;
+
+    (void)VprocPin;
+    *pFmt = DSP_YUV_420;
+
+    //AMBA_DSP_PREV_DEST_NULL / AMBA_DSP_PREV_DEST_DUMMY
+    if ((Dest != AMBA_DSP_PREV_DEST_VOUT0) &&
+        (Dest != AMBA_DSP_PREV_DEST_VOUT1) &&
+        (Dest != AMBA_DSP_PREV_DEST_PIN)) {
+        *pFmt = DSP_YUV_420;
+    //AMBA_DSP_PREV_DEST_PIN
+    } else if (Dest == AMBA_DSP_PREV_DEST_PIN) {
+        *pFmt = DSP_YUV_420;
+    //AMBA_DSP_PREV_DEST_VOUT0 / AMBA_DSP_PREV_DEST_VOUT1
+    } else {
+        UINT16 YuvStrmIdx;
+        CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+        CTX_YUV_STRM_INFO_s *YuvStrmInfo = HL_CtxYuvStrmInfoPtr;
+#ifndef UCODE_SUPPORT_EFFECT_SHARE_NONEFFECT_BUF_LOGIC
+        CTX_VPROC_INFO_s VprocInfo = {0};
+#endif
+
+        HL_GetResourcePtr(&Resource);
+        for (YuvStrmIdx=0U; YuvStrmIdx<Resource->YuvStrmNum; YuvStrmIdx++) {
+            HL_GetYuvStrmInfoPtr(YuvStrmIdx, &YuvStrmInfo);
+
+            // Only Vout YuvStreams use common buffers
+            if (0U == DSP_GetU16Bit(YuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_VOUT_IDX, 1U)) {
+                continue;
+            }
+
+            /*
+            * NonEffect Pipeline
+            *   - means the YuvBuffer to Destination
+            * Effect Pipeline
+            *   - means the YuvBuffer from which VprocPin
+            *     postp_main_ : keep as DSP_YUV_420
+            *     postp_Pip_ : keep as DSP_YUV_420
+            *     prev_com0(DEST_VOUT0) : From PrevC, could use 420/422, check by use input
+            *     prev_com1(DEST_VOUT1) : From PrevB, could use 420/422, check by use input
+            * 20210611, In CV5, Effect share same logic as NonEffect
+            */
+
+#ifndef UCODE_SUPPORT_EFFECT_SHARE_NONEFFECT_BUF_LOGIC
+            if (1U == HL_GetEffectEnableOnYuvStrm(YuvStrmIdx)) {
+                if ((1U == DSP_GetU16Bit(YuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_VOUT_IDX, 1U)) &&
+                    (Dest == AMBA_DSP_PREV_DEST_VOUT0)) {
+                    HL_GetVprocInfo(HL_MTX_OPT_ALL, YuvStrmInfo->Layout.ChanCfg[0U].ViewZoneId, &VprocInfo);
+                    if (VprocInfo.PinUsage[DSP_VPROC_PIN_PREVC] > 0U) {
+                        if (1U == DSP_GetBit(VprocInfo.PinUsage[DSP_VPROC_PIN_PREVC], YuvStrmIdx, 1U)) {
+                            *pFmt = YuvFmtTable[YuvStrmInfo->YuvBuf.DataFmt];
+                        }
+                    }
+                } else if ((1U == DSP_GetU16Bit(YuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_VOUT_IDX, 1U)) &&
+                           (Dest == AMBA_DSP_PREV_DEST_VOUT1)) {
+                    HL_GetVprocInfo(HL_MTX_OPT_ALL, YuvStrmInfo->Layout.ChanCfg[0U].ViewZoneId, &VprocInfo);
+                    if (VprocInfo.PinUsage[DSP_VPROC_PIN_PREVB] > 0U) {
+                        if (1U == DSP_GetBit(VprocInfo.PinUsage[DSP_VPROC_PIN_PREVB], YuvStrmIdx, 1U)) {
+                            *pFmt = YuvFmtTable[YuvStrmInfo->YuvBuf.DataFmt];
+                        }
+                    }
+                } else {
+                    // keep as DSP_YUV_420
+                }
+            } else
+#endif
+            {
+                DSP_Bit2U16Idx((UINT32)YuvStrmInfo->DestVout, &VoutId);
+                (void)HL_GetVoutPhysId(VoutId, &VoutPhysId);
+                if ((VoutPhysId == VOUT_IDX_A) &&
+                    (Dest == AMBA_DSP_PREV_DEST_VOUT0)) {
+                    *pFmt = YuvFmtTable[YuvStrmInfo->YuvBuf.DataFmt];
+                } else if ((VoutPhysId == VOUT_IDX_B) &&
+                           (Dest == AMBA_DSP_PREV_DEST_VOUT1)) {
+                    *pFmt = YuvFmtTable[YuvStrmInfo->YuvBuf.DataFmt];
+                } else {
+                    // keep as DSP_YUV_420
+                }
+            }
+        }
+    }
+
+    return OK;
+}
+
+UINT32 HL_GetViewZonePinFbNum(UINT16 ViewZoneId, UINT16 VprocPin, UINT16 *pNum, UINT16 *pAuxNum, UINT8 IsExtFb)
+{
+    UINT32 Rval = OK;
+#ifdef UCODE_SUPPORT_PREVFILTER_REARRANGE
+    CTX_VPROC_INFO_s VprocInfo = {0};
+    CTX_YUV_STRM_INFO_s *YuvStrmInfo = HL_CtxYuvStrmInfoPtr;
+    CTX_VIEWZONE_INFO_s *pViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    UINT16 YuvStrmIdx = 0xFFFFU;
+    UINT8 MctsDramOutDisabled;
+
+    HL_GetVprocInfo(HL_MTX_OPT_ALL, ViewZoneId, &VprocInfo);
+    DSP_Bit2U16Idx(VprocInfo.PinUsage[VprocPin], &YuvStrmIdx);
+
+    if (VprocPin == DSP_VPROC_PIN_MAIN) {
+        /*
+         * 2022/08/30, When MctfCmpr = 1, HL will allocate one MctfCmpr buffer internally for MctfRefIO data.
+         *             main-fb-num is fully used by MctsDramOut,
+         *               If MctsDramOut = 0, we can disable main-fb-num since no one need it,
+         *               Currently ucode not support main-fb = 0, we set it as 1 to prevent HL error.
+         */
+        HL_GetViewZoneInfoPtr(ViewZoneId, &pViewZoneInfo);
+        MctsDramOutDisabled = (UINT8)DSP_GetBit(pViewZoneInfo->FlowBypassOption, FLOW_BYPASS_MCTS_DRAM_OUT_IDX, 1U);
+        if (YuvStrmIdx != 0xFFFFU) {
+            HL_GetYuvStrmInfoPtr(YuvStrmIdx, &YuvStrmInfo);
+            *pNum = YuvStrmInfo->BufNum;
+            if (*pNum == 0U) {
+                *pNum = CV2X_MAX_MAIN_FB_NUM;
+            }
+
+            if ((pViewZoneInfo->MctfCmpr == (UINT8)1U) && (MctsDramOutDisabled == 1U)) {
+#ifdef SUPPORT_VPROC_MAIN_OUT_DISABLE
+                *pNum = DSP_VPROC_FB_NUM_DISABLE;
+#else
+                *pNum = CV5X_MAIN_FB_NUM_MCTFCMPR_MCTSDRAMOFF;
+#endif
+            }
+
+            /* 2021/02/18, DSP support disable main-me if we don't need it at all */
+            if (0U == DSP_GetU16Bit(YuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_ENCODE_IDX, 1U)) {
+                *pAuxNum = DSP_VPROC_FB_NUM_DISABLE;
+            } else {
+                *pAuxNum = *pNum;
+            }
+        } else {
+            if ((pViewZoneInfo->MctfCmpr == (UINT8)1U) && (MctsDramOutDisabled == 1U)) {
+#ifdef SUPPORT_VPROC_MAIN_OUT_DISABLE
+                *pNum = DSP_VPROC_FB_NUM_DISABLE;
+#else
+                *pNum = CV5X_MAIN_FB_NUM_MCTFCMPR_MCTSDRAMOFF;
+#endif
+            } else {
+                *pNum = CV2X_MAX_MAIN_FB_NUM;
+            }
+            *pAuxNum = DSP_VPROC_FB_NUM_DISABLE;
+        }
+    } else if (YuvStrmIdx == 0xFFFFU) {
+        // No one what it, set FB as Disable
+        *pNum = DSP_VPROC_FB_NUM_DISABLE;
+        *pAuxNum = *pNum;
+    } else {
+        HL_GetYuvStrmInfoPtr(YuvStrmIdx, &YuvStrmInfo);
+        if (IsExtFb == 1U) {
+            if (YuvStrmInfo->BufNum > 0U) {
+                *pNum = YuvStrmInfo->BufNum;
+            } else {
+                *pNum = CV2X_MAX_PREV_FB_NUM;
+            }
+        } else {
+            if (1U == DSP_GetU16Bit(YuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_VOUT_IDX, 1U)) {
+                /* If Prev filter outputs to Vout, it actually uses Vout common buffers
+                 * disable Prev fb to reduce dram usage */
+                *pNum = DSP_VPROC_FB_NUM_DISABLE;
+            } else if (YuvStrmInfo->Layout.NumChan > 1U) {
+                /* When PrevA is EffectChan, it uses postp_pip */
+                *pNum = DSP_VPROC_FB_NUM_DISABLE;
+            } else {
+                if (YuvStrmInfo->BufNum > 0U) {
+                    *pNum = YuvStrmInfo->BufNum;
+                } else {
+                    *pNum = CV2X_MAX_PREV_FB_NUM;
+                }
+            }
+        }
+        *pAuxNum = *pNum;
+    }
+#else
+    if (VprocPin == DSP_VPROC_PIN_PREVA) {
+        *pNum = CV2X_MAX_MAIN_FB_NUM;
+    } else if (VprocPin == DSP_VPROC_PIN_PREVB) {
+        *pNum = CV2X_MAX_PREV_FB_NUM;
+    } else { //PrevC
+        *pNum = CV2X_MAX_PREV_FB_NUM;
+    }
+    *pAuxNum = *pNum;
+#endif
+    return Rval;
+}
+
+UINT32 HL_GetViewZoneVinId(UINT16 ViewZoneId, UINT16* VinId)
+{
+    UINT32 Rval = OK;
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    CTX_VIN_INFO_s VinInfo = {0};
+    UINT16 ViewZoneVinId = 0U;
+
+    HL_GetViewZoneInfoPtr(ViewZoneId, &ViewZoneInfo);
+    if (ViewZoneInfo->SourceVin > 0U) {
+        DSP_Bit2U16Idx(ViewZoneInfo->SourceVin, &ViewZoneVinId);
+    } else if ((ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_DEC) ||
+               (ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_RECON)) {
+        ViewZoneVinId = VIN_IDX_INVALID;
+    } else {
+        ViewZoneVinId = VIN_IDX_INVALID;
+    }
+
+    if (ViewZoneInfo->SourceTdIdx != VIEWZONE_SRC_TD_IDX_NULL) {
+        HL_GetVinInfo(HL_MTX_OPT_ALL, ViewZoneVinId, &VinInfo);
+        if (ViewZoneInfo->SourceTdIdx == 0U) {
+            // physical
+            *VinId = VinInfo.TimeDivisionVinId[0U][ViewZoneInfo->SourceTdIdx];
+        } else {
+            // Virtual
+            *VinId = VinInfo.TimeDivisionVinId[0U][ViewZoneInfo->SourceTdIdx] + AMBA_DSP_MAX_VIN_NUM;
+        }
+    } else {
+        *VinId = ViewZoneVinId;
+    }
+    return Rval;
+}
+
+UINT32 HL_GetVinViewZoneId(UINT16 VinId, UINT16 *pViewZoneId)
+{
+    UINT32 Rval = OK;
+    UINT16 i, ViewZoneVinId = VIN_IDX_INVALID;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+
+    HL_GetResourcePtr(&Resource);
+    for (i = 0U; i < Resource->MaxViewZoneNum; i++) {
+        if (0U == DSP_GetBit(Resource->ViewZoneActiveBit, i, 1U)) {
+            continue;
+        }
+        HL_GetViewZoneInfoPtr(i, &ViewZoneInfo);
+        //skip, MemInput viewzone
+        if ((ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_RECON) ||
+            (ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_DEC)) {
+            continue;
+        }
+        if (ViewZoneInfo->SourceVin > 0U) {
+            DSP_Bit2U16Idx(ViewZoneInfo->SourceVin, &ViewZoneVinId);
+        }
+        if (ViewZoneVinId == VinId) {
+            *pViewZoneId = i;
+            break;
+        }
+    }
+
+    return Rval;
+}
+
+void HL_GetGroupAliveViewZoneId(UINT8 GrpID,
+                                UINT16 MasterVinId,
+                                UINT32 DisableViewZoneBitMask,
+                                UINT16 *pMasterViewZoneId,
+                                UINT16 *pNumVproc)
+{
+    UINT16 i, ViewGrpIdx, NumVproc = 0U;
+    UINT16 VzVinIdx = 0U;
+    UINT16 MasterViewZoneId = AMBA_DSP_MAX_VIEWZONE_NUM;
+    UINT32 GrpViewZoneBitMask = 0U;
+    CTX_VIN_INFO_s VinInfo = {0};
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+
+    HL_GetResourcePtr(&Resource);
+    /* Find all the ViewZones in GrpID */
+    for (i=0; i<Resource->MaxViewZoneNum; i++) {
+        if (0U == DSP_GetBit(Resource->ViewZoneActiveBit, i, 1U)) {
+            continue;
+        }
+
+        (void)HL_GetVprocGroupIdx(i, &ViewGrpIdx, 0/*IsStlProc*/);
+        if (GrpID == ViewGrpIdx) {
+            DSP_SetBit(&GrpViewZoneBitMask, i);
+            NumVproc++;
+        }
+    }
+    /* find new master, aka smallest alive vin */
+    for (i=0; i<Resource->MaxViewZoneNum; i++) {
+        if (0U == DSP_GetBit(GrpViewZoneBitMask, i, 1U)) {
+            continue;
+        }
+        if (1U == DSP_GetBit(DisableViewZoneBitMask, i, 1U)) {
+            continue;
+        }
+        (void)HL_GetViewZoneVinId(i, &VzVinIdx);
+        if (VzVinIdx == MasterVinId) {
+            continue;
+        }
+        HL_GetVinInfo(HL_MTX_OPT_ALL, VzVinIdx, &VinInfo);
+        if (VinInfo.VinCtrl.VinState == DSP_VIN_STATUS_ACTIVE) {
+            MasterViewZoneId = i;
+            break;
+        }
+    }
+
+    *pMasterViewZoneId = MasterViewZoneId;
+    *pNumVproc = NumVproc;
+}
+
+void HL_GetGroupFirstVprocId(const UINT16 GrpId,
+                             UINT16 *pFirstVprocId)
+{
+    UINT16 i;
+    UINT16 FirstVprocId = AMBA_DSP_MAX_VIEWZONE_NUM;
+    UINT32 Rval;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+
+    HL_GetResourcePtr(&Resource);
+
+    /* find master vproc in group, ie. 1st order(smallest ViewIdx) in Grp */
+    for (i=0U; i<Resource->MaxViewZoneNum; i++) {
+        UINT16 VzGrpId = 0U;
+        UINT32 ViewZoneActive = DSP_GetBit(Resource->ViewZoneActiveBit, i, 1U);
+
+        Rval = HL_GetVprocGroupIdx(i, &VzGrpId, 0/*IsStlProc*/);
+        if ((Rval != OK) || (VzGrpId != GrpId) || (ViewZoneActive == 0U)) {
+            continue;
+        }
+        FirstVprocId = (FirstVprocId > i)? i: FirstVprocId;
+    }
+
+    *pFirstVprocId = FirstVprocId;
+}
+
+void HL_GetGroupMasterVprocId(const UINT16 GrpId,
+                              UINT16 *pMasterVprocId)
+{
+    UINT16 i;
+    UINT16 MasterVprocId = AMBA_DSP_MAX_VIEWZONE_NUM;
+    UINT32 Rval;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+
+    HL_GetResourcePtr(&Resource);
+
+    for (i=0U; i<Resource->MaxViewZoneNum; i++) {
+        UINT16 VzGrpId = 0U;
+        UINT32 ViewZoneActive = DSP_GetBit(Resource->ViewZoneActiveBit, i, 1U);
+
+        Rval = HL_GetVprocGroupIdx(i, &VzGrpId, 0/*IsStlProc*/);
+        HL_GetViewZoneInfoPtr(i, &ViewZoneInfo);
+//        AmbaLL_LogUInt5("HL_GetGroupMasterVprocId vz:%u Grp:%u ViewZoneActive:%u IsMaster:%u",
+//                i, VzGrpId, ViewZoneActive, ViewZoneInfo->IsMaster, 0U);
+        if ((Rval == OK) &&
+            (VzGrpId == GrpId) &&
+            (ViewZoneActive == 1U) &&
+            (ViewZoneInfo->IsMaster == 1U)) {
+            MasterVprocId = i;
+            break;
+        }
+    }
+
+    *pMasterVprocId = MasterVprocId;
+}
+
+#if 0
+void HL_GetGroupVZMask(const UINT16 GrpId, UINT32 *pGroupVZMask)
+{
+    UINT16 i;
+    UINT32 Rval;
+    UINT32 GroupVZMask = 0U;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+
+    HL_GetResourcePtr(&Resource);
+
+    for (i=0U; i<Resource->MaxViewZoneNum; i++) {
+        UINT16 VzGrpId = 0U;
+        UINT32 ViewZoneActive = DSP_GetBit(Resource->ViewZoneActiveBit, i, 1U);
+
+        Rval = HL_GetVprocGroupIdx(i, &VzGrpId, 0/*IsStlProc*/);
+        if ((Rval == OK) &&
+            (VzGrpId == GrpId) &&
+            (ViewZoneActive == 1U)) {
+            DSP_SetBit(&GroupVZMask, i);
+        }
+    }
+
+    *pGroupVZMask = GroupVZMask;
+}
+#endif
+
+static inline UINT32 HL_GetViewZonePixelRate(const UINT16 ViewZoneId, const CTX_VIEWZONE_INFO_s *pViewZoneInfo, UINT32 *pPixelRate)
+{
+    UINT32 Rval = DSP_ERR_NONE;
+    UINT32 Width, Height, FrameRate;
+    UINT16 VinId = VIN_IDX_INVALID;
+    CTX_VIN_INFO_s VinInfo = {0};
+
+    Width = pViewZoneInfo->Main.Width;
+    Height = pViewZoneInfo->Main.Height;
+
+    (void)HL_GetViewZoneVinId(ViewZoneId, &VinId);
+    if (VinId == VIN_IDX_INVALID) {
+//FIXME, source is memory
+        FrameRate = 30U;
+    } else {
+        HL_GetVinInfo(HL_MTX_OPT_ALL, VinId, &VinInfo);
+
+        if (VinInfo.FrameRate.NumUnitsInTick > 0U) {
+            FrameRate = (VinInfo.FrameRate.TimeScale + (VinInfo.FrameRate.NumUnitsInTick - 1U))/VinInfo.FrameRate.NumUnitsInTick;
+        } else {
+            FrameRate = 0U;
+        }
+        if (pViewZoneInfo->VinDecimationRate > 1U) {
+            FrameRate /= pViewZoneInfo->VinDecimationRate;
+        }
+    }
+
+    *pPixelRate = (Width*Height)*FrameRate;
+
+    return Rval;
+}
+
+//#define DBG_IDSP_AFF
+UINT32 HL_GetViewZoneAffinity(const UINT16 ViewZoneId, const CTX_VIEWZONE_INFO_s *pViewZoneInfo, UINT8 *pAffinity)
+{
+    UINT32 Rval = DSP_ERR_NONE;
+    CTX_RESOURCE_INFO_s *pResource = HL_CtxResInfoPtr;
+    UINT32 LoadNumber[DSP_IDSP_CORE_NUM], PixelRate = 0U;
+    UINT32 MinLoadNum = 0xFFFFFFFFU;
+    UINT8 i, MinLoadId = (UINT8)0U;
+    UINT8 PrevSync = (UINT8)0U, PrevVoutPreSend = (UINT8)0U;
+
+    /*
+     * Current rule to assign affinity
+     *   1) When resolution > 2M, assign dual-core
+     *   2) When resolution <= 2M, assign to single-core with light loading
+     *   3) When prev_sync_to_enc = 1, assing to single-core
+     */
+
+    HL_GetResourcePtr(&pResource);
+    (void)dsp_osal_memcpy(LoadNumber, pResource->IdspLoad, sizeof(UINT32)*DSP_IDSP_CORE_NUM);
+
+    (void)HL_GetViewZonePixelRate(ViewZoneId, pViewZoneInfo, &PixelRate);
+
+#ifdef DBG_IDSP_AFF
+        AmbaLL_LogUInt5("HL_GetViewZoneAffinity : VZ[%d] Load[%d %d] P[%d]",
+                         ViewZoneId, LoadNumber[0U], LoadNumber[1U], PixelRate, 0U);
+#endif
+    (void)HL_GetViewZonePrevSync(ViewZoneId, &PrevSync, &PrevVoutPreSend);
+
+    if (((pViewZoneInfo->Main.Width > SEC2_MAX_OUT_WIDTH) || (pViewZoneInfo->SliceNumCol > 1U)) &&
+        (PrevSync == (UINT8)0U)) {
+        /* Dispatch pixel-rate to all core */
+        for (i = 0U; i < DSP_IDSP_CORE_NUM; i++) {
+            LoadNumber[i] += (PixelRate>>10U)/DSP_IDSP_CORE_NUM;
+        }
+        *pAffinity = DSP_IDSP_FULL_CORE_MASK;
+    } else {
+        /* Dispatch pixel-rate to lighter core */
+        for (i = 0U; i < DSP_IDSP_CORE_NUM; i++) {
+            if (LoadNumber[i] < MinLoadNum) {
+                MinLoadNum = LoadNumber[i];
+                MinLoadId = i;
+            }
+        }
+        LoadNumber[MinLoadId] += (PixelRate>>10U);
+        *pAffinity = (1U << MinLoadId);
+    }
+
+#ifdef DBG_IDSP_AFF
+    AmbaLL_LogUInt5("HL_GetViewZoneAffinity : UptLoad[%d %d] Aff[0x%X]",
+                     LoadNumber[0U], LoadNumber[1U], *pAffinity, 0U, 0U);
+#endif
+
+    /* Update idsp loading */
+    HL_GetResourceLock(&pResource);
+    (void)dsp_osal_memcpy(pResource->IdspLoad, LoadNumber , sizeof(UINT32)*DSP_IDSP_CORE_NUM);
+    HL_GetResourceUnLock();
+
+    return Rval;
+}
+
+//#define DBG_VDSP_ENC_AFF
+static inline UINT32 HL_GetEncStrmPixelRate(const UINT16 StrmIdx,
+                                            const AMBA_DSP_WINDOW_DIMENSION_s *pWin,
+                                            const CTX_RESOURCE_INFO_s *pResource,
+                                            UINT32 *pPixelRate,
+                                            UINT8 *pIsPrevSyncToEnc)
+{
+    UINT32 Rval = DSP_ERR_NONE;
+    UINT32 FrameRate = 30U;
+    UINT8 NeedAvcResc = (UINT8)DSP_GetU8Bit(pResource->MaxStrmFmt[StrmIdx], 0U/*H264*/, 1U);
+    UINT8 NeedHevcResc = (UINT8)DSP_GetU8Bit(pResource->MaxStrmFmt[StrmIdx], 1U/*H265*/, 1U);
+    UINT8 NeedJpgResc = (UINT8)DSP_GetU8Bit(pResource->MaxStrmFmt[StrmIdx], 2U/*JPG*/, 1U);
+    UINT16 i;
+    CTX_YUV_STRM_INFO_s *pYuvStrmInfo = HL_CtxYuvStrmInfoPtr;
+    const CTX_YUV_STRM_LAYOUT_s *pYuvStrmLayout;
+    CTX_VIEWZONE_INFO_s *pViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    UINT16 StrmDecimation;
+    UINT16 SrcViewZoneId;
+    UINT16 VinId = 0U;
+    CTX_VIN_INFO_s VinInfo = {0};
+
+    if ((NeedAvcResc == (UINT8)0U) && (NeedHevcResc == (UINT8)0U) && (NeedJpgResc == (UINT8)1U)) {
+        /* Still assume 1fps most */
+        FrameRate = 1U;
+    } else {
+        /* Video */
+        for (i = 0U; i < pResource->YuvStrmNum; i++) {
+            HL_GetYuvStrmInfoPtr(i, &pYuvStrmInfo);
+            if (1U == DSP_GetU16Bit(pYuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_ENCODE_IDX, 1U)) {
+                if (1U == DSP_GetBit(pYuvStrmInfo->DestEnc, StrmIdx, 1U)) {
+                    *pIsPrevSyncToEnc = (UINT8)DSP_GetU16Bit(pYuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_LD_IDX, 1U);
+                    pYuvStrmLayout = &pYuvStrmInfo->Layout;
+                    if (pYuvStrmInfo->DestDeciRate > 0U) {
+                        StrmDecimation = (UINT16)DSP_GetBit(pYuvStrmInfo->DestDeciRate, 16U, 16U);
+                    } else {
+                        StrmDecimation = 1U;
+                    }
+                    // Assume all the source viewzone has the same frame rate
+                    SrcViewZoneId = pYuvStrmLayout->ChanCfg[0].ViewZoneId;
+                    HL_GetViewZoneInfoPtr(SrcViewZoneId, &pViewZoneInfo);
+                    DSP_Bit2U16Idx((UINT32)pViewZoneInfo->SourceVin, &VinId);
+                    HL_GetVinInfo(HL_MTX_OPT_ALL, VinId, &VinInfo);
+                    if (VinInfo.FrameRate.NumUnitsInTick > 0U) {
+                        FrameRate = (VinInfo.FrameRate.TimeScale + (VinInfo.FrameRate.NumUnitsInTick - 1U))/VinInfo.FrameRate.NumUnitsInTick;
+                        if (StrmDecimation > 0U) {
+                            FrameRate /= StrmDecimation;
+                        }
+                    } else {
+                        FrameRate = 0U;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    *pPixelRate = ((UINT32)pWin->Width*pWin->Height)*FrameRate;
+
+    return Rval;
+}
+
+UINT32 HL_GetRescEncStrmAffinity(const UINT16 StrmIdx,
+                                 const AMBA_DSP_WINDOW_DIMENSION_s *pWin,
+                                 UINT8 *pAffinity)
+{
+    UINT32 Rval = DSP_ERR_NONE;
+    CTX_RESOURCE_INFO_s *pResource = HL_CtxResInfoPtr;
+    UINT32 LoadNumber[DSP_VDSP_CORE_NUM], PixelRate = 0U;
+    UINT32 MinLoadNum = 0xFFFFFFFFU;
+    UINT8 i, MinLoadId = (UINT8)0U;
+    UINT8 IsPrevSyncToEnc = (UINT8)0U;
+
+    /*
+     * Current rule to assign affinity
+     *   1) When resolution > 2M, assign dual-core
+     *   2) When resolution <= 2M, assign to single-core with light loading
+     *   3) When prev_sync_to_enc = 1, assing to single-core
+     */
+
+    HL_GetResourcePtr(&pResource);
+    (void)dsp_osal_memcpy(LoadNumber, pResource->VdspLoad, sizeof(UINT32)*DSP_VDSP_CORE_NUM);
+
+    (void)HL_GetEncStrmPixelRate(StrmIdx,
+                                 pWin,
+                                 pResource,
+                                 &PixelRate,
+                                 &IsPrevSyncToEnc);
+
+#ifdef DBG_VDSP_ENC_AFF
+        AmbaLL_LogUInt5("HL_GetEncStrmAffinity : Strm[%d] Load[%d %d] P[%d] SyncEnc[%d]",
+                         StrmIdx, LoadNumber[0U], LoadNumber[1U], PixelRate, IsPrevSyncToEnc);
+#endif
+
+    if ((pWin->Width > FHD_WIDTH) &&
+        (IsPrevSyncToEnc == (UINT8)0U)) {
+        /* Dispatch pixel-rate to all core */
+        for (i = 0U; i < DSP_VDSP_CORE_NUM; i++) {
+            LoadNumber[i] += (PixelRate>>10U)/DSP_VDSP_CORE_NUM;
+        }
+        *pAffinity = DSP_VDSP_FULL_CORE_MASK;
+    } else {
+        /* Dispatch pixel-rate to lighter core */
+        for (i = 0U; i < DSP_VDSP_CORE_NUM; i++) {
+            if (LoadNumber[i] < MinLoadNum) {
+                MinLoadNum = LoadNumber[i];
+                MinLoadId = i;
+            }
+        }
+        LoadNumber[MinLoadId] += (PixelRate>>10U);
+        *pAffinity = (1U << MinLoadId);
+    }
+
+#ifdef DBG_VDSP_ENC_AFF
+    AmbaLL_LogUInt5("HL_GetEncStrmAffinity : UptLoad[%d %d] Aff[0x%X]",
+                     LoadNumber[0U], LoadNumber[1U], *pAffinity, 0U, 0U);
+#endif
+
+    /* Update vdsp loading */
+    HL_GetResourceLock(&pResource);
+    (void)dsp_osal_memcpy(pResource->VdspLoad, LoadNumber , sizeof(UINT32)*DSP_VDSP_CORE_NUM);
+    HL_GetResourceUnLock();
+
+    return Rval;
+}
+
+static inline void HL_GetSysExtLndtExistOnVin(UINT16 VinId,
+                                              const CTX_RESOURCE_INFO_s *pResource,
+                                              UINT8 *pExist)
+{
+    UINT16 i;
+    CTX_VIEWZONE_INFO_s *pViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    UINT32 ViewZoneVinId = 0U;
+    UINT8 Exist = 0U;
+
+    for (i = 0U; i < pResource->MaxViewZoneNum; i++) {
+        if (0U == DSP_GetBit(pResource->ViewZoneActiveBit, i, 1U)) {
+            continue;
+        }
+        HL_GetViewZoneInfoPtr(i, &pViewZoneInfo);
+        if ((pViewZoneInfo->InputFromMemory == VIN_SRC_FROM_DEC) ||
+            (pViewZoneInfo->InputFromMemory == VIN_SRC_FROM_RECON)) {
+            continue;
+        }
+        DSP_Bit2Idx(pViewZoneInfo->SourceVin, &ViewZoneVinId);
+        if (ViewZoneVinId == (UINT32)VinId) {
+            if (pViewZoneInfo->LndtIsExtMem > 0U) {
+                Exist++;
+                break;
+            }
+        }
+    }
+
+    *pExist = Exist;
+}
+
+static inline void HL_GetSysExtMainY12ExistOnVin(UINT16 VinId,
+                                                 const CTX_RESOURCE_INFO_s *pResource,
+                                                 UINT8 *pExist)
+{
+    UINT16 i;
+    CTX_VIEWZONE_INFO_s *pViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    UINT32 ViewZoneVinId = 0U;
+    UINT8 Exist = 0U;
+
+    for (i = 0U; i < pResource->MaxViewZoneNum; i++) {
+        if (0U == DSP_GetBit(pResource->ViewZoneActiveBit, i, 1U)) {
+            continue;
+        }
+        HL_GetViewZoneInfoPtr(i, &pViewZoneInfo);
+        if ((pViewZoneInfo->InputFromMemory == VIN_SRC_FROM_DEC) ||
+            (pViewZoneInfo->InputFromMemory == VIN_SRC_FROM_RECON)) {
+            continue;
+        }
+        DSP_Bit2Idx(pViewZoneInfo->SourceVin, &ViewZoneVinId);
+        if (ViewZoneVinId == (UINT32)VinId) {
+            if (pViewZoneInfo->MainY12IsExtMem > 0U) {
+                Exist++;
+                break;
+            }
+        }
+    }
+
+    *pExist = Exist;
+}
+
+static inline void HL_GetSysExtMainIrExistOnVin(UINT16 VinId,
+                                                const CTX_RESOURCE_INFO_s *pResource,
+                                                UINT8 *pExist)
+{
+    UINT16 i;
+    CTX_VIEWZONE_INFO_s *pViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    UINT32 ViewZoneVinId = 0U;
+    UINT8 Exist = 0U;
+
+    for (i = 0U; i < pResource->MaxViewZoneNum; i++) {
+        if (0U == DSP_GetBit(pResource->ViewZoneActiveBit, i, 1U)) {
+            continue;
+        }
+        HL_GetViewZoneInfoPtr(i, &pViewZoneInfo);
+        if ((pViewZoneInfo->InputFromMemory == VIN_SRC_FROM_DEC) ||
+            (pViewZoneInfo->InputFromMemory == VIN_SRC_FROM_RECON)) {
+            continue;
+        }
+        DSP_Bit2Idx(pViewZoneInfo->SourceVin, &ViewZoneVinId);
+        if (ViewZoneVinId == (UINT32)VinId) {
+            if (pViewZoneInfo->MainIrIsExtMem > 0U) {
+                Exist++;
+                break;
+            }
+        }
+    }
+
+    *pExist = Exist;
+}
+
+static void HL_GetVinAttEvtDftMsk2ndHalf(UINT16 VinId,
+                                         UINT32 *pMask,
+                                         const CTX_RESOURCE_INFO_s *pResource,
+                                         UINT8 IsExtPymdYuv)
+{
+    UINT8 IsExtMainY12 = 0U, IsExtLndtYuv = 0U, IsExtMainIr = 0U;
+
+    HL_GetSysExtLndtExistOnVin(VinId, pResource, &IsExtLndtYuv);
+
+    HL_GetSysExtMainY12ExistOnVin(VinId, pResource, &IsExtMainY12);
+
+    HL_GetSysExtMainIrExistOnVin(VinId, pResource, &IsExtMainIr);
+
+    if (IsExtPymdYuv > 0U) {
+        *pMask |= ((UINT32)1U<<DSP_BIT_POS_EXT_HIER_0);
+    } else if (IsExtMainY12 > 0U) {
+        *pMask |= ((UINT32)1U<<DSP_BIT_POS_EXT_HIER_Y12);
+    } else {
+        // DO NOTHING
+    }
+
+    if (IsExtLndtYuv > 0U) {
+        *pMask |= ((UINT32)1U<<DSP_BIT_POS_EXT_LN_DEC);
+    }
+
+    if (IsExtMainY12 > 0U) {
+        *pMask |= ((UINT32)1U<<DSP_BIT_POS_EXT_C2Y_Y12);
+    }
+
+    if (IsExtMainIr > 0U) {
+        *pMask |= ((UINT32)1U<<DSP_BIT_POS_EXT_IR);
+    }
+}
+
+/**
+ * Get default Mask to keep sustain able events taking effect
+ * @param [In] VinId
+ * @param [In] ViewZoneId
+ * @param [Out] pMask pointer to Mask value
+ * @return ErrorCode
+ */
+//UINT32 HL_GetVinAttachEventDefaultMask(UINT16 VinId, UINT16 ViewZoneId, UINT32 *pMask)
+UINT32 HL_GetVinAttachEventDefaultMask(UINT16 VinId, UINT32 *pMask)
+{
+    UINT8 IsExtPymdYuv = 0U;
+//    UINT8 IsExtPymdY12 = 0U;
+    UINT16 i;
+    UINT32 Rval = OK;
+    UINT32 ViewZoneVinId = 0U;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+
+//FIXME, single Vin contains multiple ViewZone
+//(void)ViewZoneId;
+
+    if (pMask == NULL) {
+        Rval = DSP_ERR_0000;
+    } else {
+        *pMask = 0;
+        HL_GetResourcePtr(&Resource);
+
+        /* Check if this Vin contains ViewZone with external Hierarchy */
+        for (i = 0U; i < Resource->MaxViewZoneNum; i++) {
+            if (0U == DSP_GetBit(Resource->ViewZoneActiveBit, i, 1U)) {
+                continue;
+            }
+            HL_GetViewZoneInfoPtr(i, &ViewZoneInfo);
+            if ((ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_DEC) ||
+                (ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_RECON)) {
+                continue;
+            }
+            DSP_Bit2Idx(ViewZoneInfo->SourceVin, &ViewZoneVinId);
+            if (ViewZoneVinId == (UINT32)VinId) {
+                if (ViewZoneInfo->PymdIsExtMem > 0U) {
+                    if (DSP_GetU16Bit(ViewZoneInfo->Pyramid.IsPolySqrt2, DSP_PYMD_Y12_IDX, DSP_PYMD_Y12_LEN) > 0U) {
+//                        IsExtPymdY12++;
+                    } else {
+                        IsExtPymdYuv++;
+                    }
+                    break;
+                }
+            }
+        }
+
+        HL_GetVinAttEvtDftMsk2ndHalf(VinId, pMask, Resource, IsExtPymdYuv);
+    }
+
+    return Rval;
+}
+
+UINT32 HL_GetSystemPymdMaxWindow(UINT16 *Width, UINT16 *Height)
+{
+    UINT32 Rval = OK;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    UINT16 i = 0U;
+
+    if ((Width == NULL) || (Height == NULL)) {
+        Rval = DSP_ERR_0000;
+    } else {
+        HL_GetResourcePtr(&Resource);
+
+        for (i=0U; i<Resource->MaxViewZoneNum; i++) {
+            *Width = (*Width > Resource->MaxHierWidth[i])? *Width: Resource->MaxHierWidth[i];
+            *Height = (*Height > Resource->MaxHierHeight[i])? *Height: Resource->MaxHierHeight[i];
+        }
+    }
+
+    return Rval;
+}
+
+UINT32 HL_GetViewZonePymdMaxWindow(UINT16 *Width, UINT16 *Height, UINT16 ViewZoneId)
+{
+    UINT32 Rval = OK;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+
+    if ((Width == NULL) || (Height == NULL)) {
+        Rval = DSP_ERR_0000;
+    } else {
+        HL_GetResourcePtr(&Resource);
+//        AmbaLL_LogUInt5("HL_GetViewZonePymdMaxWindow ViewZoneId[%d] MaxHierWidth:%u MaxHierHeight:%u",
+//                ViewZoneId, Resource->MaxHierWidth[ViewZoneId], Resource->MaxHierHeight[ViewZoneId], 0U, 0U);
+        *Width = (*Width > Resource->MaxHierWidth[ViewZoneId])? *Width: Resource->MaxHierWidth[ViewZoneId];
+        *Height = (*Height > Resource->MaxHierHeight[ViewZoneId])? *Height: Resource->MaxHierHeight[ViewZoneId];
+    }
+
+    return Rval;
+}
+
+UINT32 HL_GetSystemLndtMaxWindow(UINT16 *Width, UINT16 *Height)
+{
+    UINT32 Rval = OK;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    UINT16 i = 0U;
+
+    if ((Width == NULL) || (Height == NULL)) {
+        Rval = DSP_ERR_0000;
+    } else {
+        HL_GetResourcePtr(&Resource);
+
+        for (i=0U; i<Resource->MaxViewZoneNum; i++) {
+            *Width = (*Width > Resource->MaxLndtWidth[i])? *Width: Resource->MaxLndtWidth[i];
+            *Height = (*Height > Resource->MaxLndtHeight[i])? *Height: Resource->MaxLndtHeight[i];
+        }
+    }
+
+    return Rval;
+}
+
+UINT32 HL_GetViewZoneLndtMaxWindow(UINT16 *Width, UINT16 *Height, UINT16 ViewZoneId)
+{
+    UINT32 Rval = OK;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+
+    if ((Width == NULL) || (Height == NULL)) {
+        Rval = DSP_ERR_0000;
+    } else {
+        HL_GetResourcePtr(&Resource);
+//        AmbaLL_LogUInt5("HL_GetViewZonePymdMaxWindow ViewZoneId[%d] MaxHierWidth:%u MaxHierHeight:%u",
+//                ViewZoneId, Resource->MaxHierWidth[ViewZoneId], Resource->MaxHierHeight[ViewZoneId], 0U, 0U);
+        *Width = (*Width > Resource->MaxLndtWidth[ViewZoneId])? *Width: Resource->MaxLndtWidth[ViewZoneId];
+        *Height = (*Height > Resource->MaxLndtHeight[ViewZoneId])? *Height: Resource->MaxLndtHeight[ViewZoneId];
+    }
+
+    return Rval;
+}
+
+
+UINT32 HL_GetSystemHdrSetting(UINT8 *MaxHdrExpNumMiunsOne, UINT8 *LinearCeEnable, UINT16 *MaxHdrBlendHeight)
+{
+    UINT32 Rval = OK;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    CTX_STILL_INFO_s StlInfo = {0};
+    UINT16 i = 0U;
+
+
+    if ((MaxHdrExpNumMiunsOne == NULL) || (LinearCeEnable == NULL)) {
+        Rval = DSP_ERR_0000;
+    } else {
+        HL_GetResourcePtr(&Resource);
+
+        for (i=0U; i<Resource->MaxViewZoneNum; i++) {
+            HL_GetViewZoneInfoPtr(i, &ViewZoneInfo);
+            *MaxHdrExpNumMiunsOne = (*MaxHdrExpNumMiunsOne > ViewZoneInfo->HdrBlendNumMinusOne)? *MaxHdrExpNumMiunsOne: ViewZoneInfo->HdrBlendNumMinusOne;
+            *LinearCeEnable |= ViewZoneInfo->LinearCe;
+            *MaxHdrBlendHeight = (*MaxHdrBlendHeight > ViewZoneInfo->HdrBlendHeight)? *MaxHdrBlendHeight: ViewZoneInfo->HdrBlendHeight;
+        }
+        HL_GetStlInfo(HL_MTX_OPT_ALL, &StlInfo);
+        if (StlInfo.RawInVprocId != DSP_VPROC_IDX_INVALID) {
+            *LinearCeEnable = 1U;
+            *MaxHdrBlendHeight = (*MaxHdrBlendHeight > Resource->MaxStlRawInputHeight)? *MaxHdrBlendHeight: Resource->MaxStlRawInputHeight;
+        }
+    }
+
+    return Rval;
+}
+
+UINT32 HL_GetSystemHdrSettingOnVin(UINT16 VinId, UINT8 *MaxHdrExpNumMiunsOne, UINT8 *LinearCeEnable, UINT16 *MaxHdrBlendHeight)
+{
+    UINT32 Rval = OK;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    UINT16 i = 0U, VinIdx = 0U, j;
+
+    if ((MaxHdrExpNumMiunsOne == NULL) || (LinearCeEnable == NULL)) {
+        Rval = DSP_ERR_0000;
+    } else {
+        HL_GetResourcePtr(&Resource);
+
+        for (i=0U; i<Resource->MaxViewZoneNum; i++) {
+            HL_GetViewZoneInfoPtr(i, &ViewZoneInfo);
+            if ((ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_DEC) ||
+                (ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_RECON)) {
+                continue;
+            }
+            DSP_Bit2U16Idx(ViewZoneInfo->SourceVin, &VinIdx);
+            if ((ViewZoneInfo->HdrBlendNumMinusOne > 0U) &&
+                (ViewZoneInfo->HdrOutputType == 1U)) {
+                for (j = 0U; j <= ViewZoneInfo->HdrBlendNumMinusOne; j++) {
+                    if ((VinIdx + j) == VinId) {
+                        *MaxHdrExpNumMiunsOne = (*MaxHdrExpNumMiunsOne > ViewZoneInfo->HdrBlendNumMinusOne)? *MaxHdrExpNumMiunsOne: ViewZoneInfo->HdrBlendNumMinusOne;
+                        *LinearCeEnable |= ViewZoneInfo->LinearCe;
+                        *LinearCeEnable |= (ViewZoneInfo->InputMuxSelSrc == VZ_IN_MUXSEL_SRC_HDS)? 0x2U: 0U;
+                        *LinearCeEnable |= (ViewZoneInfo->InputMuxSelSrc == VZ_IN_MUXSEL_SRC_2xHDS)? 0x4U: 0U;
+                        *MaxHdrBlendHeight = (*MaxHdrBlendHeight > ViewZoneInfo->HdrBlendHeight)? *MaxHdrBlendHeight: ViewZoneInfo->HdrBlendHeight;
+                    }
+                }
+            } else {
+                if (VinIdx == VinId) {
+                    *MaxHdrExpNumMiunsOne = (*MaxHdrExpNumMiunsOne > ViewZoneInfo->HdrBlendNumMinusOne)? *MaxHdrExpNumMiunsOne: ViewZoneInfo->HdrBlendNumMinusOne;
+                    *LinearCeEnable |= ViewZoneInfo->LinearCe;
+                    *LinearCeEnable |= (ViewZoneInfo->InputMuxSelSrc == VZ_IN_MUXSEL_SRC_HDS)? 0x2U: 0U;
+                    *LinearCeEnable |= (ViewZoneInfo->InputMuxSelSrc == VZ_IN_MUXSEL_SRC_2xHDS)? 0x4U: 0U;
+                    *MaxHdrBlendHeight = (*MaxHdrBlendHeight > ViewZoneInfo->HdrBlendHeight)? *MaxHdrBlendHeight: ViewZoneInfo->HdrBlendHeight;
+                }
+            }
+        }
+    }
+
+    return Rval;
+}
+
+UINT32 HL_GetSystemMctfSetting(UINT8 *pMctfEnable, UINT8 *pMctsEnable, UINT8 *pMctfCmpr)
+{
+    UINT32 Rval = OK;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    UINT16 i = 0U;
+
+    if ((pMctfEnable == NULL) || (pMctsEnable == NULL)) {
+        Rval = DSP_ERR_0000;
+    } else {
+        HL_GetResourcePtr(&Resource);
+
+        for (i=0U; i<Resource->MaxViewZoneNum; i++) {
+            HL_GetViewZoneInfoPtr(i, &ViewZoneInfo);
+            if (0U == DSP_GetBit(ViewZoneInfo->FlowBypassOption, FLOW_BYPASS_MCTF_IDX, 1U)) {
+                *pMctfEnable |= 1U;
+                /* Any viewzone need Mctf-unCmpr shall reserve uncompression resource */
+                if (ViewZoneInfo->MctfCmpr > 0U) {
+                    *pMctfCmpr |= 1U;
+                } else {
+                    *pMctfCmpr = (UINT8)0U;
+                }
+            }
+
+            if (0U == DSP_GetBit(ViewZoneInfo->FlowBypassOption, FLOW_BYPASS_MCTS_IDX, 1U)) {
+                *pMctsEnable |= 1U;
+            }
+        }
+    }
+
+    return Rval;
+}
+
+void HL_GetWarpChromaDma(UINT16 LumaDmaSize, UINT16 *pChromaDmaSize)
+{
+#ifdef SUPPORT_IK_UV_DMA
+    UINT16 Val = 0U;
+
+    if (pChromaDmaSize != NULL) {
+        /* Chroma = align2 (((Luma - 6) / 2) + 6) */
+        if (LumaDmaSize > 0U) {
+            Val = LumaDmaSize;
+            *pChromaDmaSize = ALIGN_NUM16((((Val - 6U) / 2U) + 6U), 2U);
+        } else {
+            *pChromaDmaSize = LumaDmaSize;
+        }
+    }
+#else
+    *pChromaDmaSize = LumaDmaSize;
+#endif
+}
+
+UINT32 HL_GetSystemWarpDmaSetting(UINT16 *pLumaDmaSize, UINT16 *pChromaDmaSize)
+{
+    UINT32 Rval = OK;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    UINT16 i = 0U;
+
+    if ((pLumaDmaSize == NULL) || (pChromaDmaSize == NULL)) {
+        Rval = DSP_ERR_0000;
+    } else {
+        HL_GetResourcePtr(&Resource);
+
+        for (i=0U; i<Resource->MaxViewZoneNum; i++) {
+            *pLumaDmaSize = (*pLumaDmaSize > Resource->MaxWarpDma[i])? *pLumaDmaSize: Resource->MaxWarpDma[i];
+        }
+
+        HL_GetWarpChromaDma(*pLumaDmaSize, pChromaDmaSize);
+    }
+
+    return Rval;
+}
+
+UINT32 HL_GetSystemWarpWaitLineSetting(UINT16 *pLumaWaitLine, UINT16 *pChromaWaitLine)
+{
+    UINT32 Rval = OK;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    UINT16 i = 0U;
+
+    if ((pLumaWaitLine == NULL) || (pChromaWaitLine == NULL)) {
+        Rval = DSP_ERR_0000;
+    } else {
+        HL_GetResourcePtr(&Resource);
+
+        for (i=0U; i<Resource->MaxViewZoneNum; i++) {
+            AmbaLL_LogUInt5("WarpWaitLine[%d] %d %d", i, Resource->MaxWarpWaitLineLuma[i], Resource->MaxWarpWaitLineChroma[i], 0U, 0U);
+            *pLumaWaitLine = (*pLumaWaitLine > Resource->MaxWarpWaitLineLuma[i])? *pLumaWaitLine: Resource->MaxWarpWaitLineLuma[i];
+            *pChromaWaitLine = (*pChromaWaitLine > Resource->MaxWarpWaitLineChroma[i])? *pChromaWaitLine: Resource->MaxWarpWaitLineChroma[i];
+        }
+    }
+
+    return Rval;
+}
+
+UINT32 HL_GetSystemPostBlendSetting(UINT16 *pBlendWidth)
+{
+    UINT32 Rval = OK;
+    CTX_RESOURCE_INFO_s *pResource = HL_CtxResInfoPtr;
+    UINT16 i = 0U;
+
+    if (pBlendWidth == NULL) {
+        Rval = DSP_ERR_0000;
+    } else {
+        HL_GetResourcePtr(&pResource);
+
+        *pBlendWidth = 0U;
+        for (i = 0U; i < pResource->MaxViewZoneNum; i++) {
+            *pBlendWidth = (*pBlendWidth > pResource->MaxPostBldWidth[i])? *pBlendWidth: pResource->MaxPostBldWidth[i];
+        }
+    }
+
+    return Rval;
+}
+
+static inline UINT32 CalcVideoTile(UINT16 Width, UINT16 TileWidth, UINT16 *pTileNum, UINT16 Overlap)
+{
+#define TILE_ALIGN_NUM  (128U)  // based on ucode's internal logic
+    UINT32 Rval = OK;
+    UINT8 IsWhileOne = (UINT8)1U, ExitILoop;
+    UINT16 i = 0U, CalcTileWidth = 0U;
+    UINT16 AlignWidth;
+
+    /* Initial TileNum */
+    *pTileNum = (UINT16)(((Width + TileWidth) - 1U)/TileWidth);
+
+    /* Consider TileOverlap */
+    if ((Overlap > 0U) &&
+        (*pTileNum > 1U)) {
+        while (IsWhileOne > 0U) {
+            ExitILoop = (UINT8)0U;
+            for (i = 0U; i < *pTileNum; i++) {
+                CalcTileWidth = Width/(*pTileNum);
+
+                if ((i == 0U) ||
+                    (i == (*pTileNum - 1U))) {
+                    AlignWidth = CalcTileWidth + Overlap;
+                    AlignWidth = ALIGN_NUM16(AlignWidth, TILE_ALIGN_NUM);
+                    if (AlignWidth > TileWidth) {
+                        ExitILoop = (UINT8)1U;
+                    }
+                } else {
+                    AlignWidth = (UINT16)(CalcTileWidth + (UINT16)(2U*Overlap));
+                    AlignWidth = ALIGN_NUM16(AlignWidth, TILE_ALIGN_NUM);
+                    if (AlignWidth > TileWidth) {
+                        ExitILoop = (UINT8)1U;
+                    }
+                }
+                if (ExitILoop == (UINT8)1U) {
+                    break;
+                }
+            }
+
+            if (ExitILoop == (UINT8)1U) {
+                *pTileNum += 1U;
+                if (*pTileNum > MAX_TILE_NUM) {
+                    AmbaLL_LogUInt5("CalcVdoTile Force TileNum[%d]", MAX_TILE_NUM, 0U, 0U, 0U, 0U);
+                    *pTileNum = MAX_TILE_NUM;
+                    IsWhileOne = (UINT8)0U;
+                }
+            } else {
+                IsWhileOne = (UINT8)0U;
+            }
+        }
+    }
+
+#ifdef SUPPORT_TILE_NUM_ALIGN
+    if (*pTileNum > 1U) {
+        *pTileNum = ALIGN_NUM16(*pTileNum, CV5X_IDSP_CORE_NUM);
+#ifdef DEBUG_TILE_CALC
+        AmbaLL_LogUInt5("TileAlign[%d] -> [%d]", CV5X_IDSP_CORE_NUM, *pTileNum, 0U, 0U, 0U);
+#endif
+    }
+#endif
+
+    return Rval;
+}
+
+UINT32 HL_CalcVideoTile(UINT16 Width, UINT16 TileWidth, UINT16 *pTileNum, UINT16 Overlap)
+{
+    UINT32 Rval = OK;
+
+    if (Width == 0U) {
+#ifdef DEBUG_TILE_CALC
+        AmbaLL_LogUInt5("HL_CalcVideoTile W[%d]", Width, 0U, 0U, 0U, 0U);
+#endif
+        *pTileNum = 0U;
+        Rval = DSP_ERR_0001;
+    } else if (TileWidth == 0U) {
+#ifdef DEBUG_TILE_CALC
+        AmbaLL_LogUInt5("HL_CalcVideoTile TW[%d]", TileWidth, 0U, 0U, 0U, 0U);
+#endif
+        *pTileNum = 0U;
+        Rval = DSP_ERR_0001;
+    } else {
+        Rval = CalcVideoTile(Width, TileWidth, pTileNum, Overlap);
+#ifdef DEBUG_TILE_CALC
+        AmbaLL_LogUInt5("HL_CalcVideoTile W[%d] TW[%d] TN[%d] O[%d]",
+                Width, TileWidth, *pTileNum, Overlap, 0U);
+#endif
+    }
+
+    return Rval;
+}
+
+static inline UINT32 ForceC2yTileMinimum(UINT16 Width, UINT16 *pTileNum)
+{
+    UINT32 Rval = OK;
+    UINT16 TileNumMin = (Width+(SEC2_MAX_OUT_WIDTH_INTERNAL-1U))/SEC2_MAX_OUT_WIDTH_INTERNAL;
+
+    if (*pTileNum < TileNumMin) {
+#ifdef DEBUG_TILE_CALC
+        AmbaLL_LogUInt5("ForceC2yTileMinimum W[%d] TN[%d %d]",
+                         Width, *pTileNum, TileNumMin, 0U, 0U);
+#endif
+        *pTileNum = TileNumMin;
+        Rval = DSP_ERR_0000;
+    }
+    return Rval;
+}
+
+static inline UINT32 ForceC2yTileWidth(UINT16 Width, UINT8 FixedOverlap, UINT16 *TileNum, UINT16 *Overlap)
+{
+    UINT32 Rval = OK;
+    UINT16 TileWidth;
+    UINT16 OverlapPadding = *Overlap;
+
+    (void)HL_CalcVideoTileWidth(Width, *TileNum, &TileWidth);
+    if (*TileNum > 2U) {
+        OverlapPadding += *Overlap;
+    }
+    if ((UINT16)(TileWidth + (UINT16)OverlapPadding) > SEC2_MAX_OUT_WIDTH_SMEM) {
+        if (FixedOverlap == 0U) {
+            OverlapPadding = SEC2_MAX_OUT_WIDTH_SMEM - (Width / *TileNum);
+            if (*TileNum > 2U) {
+                OverlapPadding = OverlapPadding >> 1U;
+            }
+#ifdef DEBUG_TILE_CALC
+            AmbaLL_LogUInt5("ForceC2yTileWidth w:%u n:%u t_w:%u o:%u/%u ",
+                    Width, *TileNum, TileWidth, *Overlap, OverlapPadding);
+#endif
+            *Overlap = OverlapPadding;
+        } else {
+#ifdef DEBUG_TILE_CALC
+            AmbaLL_LogUInt5("ForceC2yTileWidth w:%u n+:%u t_w:%u o:%u/%u ",
+                    Width, *TileNum, TileWidth, *Overlap, OverlapPadding);
+#endif
+            *TileNum += 1U;
+        }
+
+        Rval = DSP_ERR_0001;
+    }
+
+    return Rval;
+}
+
+static inline UINT32 CheckPrevFromYuvStreamInfo(UINT16 ViewZoneId,
+                                                UINT16 MainWidth,
+                                                UINT16 NumYuvStream,
+                                                UINT16 TileWidth,
+                                                UINT8 FixedOverlap,
+                                                UINT16 *TileNum,
+                                                UINT16 *Overlap)
+{
+    UINT32 Rval = OK;
+    UINT16 i, j, Found = 0U, IsUpsampling = 0U, NumOfOverlaps = 0U;
+    UINT16 MaxPrevOutWidth = 0U, PrevCropSrcWidth = 0U;
+    UINT32 TileOutWidth, TileWidthMinusOverlap, UpdatedTileWidth;
+    UINT32 NewOverlap = (UINT32)*Overlap;
+    CTX_YUV_STRM_INFO_s *YuvStrmInfo = HL_CtxYuvStrmInfoPtr;
+
+    for (i = 0; i < NumYuvStream; i++) {
+        HL_GetYuvStrmInfoPtr(i, &YuvStrmInfo);
+        for (j = 0; j < YuvStrmInfo->Layout.NumChan; j++) {
+            IsUpsampling = (YuvStrmInfo->Layout.ChanCfg[j].Window.Width > YuvStrmInfo->Layout.ChanCfg[j].ROI.Width)? (UINT16)1U: (UINT16)0U;
+            if ((ViewZoneId == YuvStrmInfo->Layout.ChanCfg[j].ViewZoneId) &&
+                (MainWidth != YuvStrmInfo->Layout.ChanCfg[j].ROI.Width) &&
+                (IsUpsampling == 1U)) {
+                Found = 1U;
+                if (MaxPrevOutWidth < YuvStrmInfo->Layout.ChanCfg[j].Window.Width) {
+                    MaxPrevOutWidth = YuvStrmInfo->Layout.ChanCfg[j].Window.Width;
+                    PrevCropSrcWidth = YuvStrmInfo->Layout.ChanCfg[j].ROI.Width;
+                }
+            }
+        }
+    }
+
+    if ((Found == 1U) &&
+        (PrevCropSrcWidth > 0U) && (MaxPrevOutWidth > 0U)) {
+        /* The input tile width contains the overlaps */
+        if (TileWidth < PrevCropSrcWidth) {
+            TileOutWidth = (UINT32)TileWidth*MaxPrevOutWidth;
+            TileOutWidth = TileOutWidth/(UINT32)PrevCropSrcWidth;
+        } else {
+            TileOutWidth = (UINT32)MaxPrevOutWidth;
+        }
+
+        if ((UINT16)TileOutWidth > PREVB_MAX_WIDTH) {
+            if (FixedOverlap == 0U) {
+                UpdatedTileWidth = (UINT32)PREVB_MAX_WIDTH*(UINT32)PrevCropSrcWidth;
+                UpdatedTileWidth = UpdatedTileWidth/(UINT32)MaxPrevOutWidth;
+                NumOfOverlaps = (*TileNum>2U)? (UINT16)2U: (UINT16)1U;
+                TileWidthMinusOverlap = (UINT32)TileWidth - ((UINT32)(*Overlap)*(UINT32)NumOfOverlaps);
+                if (UpdatedTileWidth > TileWidthMinusOverlap) {
+                    NewOverlap = (UpdatedTileWidth-TileWidthMinusOverlap)/NumOfOverlaps;
+                } else {
+                    /* It suggested that YuvStream setting exceeds maximal preview pin out width
+                     * and it cannot be avoided by reducing overlap */
+                }
+#ifdef DEBUG_TILE_CALC
+                AmbaLL_LogUInt5("CheckPrevFromYuvStreamInfo w:%u n:%u t_w:%u o:%u/%u ",
+                        MainWidth, *TileNum, TileWidth, *Overlap, NewOverlap);
+                AmbaLL_LogUInt5("    MaxPrevOutWidth %u PrevCropSrcWidth %u TileOutWidth:%u ",
+                        MaxPrevOutWidth, PrevCropSrcWidth, TileOutWidth, 0U, 0U);
+#endif
+                *Overlap = (UINT16)NewOverlap;
+            } else {
+#ifdef DEBUG_TILE_CALC
+                AmbaLL_LogUInt5("CheckPrevFromYuvStreamInfo w:%u n+:%u t_w:%u o:%u/%u ",
+                        MainWidth, *TileNum, TileWidth, *Overlap, NewOverlap);
+#endif
+                *TileNum += 1U;
+            }
+
+            Rval = DSP_ERR_0001;
+        }
+    }
+
+    return Rval;
+}
+
+#if 0
+static inline UINT32 ForceC2yTileAlign(UINT16 Width,
+                                       UINT16 TileWidthExp,
+                                       UINT16 TileNum,
+                                       UINT16 *Overlap)
+{
+    //e.g. w=2016, t=2, exp=4(16), o=128
+    UINT32 Rval = OK;
+    UINT16 Truncate;
+    UINT16 InpOverlap = *Overlap;
+    //1006
+    UINT16 TileContentWidth = Width / TileNum;
+    UINT16 LastTileStart, TileWidth;
+
+//    AmbaLL_LogUInt5("ForceC2yTileWidthAlign w:%u e:%u n:%u o:%u",
+//            Width, TileWidthExp, TileNum, InpOverlap, 0U);
+    if ((TileWidthExp > 2U) && (TileWidthExp < 9U)) {
+        Truncate = (UINT16)1U<<TileWidthExp;
+    } else {
+        Truncate = (UINT16)1U<<WARP_GRID_EXP;
+    }
+    //1006 - 128 --> 880
+    LastTileStart = TRUNCATE_16(((TileContentWidth * (TileNum - 1U)) - InpOverlap), Truncate);
+    //1136 = 2016 - 880
+    TileWidth = Width - LastTileStart;
+
+    if (IS_ALIGN_NUM((UINT32)TileWidth, TILE_WIDTH_ALIGN) == 0U) {
+        //1152 = 1136 align32
+        UINT32 AlignTileWidth = ALIGN_NUM((UINT32)TileWidth, TILE_WIDTH_ALIGN);
+        //864 = 2016-1152
+        UINT16 TileStart = Width - (UINT16)AlignTileWidth;
+        //144 = 1008-864
+        UINT16 AlignOverlap = (TileContentWidth * (TileNum - 1U)) - TileStart;
+        //456 = (1921 - 1008) / 2
+        UINT16 OverlapMax = (SEC2_MAX_OUT_WIDTH_INTERNAL - TileContentWidth) >> 1U;
+
+        //increase overlap
+        if (AlignOverlap < OverlapMax) {
+            *Overlap = AlignOverlap;
+        //decrease
+        } else {
+            UINT16 TruncateOverlap;
+            //1120 = 1136 truncate32
+            UINT16 TruncateTileWidth = TRUNCATE_16(TileWidth, TILE_WIDTH_ALIGN);
+            //864 = 2016-1152
+            TileStart = Width - TruncateTileWidth;
+            //112 = 1008-864
+            TruncateOverlap = (TileContentWidth * (TileNum - 1U)) - TileStart;
+            *Overlap = TruncateOverlap;
+        }
+        Rval = DSP_ERR_0001;
+    } else {
+        //keep as input overlap
+    }
+
+    return Rval;
+}
+#endif
+
+static inline UINT32 ForceC2yTileTruncate(UINT16 Width,
+                                          UINT16 TileWidthExp,
+                                          UINT16 TileNum,
+                                          UINT16 *pOverlap,
+                                          UINT16 *pMaxTileWidth)
+{
+    //e.g. w=2016, t=2, exp=4(16), o=128
+    UINT32 Rval = OK;
+    UINT16 TileTruncate;
+    UINT16 InpOverlap = *pOverlap;
+    //1006
+    UINT16 TileContentWidth = Width / TileNum;
+    UINT16 LastTileStart, TileWidth;
+    UINT16 SecondTileStart, SecondTileStop;
+
+    if ((TileWidthExp > 2U) && (TileWidthExp < 9U)) {
+        TileTruncate = (UINT16)1U<<TileWidthExp;
+    } else {
+        TileTruncate = (UINT16)1U<<WARP_GRID_EXP;
+    }
+    //1006 - 128 --> 880
+    LastTileStart = TRUNCATE_16((UINT16)((TileContentWidth * (TileNum - 1U)) - InpOverlap), TileTruncate);
+    //1136 = 2016 - 880
+    TileWidth = Width - LastTileStart;
+    if (IS_ALIGN_NUM((UINT32)TileWidth, TILE_WIDTH_ALIGN) == 0U) {
+        //1120 = 1136 truncate32
+        UINT16 TruncateTileWidth = TRUNCATE_16(TileWidth, TILE_WIDTH_ALIGN);
+        //864 = 2016-1152
+        UINT16 TileStart = Width - TruncateTileWidth;
+        //112 = 1008-864
+        UINT16 TruncateOverlap = (UINT16)(TileContentWidth * (TileNum - 1U)) - TileStart;
+#ifdef DEBUG_TILE_CALC
+        AmbaLL_LogUInt5("ForceC2yTileTruncate w:%u n:%u t_w:%u o:%u/%u ",
+                Width, TileNum, TileWidth, *pOverlap, TruncateOverlap);
+#endif
+        *pOverlap = TruncateOverlap;
+        *pMaxTileWidth = TruncateTileWidth;
+        Rval = DSP_ERR_0001;
+    } else {
+        //overlap keeps the same
+        *pMaxTileWidth = TileWidth;
+    }
+    /*
+     * When the tile number is greater than 2, those tiles in the middle must be the widest because:
+     *  (1) they contain one more overlap than the first or the last tile
+     *  (2) they also need to follow the alignment restriction
+     */
+    if (TileNum > 2U) {
+        SecondTileStart = TRUNCATE_16(TileContentWidth - InpOverlap, TileTruncate);
+        SecondTileStop = ALIGN_NUM16(((TileContentWidth << 1UL) + InpOverlap), TILE_WIDTH_ALIGN);
+        *pMaxTileWidth = SecondTileStop - SecondTileStart;
+#ifdef DEBUG_TILE_CALC
+        AmbaLL_LogUInt5("Multiple-tile: SecondTile Start %d Stop %d TileWidth %d",
+                SecondTileStart, SecondTileStop, *pMaxTileWidth, 0U, 0U);
+#endif
+    }
+    return Rval;
+}
+
+static inline UINT16 CalcTileWidthSmem(UINT16 Width, UINT16 TileNum, UINT16 Overlap)
+{
+    UINT16 TileWidth;
+    UINT16 TileWidthNoneOverlap;
+
+    (void)HL_CalcVideoTileWidth(Width, TileNum, &TileWidthNoneOverlap);
+    TileWidth = TileWidthNoneOverlap + (Overlap << 1);
+
+    return TileWidth;
+}
+
+UINT32 HL_CalcVideoTileC2Y(UINT16 ViewZoneId,
+                           UINT16 Width,
+                           UINT16 MaxTileWidth,
+                           UINT32 TileWidthExp,
+                           UINT8 FixedOverlap,
+                           UINT8 ChkSmem,
+                           UINT16 *pTileNum,
+                           UINT16 *pOverlap)
+{
+    UINT32 Rval = OK;
+
+    if (Width == 0U) {
+#ifdef DEBUG_TILE_CALC
+        AmbaLL_LogUInt5("HL_CalcVideoTileC2Y W[%d]", Width, 0U, 0U, 0U, 0U);
+#endif
+        *pTileNum = 0U;
+        Rval = DSP_ERR_0001;
+    } else if (MaxTileWidth == 0U) {
+#ifdef DEBUG_TILE_CALC
+        AmbaLL_LogUInt5("HL_CalcVideoTileC2Y MaxTW[%d]", MaxTileWidth, 0U, 0U, 0U, 0U);
+#endif
+        *pTileNum = 0U;
+        Rval = DSP_ERR_0001;
+    } else {
+        CTX_RESOURCE_INFO_s *pResource = HL_CtxResInfoPtr;
+        UINT16 NewOverlap = *pOverlap;
+        UINT16 NewTileNum, ActualTileWidth = MaxTileWidth;
+
+        Rval = CalcVideoTile(Width, MaxTileWidth, pTileNum, NewOverlap);
+        if (ForceC2yTileMinimum(Width, pTileNum) != DSP_ERR_NONE) {
+            (void)CalcVideoTile(Width, MaxTileWidth, &NewTileNum, NewOverlap);
+#ifdef DEBUG_TILE_CALC
+            AmbaLL_LogUInt5("CalcVdoTile ForceM W[%d] MaxTW[%d] O[%d] TN[%d->%d]",
+                             Width, MaxTileWidth, *pOverlap, *pTileNum, NewTileNum);
+#endif
+        }
+        NewTileNum = *pTileNum;
+        if (ForceC2yTileWidth(Width, FixedOverlap, &NewTileNum, &NewOverlap) != OK) {
+            /*
+             * Re-calculate tile number with new TileNum and Overlap to confirm that
+             * current setting doesn't exceed maximal tile width.
+             * After ForceC2yTileWidth, TileNum could get larger or Overlap could get smaller
+             */
+//            (void)CalcVideoTile(Width, MaxTileWidth, &NewTileNum, NewOverlap);
+#ifdef DEBUG_TILE_CALC
+            AmbaLL_LogUInt5("CalcVdoTile r W[%d] O[%d->%d] TN[%d->%d]",
+                             Width, *pOverlap, NewOverlap, *pTileNum, NewTileNum);
+#endif
+        }
+
+        if (FixedOverlap == 0U) {
+           if (ForceC2yTileTruncate(Width, (UINT16)TileWidthExp, NewTileNum, &NewOverlap, &ActualTileWidth) != OK) {
+               /*
+                * Re-calculate tile number with new TileNum and Overlap to confirm that
+                * current setting doesn't exceed maximal tile width.
+                * After ForceC2yTileTruncate, TileNum could get larger or Overlap could get smaller
+                */
+                (void)CalcVideoTile(Width, MaxTileWidth, &NewTileNum, NewOverlap);
+#ifdef DEBUG_TILE_CALC
+                AmbaLL_LogUInt5("CalcVdoTile ForceT W[%d] O[%d->%d] TN[%d->%d]",
+                                 Width, *pOverlap, NewOverlap, *pTileNum, NewTileNum);
+#endif
+           }
+        }
+
+        HL_GetResourcePtr(&pResource);
+        if (ViewZoneId != 0xFFU) {
+            if (CheckPrevFromYuvStreamInfo(ViewZoneId,
+                                           Width,
+                                           pResource->YuvStrmNum,
+                                           ActualTileWidth,
+                                           FixedOverlap,
+                                           &NewTileNum, &NewOverlap) != OK) {
+#ifdef DEBUG_TILE_CALC
+                AmbaLL_LogUInt5("CheckPrev ForceW W[%d] O[%d->%d] TN[%d->%d]",
+                                 Width, *pOverlap, NewOverlap, *pTileNum, NewTileNum);
+#endif
+                if (FixedOverlap == 0U) {
+                    if (ForceC2yTileTruncate(Width, (UINT16)TileWidthExp, NewTileNum, &NewOverlap, &ActualTileWidth) != OK) {
+                        (void)CalcVideoTile(Width, MaxTileWidth, &NewTileNum, NewOverlap);
+#ifdef DEBUG_TILE_CALC
+                        AmbaLL_LogUInt5("CalcVdoTile ForceT W[%d] O[%d->%d] TN[%d->%d]",
+                                         Width, *pOverlap, NewOverlap, *pTileNum, NewTileNum);
+#endif
+                    }
+                }
+            }
+        }
+        if (ChkSmem == 1U) {
+            if (pResource->MaxVprocTileWidth > 0U) {
+                if (CalcTileWidthSmem(Width, NewTileNum, NewOverlap) >
+                    (pResource->MaxVprocTileWidth + (pResource->MaxVprocTileOverlap << 1U))) {
+#ifdef DEBUG_TILE_CALC
+                    AmbaLL_LogUInt5("CalcVdoTile ForceS W[%d] TN[%d] O[%d] smem[%d] max[%d]",
+                                     Width, NewTileNum, NewOverlap, CalcTileWidthSmem(Width, NewTileNum, NewOverlap),
+                                     (UINT32)(pResource->MaxVprocTileWidth + ((UINT32)pResource->MaxVprocTileOverlap << 1U)));
+#endif
+                    NewTileNum += 1U;
+#ifdef DEBUG_TILE_CALC
+                    AmbaLL_LogUInt5("CalcVdoTile ForceS W[%d] O[%d->%d] TN[%d->%d]",
+                                     Width, *pOverlap, NewOverlap, *pTileNum, NewTileNum);
+#endif
+                }
+            }
+        }
+        *pOverlap = NewOverlap;
+        *pTileNum = NewTileNum;
+    }
+
+    return Rval;
+}
+
+UINT32 HL_CalcVideoTileWidth(UINT16 Width,
+                             UINT16 TileNum,
+                             UINT16 *pTileWidth)
+{
+    UINT32 Rval = OK;
+
+    if (Width == 0U) {
+#ifdef DEBUG_TILE_CALC
+        AmbaLL_LogUInt5("CalcVdoTileW W[%d]", Width, 0U, 0U, 0U, 0U);
+#endif
+        *pTileWidth = 0U;
+        Rval = DSP_ERR_0001;
+    } else if (TileNum == 0U) {
+#ifdef DEBUG_TILE_CALC
+        AmbaLL_LogUInt5("CalcVdoTileW TN[%d]", TileNum, 0U, 0U, 0U, 0U);
+#endif
+        *pTileWidth = 0U;
+        Rval = DSP_ERR_0001;
+    } else if (TileNum == 1U) {
+        *pTileWidth = Width;
+    } else {
+        *pTileWidth = (UINT16)(((Width + TileNum) - 1U)/TileNum);
+    }
+
+    return Rval;
+}
+
+UINT32 HL_CalcVideoTileHeight(UINT16 Height, UINT16 TileNum, UINT16 *TileHeight)
+{
+    UINT32 Rval = OK;
+    if (Height == 0U) {
+#ifdef DEBUG_TILE_CALC
+        AmbaLL_LogUInt5("CalcVdoTileH H %d", Height, 0U, 0U, 0U, 0U);
+#endif
+        *TileHeight = 0U;
+        Rval = DSP_ERR_0001;
+    } else if (TileNum == 0U) {
+#ifdef DEBUG_TILE_CALC
+        AmbaLL_LogUInt5("CalcVdoTileH T %d", TileNum, 0U, 0U, 0U, 0U);
+#endif
+        *TileHeight = 0U;
+        Rval = DSP_ERR_0001;
+    } else {
+        *TileHeight = (UINT16)(((Height + TileNum) - 1U)/TileNum);
+    }
+
+    return Rval;
+}
+
+UINT32 HL_GetBatchCmdNumber(ULONG BatchAddr)
+{
+    UINT32 CmdNum = 0;
+    UINT32 i, Offset;
+
+    if (BatchAddr > 0U) {
+        const UINT32 *pU32;
+
+        dsp_osal_typecast(&pU32, &BatchAddr);
+        for (i=0U; i<MAX_BATCH_CMD_NUM; i++) {
+            Offset = i*CMD_SIZE_IN_WORD;
+            if (pU32[Offset] == MAX_BATCH_CMD_END) {
+                break;
+            }
+            CmdNum++;
+        }
+    }
+
+    return CmdNum;
+}
+
+#define VIN_REG_CFG_WAIT_TIME   (3000U) //3sec
+UINT32 HL_VinPostCfgHandler(const UINT16 VinOI)
+{
+    UINT8 ExitWhileLoop = 0U, Update;
+    UINT16 VinOILocal = VinOI;
+    UINT16 VinEnbBitMask = 0U;
+    UINT16 Idx, CountDown = VIN_REG_CFG_WAIT_TIME;
+    UINT32 Rval = OK;
+    UINT32 VinEnb = 1U;
+    AMBA_DSP_VIN_POST_CONFIG_STATE_s *pVinPostCfgInfo = NULL;
+    ULONG EventBufAddr = 0U;
+    UINT16 EventBufIdx = 0U;
+
+    while ((VinOILocal > 0U) && (ExitWhileLoop == 0U)) {
+        Update = 0U;
+        for (Idx=0U; Idx<AMBA_DSP_MAX_VIN_NUM; Idx++) {
+            if (1U == DSP_GetU16Bit(VinOILocal, Idx, 1U)) {
+                /* Invoke CSL_VIN to get VinStatus */
+                dsp_osal_dbgport_get_vin_enable_status(Idx, &VinEnb);
+
+                if (VinEnb != 0U) {
+                    DSP_ClearU16Bit(&VinOILocal, Idx);
+                    DSP_SetU16Bit(&VinEnbBitMask, (UINT32)Idx);
+                    Update = 1U;
+                }
+            }
+        }
+
+        if (Update > 0U) {
+            Rval = DSP_RequestEventInfoBuf(EVENT_INFO_POOL_PROT_BUF, &EventBufAddr, &EventBufIdx, AMBA_DSP_EVENT_VIN_POST_CONFIG);
+            if (Rval == OK) {
+                dsp_osal_typecast(&pVinPostCfgInfo, &EventBufAddr);
+                (void)dsp_osal_memset(pVinPostCfgInfo, 0, sizeof(AMBA_DSP_VIN_POST_CONFIG_STATE_s));
+
+                pVinPostCfgInfo->VinIdx = (UINT16)VinEnbBitMask; //FIXME
+                (void)DSP_GiveEvent(AMBA_DSP_EVENT_VIN_POST_CONFIG, pVinPostCfgInfo, EventBufIdx);
+            } else {
+                AmbaLL_LogUInt5("[VinPostEvt] Request event info pool[%d] fail[0x%x]", EVENT_INFO_POOL_PROT_BUF, Rval, 0U, 0U, 0U);
+            }
+        }
+
+        if (VinOILocal > 0U) {
+            (void)dsp_osal_sleep(1U);
+            CountDown--;
+            if (CountDown == 0U) {
+                ExitWhileLoop = 1U;
+            }
+        } else {
+            ExitWhileLoop = 1U;
+        }
+    }
+
+    if (CountDown == 0U) {
+        for (Idx=0U; Idx<AMBA_DSP_MAX_VIN_NUM; Idx++) {
+            if (1U == DSP_GetU16Bit(VinOILocal, Idx, 1U)) {
+                AmbaLL_LogUInt5("Vin[%d] RegCfg fail", Idx, 0U, 0U, 0U, 0U);
+                Rval = DSP_ERR_0006;
+            }
+        }
+    }
+
+    return Rval;
+}
+
+void HL_DisassembleVinCompression(UINT32 Compression, UINT8 *pCompressedMode, UINT8 *pCompactMode)
+{
+    if (DSP_GetBit(Compression, 8U, 1U)/*IsCompactMode*/ == 1U) {
+        *pCompressedMode = 0U;
+        *pCompactMode = (UINT8)(Compression - 255U);
+    } else {
+        *pCompressedMode = (UINT8)DSP_GetBit(Compression, 0U, 8U);
+        *pCompactMode = 0U;
+    }
+}
+
+UINT32 HL_GetCmprRawBufInfo(UINT16 Width, UINT8 CmprRate, UINT8 CmptMode,
+                            UINT16 *pRawWidth, UINT16 *pRawPitch,
+                            UINT16 *pMantissa, UINT16 *pBlkSz)
+{
+    static const UINT8 RawCmptBitLengthTable[RAW_COMPACT_NUM] = {
+            [RAW_COMPACT_OFF]   = 0U,
+            [RAW_COMPACT_8BIT]  = 8U, // No 8bit in CV2, but will be 5 when CV2FS
+            [RAW_COMPACT_10BIT] = 10U,
+            [RAW_COMPACT_12BIT] = 12U,
+            [RAW_COMPACT_14BIT] = 14U,
+    };
+    static const RAW_BIT_RATE_t RawBitRateTable[RAW_COMPRESS_NUM] = {
+            [RAW_COMPRESS_OFF]   = {.Den =  0U, .Num =  0U, .Mantissa =  0U, .Block = 0U},
+            [RAW_COMPRESS_6P75]  = {.Den = 27U, .Num = 32U, .Mantissa =  6U, .Block = 4U},
+            [RAW_COMPRESS_7p5]   = {.Den = 30U, .Num = 32U, .Mantissa =  6U, .Block = 2U},
+            [RAW_COMPRESS_7p75]  = {.Den = 31U, .Num = 32U, .Mantissa =  7U, .Block = 4U},
+            [RAW_COMPRESS_8p5]   = {.Den = 34U, .Num = 32U, .Mantissa =  7U, .Block = 2U},
+            [RAW_COMPRESS_8p75]  = {.Den = 35U, .Num = 32U, .Mantissa =  8U, .Block = 4U},
+            [RAW_COMPRESS_9p5]   = {.Den = 38U, .Num = 32U, .Mantissa =  8U, .Block = 2U},
+            [RAW_COMPRESS_9p75]  = {.Den = 39U, .Num = 32U, .Mantissa =  9U, .Block = 4U},
+            [RAW_COMPRESS_10p5]  = {.Den = 42U, .Num = 32U, .Mantissa =  9U, .Block = 2U},
+            [RAW_COMPRESS_10p75] = {.Den = 43U, .Num = 32U, .Mantissa = 10U, .Block = 4U},
+            [RAW_COMPRESS_11P5]  = {.Den = 46U, .Num = 32U, .Mantissa = 10U, .Block = 2U},
+            [RAW_COMPRESS_11P75] = {.Den = 47U, .Num = 32U, .Mantissa = 11U, .Block = 4U},
+            [RAW_COMPRESS_12P5]  = {.Den = 50U, .Num = 32U, .Mantissa = 11U, .Block = 2U},
+            [RAW_COMPRESS_4P75]  = {.Den = 19U, .Num = 32U, .Mantissa =  4U, .Block = 4U},
+            [RAW_COMPRESS_5P5]   = {.Den = 22U, .Num = 32U, .Mantissa =  4U, .Block = 2U},
+            [RAW_COMPRESS_5P75]  = {.Den = 23U, .Num = 32U, .Mantissa =  5U, .Block = 4U},
+            [RAW_COMPRESS_6P5]   = {.Den = 26U, .Num = 32U, .Mantissa =  5U, .Block = 2U}
+    };
+    UINT32 Rval = OK;
+    RAW_BIT_RATE_t RawBitRate = {0};
+    UINT16 SymbolSize = 0U, BlockAlign = 0U;
+    UINT32 TempWidth;
+
+    if (CmprRate == RAW_COMPRESS_OFF) {
+        if (CmptMode == 0U) {
+            RawBitRate = RawBitRateTable[CmprRate];
+            *pRawWidth = Width*2U;
+            *pMantissa = RawBitRate.Mantissa;
+            *pBlkSz = RawBitRate.Block;
+        } else {
+            TempWidth = (UINT32)Width;
+            TempWidth *= RawCmptBitLengthTable[CmptMode];
+            TempWidth = ALIGN_NUM(TempWidth, 8U)/8U;
+            *pRawWidth = (UINT16)TempWidth;
+            *pMantissa = RawCmptRateTable[CmptMode].Mantissa;
+            *pBlkSz = RawCmptRateTable[CmptMode].Block;
+        }
+    } else {
+        RawBitRate = RawBitRateTable[CmprRate];
+
+        // Aligned to block size*2 (two colors for each line)
+        BlockAlign = RawBitRate.Block << 1U;
+        TempWidth = (UINT32)ALIGN_NUM16(Width, BlockAlign);
+        SymbolSize = 3U + (RawBitRate.Block*RawBitRate.Mantissa);
+
+        TempWidth = ((TempWidth)/((UINT32)RawBitRate.Block << 1U))*((UINT32)SymbolSize << 1U);
+        TempWidth = ALIGN_NUM(TempWidth, 32U); // in bits
+        *pRawWidth = (UINT16)(TempWidth >> 3U); // in bytes
+
+        *pMantissa = RawBitRate.Mantissa;
+        *pBlkSz = RawBitRate.Block;
+    }
+
+    *pRawPitch = ALIGN_NUM16(*pRawWidth, (UINT16)DSP_BUF_ALIGNMENT);
+
+    return Rval;
+}
+
+UINT32 HL_GetViewZoneMctfEnable(UINT16 ViewZoneId,
+                                UINT8 *pMctfEnable,
+                                UINT8 *pMctsEnable,
+                                UINT8 *pMctsOutEnable,
+                                UINT8 *pMctfCmpr,
+                                UINT8 *pMctfRefIoEnable)
+{
+    UINT32 Rval = OK;
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+
+    if ((pMctfEnable == NULL) ||
+        (pMctsEnable == NULL) ||
+        (pMctsOutEnable == NULL) ||
+        (pMctfCmpr == NULL) ||
+        (pMctfRefIoEnable == NULL)) {
+        Rval = DSP_ERR_0000;
+    } else if (ViewZoneId >= AMBA_DSP_MAX_VIEWZONE_NUM) {
+        Rval = DSP_ERR_0001;
+    } else {
+        HL_GetViewZoneInfoPtr(ViewZoneId, &ViewZoneInfo);
+
+        if (ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_RECON) {
+            /* veffect group all vproc channels MUST BE configured with full pipeline steps c2y + warp/mctf/prev
+             * regardless input is yuv or sensor raw data to ensure all jobs execution order to get correct final
+             * output data. */
+            if (ViewZoneInfo->IsEffectChanMember == 1U) {
+                *pMctfEnable = 1U;
+                *pMctsEnable = 1U;
+                *pMctsOutEnable = 1U;
+                *pMctfCmpr = ViewZoneInfo->MctfCmpr;
+            } else {
+                //CV2FS don't support Warp2Prev
+                *pMctfEnable = 1U;
+                *pMctsEnable = 1U;
+                *pMctsOutEnable = 1U;
+                *pMctfCmpr = 0U;
+            }
+
+            if (0U == DSP_GetBit(ViewZoneInfo->FlowBypassOption, FLOW_BYPASS_MCTF_REF_IO_IDX, 1U)) {
+                *pMctfRefIoEnable = 1U;
+            } else {
+                *pMctfRefIoEnable = 0U;
+            }
+        } else {
+            /* 2020/5/6 from ChinChang. CV2FS can't have MctfCmpr when MctsDisable */
+            if (0U == DSP_GetBit(ViewZoneInfo->FlowBypassOption, FLOW_BYPASS_MCTF_IDX, 1U)) {
+                *pMctfEnable = 1U;
+                if (0U == DSP_GetBit(ViewZoneInfo->FlowBypassOption, FLOW_BYPASS_MCTS_IDX, 1U)) {
+                    *pMctsEnable = 1U;
+                    *pMctfCmpr = ViewZoneInfo->MctfCmpr;
+                    if (0U == DSP_GetBit(ViewZoneInfo->FlowBypassOption, FLOW_BYPASS_MCTS_DRAM_OUT_IDX, 1U)) {
+                        *pMctsOutEnable = 1U;
+                    } else {
+                        *pMctsOutEnable = 0U;
+                    }
+                } else {
+                    *pMctsEnable = 0U;
+                    *pMctfCmpr = 0U;
+                    *pMctsOutEnable = 0U;
+                }
+
+                if (0U == DSP_GetBit(ViewZoneInfo->FlowBypassOption, FLOW_BYPASS_MCTF_REF_IO_IDX, 1U)) {
+                    *pMctfRefIoEnable = 1U;
+                } else {
+                    *pMctfRefIoEnable = 0U;
+                }
+            } else {
+//FIXME
+                //CV2FS don't support Warp2Prev
+                *pMctfEnable = 1U;
+                *pMctsEnable = 1U;
+                *pMctsOutEnable = 1U;
+                *pMctfCmpr = 0U;
+                *pMctfRefIoEnable = 1U;
+            }
+        }
+    }
+    return Rval;
+}
+
+UINT32 HL_GetEncMaxTimeLapseWindow(UINT16 *Width, UINT16 *Height)
+{
+    UINT32 Rval = OK;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    CTX_YUV_STRM_INFO_s *YuvStrmInfo = HL_CtxYuvStrmInfoPtr;
+    UINT16 i = 0U, YuvStrmIdx = 0U;
+    UINT32 EncIdx = 0U;
+    UINT8 IsLiveviewEncStrm = (UINT8)0U;
+
+    if ((Width == NULL) || (Height == NULL)) {
+        Rval = DSP_ERR_0000;
+    } else {
+        HL_GetResourcePtr(&Resource);
+
+        for (i=0U; i<Resource->MaxEncodeStream; i++) {
+            if (1U == DSP_GetU16Bit(Resource->MaxStrmFmt[i], 7U/*TimeLapse*/, 1U)) {
+                for (YuvStrmIdx=0U; YuvStrmIdx<Resource->YuvStrmNum; YuvStrmIdx++) {
+                    HL_GetYuvStrmInfoPtr(YuvStrmIdx, &YuvStrmInfo);
+                    if (1U == DSP_GetU16Bit(YuvStrmInfo->Purpose, DSP_LV_STRM_PURPOSE_ENCODE_IDX, 1U)) {
+                        DSP_Bit2Idx((UINT32)YuvStrmInfo->DestEnc, &EncIdx);
+                        if (EncIdx == i) {
+                            IsLiveviewEncStrm = (UINT8)1U;
+                            if (1U == DSP_GetU16Bit(Resource->MaxStrmFmt[i], 7U/*TimeLapse*/, 1U)) {
+                                *Width = (*Width > YuvStrmInfo->MaxWidth)? *Width: YuvStrmInfo->MaxWidth;
+                                *Height = (*Height > YuvStrmInfo->MaxHeight)? *Height: YuvStrmInfo->MaxHeight;
+                            }
+                        }
+                    }
+                }
+
+                if (IsLiveviewEncStrm == (UINT8)0U) {
+                    if (1U == DSP_GetU16Bit(Resource->MaxStrmFmt[i], 7U/*TimeLapse*/, 1U)) {
+                        *Width = (*Width > Resource->MaxExtMemWidth[i])? *Width: Resource->MaxExtMemWidth[i];
+                        *Height = (*Height > Resource->MaxExtMemHeight[i])? *Height: Resource->MaxExtMemHeight[i];
+                    }
+                }
+            }
+        }
+    }
+
+    return Rval;
+}
+
+UINT32 HL_GetEncGrpCmprStroSetting(UINT16 StrmIdx, UINT16 *pCsLsb, UINT16 *pCsResIdx, ULONG *pCsCfgULAddr)
+{
+    UINT16 i, j;
+    UINT32 Rval = OK;
+    CTX_ENC_GRP_INFO_s EncGrpInfo = {0};
+
+    if (StrmIdx >= AMBA_DSP_MAX_STREAM_NUM) {
+        Rval = DSP_ERR_0001;
+    } else if ((pCsLsb == NULL) || (pCsResIdx == NULL) || (pCsCfgULAddr == NULL)) {
+        Rval = DSP_ERR_0000;
+    } else {
+        /* Sweep GrpCfg */
+        for (i = 0U; i < AMBA_DSP_MAX_ENC_GRP_NUM; i++) {
+            HL_GetEncGrpInfo(HL_MTX_OPT_ALL, i, &EncGrpInfo);
+            if (1U == DSP_GetU16Bit(EncGrpInfo.Purpose, DSP_ENC_GRP_PURPOSE_RC_IDX, 1U)) {
+                for (j = 0U; j < EncGrpInfo.StrmNum; j++) {
+                    if (StrmIdx == EncGrpInfo.StrmIdx[j]) {
+                        if (EncGrpInfo.MonoIncrement == 0U) {
+                            if ((j % EncGrpInfo.Stride) == 0U) {
+                                *pCsLsb = 0U;
+                            } else {
+                                *pCsLsb = 1U;
+                            }
+                            *pCsResIdx = j/EncGrpInfo.Stride;
+                        } else {
+                            if ((j % EncGrpInfo.Stride) == 0U) {
+                                *pCsLsb = 1U;
+                            } else {
+                                *pCsLsb = 0U;
+                            }
+                            *pCsResIdx = ((EncGrpInfo.StrmNum/EncGrpInfo.Stride) - 1U) - (j/EncGrpInfo.Stride);
+                        }
+
+                        //TBD, not sure CsCfg shall be put when MonoIncrement
+                        if ((*pCsLsb == 0U) &&
+                            (*pCsResIdx == 0U)) {
+                            *pCsCfgULAddr = EncGrpInfo.RcCfgAddr;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    return Rval;
+}
+
+UINT32 HL_GetVinNum(UINT16 *Num) {
+    UINT32 Rval = OK, Cnt = 0U;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+
+    HL_GetResourcePtr(&Resource);
+    DSP_Bit2Cnt(Resource->MaxVinBit, &Cnt);
+    *Num = (UINT16)Cnt;
+
+    return Rval;
+}
+
+UINT32 HL_CheckPrevROI(AMBA_DSP_WINDOW_s ROI, AMBA_DSP_WINDOW_s Main) {
+    UINT32 Rval = OK;
+
+    if (((ROI.Width + ROI.OffsetX) > Main.Width) ||
+        ((ROI.Height + ROI.OffsetY) > Main.Height)){
+        Rval = DSP_ERR_0001;
+    }
+
+    return Rval;
+}
+
+UINT32 HL_GetDramToWarpEnable(void)
+{
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    UINT16 i;
+    UINT32 Enable = 0U;
+
+    HL_GetResourcePtr(&Resource);
+    for (i=0U; i<Resource->MaxViewZoneNum; i++) {
+        HL_GetViewZoneInfoPtr(i, &ViewZoneInfo);
+        if (ViewZoneInfo->Pipe == DSP_DRAM_PIPE_NORMAL) {
+            Enable = 1U;
+            break;
+        }
+    }
+    return Enable;
+}
+
+UINT32 HL_GetSmemToWarpEnable(void)
+{
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    UINT16 i;
+    UINT32 Enable = 0U;
+
+    HL_GetResourcePtr(&Resource);
+    for (i=0U; i<Resource->MaxViewZoneNum; i++) {
+        HL_GetViewZoneInfoPtr(i, &ViewZoneInfo);
+        if (ViewZoneInfo->Pipe == DSP_DRAM_PIPE_EFCY) {
+            Enable = 1U;
+            break;
+        }
+    }
+    return Enable;
+}
+
+UINT32 HL_GetExtraHorWarpEnable(void)
+{
+    CTX_RESOURCE_INFO_s *pResource = HL_CtxResInfoPtr;
+    CTX_VIEWZONE_INFO_s *pViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    UINT16 i;
+    UINT32 Enable = 0U;
+
+    HL_GetResourcePtr(&pResource);
+    for (i = 0U; i < pResource->MaxViewZoneNum; i++) {
+        HL_GetViewZoneInfoPtr(i, &pViewZoneInfo);
+        if (pViewZoneInfo->ExtraHorWarpType == DSP_EXTRA_HWARP_TYPE_HVH) {
+            Enable = 1U;
+            break;
+        }
+    }
+    return Enable;
+}
+
+UINT32 HL_GetViewZoneDramToWarpEnable(UINT16 ViewZoneId)
+{
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    UINT32 Enable = 0U;
+
+    HL_GetViewZoneInfoPtr(ViewZoneId, &ViewZoneInfo);
+    if (ViewZoneInfo->Pipe == DSP_DRAM_PIPE_NORMAL) {
+        Enable = 1U;
+    }
+    return Enable;
+}
+
+UINT32 HL_GetViewZoneSmemToWarpEnable(UINT16 ViewZoneId)
+{
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    UINT32 Enable = 0U;
+
+    HL_GetViewZoneInfoPtr(ViewZoneId, &ViewZoneInfo);
+    if (ViewZoneInfo->Pipe == DSP_DRAM_PIPE_EFCY) {
+        Enable = 1U;
+    }
+    return Enable;
+}
+
+UINT8 HL_GetYuvStrmIsEffectOut(UINT16 MaxChanNum, UINT16 WindowOffsetX, UINT16 WindowOffsetY)
+{
+    UINT8 Enable = 0U;
+
+    if (MaxChanNum > 1U) {
+        Enable = 1U;
+    } else if (MaxChanNum == 1U) {
+        if ((WindowOffsetX > 0U) ||
+            (WindowOffsetY > 0U)) {
+            Enable = 1U;
+        }
+    } else {
+        //TBD
+    }
+
+    return Enable;
+}
+
+UINT32 HL_GetDecIdxFromVinId(UINT16 VinId, UINT16 *pIdx)
+{
+    UINT32 Rval = OK;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+    CTX_VIEWZONE_INFO_s *ViewZoneInfo = HL_CtxViewZoneInfoPtr;
+    CTX_VID_DEC_INFO_s VidDecInfo = {0};
+    UINT16 i, DecIdx = 0U;
+
+    HL_GetResourcePtr(&Resource);
+    for (i = 0U; i < Resource->MaxViewZoneNum; i++) {
+        HL_GetViewZoneInfoPtr(i, &ViewZoneInfo);
+
+        if (ViewZoneInfo->InputFromMemory == VIN_SRC_FROM_DEC) {
+            DSP_Bit2U16Idx(ViewZoneInfo->SourceVin, &DecIdx);
+            HL_GetVidDecInfo(HL_MTX_OPT_ALL, DecIdx, &VidDecInfo);
+            if ((VidDecInfo.YuvInVirtVinId != DSP_VIRT_VIN_IDX_INVALID) &&
+                (VidDecInfo.YuvInVirtVinId == (VinId - AMBA_DSP_MAX_VIN_NUM))) {
+                Rval = OK;
+                break;
+            } else {
+                Rval = DSP_ERR_0001;
+            }
+        }
+    }
+
+    *pIdx = DecIdx;
+
+    return Rval;
+}
+
+UINT32 HL_GetDecIdxFromDecTypeId(UINT16 DecTypeId, UINT32 BitsFmt, UINT16 *pIdx)
+{
+    UINT32 Rval = OK;
+    CTX_RESOURCE_INFO_s *pResource = HL_CtxResInfoPtr;
+    CTX_VID_DEC_INFO_s VidDecInfo = {0};
+    UINT16 i;
+
+    HL_GetResourcePtr(&pResource);
+    for (i = 0U; i < pResource->DecMaxStreamNum; i++) {
+        HL_GetVidDecInfo(HL_MTX_OPT_ALL, i, &VidDecInfo);
+        if (VidDecInfo.DecTypeId[BitsFmt] == DecTypeId) {
+            *pIdx = i;
+            break;
+        }
+    }
+
+    return Rval;
+}
+
+#define ZOOM_FACTOR_1_SQRT2 (46341U) // 1/sqrt(2), 16.16
+UINT32 HL_GetOctaveSize(UINT8 OctaveMode, UINT16 Input, UINT16 *pOutput)
+{
+    UINT32 Rval = OK;
+
+    if (pOutput == NULL) {
+        Rval = DSP_ERR_0000;
+    } else if (OctaveMode >= DSP_HIER_OCTAVE_MODE_NUM) {
+        Rval = DSP_ERR_0001;
+    } else {
+        if (OctaveMode == DSP_HIER_HALF_OCTAVE_MODE) {
+            *pOutput = (UINT16)((((UINT32)Input * ZOOM_FACTOR_1_SQRT2) + ((UINT32)1U << 15U)) >> 16U);
+        } else {
+            *pOutput = Input >> 1U;
+        }
+    }
+
+    return Rval;
+}
+
+#if 0
+inline static UINT32 ROUND_UP_DIV(UINT32 a, UINT32 b)
+{
+    return ((a + b) - 1U) / b;
+}
+
+#endif
+#ifndef SUPPORT_MAX_UCODE
+UINT32 HL_CalHierWindow(UINT8 OctaveMode, UINT8 HierIdx,
+                        const UINT16 *pMaxMainWidth, const UINT16 *pMaxMainHeight,
+                        UINT16 *pHierWidth, UINT16 *pHierHeight)
+{
+    UINT32 Rval = OK;
+    UINT16 InitialWidth = 0U, InitialHeight = 0U;
+
+    if ((pMaxMainWidth == NULL) || (pMaxMainHeight == NULL) ||
+        (pHierWidth == NULL) || (pHierHeight == NULL)) {
+        Rval = DSP_ERR_0000;
+    } else if ((OctaveMode >= DSP_HIER_OCTAVE_MODE_NUM) ||
+               (HierIdx >= AMBA_DSP_MAX_HIER_NUM)) {
+        Rval = DSP_ERR_0001;
+    } else {
+        /* Hier supports 2 mode:
+           1. Octave mode:
+              Hier order is 0/1/3/5/2/4, with downsampling of 1x/2x/4x/8x/16x/32x (2x each tier)
+           2. Half octave mode:
+              Hier order is 0/1/2/3/4/5/6, with downsampling of 1x/sqrt(2)x/2x/2*sqrt(2)x/4x/4*sqrt(2)x/8x (sqrt(2)x each tier)
+         */
+
+        if ((HierIdx%2U) == 0U) {
+            InitialWidth = *pMaxMainWidth;
+            InitialHeight = *pMaxMainHeight;
+        } else {
+            (void)HL_GetOctaveSize(OctaveMode, *pMaxMainWidth, &InitialWidth);
+            InitialWidth = ALIGN_NUM16(InitialWidth, 2U);
+
+            (void)HL_GetOctaveSize(OctaveMode, *pMaxMainHeight, &InitialHeight);
+            InitialHeight = ALIGN_NUM16(InitialHeight, 2U);
+        }
+
+        switch (HierIdx) {
+            case DSP_HIER_0:
+            case DSP_HIER_1:
+            {
+                *pHierWidth = InitialWidth;
+                *pHierHeight = InitialHeight;
+            }
+                break;
+            case DSP_HIER_2:
+            case DSP_HIER_4:
+            case DSP_HIER_6:
+            {
+                if (OctaveMode == DSP_HIER_HALF_OCTAVE_MODE) {
+                    *pHierWidth = ALIGN_NUM16(ROUND_UP_DIV(InitialWidth, HL_Hier2DivNum[HierIdx]), 2U);
+                    *pHierHeight = ALIGN_NUM16(ROUND_UP_DIV(InitialHeight, HL_Hier2DivNum[HierIdx]), 2U);
+
+                } else {
+                    *pHierWidth = ALIGN_NUM16(ROUND_UP_DIV(InitialWidth, HL_Hier2DivNum[HierIdx] << 3U), 2U);
+                    *pHierHeight = ALIGN_NUM16(ROUND_UP_DIV(InitialHeight, HL_Hier2DivNum[HierIdx] << 3U), 2U);
+                }
+            }
+                break;
+            case DSP_HIER_3:
+            case DSP_HIER_5:
+            {
+                *pHierWidth = ALIGN_NUM16(ROUND_UP_DIV(InitialWidth, HL_Hier2DivNum[HierIdx]), 2U);
+                *pHierHeight = ALIGN_NUM16(ROUND_UP_DIV(InitialHeight, HL_Hier2DivNum[HierIdx]), 2U);
+            }
+                break;
+            default:
+            {
+                //TBD
+            }
+                break;
+        }
+    }
+
+//    AmbaLL_LogUInt5("Octave[%d] idx[%d] W %d --> %d Init %d", OctaveMode, HierIdx, *pMaxMainWidth, *pHierWidth, InitialWidth);
+//    AmbaLL_LogUInt5("                   H %d --> %d Init %d", *pMaxMainHeight, *pHierHeight, InitialHeight, 0U, 0U);
+    return Rval;
+}
+#endif
+
+UINT32 HL_GetVoutPhysId(UINT16 VoutId, UINT16 *pPhysId)
+{
+    const UINT16 HL_VoutId2PhysIdMap[NUM_VOUT_IDX] = {
+        [VOUT_IDX_A]        = VOUT_IDX_A,
+        [VOUT_IDX_B]        = VOUT_IDX_B,
+        [VOUT_IDX_C]        = VOUT_IDX_C,
+        [3U]                = VOUT_IDX_A,
+        [VOUT_IDX_A_VC1]    = VOUT_IDX_A,
+        [VOUT_IDX_A_VC2]    = VOUT_IDX_A,
+        [VOUT_IDX_A_VC3]    = VOUT_IDX_A,
+        [VOUT_IDX_B_VC1]    = VOUT_IDX_B,
+        [VOUT_IDX_B_VC2]    = VOUT_IDX_B,
+        [VOUT_IDX_B_VC3]    = VOUT_IDX_B,
+    };
+    UINT32 Rval = DSP_ERR_NONE;
+
+    if (VoutId < NUM_VOUT_IDX) {
+        *pPhysId = HL_VoutId2PhysIdMap[VoutId];
+    }
+
+    return Rval;
+}
+
+UINT32 HL_GetVoutVirtId(UINT16 VoutId, UINT16 *pVirtId)
+{
+    const UINT16 HL_VoutId2VirtIdMap[NUM_VOUT_IDX] = {
+        [VOUT_IDX_A]        = 0U,
+        [VOUT_IDX_B]        = 0U,
+        [VOUT_IDX_C]        = 0U,
+        [3U]                = 0U,
+        [VOUT_IDX_A_VC1]    = 1U,
+        [VOUT_IDX_A_VC2]    = 2U,
+        [VOUT_IDX_A_VC3]    = 3U,
+        [VOUT_IDX_B_VC1]    = 1U,
+        [VOUT_IDX_B_VC2]    = 2U,
+        [VOUT_IDX_B_VC3]    = 3U,
+    };
+    UINT32 Rval = DSP_ERR_NONE;
+
+    if (VoutId < NUM_VOUT_IDX) {
+        *pVirtId = HL_VoutId2VirtIdMap[VoutId];
+    }
+
+    return Rval;
+}
+
+UINT16 HL_GetMinimalActiveVinId(void)
+{
+    UINT16 MinVinId;
+    CTX_RESOURCE_INFO_s *Resource = HL_CtxResInfoPtr;
+
+    HL_GetResourcePtr(&Resource);
+    if (Resource->VinBit > 0U) {
+        DSP_Bit2U16Idx(Resource->VinBit, &MinVinId);
+    } else {
+        MinVinId = 0U;
+    }
+
+    return MinVinId;
+}

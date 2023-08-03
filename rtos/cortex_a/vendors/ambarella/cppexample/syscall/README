@@ -1,0 +1,10 @@
+The codes here are the stub/wrapper for system call used by libc or
+other libraries. The default libnosys.a from toolchain could also be used
+if users do not call system call.
+
+Please check https://sourceware.org/newlib/ for detail.
+
+Here are some constructors in example codes from Ambarella.
+Such constructors need to be called during boot up.
+(cf. comsvc/AmbaSys/AmbaCRT0.c for detail.)
+

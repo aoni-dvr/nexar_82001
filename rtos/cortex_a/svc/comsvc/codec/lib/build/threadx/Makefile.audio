@@ -1,0 +1,13 @@
+# svc audio function
+ifeq ($(CONFIG_BUILD_COMAMBA_CODEC_AUDIO), y)
+
+COMAMBA_CODEC_AUDIO_SRC = lib/src/common/audio
+
+libcomsvc_codec-objs += $(COMAMBA_CODEC_AUDIO_SRC)/AmbaAEncFlow.o
+libcomsvc_codec-objs += $(COMAMBA_CODEC_AUDIO_SRC)/AmbaADecFlow.o
+libcomsvc_codec-objs += $(COMAMBA_CODEC_AUDIO_SRC)/AmbaAudioBSBuf.o
+libcomsvc_codec-objs += $(COMAMBA_CODEC_AUDIO_SRC)/AmbaAudioBuf.o
+libcomsvc_codec-objs += $(COMAMBA_CODEC_AUDIO_SRC)/AmbaAudioEfx.o
+libcomsvc_codec-objs += $(COMAMBA_CODEC_AUDIO_SRC)/AmbaAudio.o
+
+endif

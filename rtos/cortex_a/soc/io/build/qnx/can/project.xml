@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<module name="can-ambarella">
+  <classification>Driver</classification>
+  <description>
+    <short>ambarella can Driver</short>
+    <abstract><![CDATA[
+                       The can driver for the Ambarella BSP.
+               ]]></abstract>
+  </description>
+  <supports>
+    <availability>
+      <cpu isa="aarch64">
+        <byteOrder>le</byteOrder>
+      </cpu>
+    </availability>
+  </supports>
+  <contents>
+    <component id="ambarella" generated="true">
+      <location basedir="aarch64/le">can-ambarella</location>
+    </component>
+  </contents>
+  <requires>
+    <part build="false" location="lib/can"/>
+  </requires>
+</module>

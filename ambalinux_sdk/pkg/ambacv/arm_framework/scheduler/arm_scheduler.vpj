@@ -1,0 +1,323 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+  Version="10.0"
+  VendorName="SlickEdit"
+  TemplateName="GNU C/C++"
+  WorkingDir="."
+  BuildSystem="vsbuild">
+  <Config
+    Name="Debug"
+    Type="gnuc"
+    DebugCallbackName="gdb"
+    Version="1"
+    OutputFile="%bdarm_scheduler.exe"
+    CompilerConfigName="Latest Version">
+    <Menu>
+      <Target
+        Name="Compile"
+        MenuCaption="&amp;Compile"
+        Dialog="_gnuc_options_form Compile"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        OutputExts="*.o"
+        SaveOption="SaveCurrent"
+        RunFromDir="%rw">
+        <Exec CmdLine='g++ -c %xup  %defd -g -o "%bd%n%oe" %i "%f"'/>
+      </Target>
+      <Target
+        Name="Link"
+        MenuCaption="&amp;Link"
+        ShowOnMenu="Never"
+        Dialog="_gnuc_options_form Link"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        SaveOption="SaveCurrent"
+        RunFromDir="%rw">
+        <Exec CmdLine='g++ %xup -g -o "%o" %f %libs'/>
+      </Target>
+      <Target
+        Name="Build"
+        MenuCaption="&amp;Build"
+        Dialog="_gnuc_options_form Compile"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        SaveOption="SaveWorkspaceFiles"
+        RunFromDir="%rw">
+        <Exec CmdLine='"%(VSLICKBIN1)vsbuild" "%w" "%r" -t build'/>
+      </Target>
+      <Target
+        Name="Rebuild"
+        MenuCaption="&amp;Rebuild"
+        Dialog="_gnuc_options_form Compile"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        SaveOption="SaveWorkspaceFiles"
+        RunFromDir="%rw">
+        <Exec CmdLine='"%(VSLICKBIN1)vsbuild" "%w" "%r" -t rebuild'/>
+      </Target>
+      <Target
+        Name="Debug"
+        MenuCaption="&amp;Debug"
+        Dialog="_gnuc_options_form Run/Debug"
+        BuildFirst="1"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        SaveOption="SaveNone"
+        RunFromDir="%rw">
+        <Exec CmdLine='vsdebugio -prog "%o"'/>
+      </Target>
+      <Target
+        Name="Execute"
+        MenuCaption="E&amp;xecute"
+        Dialog="_gnuc_options_form Run/Debug"
+        BuildFirst="1"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        SaveOption="SaveWorkspaceFiles"
+        RunFromDir="%rw">
+        <Exec CmdLine='"%o"'/>
+      </Target>
+      <Target
+        Name="dash"
+        MenuCaption="-"
+        Deletable="0">
+        <Exec/>
+      </Target>
+      <Target
+        Name="GNU C Options"
+        MenuCaption="GNU C &amp;Options..."
+        ShowOnMenu="HideIfNoCmdLine"
+        Deletable="0"
+        SaveOption="SaveNone">
+        <Exec
+          CmdLine="gnucoptions"
+          Type="Slick-C"/>
+      </Target>
+    </Menu>
+    <List Name="GNUC Options">
+      <Item
+        Name="LinkerOutputType"
+        Value="Executable"/>
+    </List>
+  </Config>
+  <Config
+    Name="Release"
+    Type="gnuc"
+    DebugCallbackName="gdb"
+    Version="1"
+    OutputFile="%bdarm_scheduler.exe"
+    CompilerConfigName="Latest Version">
+    <Menu>
+      <Target
+        Name="Compile"
+        MenuCaption="&amp;Compile"
+        Dialog="_gnuc_options_form Compile"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        OutputExts="*.o"
+        SaveOption="SaveCurrent"
+        RunFromDir="%rw">
+        <Exec CmdLine='g++ -c %xup %defd -o "%bd%n%oe" %i "%f"'/>
+      </Target>
+      <Target
+        Name="Link"
+        MenuCaption="&amp;Link"
+        ShowOnMenu="Never"
+        Dialog="_gnuc_options_form Link"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        SaveOption="SaveCurrent"
+        RunFromDir="%rw">
+        <Exec CmdLine='g++ %xup -o "%o" %f %libs'/>
+      </Target>
+      <Target
+        Name="Build"
+        MenuCaption="&amp;Build"
+        Dialog="_gnuc_options_form Compile"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        SaveOption="SaveWorkspaceFiles"
+        RunFromDir="%rw">
+        <Exec CmdLine='"%(VSLICKBIN1)vsbuild" "%w" "%r" -t build'/>
+      </Target>
+      <Target
+        Name="Rebuild"
+        MenuCaption="&amp;Rebuild"
+        Dialog="_gnuc_options_form Compile"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        SaveOption="SaveWorkspaceFiles"
+        RunFromDir="%rw">
+        <Exec CmdLine='"%(VSLICKBIN1)vsbuild" "%w" "%r" -t rebuild'/>
+      </Target>
+      <Target
+        Name="Debug"
+        MenuCaption="&amp;Debug"
+        Dialog="_gnuc_options_form Run/Debug"
+        BuildFirst="1"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        SaveOption="SaveNone"
+        RunFromDir="%rw">
+        <Exec CmdLine='vsdebugio -prog "%o"'/>
+      </Target>
+      <Target
+        Name="Execute"
+        MenuCaption="E&amp;xecute"
+        Dialog="_gnuc_options_form Run/Debug"
+        BuildFirst="1"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        SaveOption="SaveWorkspaceFiles"
+        RunFromDir="%rw">
+        <Exec CmdLine='"%o"'/>
+      </Target>
+      <Target
+        Name="dash"
+        MenuCaption="-"
+        Deletable="0">
+        <Exec/>
+      </Target>
+      <Target
+        Name="GNU C Options"
+        MenuCaption="GNU C &amp;Options..."
+        ShowOnMenu="HideIfNoCmdLine"
+        Deletable="0"
+        SaveOption="SaveNone">
+        <Exec
+          CmdLine="gnucoptions"
+          Type="Slick-C"/>
+      </Target>
+    </Menu>
+    <List Name="GNUC Options">
+      <Item
+        Name="LinkerOutputType"
+        Value="Executable"/>
+    </List>
+  </Config>
+  <Files>
+    <Folder
+      Name="core"
+      Filters="">
+      <Folder
+        Name="core_linux"
+        Filters="">
+        <Folder
+          Name="core_amalgam"
+          Filters="">
+          <F N="core/linux/amalgam/amalgam.h"/>
+          <F N="core/linux/amalgam/amalgam_cavalry_kernel.c"/>
+          <F N="core/linux/amalgam/amalgam_flexidag_kernel.c"/>
+          <F N="core/linux/amalgam/amalgam_init.c"/>
+          <F N="core/linux/amalgam/amalgam_kernel.c"/>
+          <F N="core/linux/amalgam/cache.c"/>
+          <F N="core/linux/amalgam/dram_sync.c"/>
+          <F N="core/linux/amalgam/dram_sync.h"/>
+          <F N="core/linux/amalgam/network.c"/>
+          <F N="core/linux/amalgam/util.c"/>
+        </Folder>
+        <F N="core/linux/debug_core.c"/>
+        <F N="core/linux/os_api.c"/>
+        <F N="core/linux/os_api.h"/>
+        <F N="core/linux/set_roi.c"/>
+      </Folder>
+      <Folder
+        Name="core_qnx"
+        Filters="">
+        <F N="core/qnx/os_api.c"/>
+        <F N="core/qnx/os_api.h"/>
+        <F N="core/qnx/schdr_resource.c"/>
+      </Folder>
+      <Folder
+        Name="core_threadx"
+        Filters="">
+        <F N="core/threadx/os_api.c"/>
+        <F N="core/threadx/os_api.h"/>
+      </Folder>
+      <F N="core/cavalry_drv.c"/>
+      <F N="core/cvtask_api.c"/>
+      <F N="core/cvtask_ops.c"/>
+      <F N="core/cvtask_thpool.c"/>
+      <F N="core/dram_mmap.c"/>
+      <F N="core/flexidag_api.c"/>
+      <F N="core/flexidag_drv.c"/>
+      <F N="core/msg_drv.c"/>
+      <F N="core/schdr_boot.c"/>
+      <F N="core/schdr_loader.c"/>
+      <F N="core/schdr_log.c"/>
+      <F N="core/schdr_logger.c"/>
+      <F N="core/schdr_messager.c"/>
+      <F N="core/schdr_misc.c"/>
+      <F N="core/schdr_names.c"/>
+      <F N="core/superdag_drv.c"/>
+    </Folder>
+    <Folder
+      Name="inc"
+      Filters="">
+      <F N="inc/ambacv_kal.h"/>
+      <F N="inc/cvtask_hw.h"/>
+      <F N="inc/cvtask_ops.h"/>
+      <F N="inc/dram_mmap.h"/>
+      <F N="inc/schdr.h"/>
+      <F N="inc/schdr_resource.h"/>
+      <F N="inc/schdrmsg_def.h"/>
+      <F N="inc/thpool.h"/>
+    </Folder>
+    <Folder
+      Name="kernel"
+      Filters="">
+      <Folder
+        Name="kernel_linux"
+        Filters="">
+        <F N="kernel/linux/ambacv_dev.c"/>
+        <F N="kernel/linux/cavalry_cma.c"/>
+        <F N="kernel/linux/cavalry_cma.h"/>
+        <F N="kernel/linux/os_kernel.c"/>
+        <F N="kernel/linux/os_kernel.h"/>
+      </Folder>
+      <Folder
+        Name="kernel_qnx"
+        Filters="">
+        <F N="kernel/qnx/ambacv_dev.c"/>
+        <F N="kernel/qnx/os_kernel.c"/>
+        <F N="kernel/qnx/os_kernel.h"/>
+      </Folder>
+      <Folder
+        Name="kernel_threadx"
+        Filters="">
+        <F N="kernel/threadx/os_kernel.c"/>
+        <F N="kernel/threadx/os_kernel.h"/>
+      </Folder>
+      <F N="kernel/ambacv_kernel.c"/>
+      <F N="kernel/ambacv_kernel.h"/>
+      <F N="kernel/cache_kernel.c"/>
+      <F N="kernel/cache_kernel.h"/>
+      <F N="kernel/flexidag_kernel.c"/>
+      <F N="kernel/flexidag_kernel.h"/>
+      <F N="kernel/schdrmsg_kernel.c"/>
+      <F N="kernel/schdrmsg_kernel.h"/>
+      <F N="kernel/util_kernel.c"/>
+      <F N="kernel/visorc_cv1.i"/>
+      <F N="kernel/visorc_cv2.i"/>
+      <F N="kernel/visorc_cv22.i"/>
+      <F N="kernel/visorc_cv25.i"/>
+      <F N="kernel/visorc_cv28.i"/>
+      <F N="kernel/visorc_cv2a.i"/>
+      <F N="kernel/visorc_cv2fs.i"/>
+      <F N="kernel/visorc_cv6.i"/>
+      <F N="kernel/visorc_kernel.c"/>
+      <F N="kernel/visorc_kernel.h"/>
+    </Folder>
+    <Folder
+      Name="cvsched_common"
+      Filters="">
+      <F N="../../cv_common/inc/cvsched_common/cvsched_api.h"/>
+      <F N="../../cv_common/inc/cvsched_common/cvsched_flexibin_format.h"/>
+      <F N="../../cv_common/inc/cvsched_common/cvsched_sysflow_format.h"/>
+      <F N="../../cv_common/inc/cvsched_common/cvsched_tbar_format.h"/>
+    </Folder>
+    <F
+      N="makefile"
+      Type="Makefile"/>
+  </Files>
+</Project>

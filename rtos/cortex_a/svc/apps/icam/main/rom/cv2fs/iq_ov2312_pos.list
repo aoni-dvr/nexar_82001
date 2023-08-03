@@ -1,0 +1,139 @@
+<!------------------------------------------------------------------------------------------------------------- ->
+<!- @FileName       :: iq_ov2312.list                                                                           ->
+<!-                                                                                                             ->
+<!- @Copyright      :: Copyright (C) 2018 Ambarella Corporation. All rights reserved.                           ->
+<!-                                                                                                             ->
+<!-                    No part of this file may be reproduced, stored in a retrieval system,                    ->
+<!-                    or transmitted, in any form, or by any means, electronic, mechanical, photocopying,      ->
+<!-                    recording, or otherwise, without the prior consent of Ambarella Corporation.             ->
+<!-                                                                                                             ->
+<!- @Description    :: the file list for rom file system                                                        ->
+<!------------------------------------------------------------------------------------------------------------- ->
+
+<romfs>
+    <!- Relative path from the top directory of the build ->
+    <top>vendors/ambarella/image/iqtable/</top>
+    <!- OV2312 SIMUL RGBIR ->
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/idspbins/Cc_bw_gamma_lin_still.bin<alias>cc3d_cc_bw_gamma_lin_still_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/idspbins/Cc_bw_gamma_lin_video.bin<alias>cc3d_cc_bw_gamma_lin_video_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/idspbins/Cc_Video0.bin<alias>VideoCc0_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/idspbins/Cc_Video1.bin<alias>VideoCc1_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/idspbins/Cc_Video2.bin<alias>VideoCc2_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/idspbins/Cc_Video3.bin<alias>VideoCc3_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/idspbins/Cc_Video4.bin<alias>VideoCc4_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/idspbins/Cc_Still0.bin<alias>StillCc0_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/idspbins/Cc_Still1.bin<alias>StillCc1_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/idspbins/Cc_Still2.bin<alias>StillCc2_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/idspbins/Cc_Still3.bin<alias>StillCc3_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/idspbins/Cc_Still4.bin<alias>StillCc4_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/bins/Adj_PhotoPreview00.bin<alias>adj_photo_default_00_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/bins/Adj_PhotoPreview01.bin<alias>adj_photo_default_01_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/bins/Adj_VideoPc00.bin<alias>adj_video_default_00_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/bins/Adj_VideoPc01.bin<alias>adj_video_default_01_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/bins/Adj_VideoPc02.bin<alias>adj_video_default_02_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/bins/ScSet01Param.bin<alias>scene_data_s01_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/bins/ScSet02Param.bin<alias>scene_data_s02_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/bins/ScSet03Param.bin<alias>scene_data_s03_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/bins/ScSet04Param.bin<alias>scene_data_s04_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/bins/ScSet05Param.bin<alias>scene_data_s05_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/bins/ImageParam.bin<alias>img_default_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/bins/DefaultParams.bin<alias>aaa_default_00_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/bins/DefaultParams.bin<alias>aaa_default_01_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/bins/StillParam.bin<alias>adj_still_idx_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/bins/DeVideoParam.bin<alias>de_default_video_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/bins/DeStillParam.bin<alias>de_default_still_OV2312SIMULRGBIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_RGBIR_HJ6074L/bins/AdjTableParam.bin<alias>adj_table_param_default_OV2312SIMULRGBIR</alias></file>
+
+    <!- OV2312 SIMUL IR ->
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/idspbins/Cc_bw_gamma_lin_still.bin<alias>cc3d_cc_bw_gamma_lin_still_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/idspbins/Cc_bw_gamma_lin_video.bin<alias>cc3d_cc_bw_gamma_lin_video_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/idspbins/Cc_Video0.bin<alias>VideoCc0_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/idspbins/Cc_Video1.bin<alias>VideoCc1_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/idspbins/Cc_Video2.bin<alias>VideoCc2_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/idspbins/Cc_Video3.bin<alias>VideoCc3_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/idspbins/Cc_Video4.bin<alias>VideoCc4_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/idspbins/Cc_Still0.bin<alias>StillCc0_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/idspbins/Cc_Still1.bin<alias>StillCc1_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/idspbins/Cc_Still2.bin<alias>StillCc2_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/idspbins/Cc_Still3.bin<alias>StillCc3_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/idspbins/Cc_Still4.bin<alias>StillCc4_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/bins/Adj_PhotoPreview00.bin<alias>adj_photo_default_00_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/bins/Adj_PhotoPreview01.bin<alias>adj_photo_default_01_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/bins/Adj_VideoPc00.bin<alias>adj_video_default_00_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/bins/Adj_VideoPc01.bin<alias>adj_video_default_01_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/bins/Adj_VideoPc02.bin<alias>adj_video_default_02_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/bins/ScSet01Param.bin<alias>scene_data_s01_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/bins/ScSet02Param.bin<alias>scene_data_s02_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/bins/ScSet03Param.bin<alias>scene_data_s03_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/bins/ScSet04Param.bin<alias>scene_data_s04_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/bins/ScSet05Param.bin<alias>scene_data_s05_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/bins/ImageParam.bin<alias>img_default_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/bins/DefaultParams.bin<alias>aaa_default_00_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/bins/DefaultParams.bin<alias>aaa_default_01_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/bins/StillParam.bin<alias>adj_still_idx_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/bins/DeVideoParam.bin<alias>de_default_video_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/bins/DeStillParam.bin<alias>de_default_still_OV2312SIMULIR</alias></file>
+    <file>OV2312_SIMULTANEOUS_IR_HJ6074L/bins/AdjTableParam.bin<alias>adj_table_param_default_OV2312SIMULIR</alias></file>
+
+    <!- OV2312 TD RGBIR ->
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/idspbins/Cc_bw_gamma_lin_still.bin<alias>cc3d_cc_bw_gamma_lin_still_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/idspbins/Cc_bw_gamma_lin_video.bin<alias>cc3d_cc_bw_gamma_lin_video_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/idspbins/Cc_Video0.bin<alias>VideoCc0_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/idspbins/Cc_Video1.bin<alias>VideoCc1_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/idspbins/Cc_Video2.bin<alias>VideoCc2_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/idspbins/Cc_Video3.bin<alias>VideoCc3_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/idspbins/Cc_Video4.bin<alias>VideoCc4_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/idspbins/Cc_Still0.bin<alias>StillCc0_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/idspbins/Cc_Still1.bin<alias>StillCc1_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/idspbins/Cc_Still2.bin<alias>StillCc2_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/idspbins/Cc_Still3.bin<alias>StillCc3_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/idspbins/Cc_Still4.bin<alias>StillCc4_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/bins/Adj_PhotoPreview00.bin<alias>adj_photo_default_00_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/bins/Adj_PhotoPreview01.bin<alias>adj_photo_default_01_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/bins/Adj_VideoPc00.bin<alias>adj_video_default_00_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/bins/Adj_VideoPc01.bin<alias>adj_video_default_01_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/bins/Adj_VideoPc02.bin<alias>adj_video_default_02_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/bins/ScSet01Param.bin<alias>scene_data_s01_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/bins/ScSet02Param.bin<alias>scene_data_s02_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/bins/ScSet03Param.bin<alias>scene_data_s03_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/bins/ScSet04Param.bin<alias>scene_data_s04_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/bins/ScSet05Param.bin<alias>scene_data_s05_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/bins/ImageParam.bin<alias>img_default_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/bins/DefaultParams.bin<alias>aaa_default_00_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/bins/DefaultParams.bin<alias>aaa_default_01_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/bins/StillParam.bin<alias>adj_still_idx_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/bins/DeVideoParam.bin<alias>de_default_video_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/bins/DeStillParam.bin<alias>de_default_still_OV2312TDRGBIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_RGBIR_HJ6074L/bins/AdjTableParam.bin<alias>adj_table_param_default_OV2312TDRGBIR</alias></file>
+
+    <!- OV2312 TD IR ->
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/idspbins/Cc_bw_gamma_lin_still.bin<alias>cc3d_cc_bw_gamma_lin_still_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/idspbins/Cc_bw_gamma_lin_video.bin<alias>cc3d_cc_bw_gamma_lin_video_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/idspbins/Cc_Video0.bin<alias>VideoCc0_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/idspbins/Cc_Video1.bin<alias>VideoCc1_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/idspbins/Cc_Video2.bin<alias>VideoCc2_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/idspbins/Cc_Video3.bin<alias>VideoCc3_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/idspbins/Cc_Video4.bin<alias>VideoCc4_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/idspbins/Cc_Still0.bin<alias>StillCc0_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/idspbins/Cc_Still1.bin<alias>StillCc1_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/idspbins/Cc_Still2.bin<alias>StillCc2_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/idspbins/Cc_Still3.bin<alias>StillCc3_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/idspbins/Cc_Still4.bin<alias>StillCc4_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/bins/Adj_PhotoPreview00.bin<alias>adj_photo_default_00_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/bins/Adj_PhotoPreview01.bin<alias>adj_photo_default_01_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/bins/Adj_VideoPc00.bin<alias>adj_video_default_00_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/bins/Adj_VideoPc01.bin<alias>adj_video_default_01_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/bins/Adj_VideoPc02.bin<alias>adj_video_default_02_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/bins/ScSet01Param.bin<alias>scene_data_s01_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/bins/ScSet02Param.bin<alias>scene_data_s02_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/bins/ScSet03Param.bin<alias>scene_data_s03_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/bins/ScSet04Param.bin<alias>scene_data_s04_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/bins/ScSet05Param.bin<alias>scene_data_s05_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/bins/ImageParam.bin<alias>img_default_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/bins/DefaultParams.bin<alias>aaa_default_00_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/bins/DefaultParams.bin<alias>aaa_default_01_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/bins/StillParam.bin<alias>adj_still_idx_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/bins/DeVideoParam.bin<alias>de_default_video_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/bins/DeStillParam.bin<alias>de_default_still_OV2312TDIR</alias></file>
+    <file>OV2312_TIMEDIVISION_FRONT_IR_HJ6074L/bins/AdjTableParam.bin<alias>adj_table_param_default_OV2312TDIR</alias></file>
+</romfs>

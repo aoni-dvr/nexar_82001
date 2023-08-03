@@ -1,0 +1,17 @@
+#include "vp_vas.h"
+#define IN1_WIDTH           131072
+#define IN1_HEIGHT          1
+#define IN2_WIDTH           IN1_WIDTH
+#define IN2_HEIGHT          1
+#define OUT_WIDTH           IN1_WIDTH
+#define OUT_HEIGHT          1
+
+DAG and8u = {
+	VP_input(input0, uint8_t, vector(1, 1, IN1_HEIGHT, IN1_WIDTH));
+
+	VP_input(input1, uint8_t, vector(1, 1, IN2_HEIGHT, IN2_WIDTH));
+
+	VP_bwand(input0, input1, VP_tensor(output_temp, uint8_t));
+
+	VP_output(output, output_temp);
+}

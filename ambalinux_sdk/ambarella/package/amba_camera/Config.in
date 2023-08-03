@@ -1,0 +1,79 @@
+menu "Amba Camera"
+
+config BR2_PACKAGE_AMBA_CAMERA
+	bool "amba_camera"
+	help
+	  This is the Amba Camera Package
+
+if BR2_PACKAGE_AMBA_CAMERA
+
+config BR2_PACKAGE_AMBA_CAMERA_AUTOSTART
+	bool "Auto start amba_svc during bootup"
+	default y
+
+config BR2_PACKAGE_AMBA_CAMERA_SOURCE
+	string "amba camera source"
+	default "$(TOPDIR)/../pkg/amba_camera/cortex_a/"
+	help
+	  defconfig file.
+	  It's absolute path.
+
+config BR2_PACKAGE_AMBA_CAMERA_DEFCONFIG
+	string "amba camera defconfig"
+	default "$(TOPDIR)/../pkg/amba_camera/cortex_a/configs/cv22/cv22_svc_cv_ut_defconfig"
+	help
+	  defconfig file.
+	  It's absolute path.
+
+config BR2_PACKAGE_AMBA_CAMERA_KCONFIG
+	string "amba camera Kconfig"
+	default "svc/build/linux/Kconfig.Linux"
+	help
+	  First Kconfig file
+	  Relative to root of amba_camera/cortex_a
+
+config BR2_PACKAGE_AMBA_CAMERA_AMBA_MKFILE
+	string "amba camera Makefile.Amba"
+	default "svc/build/linux/Makefile.Amba"
+	help
+	  Path of Makefile.Amba
+	  Relative to root of amba_camera/cortex_a
+
+
+config BR2_PACKAGE_AMBA_CAMERA_OOSB
+	bool
+	default y
+	help
+	  Out-of-Source Building, i.e.
+	  compile amba camera with "O=" option.
+	  So that it will skip to rsync source to output folder,
+	  and put object files to output folder.
+
+config BR2_PACKAGE_AMBA_CAMERA_DIAGS
+	bool "amba camera diags"
+	default y
+	help
+	  Do "make diags" before "make".
+	  Used for project who need to make diags
+
+config BR2_PACKAGE_AMBA_CAMERA_DIAGS_LIB
+	bool "amba camera diags_lib"
+	default n
+	help
+	  Do "make diags_lib" before "make".
+	  Used for project who need to make diags_lib
+
+config BR2_PACKAGE_AMBA_CAMERA_BRIDGE_SENSOR
+	string "build sensor or bridge"
+	help
+	  copy eva-only bridge file for sensor or radar
+
+config BR2_PACKAGE_AMBA_CAMERA_SYSLOGD_PARAMS
+	string "syslogd parameters"
+	default ""
+	help
+	  syslogd parameters
+
+endif # BR2_PACKAGE_AMBA_CAMERA
+
+endmenu

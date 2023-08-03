@@ -1,0 +1,12 @@
+#include "vp_vas.h"
+#include "idsp_top_globals.h"
+
+DAG conv8u = {
+    VP_input(input, uint8_t, vector( 1, 1, IN_HEIGHT, IN_WIDTH), vp_interleave_mode = 2);
+
+	
+    VP_ln( input, VP_tensor( output_temp, float16_t),
+	        strong_zero = false, disable_reserved = true);
+
+    VP_output(output, output_temp);
+}

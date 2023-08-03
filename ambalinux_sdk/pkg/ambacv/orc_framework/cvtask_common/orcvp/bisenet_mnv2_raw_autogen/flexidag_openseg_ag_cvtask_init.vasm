@@ -1,0 +1,3 @@
+.section .cvtasklist_entry
+.align 4
+    .long _flexidag_openseg_ag_cvtask_register

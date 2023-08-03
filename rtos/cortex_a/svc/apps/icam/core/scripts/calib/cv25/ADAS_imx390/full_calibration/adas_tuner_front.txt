@@ -1,0 +1,50 @@
+system.calib_mode ADAS
+system.type SV
+system.chip_rev CV22
+system.output_prefix ADAS
+lens[0].disto_type 0
+lens[0].real_table 0.0 0.03724 0.11173 0.14897 0.22342 0.29781 0.33499 0.40928 0.44639 0.52053 0.59455 0.63152 0.70533 0.74218 0.81574 0.88912 0.92573 0.99879 1.03523 1.10793 1.18036 1.21647 1.28847 1.32435 1.39587 1.46704 1.50249 1.57311 1.60827 1.67826 1.74782 1.78243 1.85130 1.88554 1.95365 2.02122 2.05480 2.12152 2.15465 2.22045 2.28561 2.31793 2.38205 2.41383 2.47684 2.53908 2.56989 2.63088 2.66105 2.72071 2.77944 2.80845 2.86569 2.89393 2.94960 3.00414 3.03098 3.08376 3.10969 3.16057 3.21012 3.23438 3.28182 3.30499136
+lens[0].expect_table 0.0 0.03742 0.11226 0.14971 0.22479 0.30015 0.33800 0.41395 0.45209 0.52886 0.60630 0.64533 0.72397 0.76361 0.84371 0.9249 0.96601 1.04913 1.09119 1.17653 1.2635 1.3077 1.39754 1.44318 1.53617 1.63154 1.68022 1.77955 1.830 1.93411 2.04131 2.09629 2.20909 2.26698 2.38616 2.51010 2.57404 2.70598 2.77411 2.91525 3.06331 3.14021 3.30002 3.38314 3.55665 3.74058 3.83690 4.03882 4.1447 4.36810 4.60801 4.73497 5.0041 5.14705 5.4520 5.7855  5.96460 6.35009 6.55811 7.01000 7.51703 7.79490 8.40724 8.74591
+lens[0].table_length 64
+sensor[0].cell_size 0.003
+sensor[0].start_x 48
+sensor[0].start_y 81
+sensor[0].width 1920
+sensor[0].height 1080
+optical_center[0].x 960
+optical_center[0].y 540
+camera[0].pos_x -148
+camera[0].pos_y 535
+camera[0].pos_z 1406
+camera[0].rotate_type 0
+vin[0].start_x 0
+vin[0].start_y 0
+vin[0].width 1920
+vin[0].height 1080
+vin[0].h_subsample_factor_num 1
+vin[0].h_subsample_factor_den 1
+vin[0].v_subsample_factor_num 1
+vin[0].v_subsample_factor_den 1
+view_single.type 0
+vout[0].start_x 0
+vout[0].start_y 0
+vout[0].width 1920
+vout[0].height 1080
+calib_points[0].world_pos_x -1600.0 1600.0 -1600.0 1600.0
+calib_points[0].world_pos_y 3580.0 3580.0 3580.0 3580.0
+calib_points[0].world_pos_z 1600.0 1600.0 620.0 620.0
+calib_points[0].raw_pos_x 506.0 1460.0 518.0 1450.0
+calib_points[0].raw_pos_y 439.0 434.0 735.0 721.0
+tile_size[0].width 32
+tile_size[0].height 32
+roi[0].start_x 0
+roi[0].start_y 0
+roi[0].width 1920
+roi[0].height 1080
+optimize[0].level 0
+internal[0].debug_id 0
+internal[0].wait_line_th 0
+internal[0].dma_th 0
+internal[0].raw_pos_horflip_enable 0
+internal[0].out_of_roi_refine_enable 1
+internal[0].auto_roi_refine_enable 0

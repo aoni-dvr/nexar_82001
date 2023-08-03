@@ -1,0 +1,35 @@
+# For bootstrap
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaBST_UserConfig.o
+ifdef CONFIG_ENABLE_SPINOR_BOOT
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaBST_NOR_MT25L256ABA.o
+else
+ifdef CONFIG_ENABLE_EMMC_BOOT
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaBST_EMMC_Generic.o
+else
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaBST_SPINAND_Generic.o
+endif
+endif
+
+ifdef CONFIG_H32_LPDDR4_MT53D512M16D1DS_1596MHZ
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaLPDDR4_MT53D512M16D1DS_1596Mhz.o
+endif
+ifdef CONFIG_H32_LPDDR4_MT53D512M16D1DS_1200MHZ
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaLPDDR4_MT53D512M16D1DS_1200Mhz.o
+endif
+ifdef CONFIG_H32_LPDDR4_MT53D512M16D1DS_840MHZ
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaLPDDR4_MT53D512M16D1DS_840Mhz.o
+endif
+ifdef CONFIG_H32_DDR4_MT40A512M16LY_1596MHZ
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaDDR4_MT40A512M16LY_1596Mhz.o
+endif
+
+# For bootloader
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaUserGpioConfig.o            \
+                                $(BSP_PATH)/AmbaUserDefinedPreBoot.o        \
+                                $(BSP_PATH)/AmbaNAND_S34ML04G2.o            \
+                                $(BSP_PATH)/AmbaSpiNOR_MT25QL256ABA.o       \
+                                $(BSP_PATH)/AmbaSPINAND_MT29F2G01ABAGDWB.o
+
+ifeq ($(CONFIG_SVC_APPS_ICAM),)
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaUserNandPartition.o
+endif

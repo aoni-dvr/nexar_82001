@@ -1,0 +1,463 @@
+#!gmake
+
+# Copyright (c) 2017-2018 Ambarella, Inc.
+#
+# This file and its contents ("Software") are protected by intellectual
+# property rights including, without limitation, U.S. and/or foreign copyrights.
+# This Software is also the confidential and proprietary information of
+# Ambarella, Inc. and its licensors.  You may not use, reproduce, disclose,
+# distribute, modify, or otherwise prepare derivative works of this Software
+# or any portion thereof except pursuant to a signed license agreement or
+# nondisclosure agreement with Ambarella, Inc. or its authorized affiliates.
+# In the absence of such an agreement, you agree to promptly notify and
+# return this Software to Ambarella, Inc.
+#
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+# INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT,
+# MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL AMBARELLA, INC. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT,
+# INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; COMPUTER FAILURE OR MALFUNCTION;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+SRCDIR			= @srcdir@
+CV_COMMON_DIR		= @cv_common_dir@
+
+USER_DATA_RULE := 1
+USER_CHECKDATA_RULE := 1
+USER_CHECK_RULE := 1
+USER_CODE_RULE := 1
+USER_CHECKRTL_RULE := 1
+USER_RUNRTL_RULE := 1
+
+ifeq (@use_ace_platform@, 0)
+DUMP_OUT_DIR = ./amalgam
+endif
+#DUMP_OUT_DIR is defined by ace/Makefile.in when use_ace_platform=1
+
+# jobs for code build (Allow infinite jobs to fix compiler warning and promote building performance)
+j =
+
+##############################################################################
+
+CHECKDATA_TO_CLEAN :=
+RESULTS_TO_CLEAN   :=
+
+##############################################################################
+
+# data
+
+DATA_TARGETS := 
+
+DATA_TO_CLEAN := $(DATA_TARGETS)
+
+##############################################################################
+
+CHECKDATA_TO_CLEAN +=
+
+##############################################################################
+
+##############################################################################
+
+CHECK_UTILS := 
+
+##############################################################################
+
+##############################################################################
+
+# -*- makefile -*-
+
+ifdef VERBOSE_TABLE_AR
+TABLE_AR_FLAGS = -verbose
+else
+TABLE_AR_FLAGS =
+endif
+
+ifndef VERBOSE_MAKE
+.SILENT:
+endif
+
+ifdef FORCE
+  ifneq ($(FORCE),0)
+FORCE_RULE = force
+  endif
+endif
+
+INFILES = $(shell find $(SRCDIR) -name \*.in)
+
+.PHONY: default all allrtl force ref		   \
+	build code data checkdata preprtl	   \
+	run runrtl check checkrtl compress	   \
+	copyall copypass copyfail		   \
+	clean cleancode cleanrun cleandata	   \
+	clobber clobbercode clobberrun clobberdata 
+
+default: build
+
+all: build run check postproc
+
+allrtl: build preprtl runrtl checkrtl postproc
+
+$(SRCDIR)/configure : $(SRCDIR)/configure.ac
+	cd $(SRCDIR) && autoconf
+
+Makefile: $(INFILES) $(USER_CONFIG_DEPS) config.status
+	./config.status
+
+config.status: $(SRCDIR)/configure
+	./config.status --recheck
+
+build: code data checkdata
+
+force:
+
+ifndef USER_CODE_RULE
+# Build diag code
+code:
+	@echo ""
+	@echo "Building code"
+	@echo ""
+	$(MAKE) -C build
+endif
+
+ifndef USER_DATA_RULE
+# Build data for run input
+data:
+endif
+
+ifndef USER_CHECKDATA_RULE
+# Build "golden" data to check against
+checkdata:
+endif
+
+ifndef USER_PREPRTL_RULE
+preprtl:
+endif
+
+ifndef USER_RUNRTL_RULE
+runrtl:
+	make -C rtl run
+endif
+
+ifndef USER_RUN_RULE
+run:
+	@echo ""
+	@echo "Running amalgam"
+	@echo ""
+	cd amalgam;							\
+	amalgam -logfile amalgam.log -nostdout -noct -command run;	\
+	exit_code=$$?;							\
+	echo "exit_status=$$exit_code" > amalgam.status;		\
+	if [ $$exit_code != 0 ]; then					\
+	  false;							\
+	fi
+endif
+
+ifndef USER_CHECK_RULE
+check: checkdata
+	@echo "PASS: No data to check"
+endif
+
+ifndef USER_CHECKRTL_RULE
+checkrtl: checkdata
+	@echo "PASS: No data to check"
+endif
+
+ifndef USER_COMPRESS_RULE
+compress:
+	find . -type f -size +2048k | xargs -r gzip
+endif
+
+ifndef USER_COPYALL_RULE
+# use find instead of * .* because .* picks up .., which is bad for rcp -r
+copyall: compress
+	rcp -r `find . -maxdepth 1 \! -name '.'` $(COPYDEST)
+endif
+
+ifndef USER_COPYPASS_RULE
+copypass:
+	cp -f $(DIAGSTATUSLOG) $(COPYDEST)
+endif
+
+ifndef USER_COPYFAIL_RULE
+copyfail: copyall
+endif
+
+
+ifndef USER_POSTPROC_RULE
+postproc:
+endif
+
+ifndef USER_CLEAN_CODE_RULE
+cleancode:
+	$(MAKE) -C build clean
+endif
+
+ifndef USER_CLEAN_RUN_RULE
+ifneq ($(CLEAN_RUN_FILES),)
+cleanrun:
+	rm -rf $(CLEAN_RUN_FILES)
+else
+cleanrun:
+endif
+endif
+
+ifndef USER_CLEANDATA_RULE
+ifneq ($(CLEAN_DATA_FILES),)
+cleandata:
+	rm -rf $(CLEAN_DATA_FILES)
+else
+cleandata:
+endif
+endif
+
+clean: cleancode cleanrun cleandata
+
+
+ifndef USER_CLOBBER_CODE_RULE
+clobbercode:
+	$(MAKE) -C build clobber
+endif
+
+ifndef USER_CLOBBER_RUN_RULE
+ifneq ($(CLOBBER_RUN_FILES),)
+clobberrun:
+	rm -rf $(CLOBBER_RUN_FILES)
+else
+clobberrun:
+endif
+endif
+
+ifndef USER_CLOBBERDATA_RULE
+ifneq ($(CLOBBER_DATA_FILES),)
+clobberdata:
+	rm -rf $(CLOBBER_DATA_FILES)
+else
+clobberdata:
+endif
+endif
+
+clobber: clean clobbercode clobberrun clobberdata
+
+###############################################################################
+
+# clean
+
+CLEAN_DATA_FILES = $(DATA_TO_CLEAN) $(CHECKDATA_TO_CLEAN) $(RESULTS_TO_CLEAN) $(CHECK_UTILS)
+
+
+
+# the only way in which this is non-standard is that it passes -j to submake
+code: 
+	@echo ""
+	@echo "Building code"
+	@echo ""
+	$(MAKE) -j$(j) -C build
+
+###############################################################################
+# make data
+###############################################################################
+
+.PHONY: data_targets
+.PHONY: check_utils
+
+data: force
+	@echo ""
+	@echo "Building data"
+	@echo ""
+	$(MAKE) -j$(j) data_targets
+	$(MAKE) -j$(j) -C build data
+	$(MAKE) -j$(j) check_utils
+	@echo "Done building data."
+
+data_targets: $(DATA_TARGETS)
+
+check_utils: $(CHECK_UTILS)
+
+###############################################################################
+# make checkdata
+###############################################################################
+
+checkdata-spu:
+	@echo "Running SPU reference model"
+	cd ref_data;	\
+	cv1_ref_model "spu"
+
+checkdata-tm:
+	@echo "Running TM reference model"
+	cd ref_data;	\
+	cv1_ref_model "tm"
+
+checkdata-vo:
+	@echo "Running VO reference model"
+	cd ref_data;	\
+	cv1_ref_model "vo"
+
+checkdata-ld:
+	@echo "Running LD reference model"
+	cd ref_data;	\
+	cv1_ref_model "ld"
+
+checkdata-odfc:
+	@echo "Running LL ODFC reference model"
+	cd ref_data;	\
+	cv1_ref_model "odfc"
+
+checkdata-fsd:
+	@echo "Running FSD reference model"
+	cd ref_data;	\
+	cv1_ref_model "fsd"
+
+checkdata:
+	mkdir -p ref_data	
+	$(MAKE) checkdata-spu;
+	$(MAKE) checkdata-tm;
+	$(MAKE) checkdata-fsd;
+	$(MAKE) checkdata-odfc;
+	$(MAKE) checkdata-vo;
+	$(MAKE) checkdata-ld;
+
+###############################################################################
+# make check
+###############################################################################
+
+check-single:	
+	diff -q $(FILE1) $(FILE2)
+
+check-spu:
+	@echo "Checking SPU output"
+	+make_exit=0;								\
+	for ((num=0; num < @diag_num_frames@; num++)); do			\
+		val=$$num;						\
+		val+=00;							\
+		$(MAKE) check-single FILE1=amalgam/SPU_output_00000$$val.bin FILE2=./ref_data/SPU_output_00000$$val.bin || { make_exit=2; break; };						\
+	done;									\
+	if (( $$make_exit )); then               				\
+		echo "... SPU make check failed";                    		\
+		false;								\
+	else									\
+		echo "... SPU make check passed";                    		\
+	fi
+	@echo "... SPU check completed"
+
+check-tm:
+	@echo "Checking TM output"
+	+make_exit=0;								\
+	for ((num=0; num < @diag_num_frames@; num++)); do			\
+		$(MAKE) check-single FILE1=$(DUMP_OUT_DIR)/TERRAIN_MAPPING_OUTPUT_00000$$num.bin FILE2=./ref_data/terrain_mapping_output_00000$$num || { make_exit=2; break; };			\
+	done;									\
+	if (( $$make_exit )); then               				\
+		echo "... TM make check failed";                    		\
+		false;								\
+	else									\
+		echo "... TM make check passed";                    		\
+	fi
+
+check-vo:
+	@echo "Checking VO output"
+	+make_exit=0;								\
+	for ((num=0; num < @diag_num_frames@; num++)); do			\
+		val=$$num;							\
+		val+=0000;							\
+		$(MAKE) check-single FILE1=amalgam/FMA_VO_result_feature_000$$val.bin FILE2=./ref_data/FMA_VO_result_feature_000$$val.bin || { make_exit=2; break; };				\
+	done;									\
+	if (( $$make_exit )); then               				\
+		echo "... VO make check failed";                    		\
+		false;								\
+	else									\
+		echo "... VO make check passed";                    		\
+	fi
+	@echo "... VO check completed"
+
+check-ld:
+	@echo "Checking LD output"
+	+make_exit=0;								\
+	for ((num=0; num < @diag_num_frames@; num++)); do			\
+		$(MAKE) check-single FILE1=amalgam/LD_bdoor_BEV_cc_$$num.bin FILE2=./ref_data/LD_bdoor_BEV_cc_$$num.bin || { make_exit=2; break; };						\
+		$(MAKE) check-single FILE1=amalgam/LD_bdoor_threshold_next_$$num.bin FILE2=./ref_data/LD_bdoor_threshold_next_$$num.bin || { make_exit=2; break; };				\
+		$(MAKE) check-single FILE1=amalgam/LD_bdoor_warp_in_$$num.bin FILE2=./ref_data/LD_bdoor_warp_in_$$num.bin || { make_exit=2; break; };						\
+		$(MAKE) check-single FILE1=amalgam/LD_bdoor_warp_out_$$num.bin FILE2=./ref_data/LD_bdoor_warp_out_$$num.bin || { make_exit=2; break; };						\
+		$(MAKE) check-single FILE1=amalgam/LD_bdoor_warp_out_with_invalid_region_$$num.bin FILE2=./ref_data/LD_bdoor_warp_out_with_invalid_region_$$num.bin || { make_exit=2; break; };	\
+		$(MAKE) check-single FILE1=amalgam/LD_bdoor_warp_out_with_mask_$$num.bin FILE2=./ref_data/LD_bdoor_warp_out_with_mask_$$num.bin || { make_exit=2; break; };			\
+	done;									\
+	if (( $$make_exit )); then               				\
+		echo "... LD make check failed";                    		\
+		false;								\
+	else									\
+		echo "... LD make check passed";                    		\
+	fi
+	@echo "... LD check completed"
+
+check-odfc: $(my_ODFC_TOOL)
+	@echo "Checking LL ODFC output"
+	+make_exit=0;								\
+	for ((num=0; num < @diag_num_frames@; num++)); do			\
+		$(my_ODFC_TOOL) vo $(DUMP_OUT_DIR)/VO_FEATURE_OUT_00000$$num.bin; \
+		$(my_ODFC_TOOL) vo ./ref_data/VO_FEATURE_OUT_00000$$num.bin; \
+		$(MAKE) check-single FILE1=$(DUMP_OUT_DIR)/VO_FEATURE_OUT_00000$$num.bin.txt FILE2=./ref_data/VO_FEATURE_OUT_00000$$num.bin.txt || { make_exit=2; break; };				\
+		$(my_ODFC_TOOL) od $(DUMP_OUT_DIR)/OD_PASS2_OUT_00000$$num.bin; \
+		$(my_ODFC_TOOL) od ./ref_data/OD_PASS2_OUT_00000$$num.bin; \
+		$(MAKE) check-single FILE1=$(DUMP_OUT_DIR)/OD_PASS2_OUT_00000$$num.bin.txt FILE2=./ref_data/OD_PASS2_OUT_00000$$num.bin.txt || { make_exit=2; break; };					\
+	done;									\
+	if (( $$make_exit )); then               				\
+		echo "... LL ODFC make check failed";                    		\
+		false;								\
+	else									\
+		echo "... LL ODFC make check passed";                    		\
+	fi
+	@echo "... LL ODFC check completed !"
+
+check-fsd:
+	@echo "Checking FSD output"
+	+make_exit=0;								\
+	for ((num=0; num < @diag_num_frames@; num++)); do			\
+		$(MAKE) check-single FILE1=$(DUMP_OUT_DIR)/FSD_OUTPUT_00000$$num.bin FILE2=./ref_data/fsd_output_00000$$num || { make_exit=2; break; };			\
+	done;									\
+	if (( $$make_exit )); then               				\
+		echo "... FSD make check failed";                    		\
+		false;								\
+	else									\
+		echo "... FSD make check passed";                    		\
+	fi
+
+check:
+	$(MAKE) check-spu;
+	$(MAKE) check-tm;
+	$(MAKE) check-fsd;
+	$(MAKE) check-odfc;
+	$(MAKE) check-vo;
+	$(MAKE) check-ld;
+
+###############################################################################
+# make checkrtl
+###############################################################################
+
+checkrtl:
+	@echo "Nothing to check"
+
+###############################################################################
+# make runrtl
+###############################################################################
+
+runrtl:
+	@echo ""
+	@echo "Running RTL"
+	@echo ""
+	cd rtl;		    \
+	tabasco -nso ;      \
+	exit_code=$$?;                                                  \
+	echo "exit_status=$$exit_code" > ../tabasco.status;             \
+	if [ $$exit_code != 0 ]; then                                   \
+	  false;                                                        \
+	fi
+
+###############################################################################
+# make check_config
+###############################################################################
+
+check_config :
+	perl -I./code -MUcodeConfig -e 'print_config'

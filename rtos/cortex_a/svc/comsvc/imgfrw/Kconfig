@@ -1,0 +1,67 @@
+config BUILD_IMGFRW_AAA
+    bool "Build imgfrw aaa functions"
+    default y
+config BUILD_IMGFRW_RAW_ENC
+    bool "Build imgfrw raw enc functions"
+    default y
+config BUILD_IMGFRW_ISO_DIS
+    bool "Build imgfrw iso disable functions"
+    default n
+menuconfig BUILD_IMGFRW_EFOV
+    bool "Build imgfrw ext fov functions"
+    default n
+if BUILD_IMGFRW_EFOV
+config BUILD_IMGFRW_EFOV_LPBK
+    bool "Enable imgfrw ext fov loopback"
+    default n
+endif
+menuconfig BUILD_IMGFRW_EIS
+    bool "Build imgfrw eis functions"
+    default n
+if BUILD_IMGFRW_EIS
+config BUILD_IMGFRW_EIS_POST
+    bool "Enable imgfrw eis post process functions"
+    default n
+endif
+config BUILD_IMGFRW_EIS_GYRODLY
+    bool "Build imgfrw eis gyro delay functions"
+    default n
+
+config BUILD_IMGFRW_EIS_WARP_CT
+    bool "build imgfrw eis warp convert functions"
+    default n
+menuconfig BUILD_IMGFRW_EIS_WARP_AC
+    bool "build imgfrw eis warp accumulate functions"
+    default n
+if BUILD_IMGFRW_EIS_WARP_AC
+config BUILD_IMGFRW_EIS_WARP_LV
+    bool "Enable imgfrw eis liv (LDC) warp functions"
+    default n
+endif
+config BUILD_IMGFRW_AF
+    bool "Build imgfrw af functions"
+    default n
+config BUILD_IMGFRW_TD_SM_BCNT
+    bool "Build imgfrw time-division sensor mode & bath counter"
+    default n
+config BUILD_IMGFRW_RAW_PIV
+    bool "Build imgfrw raw piv functions"
+    default n
+config BUILD_IMGFRW_SLAVE_SS
+    bool "build imgfrw slave slow shutter functions"
+    default n
+config BUILD_IMGFRW_HDR_SS
+    bool "build imgfrw hdr slow shutter functions"
+    default n
+config BUILD_IMGFRW_SMC
+    bool "build imgfrw slow motion capture functions"
+    default n
+config BUILD_IMGFRW_AAA_ADJ_EXT
+    bool "build imgfrw adj external functions"
+    default n
+config BUILD_IMGFRW_AAA_SHR_BDY
+    bool "build imgfrw ae frame shutter boundary"
+    default n
+config BUILD_IMGFRW_FIFO_PROT
+    bool "build imgfrw fifo overflow proctect"
+    default n

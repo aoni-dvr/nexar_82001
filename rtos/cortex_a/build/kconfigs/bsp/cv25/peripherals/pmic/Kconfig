@@ -1,0 +1,13 @@
+menu "Pmic Driver"
+
+choice
+	prompt "Select Pmic Driver"
+	default PMIC_AMBA_PWC
+	help
+		Select Pmic Driver
+	config PMIC_AMBA_PWC
+		bool "PMIC_AMBA_PWC"
+	config PMIC_CHIPON
+		bool "PMIC_CHIPON"
+endchoice
+endmenu

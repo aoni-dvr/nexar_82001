@@ -1,0 +1,276 @@
+#include "battery_task.h"
+#include "AmbaADC.h"
+
+//#define NEW_BATTERY_DEFINE
+
+// msg task
+static AMBA_KAL_TASK_t battery_task;
+#define BATTERY_TASK_STACK_SIZE (32 * 1024)
+static unsigned char battery_task_stack[BATTERY_TASK_STACK_SIZE] __attribute__((aligned(4))) __attribute__((section(".bss.noinit")));
+static int debug_enable = 0;
+static int running = 0;
+static int low_battery_check = 1;
+static int low_battery_target_adc = 2900;
+static int battery_percentage  = -1;
+static int battery_voltage_mv  = -1;
+
+#ifdef NEW_BATTERY_DEFINE
+typedef struct _battery_value_s_ {
+    int adc;
+    int voltage_mv;
+    int percentage;
+} battery_value_s;
+
+static battery_value_s battery_values_charge[] = {
+    {2700, 2700, 0},
+    {2041, 2700, 20},
+    {3100, 4100, 100},
+};
+
+static battery_value_s battery_values_discharge[] = {
+    {2700, 2700, 0},
+    {2041, 2700, 20},
+    {3100, 4100, 100},
+};
+#else
+static int max_battery_target_adc = 3180;
+#endif
+
+static void *battery_task_entry(void *arg);
+
+int battery_task_start(void)
+{
+    unsigned int ret = 0;
+
+    running = 1;
+    ret = AmbaKAL_TaskCreate(&battery_task,
+                            "battery_task",
+                            160,
+                            (AMBA_KAL_TASK_ENTRY_f)battery_task_entry,
+                            0,
+                            battery_task_stack,
+                            BATTERY_TASK_STACK_SIZE,
+                            AMBA_KAL_AUTO_START
+                            );
+    if (ret != KAL_ERR_NONE) {
+        debug_line("battery_task create fail");
+        running = 0;
+        return -1;
+    }
+
+    return 0;
+}
+
+int battery_task_stop(void)
+{
+    running = 0;
+
+    return 0;
+}
+
+int battery_task_set_debug(int enable)
+{
+    debug_enable = enable;
+
+    return 0;
+}
+
+int battery_task_set_low_power_check(int enable)
+{
+    low_battery_check = enable;
+
+    return 0;
+}
+
+int battery_task_set_low_power_target_adc(int value)
+{
+    low_battery_target_adc = value;
+
+    return 0;
+}
+
+int battery_task_get_low_power_target_adc(void)
+{
+    return low_battery_target_adc;
+}
+
+int battery_task_check_is_charging(void)
+{
+    unsigned char value = 0;
+
+    i2c_read_reg(CHARGER_I2C_CHANNEL, CHARGER_I2C_SLAVE_ADDR, 0x08, &value);
+    if ((value & 0x18) == 0x00 || (value & 0x18) == 0x18) {
+        return 0;
+    }
+    return 1;
+}
+
+int battery_power_on_check(void)
+{
+    if (Pmic_CheckUsbConnected() == 0) {
+        unsigned int data = 0, i = 0, sum = 0;
+        for (i = 0; i < 10; i++) {
+            AmbaADC_SingleRead(AMBA_ADC_CHANNEL1, &data);
+            sum += data;
+            msleep(10);
+        }
+        debug_line("battery power on(adc=%d)", sum / 10);AmbaPrint_Flush();
+        if (sum < 29000) {
+            app_helper.set_led_onoff(1);
+            app_helper.set_led_brihtness(1);
+            app_helper.set_led_fade(0);
+            for (i = 0; i < 3; i++) {
+                app_helper.set_led_color(0xe4, 0x00, 0x2e);
+                msleep(100);
+                app_helper.set_led_color(0, 0, 0);
+                msleep(100);
+            }
+            debug_line("battery too low(adc=%d), power off", sum / 10);AmbaPrint_Flush();
+            app_helper.low_battery_power_off = 1;
+            Pmic_DoPowerOff(0);
+        }
+    }
+
+    return 0;
+}
+
+unsigned int battery_task_get_adc(void)
+{
+    unsigned int data = 0;
+
+    AmbaADC_SingleRead(AMBA_ADC_CHANNEL1, &data);
+
+    return data;
+}
+
+unsigned int battery_task_get_adc_impl(void)
+{
+    unsigned int data = 0, i = 0, sum = 0;
+
+    for (i = 0; i < 5; i++) {
+        AmbaADC_SingleRead(AMBA_ADC_CHANNEL1, &data);
+        sum += data;
+        msleep(10);
+    }
+
+    return sum / 5;
+}
+
+int battery_task_get_percentage(void)
+{
+    return battery_percentage;
+}
+
+int battery_task_get_voltage_mv(void)
+{
+    return battery_voltage_mv;
+}
+
+static void *battery_task_entry(void *arg)
+{
+    unsigned int cur_value = 0, sum_value = 0, average_adc = 0, low_battery_count = 0, i = 0;
+    unsigned int value[5] = {0};
+    int cnt = 0;
+
+    //init charger ETA6953
+    if (dqa_test_script.usb_uvc_mode
+        || app_helper.usb_mass_storage_mode) {
+        i2c_modify_reg(CHARGER_I2C_CHANNEL, CHARGER_I2C_SLAVE_ADDR, 0x01, 0x10, 0x00);
+    } else {
+        i2c_modify_reg(CHARGER_I2C_CHANNEL, CHARGER_I2C_SLAVE_ADDR, 0x01, 0x10, 0x10);
+        i2c_modify_reg(CHARGER_I2C_CHANNEL, CHARGER_I2C_SLAVE_ADDR, 0x02, 0x3F, 0x06);
+        i2c_write_reg(CHARGER_I2C_CHANNEL, CHARGER_I2C_SLAVE_ADDR, 0x03, 0x11);
+        i2c_modify_reg(CHARGER_I2C_CHANNEL, CHARGER_I2C_SLAVE_ADDR, 0x04, 0xF8, 0x40);
+        i2c_modify_reg(CHARGER_I2C_CHANNEL, CHARGER_I2C_SLAVE_ADDR, 0x05, 0x30, 0x00);
+        i2c_modify_reg(CHARGER_I2C_CHANNEL, CHARGER_I2C_SLAVE_ADDR, 0x06, 0x0F, 0x00);
+        i2c_modify_reg(CHARGER_I2C_CHANNEL, CHARGER_I2C_SLAVE_ADDR, 0x07, 0x04, 0x00);
+    }
+
+    while (running) {
+        AmbaADC_SingleRead(AMBA_ADC_CHANNEL1, &cur_value);
+        if (cnt < 5) {
+            value[cnt] = cur_value;
+            cnt++;
+        } else {
+            for (i = 0; i < 4; i++) {
+                value[i] = value[i + 1];
+            }
+            value[4] = cur_value;
+            cnt = 5;
+        }
+        sum_value = 0;
+        for (i = 0; i < cnt; i++) {
+            sum_value += value[i];
+        }
+        average_adc = sum_value / cnt;
+#ifdef NEW_BATTERY_DEFINE
+        {
+            battery_value_s *battery_values = NULL;
+            int len = 0;
+            if (Pmic_CheckUsbConnected()) {
+                battery_values = battery_values_charge;
+                len = sizeof(battery_values_charge) / sizeof(battery_value_s) - 1;
+            } else {
+                battery_values = battery_values_discharge;
+                len = sizeof(battery_values_discharge) / sizeof(battery_value_s) - 1;
+            }
+            if (average_adc > battery_values[len].adc) {
+                battery_percentage = battery_values[len].percentage;
+                battery_voltage_mv = battery_values[len].voltage_mv;
+            } else {
+                for (i = 0; i < len; i++) {
+                    if (average_adc > battery_values[i].adc && average_adc <= battery_values[i + 1].adc) {
+                        battery_percentage = battery_values[i].percentage;
+                        battery_voltage_mv = battery_values[i].voltage_mv;
+                        break;
+                    }
+                }
+            }
+        }
+#else
+        if (average_adc < low_battery_target_adc) {
+            battery_percentage = 0;
+        } else if (average_adc > max_battery_target_adc) {
+            battery_percentage = 100;
+        } else {
+            battery_percentage = (average_adc - low_battery_target_adc) * 100 / (max_battery_target_adc - low_battery_target_adc);
+        }
+        battery_voltage_mv = average_adc * 4100 / 3330;
+#endif
+
+        if (debug_enable) {
+            debug_line("battery adc: %d, average: %d, percentage: %d, voltage: %dmv, charge: %d",
+                cur_value, average_adc, battery_percentage, battery_voltage_mv, battery_task_check_is_charging());
+        }
+        if (low_battery_check) {
+            if (Pmic_CheckUsbConnected() == 0) {
+                if (average_adc < low_battery_target_adc) {         //2860  3.7V      2800 3.6v     2960 3.9V
+                    low_battery_count++;
+                } else if (average_adc > (low_battery_target_adc + 10)) {
+                    low_battery_count = 0;
+                }
+            } else {
+                low_battery_count = 0;
+            }
+            if (low_battery_count > 0) {
+                app_helper.low_battery = 1;
+                app_helper.set_led_fade(0);
+                if (low_battery_count % 2) {
+                    app_helper.set_led_color(0xe4, 0x00, 0x2e);
+                } else {
+                    app_helper.set_led_color(0, 0, 0);
+                }
+            } else {
+                app_helper.low_battery = 0;
+            }
+            if (low_battery_count >= 10) {
+                app_msg_queue_send(APP_MSG_ID_LOW_BATTERY, 0, 0, 0);
+                break;
+            }
+        }
+        msleep(100);
+    }
+
+    return NULL;
+}
+

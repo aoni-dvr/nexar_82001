@@ -1,0 +1,40 @@
+#!/bin/sh
+
+if [ -e /sys/module/ambarella_rct_profile/parameters/rct_timer1 ]; then
+    boot_us=`cat /sys/module/ambarella_rct_profile/parameters/rct_timer1`
+    ld_us=`cat /sys/module/ambarella_rct_profile/parameters/rct_timerInfo_ld`
+fi
+
+if [ -e /sys/module/rpmsg_echo/parameters/example_printk ]; then
+	echo $0 > /sys/module/rpmsg_echo/parameters/example_printk
+fi
+# Start all init scripts in /etc/init.d
+# executing them in numerical order.
+#
+for i in /etc/init.d/S??* ;do
+
+     # Ignore dangling symlinks (if any).
+     [ ! -f "$i" ] && continue
+
+     case "$i" in
+	*.sh)
+	    # Source shell script for speed.
+	    (
+		trap - INT QUIT TSTP
+		set start
+		. $i
+	    )
+	    ;;
+	*)
+	    # No sh extension, so fork subprocess.
+	    $i start
+	    ;;
+    esac
+    #echo $i > /sys/module/rpmsg_echo/parameters/example_printk
+done
+
+if [ -e /sys/module/ambarella_rct_profile/parameters/rct_timer1 ]; then
+    # Print OS load time & OS boot time
+    printf "OS Load Time : %u.%03u ms\n" $((ld_us/1000)) $((ld_us%1000))
+    printf "OS Boot Time : %u.%03u ms\n" $((boot_us/1000)) $((boot_us%1000))
+fi

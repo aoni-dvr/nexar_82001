@@ -1,0 +1,22 @@
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_PreProcCAWarpTbl(), ID = 0, description : OK case in ik_ctest_remap.c
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_PreProcWarpTbl(), ID = 1, description : OK case in ik_ctest_remap.c
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_PreProcWarpTbl(), ID = 2, description : OK case in ik_ctest_remap.c
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_PreProcWarpTbl(), ID = 3, description : OK case in ik_ctest_remap.c
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_PreProcWarpTbl(), ID = 4, description : OK case in ik_ctest_remap.c
+Rval = 0x01100005, AmbaDSP_ImageUtility.c, AmbaIK_PreProcCAWarpTbl(), ID = 5, description : null-ptr fail case in ik_ctest_remap.c
+Rval = 0x01100005, AmbaDSP_ImageUtility.c, AmbaIK_PreProcWarpTbl(), ID = 6, description : null-ptr fail case in ik_ctest_remap.c
+Rval = 0x01100105, AmbaDSP_ImageUtility.c, AmbaIK_PreProcCAWarpTbl(), ID = 7, description : parameter fail case in ik_ctest_remap.c
+Rval = 0x01100104, AmbaDSP_ImageUtility.c, AmbaIK_PreProcWarpTbl(), ID = 8, description : parameter fail case in ik_ctest_remap.c
+Rval = 0x01100005, AmbaDSP_ImageUtility.c, AmbaIK_PreProcCAWarpTbl(), ID = 9, description : Invalid buffer size too small fail case in ik_ctest_remap.c
+Rval = 0x01100007, AmbaDSP_ImageUtility.c, AmbaIK_PreProcWarpTbl(), ID = 10, description : Invalid buffer size too small fail case in ik_ctest_remap.c
+Rval = 0x01100005, AmbaDSP_ImageUtility.c, AmbaIK_PreProcCAWarpTbl(), ID = 11, description : null-ptr fail case in ik_ctest_remap.c
+Rval = 0x01100005, AmbaDSP_ImageUtility.c, AmbaIK_PreProcWarpTbl(), ID = 12, description : null-ptr fail case in ik_ctest_remap.c
+Rval = 0x01100005, AmbaDSP_ImageUtility.c, AmbaIK_PreProcCAWarpTbl(), ID = 13, description : null-ptr fail case in ik_ctest_remap.c
+Rval = 0x01100005, AmbaDSP_ImageUtility.c, AmbaIK_PreProcWarpTbl(), ID = 14, description : null-ptr fail case in ik_ctest_remap.c
+Rval = 0x00000000, AmbaDSP_IkcUnitRemap.c, ikc_warp_remap(), ID = 15, description : OK case in ik_ctest_remap.c
+Rval = 0x01100101, AmbaDSP_IkcUnitRemap.c, ikc_warp_remap(), ID = 16, description : parameter fail case in ik_ctest_remap.c
+Rval = 0x01100101, AmbaDSP_IkcUnitRemap.c, ikc_warp_remap(), ID = 17, description : parameter fail case in ik_ctest_remap.c
+Rval = 0x01100101, AmbaDSP_IkcUnitRemap.c, ikc_warp_remap(), ID = 18, description : parameter fail case in ik_ctest_remap.c
+Rval = 0x01100005, AmbaDSP_IkcUnitRemap.c, ikc_warp_remap(), ID = 19, description : null-ptr fail case in ik_ctest_remap.c
+Rval = 0x01100005, AmbaDSP_IkcUnitRemap.c, ikc_warp_remap(), ID = 20, description : null-ptr fail case in ik_ctest_remap.c
+Rval = 0x01100005, AmbaDSP_IkcUnitRemap.c, ikc_cawarp_remap(), ID = 21, description : null-ptr fail case in ik_ctest_remap.c

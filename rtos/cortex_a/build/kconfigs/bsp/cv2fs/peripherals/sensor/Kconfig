@@ -1,0 +1,129 @@
+menu "Image Sensor Driver"
+
+menuconfig SENSOR_SONY_IMX290_MIPI
+    bool "Sony IMX290"
+    default n
+
+menuconfig SENSOR_SONY_IMX490
+    bool "Sony IMX490"
+    default n
+
+menuconfig SENSOR_SONY_IMX577
+    bool "Sony IMX577"
+    default n
+config IMX577_POSTCFG_ENABLED
+    bool "enable post configuration"
+    depends on SENSOR_SONY_IMX577
+    default n
+
+menuconfig SENSOR_MX00_IMX424
+    bool "SONY IMX424 @ MAXIM 9295/9296 (in slave mode)"
+    default n
+config IMX424_RCCB_PSLIN_DISABLE
+    bool "disable pesudo linear config"
+    depends on SENSOR_MX00_IMX424
+    default y
+
+menuconfig SENSOR_MX00_AR0220_RCCB
+	bool "OnSemi AR0220_RCCB @ MAXIM 9295/9296 (in master mode)"
+	default n
+
+menuconfig SENSOR_MX00_OV2312_RGBIR
+	bool "OV2312 RGBIR @ MAXIM 9295/9296 (in master mode)"
+	default n
+
+menuconfig SENSOR_MX00_VG1762_RGBIR
+	bool "VG1762 RGBIR @ MAXIM 9295/9296 (in master mode)"
+	default n
+
+menuconfig SENSOR_MX01_IMX390
+    bool "SONY IMX390 @ MAXIM 9295/96712 (in slave mode)"
+    default n
+config MX01_IMX390_ASIL_ENABLED
+    bool "enable IMX390 safety check"
+    depends on SENSOR_MX01_IMX390
+    default n
+    
+menuconfig SENSOR_MX01_IMX390_VC
+    bool "SONY IMX390 @ MAXIM 9295/96712 (in master mode, with VC)"
+    default n
+
+menuconfig SENSOR_TI01_AR0220_RCCB
+    bool "Onsemi AR0220_RCCB @ TI 953/954"
+    default n
+
+menuconfig SENSOR_TI01_AR0233
+    bool "Onsemi AR0233 @ TI 953/954 (in slave mode)"
+    default n
+
+menuconfig SENSOR_MX01_AR0233
+    bool "OnSemi AR0233 @ MAXIM 9295/96712 (in master mode)"
+    default n
+
+menuconfig SENSOR_MX00_AR0820_RCCB
+    bool "OnSemi AR0820_RCCB @ MAXIM 9295/9296 (in slave mode)"
+    default n
+	
+menuconfig SENSOR_MX00_IMX490
+    bool "SONY IMX490 @ MAXIM 9295/9296 (in slave mode)"
+    default n
+	
+menuconfig SENSOR_MX00_IMX390_RCCB
+    bool "SONY IMX390_RCCB @ MAXIM 9295/9296 (in slave mode)"
+    default n
+
+menuconfig SENSOR_MX00_IMX390
+    bool "SONY IMX390 @ MAXIM 9295/9296 (in slave mode)"
+    default n
+config MX00_IMX390_POSTCFG_ENABLED
+    bool "enable post configuration"
+    depends on SENSOR_MX00_IMX390
+    default n    
+config MX00_IMX390_ASIL_ENABLED
+    bool "enable IMX390 safety check"
+    depends on SENSOR_MX00_IMX390
+    default n
+	
+menuconfig SENSOR_MX00_AR0239
+	bool "OnSemi AR0239 @ MAXIM 9295/9296 (in slave mode)"
+	default n
+	
+menuconfig SENSOR_MX03_AR0144
+    bool "OnSemi AR0144 @ MAXIM 96707/9286 (in slave mode)"
+    default n
+
+menuconfig SENSOR_MX00_OX03C
+    bool "OV OX03C @ MAXIM 9295/9296 (in slave mode)"
+    default n
+	
+menuconfig SENSOR_SONY_IMX424_RCCB
+    bool "Sony IMX424_RCCB"
+    default n
+config IMX424_RCCB_PSLIN_DISABLE
+    bool "disable pesudo linear config"
+    depends on SENSOR_SONY_IMX424_RCCB
+    default y
+
+choice SENSOR_MX00_AR0820_RCCB_PIN_RESET
+    prompt "Select MAXIM9295 GPIO PIN for sensor reset"
+	depends on SENSOR_MX00_AR0820_RCCB
+    default RESET_MAX9295_GPIO4
+
+    config RESET_MAX9295_GPIO0
+        bool "GPIO0"
+    config RESET_MAX9295_GPIO4
+        bool "GPIO4"
+endchoice
+
+choice SENSOR_MX00_AR0820_RCCB_PIN_TRIGGER
+    prompt "Select AR0820_RCCB GPIO PIN for slave trigger"
+	depends on SENSOR_MX00_AR0820_RCCB
+    default TRIG_SENSOR_GPIO2
+
+    config TRIG_SENSOR_GPIO2
+        bool "GPIO2"
+    config TRIG_SENSOR_GPIO3
+        bool "GPIO3"
+endchoice
+
+endmenu

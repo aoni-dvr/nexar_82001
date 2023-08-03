@@ -1,0 +1,61 @@
+config BR2_PACKAGE_CYPRESS
+	tristate "Cypress DHD"
+	select BR2_PACKAGE_WPA_SUPPLICANT
+	select BR2_PACKAGE_WPA_SUPPLICANT_NL80211
+	select BR2_PACKAGE_WPA_SUPPLICANT_AP_SUPPORT
+	select BR2_PACKAGE_WPA_SUPPLICANT_EAP
+	select BR2_PACKAGE_WPA_SUPPLICANT_HOTSPOT
+	select BR2_PACKAGE_WPA_SUPPLICANT_DEBUG_SYSLOG
+	select BR2_PACKAGE_WPA_SUPPLICANT_WPS
+	select BR2_PACKAGE_WPA_SUPPLICANT_CLI
+	select BR2_PACKAGE_WPA_SUPPLICANT_WPA_CLIENT_SO
+	select BR2_PACKAGE_WPA_SUPPLICANT_PASSPHRASE
+	help
+	  Cypress SDK.
+
+if BR2_PACKAGE_CYPRESS
+
+choice
+	prompt "Select type"
+	help
+	  Select 43455, etc.
+
+config BR2_PACKAGE_CY_43455
+	tristate "43455"
+	help
+	  Cypress BCM43340 SDK.
+
+config BR2_PACKAGE_CY_43456
+	tristate "43456"
+	help
+	  Cypress BCM43340 SDK.
+
+endchoice
+
+choice
+	prompt "Select vendor/maker"
+	help
+	  Choose vendor/maker
+
+config BR2_PACKAGE_CY_AW
+	bool "AzureWave"
+	depends on BR2_PACKAGE_CY_43455 || BR2_PACKAGE_CY_43456
+	help
+	  AzureWave
+
+config BR2_PACKAGE_CY_AMPAK
+	bool "Ampak"
+	depends on BR2_PACKAGE_CY_43455
+	help
+	  Ampak
+
+config BR2_PACKAGE_CY_QUECTEL
+	bool "Quectel"
+	depends on BR2_PACKAGE_CY_43455
+	help
+	  Quectel
+
+endchoice
+
+endif
+

@@ -1,0 +1,6 @@
+config ARMHSM
+       tristate "ARMHSM"
+       depends on ARM64
+       default n
+       help
+          Enable this to support ARMHSM which in turn interfaces with ORCHSM

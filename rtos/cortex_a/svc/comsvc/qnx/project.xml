@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<module name="comsvc-ambarella">
+  <classification>Utility</classification>
+  <description>
+    <short>Common Service for ambarella platform</short>
+    <abstract><![CDATA[
+                        The comsvc-ambarella is a collection of common service APIs for AMBA platform.
+                ]]></abstract>
+  </description>
+  <supports>
+    <availability>
+      <cpu isa="aarch64">
+        <byteOrder>le</byteOrder>
+      </cpu>
+    </availability>
+  </supports>
+  <contents>
+    <component id="ambarella" generated="true">
+      <location basedir="aarch64/le">comsvc-ambarella</location>
+    </component>
+  </contents>
+  <requires>
+  </requires>
+</module>

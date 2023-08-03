@@ -1,0 +1,5 @@
+config BR2_PACKAGE_AMBAGPU
+	bool "Install prebuild binary for Ambarella GPU"
+	default n
+	help
+	  Graphics libraries for Ambarella GPU

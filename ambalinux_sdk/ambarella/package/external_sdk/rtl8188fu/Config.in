@@ -1,0 +1,7 @@
+config BR2_PACKAGE_RTL8188FU
+	bool "RTL8188-FU/FTV/FUS"
+	help
+	  Realtek RTL8188FU, RTL8188FTV, ETL8188FUS
+	  Module name is 8188fu.ko
+	  Driver is the same.
+

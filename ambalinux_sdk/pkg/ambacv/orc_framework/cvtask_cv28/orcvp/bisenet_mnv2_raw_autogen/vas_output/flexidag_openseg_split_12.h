@@ -1,0 +1,424 @@
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2020 Ambarella International LP
+////////////////////////////////////////////////////////////////////////////////
+// This file and its contents ("Software") are protected by intellectual
+// property rights including, without limitation, U.S. and/or foreign
+// copyrights. This Software is also the confidential and proprietary
+// information of Ambarella International LP and its licensors. You may not use,
+// reproduce, disclose, distribute, modify, or otherwise prepare derivative
+// works of this Software or any portion thereof except pursuant to a signed
+// license agreement or nondisclosure agreement with Ambarella International LP
+// or its authorized affiliates. In the absence of such an agreement, you agree
+// to promptly notify and return this Software to Ambarella International LP.
+//
+// THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT,
+// MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+// IN NO EVENT SHALL AMBARELLA INTERNATIONAL LP OR ITS AFFILIATES BE LIABLE
+// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+// SERVICES; LOSS OF USE, DATA, OR PROFITS; COMPUTER FAILURE OR MALFUNCTION;
+// OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+// ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+////////////////////////////////////////////////////////////////////////////////
+#ifndef flexidag_openseg_prim_split_12_H
+#define flexidag_openseg_prim_split_12_H
+
+#define vas_gen_header_version                  	7
+
+/* dag name */
+#define flexidag_openseg_prim_split_12_DAG_NAME 	"flexidag_openseg_prim_split_12"
+
+/* VDG file info */
+#define flexidag_openseg_prim_split_12_vdg_name 	"flexidag_openseg_split_12.vdg"
+
+/* VDG DAG memory info */
+#define flexidag_openseg_prim_split_12_byte_offset 	4294967295	/* 0xffffffff */
+#define flexidag_openseg_prim_split_12_byte_size 	804	/* 0x00000324 */
+#define flexidag_openseg_prim_split_12_preferred_dram_xfer_size 	1
+
+/* flexidag_openseg_prim_split_12 VMEM info */
+#define flexidag_openseg_prim_split_12_use_ping_pong_vmem 	0
+#define flexidag_openseg_prim_split_12_VMEM_start 	4096	/* 0x00001000 */
+#define flexidag_openseg_prim_split_12_VMEM_end 	501428	/* 0x0007a6b4 */
+#define flexidag_openseg_prim_split_12_image_start 	484064	/* 0x000762e0 */
+#define flexidag_openseg_prim_split_12_image_size 	18168	/* 0x000046f8 */
+#define flexidag_openseg_prim_split_12_dagbin_start 	501428	/* 0x0007a6b4 */
+
+/* flexidag_openseg_prim_split_12 DAG info */
+#define flexidag_openseg_prim_split_12_estimated_cycles 	379195
+#define flexidag_openseg_prim_split_12_ddi_byte_size 	0	/* 0x00000000 */
+
+/*******************************************************************************
+ * DAG byte offset info for HMB/SMB/VCB and their fields
+ * in DAG 'flexidag_openseg_prim_split_12' in source file 'pre_split11_flexidag_openseg_split_0.vas'
+ ******************************************************************************/
+/* flexidag_openseg_prim_split_12 SMB_input __pvcn_743_ */
+#define flexidag_openseg_prim_split_12___pvcn_743__cnngen_demangled_name 	"__pvcn_743_"
+#define flexidag_openseg_prim_split_12___pvcn_743__is_constant 	1
+#define flexidag_openseg_prim_split_12___pvcn_743__has_init_data 	1
+#define flexidag_openseg_prim_split_12___pvcn_743__is_variable_scalar 	0
+#define flexidag_openseg_prim_split_12___pvcn_743__is_bitvector 	0
+#define flexidag_openseg_prim_split_12___pvcn_743__is_rlz 	0
+#define flexidag_openseg_prim_split_12___pvcn_743__is_ten_bit_packed 	0
+#define flexidag_openseg_prim_split_12___pvcn_743__byte_offset 	0	/* 0x00000000 */
+#define flexidag_openseg_prim_split_12___pvcn_743__vbase_byte_offset 	4	/* 0x00000004 */
+#define flexidag_openseg_prim_split_12___pvcn_743__dbase_byte_offset 	28	/* 0x0000001c */
+#define flexidag_openseg_prim_split_12___pvcn_743__dpitchm1_byte_offset 	32	/* 0x00000020 */
+#define flexidag_openseg_prim_split_12___pvcn_743__dpitchm1_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_12___pvcn_743__W 	8684
+#define flexidag_openseg_prim_split_12___pvcn_743__H 	1
+#define flexidag_openseg_prim_split_12___pvcn_743__D 	1
+#define flexidag_openseg_prim_split_12___pvcn_743__P 	1
+#define flexidag_openseg_prim_split_12___pvcn_743__data_num_bytes 	1
+#define flexidag_openseg_prim_split_12___pvcn_743__denable 	1
+#define flexidag_openseg_prim_split_12___pvcn_743__dpitch_num_bytes 	8704
+#define flexidag_openseg_prim_split_12___pvcn_743__dram_format 	0
+#define flexidag_openseg_prim_split_12___pvcn_743__vp_interleave_mode 	0
+#define flexidag_openseg_prim_split_12___pvcn_743__tile_width 	1
+#define flexidag_openseg_prim_split_12___pvcn_743__tile_height 	1
+#define flexidag_openseg_prim_split_12___pvcn_743__vmem_buffer_num_bytes 	8684
+#define flexidag_openseg_prim_split_12___pvcn_743__dram_size_num_bytes 	8704
+
+/* flexidag_openseg_prim_split_12 SMB_input __pvcn_744_ */
+#define flexidag_openseg_prim_split_12___pvcn_744__cnngen_demangled_name 	"__pvcn_744_"
+#define flexidag_openseg_prim_split_12___pvcn_744__is_constant 	1
+#define flexidag_openseg_prim_split_12___pvcn_744__has_init_data 	1
+#define flexidag_openseg_prim_split_12___pvcn_744__is_variable_scalar 	0
+#define flexidag_openseg_prim_split_12___pvcn_744__is_bitvector 	0
+#define flexidag_openseg_prim_split_12___pvcn_744__is_rlz 	0
+#define flexidag_openseg_prim_split_12___pvcn_744__is_ten_bit_packed 	0
+#define flexidag_openseg_prim_split_12___pvcn_744__byte_offset 	40	/* 0x00000028 */
+#define flexidag_openseg_prim_split_12___pvcn_744__vbase_byte_offset 	44	/* 0x0000002c */
+#define flexidag_openseg_prim_split_12___pvcn_744__dbase_byte_offset 	68	/* 0x00000044 */
+#define flexidag_openseg_prim_split_12___pvcn_744__dpitchm1_byte_offset 	72	/* 0x00000048 */
+#define flexidag_openseg_prim_split_12___pvcn_744__dpitchm1_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_12___pvcn_744__W 	320
+#define flexidag_openseg_prim_split_12___pvcn_744__H 	1
+#define flexidag_openseg_prim_split_12___pvcn_744__D 	1
+#define flexidag_openseg_prim_split_12___pvcn_744__P 	1
+#define flexidag_openseg_prim_split_12___pvcn_744__data_num_bytes 	1
+#define flexidag_openseg_prim_split_12___pvcn_744__denable 	1
+#define flexidag_openseg_prim_split_12___pvcn_744__dpitch_num_bytes 	320
+#define flexidag_openseg_prim_split_12___pvcn_744__dram_format 	0
+#define flexidag_openseg_prim_split_12___pvcn_744__vp_interleave_mode 	0
+#define flexidag_openseg_prim_split_12___pvcn_744__tile_width 	1
+#define flexidag_openseg_prim_split_12___pvcn_744__tile_height 	1
+#define flexidag_openseg_prim_split_12___pvcn_744__vmem_buffer_num_bytes 	320
+#define flexidag_openseg_prim_split_12___pvcn_744__dram_size_num_bytes 	320
+
+/* flexidag_openseg_prim_split_12 SMB_input __pvcn_747_ */
+#define flexidag_openseg_prim_split_12___pvcn_747__cnngen_demangled_name 	"__pvcn_747_"
+#define flexidag_openseg_prim_split_12___pvcn_747__is_constant 	1
+#define flexidag_openseg_prim_split_12___pvcn_747__has_init_data 	1
+#define flexidag_openseg_prim_split_12___pvcn_747__is_variable_scalar 	0
+#define flexidag_openseg_prim_split_12___pvcn_747__is_bitvector 	0
+#define flexidag_openseg_prim_split_12___pvcn_747__is_rlz 	0
+#define flexidag_openseg_prim_split_12___pvcn_747__is_ten_bit_packed 	0
+#define flexidag_openseg_prim_split_12___pvcn_747__byte_offset 	80	/* 0x00000050 */
+#define flexidag_openseg_prim_split_12___pvcn_747__vbase_byte_offset 	84	/* 0x00000054 */
+#define flexidag_openseg_prim_split_12___pvcn_747__dbase_byte_offset 	108	/* 0x0000006c */
+#define flexidag_openseg_prim_split_12___pvcn_747__dpitchm1_byte_offset 	112	/* 0x00000070 */
+#define flexidag_openseg_prim_split_12___pvcn_747__dpitchm1_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_12___pvcn_747__W 	3200
+#define flexidag_openseg_prim_split_12___pvcn_747__H 	1
+#define flexidag_openseg_prim_split_12___pvcn_747__D 	1
+#define flexidag_openseg_prim_split_12___pvcn_747__P 	1
+#define flexidag_openseg_prim_split_12___pvcn_747__data_num_bytes 	1
+#define flexidag_openseg_prim_split_12___pvcn_747__denable 	1
+#define flexidag_openseg_prim_split_12___pvcn_747__dpitch_num_bytes 	3200
+#define flexidag_openseg_prim_split_12___pvcn_747__dram_format 	0
+#define flexidag_openseg_prim_split_12___pvcn_747__vp_interleave_mode 	0
+#define flexidag_openseg_prim_split_12___pvcn_747__tile_width 	1
+#define flexidag_openseg_prim_split_12___pvcn_747__tile_height 	1
+#define flexidag_openseg_prim_split_12___pvcn_747__vmem_buffer_num_bytes 	3200
+#define flexidag_openseg_prim_split_12___pvcn_747__dram_size_num_bytes 	3200
+
+/* flexidag_openseg_prim_split_12 SMB_input __pvcn_748_ */
+#define flexidag_openseg_prim_split_12___pvcn_748__cnngen_demangled_name 	"__pvcn_748_"
+#define flexidag_openseg_prim_split_12___pvcn_748__is_constant 	1
+#define flexidag_openseg_prim_split_12___pvcn_748__has_init_data 	1
+#define flexidag_openseg_prim_split_12___pvcn_748__is_variable_scalar 	0
+#define flexidag_openseg_prim_split_12___pvcn_748__is_bitvector 	0
+#define flexidag_openseg_prim_split_12___pvcn_748__is_rlz 	0
+#define flexidag_openseg_prim_split_12___pvcn_748__is_ten_bit_packed 	0
+#define flexidag_openseg_prim_split_12___pvcn_748__byte_offset 	120	/* 0x00000078 */
+#define flexidag_openseg_prim_split_12___pvcn_748__vbase_byte_offset 	124	/* 0x0000007c */
+#define flexidag_openseg_prim_split_12___pvcn_748__dbase_byte_offset 	148	/* 0x00000094 */
+#define flexidag_openseg_prim_split_12___pvcn_748__dpitchm1_byte_offset 	152	/* 0x00000098 */
+#define flexidag_openseg_prim_split_12___pvcn_748__dpitchm1_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_12___pvcn_748__W 	96
+#define flexidag_openseg_prim_split_12___pvcn_748__H 	1
+#define flexidag_openseg_prim_split_12___pvcn_748__D 	1
+#define flexidag_openseg_prim_split_12___pvcn_748__P 	1
+#define flexidag_openseg_prim_split_12___pvcn_748__data_num_bytes 	1
+#define flexidag_openseg_prim_split_12___pvcn_748__denable 	1
+#define flexidag_openseg_prim_split_12___pvcn_748__dpitch_num_bytes 	128
+#define flexidag_openseg_prim_split_12___pvcn_748__dram_format 	0
+#define flexidag_openseg_prim_split_12___pvcn_748__vp_interleave_mode 	0
+#define flexidag_openseg_prim_split_12___pvcn_748__tile_width 	1
+#define flexidag_openseg_prim_split_12___pvcn_748__tile_height 	1
+#define flexidag_openseg_prim_split_12___pvcn_748__vmem_buffer_num_bytes 	96
+#define flexidag_openseg_prim_split_12___pvcn_748__dram_size_num_bytes 	128
+
+/* flexidag_openseg_prim_split_12 SMB_input __pvcn_750_ */
+#define flexidag_openseg_prim_split_12___pvcn_750__cnngen_demangled_name 	"__pvcn_750_"
+#define flexidag_openseg_prim_split_12___pvcn_750__is_constant 	1
+#define flexidag_openseg_prim_split_12___pvcn_750__has_init_data 	1
+#define flexidag_openseg_prim_split_12___pvcn_750__is_variable_scalar 	0
+#define flexidag_openseg_prim_split_12___pvcn_750__is_bitvector 	0
+#define flexidag_openseg_prim_split_12___pvcn_750__is_rlz 	0
+#define flexidag_openseg_prim_split_12___pvcn_750__is_ten_bit_packed 	0
+#define flexidag_openseg_prim_split_12___pvcn_750__byte_offset 	160	/* 0x000000a0 */
+#define flexidag_openseg_prim_split_12___pvcn_750__vbase_byte_offset 	164	/* 0x000000a4 */
+#define flexidag_openseg_prim_split_12___pvcn_750__dbase_byte_offset 	188	/* 0x000000bc */
+#define flexidag_openseg_prim_split_12___pvcn_750__dpitchm1_byte_offset 	192	/* 0x000000c0 */
+#define flexidag_openseg_prim_split_12___pvcn_750__dpitchm1_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_12___pvcn_750__W 	1620
+#define flexidag_openseg_prim_split_12___pvcn_750__H 	1
+#define flexidag_openseg_prim_split_12___pvcn_750__D 	1
+#define flexidag_openseg_prim_split_12___pvcn_750__P 	1
+#define flexidag_openseg_prim_split_12___pvcn_750__data_num_bytes 	1
+#define flexidag_openseg_prim_split_12___pvcn_750__denable 	1
+#define flexidag_openseg_prim_split_12___pvcn_750__dpitch_num_bytes 	1664
+#define flexidag_openseg_prim_split_12___pvcn_750__dram_format 	0
+#define flexidag_openseg_prim_split_12___pvcn_750__vp_interleave_mode 	0
+#define flexidag_openseg_prim_split_12___pvcn_750__tile_width 	1
+#define flexidag_openseg_prim_split_12___pvcn_750__tile_height 	1
+#define flexidag_openseg_prim_split_12___pvcn_750__vmem_buffer_num_bytes 	1620
+#define flexidag_openseg_prim_split_12___pvcn_750__dram_size_num_bytes 	1664
+
+/* flexidag_openseg_prim_split_12 SMB_input __pvcn_751_ */
+#define flexidag_openseg_prim_split_12___pvcn_751__cnngen_demangled_name 	"__pvcn_751_"
+#define flexidag_openseg_prim_split_12___pvcn_751__is_constant 	1
+#define flexidag_openseg_prim_split_12___pvcn_751__has_init_data 	1
+#define flexidag_openseg_prim_split_12___pvcn_751__is_variable_scalar 	0
+#define flexidag_openseg_prim_split_12___pvcn_751__is_bitvector 	0
+#define flexidag_openseg_prim_split_12___pvcn_751__is_rlz 	0
+#define flexidag_openseg_prim_split_12___pvcn_751__is_ten_bit_packed 	0
+#define flexidag_openseg_prim_split_12___pvcn_751__byte_offset 	200	/* 0x000000c8 */
+#define flexidag_openseg_prim_split_12___pvcn_751__vbase_byte_offset 	204	/* 0x000000cc */
+#define flexidag_openseg_prim_split_12___pvcn_751__dbase_byte_offset 	228	/* 0x000000e4 */
+#define flexidag_openseg_prim_split_12___pvcn_751__dpitchm1_byte_offset 	232	/* 0x000000e8 */
+#define flexidag_openseg_prim_split_12___pvcn_751__dpitchm1_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_12___pvcn_751__W 	96
+#define flexidag_openseg_prim_split_12___pvcn_751__H 	1
+#define flexidag_openseg_prim_split_12___pvcn_751__D 	1
+#define flexidag_openseg_prim_split_12___pvcn_751__P 	1
+#define flexidag_openseg_prim_split_12___pvcn_751__data_num_bytes 	1
+#define flexidag_openseg_prim_split_12___pvcn_751__denable 	1
+#define flexidag_openseg_prim_split_12___pvcn_751__dpitch_num_bytes 	128
+#define flexidag_openseg_prim_split_12___pvcn_751__dram_format 	0
+#define flexidag_openseg_prim_split_12___pvcn_751__vp_interleave_mode 	0
+#define flexidag_openseg_prim_split_12___pvcn_751__tile_width 	1
+#define flexidag_openseg_prim_split_12___pvcn_751__tile_height 	1
+#define flexidag_openseg_prim_split_12___pvcn_751__vmem_buffer_num_bytes 	96
+#define flexidag_openseg_prim_split_12___pvcn_751__dram_size_num_bytes 	128
+
+/* flexidag_openseg_prim_split_12 SMB_input __pvcn_754_ */
+#define flexidag_openseg_prim_split_12___pvcn_754__cnngen_demangled_name 	"__pvcn_754_"
+#define flexidag_openseg_prim_split_12___pvcn_754__is_constant 	1
+#define flexidag_openseg_prim_split_12___pvcn_754__has_init_data 	1
+#define flexidag_openseg_prim_split_12___pvcn_754__is_variable_scalar 	0
+#define flexidag_openseg_prim_split_12___pvcn_754__is_bitvector 	0
+#define flexidag_openseg_prim_split_12___pvcn_754__is_rlz 	0
+#define flexidag_openseg_prim_split_12___pvcn_754__is_ten_bit_packed 	0
+#define flexidag_openseg_prim_split_12___pvcn_754__byte_offset 	240	/* 0x000000f0 */
+#define flexidag_openseg_prim_split_12___pvcn_754__vbase_byte_offset 	244	/* 0x000000f4 */
+#define flexidag_openseg_prim_split_12___pvcn_754__dbase_byte_offset 	268	/* 0x0000010c */
+#define flexidag_openseg_prim_split_12___pvcn_754__dpitchm1_byte_offset 	272	/* 0x00000110 */
+#define flexidag_openseg_prim_split_12___pvcn_754__dpitchm1_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_12___pvcn_754__W 	3252
+#define flexidag_openseg_prim_split_12___pvcn_754__H 	1
+#define flexidag_openseg_prim_split_12___pvcn_754__D 	1
+#define flexidag_openseg_prim_split_12___pvcn_754__P 	1
+#define flexidag_openseg_prim_split_12___pvcn_754__data_num_bytes 	1
+#define flexidag_openseg_prim_split_12___pvcn_754__denable 	1
+#define flexidag_openseg_prim_split_12___pvcn_754__dpitch_num_bytes 	3264
+#define flexidag_openseg_prim_split_12___pvcn_754__dram_format 	0
+#define flexidag_openseg_prim_split_12___pvcn_754__vp_interleave_mode 	0
+#define flexidag_openseg_prim_split_12___pvcn_754__tile_width 	1
+#define flexidag_openseg_prim_split_12___pvcn_754__tile_height 	1
+#define flexidag_openseg_prim_split_12___pvcn_754__vmem_buffer_num_bytes 	3252
+#define flexidag_openseg_prim_split_12___pvcn_754__dram_size_num_bytes 	3264
+
+/* flexidag_openseg_prim_split_12 SMB_input __pvcn_755_ */
+#define flexidag_openseg_prim_split_12___pvcn_755__cnngen_demangled_name 	"__pvcn_755_"
+#define flexidag_openseg_prim_split_12___pvcn_755__is_constant 	1
+#define flexidag_openseg_prim_split_12___pvcn_755__has_init_data 	1
+#define flexidag_openseg_prim_split_12___pvcn_755__is_variable_scalar 	0
+#define flexidag_openseg_prim_split_12___pvcn_755__is_bitvector 	0
+#define flexidag_openseg_prim_split_12___pvcn_755__is_rlz 	0
+#define flexidag_openseg_prim_split_12___pvcn_755__is_ten_bit_packed 	0
+#define flexidag_openseg_prim_split_12___pvcn_755__byte_offset 	280	/* 0x00000118 */
+#define flexidag_openseg_prim_split_12___pvcn_755__vbase_byte_offset 	284	/* 0x0000011c */
+#define flexidag_openseg_prim_split_12___pvcn_755__dbase_byte_offset 	308	/* 0x00000134 */
+#define flexidag_openseg_prim_split_12___pvcn_755__dpitchm1_byte_offset 	312	/* 0x00000138 */
+#define flexidag_openseg_prim_split_12___pvcn_755__dpitchm1_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_12___pvcn_755__W 	96
+#define flexidag_openseg_prim_split_12___pvcn_755__H 	1
+#define flexidag_openseg_prim_split_12___pvcn_755__D 	1
+#define flexidag_openseg_prim_split_12___pvcn_755__P 	1
+#define flexidag_openseg_prim_split_12___pvcn_755__data_num_bytes 	1
+#define flexidag_openseg_prim_split_12___pvcn_755__denable 	1
+#define flexidag_openseg_prim_split_12___pvcn_755__dpitch_num_bytes 	128
+#define flexidag_openseg_prim_split_12___pvcn_755__dram_format 	0
+#define flexidag_openseg_prim_split_12___pvcn_755__vp_interleave_mode 	0
+#define flexidag_openseg_prim_split_12___pvcn_755__tile_width 	1
+#define flexidag_openseg_prim_split_12___pvcn_755__tile_height 	1
+#define flexidag_openseg_prim_split_12___pvcn_755__vmem_buffer_num_bytes 	96
+#define flexidag_openseg_prim_split_12___pvcn_755__dram_size_num_bytes 	128
+
+/* flexidag_openseg_prim_split_12 HMB_input PeleeNet__stage_2_dense_block_1__concat______muli___459 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_cnngen_demangled_name 	"PeleeNet__stage_2_dense_block_1__concat______muli___459"
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_is_main_input_output 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_is_constant 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_has_init_data 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_is_variable_scalar 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_ddi_byte_size 	0	/* 0x00000000 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_ddi_byte_offset 	4294967295	/* 0xffffffff */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_is_bitvector 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_is_rlz 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_is_ten_bit_packed 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_byte_offset 	320	/* 0x00000140 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_vbase_byte_offset 	324	/* 0x00000144 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_dbase_byte_offset 	348	/* 0x0000015c */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_dpitchm1_byte_offset 	352	/* 0x00000160 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_dpitchm1_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_vwidth_minus_one_byte_offset 	336	/* 0x00000150 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_vheight_minus_one_byte_offset 	338	/* 0x00000152 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_vheight_minus_one_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_drotate_bit_offset 	2758	/* 0x00000ac6 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_hflip_bit_offset 	2759	/* 0x00000ac7 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_vflip_bit_offset 	2760	/* 0x00000ac8 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_dflip_bit_offset 	2761	/* 0x00000ac9 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_pflip_bit_offset 	2762	/* 0x00000aca */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_W 	160
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_H 	64
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_D 	192
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_P 	1
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_data_num_bytes 	1
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_denable 	1
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_dpitch_num_bytes 	64
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_dram_format 	3
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_vp_interleave_mode 	2
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_tile_width 	4
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_tile_height 	1
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_vmem_buffer_num_bytes 	187392
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_dram_size_num_bytes 	1966080
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_sign 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_datasize 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_expoffset 	5
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_expbits 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_drotate 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_hflip 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_vflip 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_dflip 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_pflip 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_1__concat______muli___459_trailing_extra_elements 	0
+
+/* flexidag_openseg_prim_split_12 HMB_output PeleeNet__stage_2_dense_block_2__concat */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_cnngen_demangled_name 	"PeleeNet__stage_2_dense_block_2__concat"
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_is_main_input_output 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_is_bitvector 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_is_rlz 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_is_ten_bit_packed 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_byte_offset 	360	/* 0x00000168 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_vbase_byte_offset 	364	/* 0x0000016c */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_dbase_byte_offset 	388	/* 0x00000184 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_dpitchm1_byte_offset 	392	/* 0x00000188 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_dpitchm1_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_vwidth_minus_one_byte_offset 	376	/* 0x00000178 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_vheight_minus_one_byte_offset 	378	/* 0x0000017a */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_vheight_minus_one_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_drotate_bit_offset 	3078	/* 0x00000c06 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_hflip_bit_offset 	3079	/* 0x00000c07 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_vflip_bit_offset 	3080	/* 0x00000c08 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_dflip_bit_offset 	3081	/* 0x00000c09 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_pflip_bit_offset 	3082	/* 0x00000c0a */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_W 	160
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_H 	64
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_D 	224
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_P 	1
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_data_num_bytes 	1
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_denable 	1
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_dpitch_num_bytes 	64
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_dram_format 	3
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_vp_interleave_mode 	2
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_tile_width 	4
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_tile_height 	1
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_vmem_buffer_num_bytes 	143360
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_dram_size_num_bytes 	2293760
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_sign 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_datasize 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_expoffset 	5
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_expbits 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_drotate 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_hflip 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_vflip 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_dflip 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_pflip 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__concat_trailing_extra_elements 	0
+
+/* flexidag_openseg_prim_split_12 VCB PeleeNet__stage_2_dense_block_2__conv_left_0__Conv2D___BatchNorm__FusedBatchNorm___right_0__Conv2D___BatchNorm__FusedBatchNorm___muli___460___1 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_left_0__Conv2D___BatchNorm__FusedBatchNorm___right_0__Conv2D___BatchNorm__FusedBatchNorm___muli___460___1_cnngen_demangled_name 	"PeleeNet__stage_2_dense_block_2__conv_left_0__Conv2D___BatchNorm__FusedBatchNorm___right_0__Conv2D___BatchNorm__FusedBatchNorm___muli___460___1"
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_left_0__Conv2D___BatchNorm__FusedBatchNorm___right_0__Conv2D___BatchNorm__FusedBatchNorm___muli___460___1_is_bitvector 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_left_0__Conv2D___BatchNorm__FusedBatchNorm___right_0__Conv2D___BatchNorm__FusedBatchNorm___muli___460___1_is_rlz 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_left_0__Conv2D___BatchNorm__FusedBatchNorm___right_0__Conv2D___BatchNorm__FusedBatchNorm___muli___460___1_is_ten_bit_packed 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_left_0__Conv2D___BatchNorm__FusedBatchNorm___right_0__Conv2D___BatchNorm__FusedBatchNorm___muli___460___1_byte_offset 	432	/* 0x000001b0 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_left_0__Conv2D___BatchNorm__FusedBatchNorm___right_0__Conv2D___BatchNorm__FusedBatchNorm___muli___460___1_vbase_byte_offset 	440	/* 0x000001b8 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_left_0__Conv2D___BatchNorm__FusedBatchNorm___right_0__Conv2D___BatchNorm__FusedBatchNorm___muli___460___1_vmem_buffer_num_bytes 	81920
+
+/* flexidag_openseg_prim_split_12 VCB PeleeNet__stage_2_dense_block_2__conv_right_0__Relu */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_right_0__Relu_cnngen_demangled_name 	"PeleeNet__stage_2_dense_block_2__conv_right_0__Relu"
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_right_0__Relu_is_bitvector 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_right_0__Relu_is_rlz 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_right_0__Relu_is_ten_bit_packed 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_right_0__Relu_byte_offset 	516	/* 0x00000204 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_right_0__Relu_vbase_byte_offset 	524	/* 0x0000020c */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_right_0__Relu_vmem_buffer_num_bytes 	26880
+
+/* flexidag_openseg_prim_split_12 VCB PeleeNet__stage_2_dense_block_2__conv_right_1__Conv2D___BatchNorm__FusedBatchNorm___Relu */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_right_1__Conv2D___BatchNorm__FusedBatchNorm___Relu_cnngen_demangled_name 	"PeleeNet__stage_2_dense_block_2__conv_right_1__Conv2D___BatchNorm__FusedBatchNorm___Relu"
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_right_1__Conv2D___BatchNorm__FusedBatchNorm___Relu_is_bitvector 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_right_1__Conv2D___BatchNorm__FusedBatchNorm___Relu_is_rlz 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_right_1__Conv2D___BatchNorm__FusedBatchNorm___Relu_is_ten_bit_packed 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_right_1__Conv2D___BatchNorm__FusedBatchNorm___Relu_byte_offset 	564	/* 0x00000234 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_right_1__Conv2D___BatchNorm__FusedBatchNorm___Relu_vbase_byte_offset 	572	/* 0x0000023c */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_right_1__Conv2D___BatchNorm__FusedBatchNorm___Relu_vmem_buffer_num_bytes 	13440
+
+/* flexidag_openseg_prim_split_12 VCB PeleeNet__stage_2_dense_block_2__conv_left_0__Relu */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_left_0__Relu_cnngen_demangled_name 	"PeleeNet__stage_2_dense_block_2__conv_left_0__Relu"
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_left_0__Relu_is_bitvector 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_left_0__Relu_is_rlz 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_left_0__Relu_is_ten_bit_packed 	0
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_left_0__Relu_byte_offset 	668	/* 0x0000029c */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_left_0__Relu_vbase_byte_offset 	676	/* 0x000002a4 */
+#define flexidag_openseg_prim_split_12_PeleeNet__stage_2_dense_block_2__conv_left_0__Relu_vmem_buffer_num_bytes 	26880
+
+/* flexidag_openseg_prim_split_12 SMB_output __vas_created_terminate__v0 */
+#define flexidag_openseg_prim_split_12___vas_created_terminate__v0_cnngen_demangled_name 	"__vas_created_terminate__v0"
+#define flexidag_openseg_prim_split_12___vas_created_terminate__v0_is_main_input_output 	0
+#define flexidag_openseg_prim_split_12___vas_created_terminate__v0_is_bitvector 	1
+#define flexidag_openseg_prim_split_12___vas_created_terminate__v0_is_rlz 	0
+#define flexidag_openseg_prim_split_12___vas_created_terminate__v0_is_ten_bit_packed 	0
+#define flexidag_openseg_prim_split_12___vas_created_terminate__v0_byte_offset 	728	/* 0x000002d8 */
+#define flexidag_openseg_prim_split_12___vas_created_terminate__v0_vbase_byte_offset 	732	/* 0x000002dc */
+#define flexidag_openseg_prim_split_12___vas_created_terminate__v0_W 	256
+#define flexidag_openseg_prim_split_12___vas_created_terminate__v0_H 	3
+#define flexidag_openseg_prim_split_12___vas_created_terminate__v0_D 	1
+#define flexidag_openseg_prim_split_12___vas_created_terminate__v0_P 	1
+#define flexidag_openseg_prim_split_12___vas_created_terminate__v0_data_num_bytes 	1
+#define flexidag_openseg_prim_split_12___vas_created_terminate__v0_denable 	0
+#define flexidag_openseg_prim_split_12___vas_created_terminate__v0_dram_format 	0
+#define flexidag_openseg_prim_split_12___vas_created_terminate__v0_vp_interleave_mode 	1
+#define flexidag_openseg_prim_split_12___vas_created_terminate__v0_tile_width 	1
+#define flexidag_openseg_prim_split_12___vas_created_terminate__v0_tile_height 	1
+#define flexidag_openseg_prim_split_12___vas_created_terminate__v0_vmem_buffer_num_bytes 	96
+
+
+#endif /* flexidag_openseg_prim_split_12_H */

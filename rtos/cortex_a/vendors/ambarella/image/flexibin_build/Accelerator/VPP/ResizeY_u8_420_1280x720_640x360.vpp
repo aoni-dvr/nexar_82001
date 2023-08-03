@@ -1,0 +1,39 @@
+/******************************************************************************/
+/*                                                                            */
+/*  DAG: IDSP_Top                                                             */
+/*                                                                            */
+/*      Implements IDSP-like DAG.                                             */
+/*                                                                            */
+/*  Used as tutorial in Vector Processor User Guide.                          */
+/*                                                                            */
+/*  Copyright 2017 Ambarella Inc.                                             */
+/******************************************************************************/
+#include "vp_vas.h"
+
+/*subDAGs */
+
+/******************************************************************************/
+/* Main DAG                                                                   */
+/******************************************************************************/
+DAG vp_resize_prim = {
+
+    // original input id = image_input
+    VP_input(image_input, uint8_t, vector(1, 1, 720, 1280));
+
+    // original input id = dzoom_params
+    VP_input(dzoom_params, uint32_t, vector(1, 1, 1, 4));
+
+    // primitive 1
+    VP_variableresamp(image_input, dzoom_params,
+                      VP_tensor(data, uint8_t),
+                      replicate_w = 0,
+                      replicate_h = 0,
+                      resamp_mode = 0,
+                      out_w = 1280/2,
+                      out_h = 720/2,
+    );
+
+    // original output id = resample_output
+    VP_output(resample_output, data);
+
+}

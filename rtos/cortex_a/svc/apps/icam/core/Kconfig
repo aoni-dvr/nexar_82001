@@ -1,0 +1,579 @@
+menu "Core Functions"
+
+if SOC_CV2FS
+config ICAM_CLK_LINE
+    hex "clock setting, 0: CV2FS, 1: CV22FS, 2: CV22FS15"
+    default 0x0
+endif
+
+if SOC_CV5
+config ICAM_CLK_LINE
+    hex "clock setting, 0: CV5_U55, 1: CV5_U85, 2: CV5_A55/A85"
+    default 0x1
+endif
+
+if SOC_CV52
+config ICAM_CLK_LINE
+    hex "clock setting, 0: CV52_A55/A75/U75, 1: CV52_A85, 2: CV52_U85"
+    default 0x1
+endif
+
+if !(SOC_CV2FS || SOC_CV5 || SOC_CV52)
+config ICAM_CLK_LINE
+    hex "clock setting, 0: AECQ, 1: AX"
+    default 0x0
+    default 0x1 if SOC_H32
+endif
+
+menu "Chip Capability"
+    config ICAM_HDMI_EXIST
+        bool "chip support hdmi"
+        default y if !SOC_CV2FS
+    config ICAM_CVBS_EXIST
+        bool "chip support cvbs"
+        default y if !SOC_CV2FS && THREADX
+
+    if ICAM_CVBS_EXIST
+    config ICAM_CVBS_ADC_FINE_TUNE
+        bool "auto fine tune adc level"
+        default n
+    endif
+
+endmenu
+
+menu "DSP"
+    config ICAM_DSP_LOG_SIZE
+        hex "dsp log buffer size"
+        default 0x00020000
+    config ICAM_DSP_WRK_SIZE
+        hex "dsp work buffer size"
+        default 0x1BA00000
+    config ICAM_DSP_VP_MSG_SIZE
+        hex "dsp vp message size"
+        default 0x00020000
+    config ICAM_DSP_PYRAMID_SIZE
+        hex "dsp pyramid buffer size"
+        default 0x04600000
+    config ICAM_DSP_ENC_BS_SIZE
+        hex "dsp encoder bitstream buffer size"
+        default 0x02000000
+    config ICAM_DSP_DEC_BS_SIZE
+        hex "dsp decoder bitstream buffer size"
+        default 0x00900000
+    config ICAM_DSP_VIN_RAW_BUF_NUM
+        hex "the number of dsp vin raw buffer"
+        default 0x00000005
+    config ICAM_DSP_LIV_PYRAMID_BUF_NUM
+        hex "the number of liveview pyramid yuv buffer"
+        default 0x00000005
+    config ICAM_DSP_VOUT_YUV_BUF_NUM
+        hex "the number of vout yuv stream buffer"
+        default 0x00000000
+    config ICAM_DSP_ENC_YUV_BUF_NUM
+        hex "the number of encode yuv stream buffer"
+        default 0x00000000
+    config ICAM_FIXED_ISO_CFG_USED
+        bool "Use fixed iso config"
+        default y
+    config ICAM_SWPLL_CONTROL
+        bool "SW PLL controlled"
+        default n
+    config ICAM_UCODE_PARTIAL_LOAD
+        bool "Enable ucode partial load"
+        default y
+    config ICAM_UCODE_ORCIDSP_SHARING
+        bool "Enable ucode orcidsp shareding"
+        depends on SOC_CV5 || SOC_CV52
+        default y
+    config ICAM_DSP_SUSPEND
+        bool "Enable dsp suspend/resume"
+        depends on SOC_CV5 || SOC_CV52
+        default y
+
+    comment "Advance DSP Support (depends on chip)"
+    config ICAM_CFA_WIN_SUPPORTED
+        bool "CFA window supported"
+        depends on SOC_H22
+        default y if SOC_H22
+    config ICAM_PIPE_LOWDLY_SUPPORTED
+        bool "Pipeline low delay supported"
+        depends on SOC_CV2 || SOC_CV22 || SOC_CV25 || SOC_CV2FS
+        default y if SOC_CV2 || SOC_CV22 || SOC_CV25 || SOC_CV2FS
+    config ICAM_VIN_VOUT_LOWDLY_SUPPORTED
+        bool "Vin-Vout low delay supported"
+        depends on SOC_CV2 || SOC_CV22 || SOC_CV25 || SOC_CV2FS  || SOC_CV5 || SOC_CV52
+        default y if SOC_CV2 || SOC_CV22 || SOC_CV25 || SOC_CV2FS || SOC_CV5 || SOC_CV52
+    config ICAM_ENCMV_SUPPORTED
+        bool "Motion vector supported"
+        depends on SOC_CV2 || SOC_CV22 || SOC_CV25 || SOC_H32
+        default n
+    config ICAM_PYRAMID_BUF_SUPPORTED
+        bool "pyramid buffer supported"
+        default y
+    config ICAM_MAIN_Y12_OUTPUT_SUPPORTED
+        bool "12 bits Y main output supported"
+        depends on SOC_CV2FS
+        default n
+    config ICAM_DSP_MAIN_Y12_BUF_NUM
+        hex "the number of 12 bits Y main buffer"
+        depends on ICAM_MAIN_Y12_OUTPUT_SUPPORTED
+        default 0x00000004
+    config ICAM_DSP_MAIN_Y12_SIZE
+        hex "12 bits Y main buffer size"
+        depends on ICAM_MAIN_Y12_OUTPUT_SUPPORTED
+        default 0x0BDD800
+    config ICAM_LV_FEED_EXT_DATA_SUPPORTED
+        bool "mipi raw buffer supported"
+        default n
+        if ICAM_LV_FEED_EXT_DATA_SUPPORTED
+            config ICAM_LV_FEED_EXT_DATA_BUF_NUM
+            hex "Buffer number for MIPI RAW output data"
+            default 0x4
+        endif
+    config ICAM_LV_FEED_EXT_YUV_SUPPORTED
+        bool "feeding external YUV buffer supported"
+        default n
+        if ICAM_LV_FEED_EXT_YUV_SUPPORTED
+            config ICAM_LV_FEED_EXT_YUV_BUF_NUM
+            hex "Buffer number for external YUV output data"
+            default 0x8
+        endif
+    config ICAM_DSP_HEVC_SCHRANGE_SUPPORTED
+        bool "HEVC search range configuration supported"
+        depends on SOC_CV5 || SOC_CV52
+        default y
+    config ICAM_DSP_ENC_CORE_NUM
+        hex "dsp encoder core number"
+        default 0x2 if SOC_CV5 || SOC_CV52
+        default 0x1
+        if 0x1 < ICAM_DSP_ENC_CORE_NUM
+            config ICAM_ENC_1CORE_MAX_W
+            int "dsp encoder 1core max width"
+            default 1920
+        endif
+    config ICAM_DSP_ENC_ENG_NUM
+        hex "dsp encoder engine number"
+        default 0x2 if SOC_CV5 || SOC_CV52
+        default 0x1
+    config ICAM_DSP_DPX_PB_ONLY
+        bool "Support duplex mode playback only"
+        default y if SOC_CV2FS || SOC_CV5 || SOC_CV52
+        default n
+endmenu
+
+menu "Record"
+menuconfig ICAM_RECORD_USED
+    bool "Use svc record function"
+    default n
+if ICAM_RECORD_USED
+    config ICAM_RAWENC_USED
+        bool "Use svc raw encode"
+        default y if SOC_CV2 || SOC_CV22 || SOC_CV25
+    config ICAM_TIMELAPSE_USED
+        bool "Use svc record timelapse"
+        default y
+    config ICAM_DMS_FUNC_AUTO_EXEC
+        bool "DMS auto execute function"
+        default n
+    config ICAM_DMS_FUNC_AUTO_EXEC
+        bool "DMS auto execute function"
+        default n
+
+    comment "Record Parameters"
+    config ICAM_MAX_REC_STRM
+        hex "max record streams"
+        default 0x4
+    config ICAM_MAX_RSC_PER_STRM
+        hex "max record source per stream"
+        default 0x3
+    config ICAM_MAX_RBX_PER_STRM
+        hex "max record box per stream"
+        default 0x1
+    config ICAM_MAX_RDT_PER_STRM
+        hex "max record destination per stream"
+        default 0x4
+    config ICAM_TLAPSE_SIZE
+        hex "time-lapse buffer size"
+        default 0x1A20000
+    config ICAM_REC_SYNC_TIME
+        hex "time to do file sync (sec)"
+        default 0x5
+    config ICAM_MAX_EMG_REC_TIME
+        hex "max emergency record time"
+        default 0x1E
+endif
+endmenu
+
+menu "Playback"
+menuconfig ICAM_PLAYBACK_USED
+    bool "Use svc playback function"
+    default n
+if ICAM_PLAYBACK_USED
+    config ICAM_PIP_BLEND_USED
+        bool "Use pip alpha blending"
+        default n
+    config ICAM_THMVIEW_IN_DPX
+        bool "Use thumbnail display view in duplex mode"
+        default n
+    config ICAM_B_FRAME_DECODE
+        bool "support b-frame decode"
+        default n
+    config ICAM_MAX_PBK_TIME
+        hex "max playback time (sec)"
+        default 0x00000708
+    config ICAM_MAX_PBK_VIDEO_FPS
+        hex "max video frame per second"
+        default 0x0000003C
+    config ICAM_MAX_PBK_AUDIO_SRATE
+        hex "max audio sampling rate"
+        default 0x0000BB80
+    config ICAM_MIN_PBK_AUDIO_SPF
+        hex "min audio samples per frame"
+        default 0x00000400
+endif
+endmenu
+
+menu "StillCapture"
+menuconfig ICAM_STLCAP_USED
+    bool "Use svc still capture function"
+    default n
+endmenu
+
+menu "Audio"
+menuconfig ICAM_AUDIO_USED
+    bool "Use svc audio function"
+    default y
+if ICAM_AUDIO_USED
+    config ICAM_I2S_CHANNEL
+        hex "I2S channel used"
+        default 0x0
+endif
+endmenu
+
+menu "CV"
+depends on !SOC_H22 && !SOC_H32
+menuconfig ICAM_CV_CONFIG_FILE
+    string "ICAM_CV_CONFIG_FILE"
+    default "default_cv2" if SOC_CV2
+    default "default_cv22" if SOC_CV22
+
+config ICAM_CV_USER_RESERVED
+    hex "Reserved size of cv user buffer"
+    default 0x1000000
+
+menuconfig ICAM_CV_FLEXIDAG
+    bool "Enable iCam FlexiDAG functions"
+    default n
+if ICAM_CV_FLEXIDAG
+    config ICAM_CV_FLEXIDAG_BIN_BUF_SIZE
+        hex "FlexiDAG Binary Buffer"
+        default 0x00A00000
+    config ICAM_CV_FLEXIDAG_WORK_BUF_SIZE
+        hex "FlexiDAG Working Buffer"
+        default 0x06400000
+    config ICAM_CV_FILE_IN_BUF_SIZE
+        hex "File Input Buffer size"
+        default 0x0
+    config ICAM_CV_FLEXIDAG_TASK_CORE_SELECT
+        hex "FlexiDAG CV task core select"
+        default 0xE
+    config ICAM_SCA_TASK_CORE_SELECT
+        hex "SCA task core select"
+        default 0xE
+    config ICAM_IMG_FEEDER_CORE_SELECT
+        hex "Image Feeder task core select"
+        default 0x1
+    config ICAM_IMG_FEEDER_TASK_PRIORITY
+        int "Image Feeder task priority"
+        default 50
+endif
+
+menuconfig ICAM_CV_AMBANET
+    bool "Enable iCam CV AmbaNet functions"
+    default n
+if ICAM_CV_AMBANET
+    config ICAM_CV_AMBANET_EMIRROR
+        bool "AmbaNet Emirror"
+        default n
+    config ICAM_CV_AMBANET_ADAS
+        bool "AmbaNet ADAS"
+        default n
+endif
+
+menuconfig ICAM_CV_STEREO
+    bool "Enable iCam Stereo functions"
+    depends on (SOC_CV2 || SOC_CV2FS) && BUILD_CV
+    default n
+if ICAM_CV_STEREO
+config ICAM_CV_STIXEL
+    bool "Stixel functions"
+    default n
+config ICAM_CV_STEREO_AUTO_CALIB
+    bool "Auto Calibration"
+    default n
+config ICAM_CV_LINUX_STEREO_APP
+    bool "Linux Stereo App"
+    default n
+endif
+
+config ICAM_CV_FEX
+    bool "Enable iCam Fexture Extraction"
+    default n
+
+menuconfig ICAM_CV_LOGGER
+    bool "Enable iCam CV Logger functions"
+    default n
+if ICAM_CV_LOGGER
+    config ICAM_CV_LOGGER_MAX_NUM
+        hex "CV Logger max channel"
+        default 0x2
+    config ICAM_CV_LOGGER_BUF_SIZE
+        hex "CV Logger buffer size"
+        default 0x10000
+endif
+
+config ICAM_CV_LOAD_DEFAULT_CV_TABLE
+    bool "Load default CV table file"
+    default n
+
+endmenu
+
+menu "Image"
+config ICAM_IMGPROC_USED
+    bool "image proc"
+    default y
+if BUILD_IMGFRW_AAA
+config ICAM_IMGPROC_MAX_ALGO_NUM
+    int "max algo num"
+    default 8
+endif
+config ICAM_IMGCAL_USED
+    bool "image calibration"
+    default y if SOC_CV2 || SOC_CV22 || SOC_CV25 || SOC_CV28
+config ICAM_IMGRAWCAP_USED
+    bool "image raw capture"
+    default y if SOC_CV2 || SOC_CV22 || SOC_CV25 || SOC_CV28
+config ICAM_IMGITUNER_USED
+    bool "image ituner"
+    default y if SOC_CV2 || SOC_CV22 || SOC_CV25 || SOC_CV28
+config ICAM_VIEWCTRL_USED
+    bool "view control"
+    default y if SOC_CV2 || SOC_CV22 || SOC_CV25 || SOC_CV28
+config ICAM_PIPE_PIPVIN_YUV_SUPPORTED
+    bool "PIP vin yuv-input supported"
+    default y if SOC_CV2
+config ICAM_IK_MAX_CTX_NUM
+    int "image kernel maximum context number"
+    default 16
+config ICAM_IK_MAX_CFG_NUM
+    int "image kernel maximum configuration number per one context"
+    default 10
+endmenu
+
+menu "Net"
+config ICAM_BUILD_ENET
+    bool "Svc Ethernet test application"
+    default n
+endmenu
+
+menu "USB"
+config ICAM_USB_USED
+    bool "Use svc usb features"
+    default y
+endmenu
+
+menu "Partial ROM List"
+config ICAM_IQDEF_ROMLIST
+    string "IQ default table ROM list file"
+    default ""
+config ICAM_IQ_ROMLIST
+    string "IQ ROM list file"
+    default ""
+config ICAM_GUI_ROMLIST
+    string "GUI ROM list file"
+    default ""
+config ICAM_AUDIO_ROMLIST
+    string "Audio ROM list file"
+    default ""
+config ICAM_CV_ROMLIST
+    string "CV ROM list file"
+    depends on !SOC_H32
+    default ""
+config ICAM_UCODE_ROMLIST
+    string "UCODE ROM list file"
+    default ""
+endmenu
+
+menu "Storage"
+menuconfig ICAM_MAIN_STG
+    bool "enable main storage"
+    default y
+if ICAM_MAIN_STG
+    config ICAM_MAIN_STG_DRV
+        string "main storage drive"
+        default "c" if QNX
+        default "d" if BSP_CV2FSDK_OPTION_A_V110 || BSP_CV2XFSDK_OPTION_B || BSP_CV28DK_8LAYER_A_V100
+        default "c"
+    config ICAM_MAIN_STG_CHA
+        hex "main storage channel"
+        default 0x0 if QNX
+        default 0x1 if BSP_CV2FSDK_OPTION_A_V110 || BSP_CV2XFSDK_OPTION_B || BSP_CV28DK_8LAYER_A_V100
+        default 0x0
+endif
+
+menuconfig ICAM_AUX_STG
+    bool "enable auxiliary storage"
+    depends on SOC_CV5 || SOC_CV52
+    default n
+if ICAM_AUX_STG
+    config ICAM_AUX_STG_DRV
+        string "auxiliary storage drive"
+        default "d"
+    config ICAM_AUX_STG_CHA
+        hex "auxiliary storage channel"
+        default 0x1
+endif
+endmenu
+
+menu "Other"
+
+config ICAM_DATA_GATHER_USED
+    bool "data gather (canbus, ...)"
+    default y
+
+config ICAM_USE_DIAG_COMMANDS
+    bool "enable diag commands"
+    default y if THREADX
+    default n
+
+config ICAM_USE_AMBA_DIRTDETECT
+    bool "enable amba dirt detection"
+    default y if SOC_CV22 || SOC_CV25
+
+config ICAM_USE_AMBA_DEFOG
+    bool "enable amba defog"
+    default y
+
+config ICAM_GUI_MENU_USED
+    bool "enable svc gui menu"
+    default y
+
+config ICAM_ADC_BUTTON_USED
+    bool "enable svc adc button"
+    default n
+
+menuconfig ICAM_CANBUS_USED
+    bool "enable svc canbus wrapper"
+    default y if BUILD_AMBA_ADAS
+if ICAM_CANBUS_USED
+    config ICAM_CANBUS_DEMO
+        bool "enable canbus demo driver"
+        depends on SOC_CV2 || SOC_CV22 || SOC_CV25
+        default y if SOC_CV2 || SOC_CV22 || SOC_CV25
+endif
+
+config ICAM_EEPROM_USED
+    bool "enable svc eeprom driver"
+    default n
+
+config ICAM_32BITS_OSD_USED
+    bool "enable 32bits osd"
+    default n
+
+if ICAM_32BITS_OSD_USED
+    choice
+    prompt "Choose a tool to draw GUI"
+    default SVC_LVGL_USED
+    config SVC_AMBADRAW_USED
+        bool "Use AmbaDraw to draw GUI"
+    config SVC_LVGL_USED
+        bool "Use LVGL to draw GUI"
+    endchoice
+
+    if SVC_LVGL_USED
+        config SVC_LVGL_MEM
+        hex "Allocate memory for LVGL (KBytes)"
+        default 0x60
+    endif
+endif
+
+
+config ICAM_FW_UPDATER_USED
+    bool "enable firmware updater"
+    default y if !ICAM_PROJECT_CNNTESTBED
+
+config ICAM_TIMING_LOG
+    bool "enable timing log"
+    default y
+
+config ICAM_AVE_RAW_CAP
+    bool "enable ave raw cap (for imx390 sensor calibration)"
+    default n
+
+menu "data comparison"
+    config ICAM_DATACMP_MAX_CMP_NUM
+        hex "max comparison num"
+        default 0x03
+    config ICAM_DATACMP_MAX_DATA_NUM
+        hex "max data num to compare"
+        default 0x03
+    config ICAM_DATACMP_MAX_DATAQUE_NUM
+        hex "max data queue num"
+        default 0x08
+endmenu
+
+menuconfig ICAM_YUVFILE_FEED
+    bool "feed fov from yuv file"
+    default n
+if ICAM_YUVFILE_FEED
+    config ICAM_YUVFILE_FEED_MAX_BUF
+        hex "max buffer number for each fov"
+        default 0x1
+endif
+
+menuconfig ICAM_ENCRYPTION
+    bool "encryption module"
+    default n
+if ICAM_ENCRYPTION
+    config ICAM_ENCRYPT_BUF_SIZE
+        hex "encryption internal buffer size"
+        default 0x600000
+endif
+
+config ICAM_PARALLEL_VIN_CONFIG
+    bool "enable parallel vin config"
+    default n
+
+endmenu
+
+menuconfig ICAM_CUSTOM_PLATCSV
+    string "svc custom platform csv"
+    default ""
+
+menu "Safety"
+config ICAM_FUSA_USED
+    bool "enable FUSA task"
+    depends on SOC_CV2FS
+    default y
+
+config ICAM_SENSOR_ASIL_ENABLED
+    bool "enable sensor asil, crc check task"
+    depends on SOC_CV2FS
+    default n
+
+menuconfig ICAM_BIST_UCODE
+    bool "Enable test frame flow"
+    depends on SOC_CV2FS
+    default y if THREADX
+    select BUILD_FOSS_LIB
+    select BUILD_FOSS_LZ4
+
+if ICAM_BIST_UCODE
+    config ICAM_BIST_UCODE_INTERVAL
+        int "interval of testa frame (ms)"
+        default 100
+endif
+
+endmenu
+
+endmenu

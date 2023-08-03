@@ -1,0 +1,24 @@
+#include <vp_vas.h>
+
+#define IN_SIZE 8192
+
+DAG thresh_simple_vpp_prim = {
+    VP_input(data, float32_t, vector(1, 1, 1, IN_SIZE));
+	
+	VP_scalar(thres, float32_t, 127);
+	
+	VP_scalar(max_value, float32_t, 65535);
+
+    VP_scalar(mux_in1_, float32_t, 0);
+	
+    VP_gtb(data,
+      thres,
+	  VP_tensor(compare_)
+    );
+    
+    VP_muxb(max_value, mux_in1_, compare_,
+      VP_tensor(thres_out_)
+    );
+    
+    VP_output(thresh_simple, thres_out_);
+}

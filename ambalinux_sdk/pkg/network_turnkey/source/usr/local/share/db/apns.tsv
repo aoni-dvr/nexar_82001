@@ -1,0 +1,820 @@
+001	01	1911	AT&T PHONE TEST SIM	phone		
+202	01	747	Cosmote Wireless Internet	internet		
+202	05	2399	Vf Mobile Internet	internet.vodafone.gr		
+202	09	749	Q Internet	myq		
+202	10	1519	Wind Internet	gint.b-online.gr		
+204	02	1643	Tele2 GPRS	internet.tele2.nl		
+204	03	2149	MVNO NL	internet.mvno.mobi	mvno	mvno
+204	04	2143	Truphone	truphone.com		
+204	04	1839	EHRPD - VZW Roaming Internet	VZWINTERNET		
+204	04	1836	CSpire international	internet.cs4glte.com	Uniroam@inet.cs.com	cs3g
+204	08	1644	KPN/Hi 4G LTE Mobiel internet	KPN4G.nl		
+204	08	2406	Rabo Mobiel Int.	rabo		
+204	04	1991	HOT mobile Internet	net.hotm		
+204	16	2386	T-Mobile Internet	internet		
+204	16	2095	Ben Internet Abonnee	internet.ben		
+206	01	1365	Px Internet	INTERNET.PROXIMUS.BE		
+206	01	2270	Telenet Internet	telenetwap.be		
+206	01	2106	IIJmio (TypeI/Roaming)	iijmio.jp	mio@iij	iij
+206	05	2150	Telenet Internet	telenetwap.be		
+206	10	1366	Mobistar Internet	mworld.be		
+206	10	2271	netgprs.com	netgprs.com	tsl	tsl
+206	20	1367	BASE WAP	gprs.base.be	base	base
+206	28	2132	BICS Internet	bicsapn		
+208	01	32	Orange World	orange	orange	orange
+208	01	2133	Carrefour WAP	ofnew.fr	orange	orange
+208	01	2005	NRJWEB	ofnew.fr	orange	orange
+208	01	2135	Coriolis	coriolis		
+208	09	27	SFR webphone	sl2sfr		
+208	09	2130	Be Aliv	pda.newcomobile.com		
+208	10	2272	Auchan WAP	wap65		
+208	10	2273	WAP LeclercMobile	wap66		
+208	10	2274	4G La Poste Mobile	sl2sfr		
+208	10	2275	Darty Surf&Mails	wap68		
+208	10	2276	Keyyo Mobile Internet	internet68		
+208	10	2277	Zero forfait	internet68		
+208	15	1958	Free	free		
+208	15	2127	Free Re Int	free.re		
+208	15	2124	Iliad Int	iliad		
+208	17	2151	Legos	bornsip		
+208	20	1487	Bouygues Telecom	mmsbouygtel.com		
+208	23	1984	Virgin mobile	virgin-mobile.fr		
+214	02	2131	ALTECOM	altecom.net		
+214	02	2136	FIBRACAT	fibracat.cat		
+214	03	678	Orange Internet Móvil	orangeworld	orange	orange
+214	03	2297	Happy Internet	internettph		
+214	03	2298	RACC INTERNET	internet.racc.net	CLIENTERACC	RACC
+214	03	2299	CABLE movil Internet	internettph		
+214	03	2300	MASMovil Internet	internetmas		
+214	03	2301	Ibercom Internet	ibercominternet		
+214	03	1974	jazzinternet	jazzinternet		
+214	03	2125	internet simyo	orangeworld	orange	orange
+214	04	679	Yoigo Internet	internet		
+214	05	2442	DIGI Spain	internet.digimobil.es		
+214	05	2443	DIGI Italy	digi.mobile		
+214	06	1909	INTERNET GPRS	airtelnet.es	vodafone	vodafone
+214	06	2278	Internet R	internet.mundo-r.com		
+214	06	2112	TeleCable Internet	internet.telecable.es	telecable	telecable
+214	06	2279	Eroski Movil GPRS	gprs.eroskimovil.es	wap@wap	wap125
+214	06	2280	Internet	gprsmov.pepephone.com		
+214	07	34	Movistar	telefonica.es	telefonica	telefonica
+214	07	2281	T-2	internet.t-2.net		
+214	18	1976	ONO Internet	internet.ono.com		
+214	32	2357	Tuenti	tuenti.com	tuenti	tuenti
+216	01	1534	Telenor Online	online		
+216	30	2401	T-Mobile H	internet.telekom		
+216	70	1535	Vodafone Internet	internet.vodafone.net		
+218	03	1357	HT Eronet WAP	wap.eronet.ba		
+218	05	1358	m:tel	3g1		
+218	90	1359	BHMobileInternet	active.bhmobile.ba		
+219	01	2365	T-Mobile Internet	internet.ht.hr		
+219	01	2091	bonbon Internet	web.htgprs		
+219	02	1529	Tele2	internet.tele2.hr		
+219	10	1530	Broadband	data.vip.hr	38591	38591
+220	01	1012	Telenor internet	internet	telenor	gprs
+220	03	1013	mt:s wap	gprswap	mts	064
+220	04	10	T-Mobile Internet	tmcg-wnw	38267	38267
+204	04	580	SaskTel	pda.stm.sk.ca		
+204	65	2351	agms	agms		
+220	05	1014	Vip GPRS	vipmobile	vipmobile	vipmobile
+222	01	33	TIM WAP	wap.tim.it		
+222	01	1895	Internet	internet.windmobile.ca		
+222	01	1912	Internet	web.iusacellgsm.mx	iusacellgsm	iusacellgsm
+222	01	2282	NOVERCA WEB	web.noverca.it		
+222	10	2303	PosteMobile	wap.postemobile.it		
+222	10	2304	ErgMobile WAP	mobile.erg.it		
+222	10	2438	DailyTelecomWAP	wap.dtm.it		
+222	88	1573	WIND WEB	internet.wind		
+222	99	1575	3	tre.it		
+222	99	2039	Fastweb WEB	apn.fastweb.it		
+226	01	2391	Vodafone live!	live.vodafone.com	live	vodafone
+226	05	1959	Digi.Mobil	internet		
+226	10	1011	Orange Internet	net		
+228	01	2366	Swisscom Services	gprs.swisscom.ch		
+228	02	1413	Sunrise live	internet		
+228	03	1414	Orange Internet	internet		
+230	01	2394	T-Mobile CZ	internet.t-mobile.cz	wap	wap
+230	02	1449	O2 internet	internet		
+230	03	2398	Internet	internet		
+231	01	1713	Orange SK	internet		
+231	02	2385	T-Mobile internet	internet		
+231	06	1988	O2 internet	o2internet		
+232	05	1344	Planet 3	drei.at		
+234	01	1491	UBIQUISYS	internet		
+234	02	1492	O2 MOBILE WEB	mobile.o2.co.uk	O2web	O2web
+234	08	2103	BT One Phone Internet	internet.btonephone.com		
+234	10	2093	TESCO	prepay.tesco-mobile.com	tescowap	password
+234	15	2309	Lebara Internet	uk.lebara.mobi	wap	wap
+234	20	1505	3	three.co.uk		
+234	30	717	Virgin Media Mobile Internet	goto.virginmobile.uk	user	
+234	30	718	EE Internet	everywhere	eesecure	secure
+234	30	2102	BT Internet	everywhere	eesecure	secure
+234	30	2101	BT Internet	everywhere	eesecure	secure
+234	33	2283	Internet	tslpaygnet		
+234	50	1506	pepperWEB (Jersey)	pepper		
+234	55	720	C&W Guernsey Internet	internet		
+234	58	1507	3G HSDPA	3gpronto		
+238	01	1463	DK TDC	internet		
+238	01	2284	Telmore Internet	internet		
+238	01	2459	GigSky	gigsky		
+238	02	1464	Telenor Internet	Internet		
+238	06	1466	3	data.tre.dk		
+238	20	656	Telia SurfPort	www.internet.mtelia.dk		
+238	20	2285	Call me Internet	webSP		
+238	20	2286	DLG Tele GPRS	webSP		
+238	77	657	Telenor Internet	Internet		
+240	01	1690	Telia	online.telia.se		
+240	01	2287	Halebop Internet	halebop.telia.se		
+240	02	1691	3	data.tre.se		
+240	04	1693	3	data.tre.se		
+240	06	1695	Internet	internet		
+240	07	1696	Tele2 Internet	4g.tele2.se		
+240	09	1956	Com4	com4		
+240	10	1697	Spring data	data.springmobil.se		
+242	01	2333	Ventelo Internett	internet.ventelo.no		
+242	01	958	Telenor	telenor		
+242	02	959	NetCom	netcom		
+242	02	2334	Chess Internett	netcom		
+242	04	961	Tele2 Internet	internet.tele2.no		
+242	05	1900	NwN Internet	internet		
+242	09	2134	Com4	com4		
+244	03	1904	DNA Internet	internet		
+244	04	682	DNA Internet	internet		
+244	05	1475	Elisa Internet	internet		
+244	05	1479	Saunalahti Internet	internet.saunalahti		
+244	10	1907	TDC Internet	internet.song.fi	song@internet	songnet
+244	91	1480	SONERA Internet	internet		
+246	01	892	Omnitel Internet	omnitel	omni	omni
+246	02	893	Bite Internet	wap		
+246	03	894	Tele2 Internet LT	internet.tele2.lt		
+247	01	898	LMT Internet	internet.lmt.lv		
+247	02	899	Tele2 LV Internet	internet.tele2.lv		
+247	05	2037	Bite LV Internet	internet		
+248	01	667	EMT Internet	internet.emt.ee		
+248	01	2332	Send	send.ee		
+248	02	668	Elisa Internet	internet		
+248	03	669	Tele2 Internet	internet.tele2.ee		
+250	01	1678	MTS Internet	internet.mts.ru	mts	mts
+250	02	1016	Megafon Internet	internet		
+250	11	1022	YOTA Internet	yota.ru		
+250	20	1028	TELE2 Internet	internet.tele2.ru		
+250	26	2448	VTB Mobile	vtb		
+250	28	1029	VODA internet	vodalte.ru		
+250	47	2444	Next Mobile	Next		
+250	62	2142	Tinkoff Mobile	m.tinkoff		
+250	99	1681	Beeline Internet	internet.beeline.ru	beeline	beeline
+255	01	1746	MTS-internet	internet		
+255	02	12	Beeline-internet	internet.beeline.ua		
+255	03	1747	Kyivstar Internet	www.kyivstar.net	igprs	internet
+255	03	2331	Djuice Internet	www.djuice.com.ua		
+255	06	1750	Life:) internet	internet		
+255	07	1751	Utel Internet	3g.utel.ua		
+257	01	568	Velcom Internet	web.velcom.by		
+257	02	569	MTS Internet	mts	mts	mts
+257	04	1950	life:) Internet	internet.life.com.by		
+259	01	904	Orange_Internet_GPRS	wap.orange.md		
+259	02	905	Moldcell Internet	internet		
+259	05	2153	Unite Internet PrePay	internet3g.unite.md		
+260	01	1658	Plus Internet	plus		
+260	02	2367	T-mobile.pl	internet		
+260	03	1659	Orange Internet	Internet	internet	internet
+260	06	1662	Play Internet	internet		
+260	44	2229	Rebtel	rebtel		
+262	01	2395	Telekom Internet	internet.telekom	telekom	telekom
+262	02	2397	Vodafone DE	web.vodafone.de		
+262	03	1453	E-Plus Internet	internet.eplus.de	eplus	internet
+262	03	2461	MVNO DE	internet.mvno.mobi	mvno	mvno
+262	07	2328	Fonic Prepaid	pinternet.interkom.de		
+262	07	2329	Lidl Mobile	pinternet.interkom.de		
+262	07	2330	Tchibo Internet	webmobil1		
+268	03	1668	PortalOptimus	umts		
+268	06	1670	tmn internet	internet		
+270	01	895	LUXGSM WAP	wap.pt.lu	wap	wap
+270	77	896	Tango WAP	internet	tango	tango
+270	99	897	Orange	orange.lu		
+272	01	2387	Vodafone IE	live.vodafone.com		
+272	02	792	3	internet		
+272	03	793	Meteor Data	data.mymeteor.ie	my	wap
+272	05	1903	3	3ireland.ie		
+272	11	2154	Tesco	tescomobile.liffeytelecom.com		
+274	01	1565	Siminn Internet	internet		
+274	02	1566	Vodafone Internet	gprs.is		
+274	03	1567	Vodafone Internet	gprs.is		
+274	11	2155	Net Nova	net.nova.is		
+278	01	2368	Vodafone MT	internet	internet	internet
+280	01	1447	CYTA	cytamobile		
+280	10	1448	MTN Internet	internet		
+280	20	2156	PrimeTel	ip.primetel		
+284	01	1370	MTel	inet-gprs.mtel.bg		
+284	03	1999	VIVACOM Internet	internet.vivacom.bg	vivacom	vivacom
+284	05	1371	Telenor Internet	telenorbg		
+284	11	2230	bulsatcom	bulsat.com		
+284	13	2231	MAX TELECOM	apn.maxtelecom.bg		
+286	01	1735	TURKCELL INTERNET	internet		
+286	02	1736	Vodafone internet	internet		
+286	03	1737	AVEA INTERNET	internet		
+290	01	735	Tele Internet	internet		
+293	40	1709	Si.mobil GPRS	internet.simobil.si	simobil	internet
+293	41	1710	Mobilni Internet	internet	mobitel	internet
+293	64	1711	T2	internet.t-2.net		
+293	70	1712	Tusmobil Internet	internet.tusmobil.si	tusmobil	internet
+293	70	2327	Telemach Internet	telemach.net		
+294	01	2396	T-Mobile MK Internet	internet	internet	t-mobile
+294	02	1608	Cosmofon	Internet	Internet	Internet
+294	03	1609	Internet	vipoperator	vipoperator	vipoperator
+295	05	2326	EMnify	em		
+295	09	2233	EMnify	em		
+295	09	2232	BICS	bicsapn		
+297	02	2088	T-Mobile Internet	tmcg-wnw	38267	38267
+302	220	1404	TELUS	sp.telus.com		
+302	220	2020	Koodo	sp.koodo.com		
+302	220	2053	Mobile Internet	sp.mb.com		
+302	220	2089	Mobile Internet	sp.mb.com		
+302	320	2055	MOWAP	wap.davewireless.com		
+302	270	2252	Internet	wisp.mobi.eastlink.ca		
+302	370	1962	Fido Internet	ltemobile.apn		
+302	370	578	MTS	sp.mts		
+302	500	2008	Media	media.ng		
+302	610	576	Bell Mobility	pda.bell.ca		
+302	720	1403	Rogers LTE	ltemobile.apn		
+302	720	2090	Tbaytel Internet	ltemobile.apn		
+302	720	2057	Cityfone Internet	ltemobile.apn		
+310	020	1781	Union Wireless Data	union.wap.com		
+310	028	2253	ALU Test-SIM Internet	VZWINTERNET		
+310	030	1187	Internet	private.centennialwireless.com	privuser	priv
+310	035	2254	Etex	VZWINTERNET		
+310	040	1784	Mta	VZWINTERNET		
+310	080	1168	Corr Wap	corrgprs		
+310	090	1779	Internet	isp		
+310	100	1170	PLATWEB	isp.plateau		
+310	120	1788	Sprint	sprint		
+310	130	1789	Carolina West Internet	home.cww.com		
+310	150	1964	internet	ndo		
+310	160	1	T-Mobile US 160	fast.t-mobile.com		
+310	160	1949	MetroPCS 160	fast.metropcs.com		
+310	180	1792	WCW-INTERNET	internet.wcc.net	13257630000	mmsc
+310	260	2078	SIMPLE	simple		
+310	260	2022	TFWAP	wap.tracfone		
+310	260	2023	Consumer Cellular	wholesale		
+310	320	1796	Cellular One NEAZ ISP	isp.cellularoneaz.net		
+310	360	1185	Pioneer	VZWINTERNET		
+310	380	2030	AGMS Global	agms.nl.gmm		
+310	410	2029	Defense Mobile	PRODATA		
+310	420	1190	CBW Data	wap.gocbw.com		
+310	450	1193	Viaero Connect	internet.vedge.com		
+310	470	1893	DataConnect	isp.cingular		
+310	480	1195	DataConnect	isp.cingular		
+310	570	1800	Cellular One Smartphone	internet		
+310	580	2011	Inland	VZWINTERNET		
+310	600	1802	Cellcom	VZWINTERNET		
+310	610	1803	EpicINT	internet.epictouch		
+310	720	1811	Rogers Internet	internet.com		
+310	750	1813	Appalachian	VZWINTERNET		
+310	770	1815	Web 2	i2.iwireless.com		
+310	820	2325	Nepa	VZWINTERNET		
+310	840	1821	Internet	isp		
+310	880	1825	DTC dtcwap	wapdtcw.com		
+310	900	1827	Midrivers	VZWINTERNET		
+310	910	1828	WOW_WAP	wap.firstcellular.com		
+310	920	1829	Jamesvalley	VZWINTERNET		
+310	930	1830	Copper Valley	VZWINTERNET		
+310	960	2324	Nntcwire	VZWINTERNET		
+310	960	2323	Silverstar	VZWINTERNET		
+310	960	2322	Snakeriver	VZWINTERNET		
+310	960	2321	Southcentral	VZWINTERNET		
+310	960	2320	strata	VZWINTERNET		
+311	050	1241	Thumbcellular	VZWINTERNET		
+311	070	2319	Elementmobile	VZWINTERNET		
+311	080	1244	PINE WAP	PINE		
+311	140	2318	Sprocket	VZWINTERNET		
+311	190	1833	ISP	isp.cellular1.net		
+311	210	1835	Farmers GPRS	internet.farmerswireless.com		
+311	220	1952	U.S. Cellular	usccinternet		
+311	310	1842	Leaco	VZWINTERNET		
+311	340	1263	Illinois valley	VZWINTERNET		
+311	350	2317	Nemont	VZWINTERNET		
+311	370	1843	GCI WEB	web.gci		
+311	390	1845	Ericsson Test-SIM Internet	VZWINTERNET		
+311	410	1846	Chatmobrsa2	VZWINTERNET		
+311	420	1847	Northwestcell	VZWINTERNET		
+311	440	1849	Bluegrass	VZWINTERNET		
+311	450	1850	Ptci	VZWINTERNET		
+311	500	2316	Mosaic WAP	wap		
+311	500	2315	Norvado	wap		
+311	530	1857	Blaze	mms.mymobiletxt.com		
+311	590	2288	Gsc	VZWINTERNET		
+311	600	1910	Cox	VZWINTERNET		
+311	610	2158	Srtcomm	VZWINTERNET		
+311	650	2159	Unitedwireless	VZWINTERNET		
+311	670	2160	Pinebelt	VZWINTERNET		
+311	740	2256	TelAlaska Cellular	akcell.mobi		
+311	750	2257	Cleartalk	CdmaNai		
+311	910	2258	MobileNation	mymn4g.net		
+311	930	2259	Syringa Wireless	internet.syringawireless.com		
+312	040	2162	Custer	VZWINTERNET		
+312	420	2260	NexTech Wireless	internet.lte.ntwls.com		
+312	570	2261	Blue Wireless	Blue Hotspot	%M@dun.bluehandset.com	wirelessblue
+330	110	1955	Puerto Rico:Claro:LTE	lte.claropr.com		
+334	020	1913	Internet	internet.itelcel.com	webgprs	webgprs2002
+334	03	1914	Movistar INTERNET	internet.movistar.mx	movistar	movistar
+334	050	1915	Iusacell Internet	web.iusacellgsm.mx	iusacellgsm	iusacellgsm
+338	05	1577	INTERNET Digicel	web		
+338	18	2224	Lime Internet Postpaid	internet		
+338	070	2263	Claro Web	internet.ideasclaro.com.jm		
+340	01	742	Orange World Caraïbe	orangeweb	orange	orange
+340	20	745	Digicel Web	web.digicelfr.com		
+342	600	1360	Barbado:Lime:Internet	internet		
+344	920	1325	Antigua:Lime:Internet	internet		
+346	140	1587	Cayman Islands:Lime:Internet	internet		
+348	77	2356	Bvi:Digicel:Internet	wap.digicelbvi.com		
+348	170	2289	Bvi:Lime:Internet	internet		
+352	110	2223	Grenada:Lime:Internet	internet		
+354	860	2292	Monserrat:Lime:Internet	internet		
+358	110	2293	St Lucia:Lime:Internet	internet		
+360	110	2294	St Vincent:Lime:Internet	internet		
+362	69	1332	Curacao:Digicel:Internet	web.digicelcuracao.com		
+363	02	2163	INTERNET Aruba	web.digicelaruba.com		
+365	840	2295	Anguilla:Lime:Internet	internet		
+366	110	2290	Dominica:Lime:Internet	internet		
+368	01	1444	Internet	internet		
+370	01	658	Orange Internet (LTE)	orangeinternet		
+370	02	1467	Internet Móvil Claro	internet.ideasclaro.com.do		
+370	04	1469	Viva Edge (GSM)	edge.viva.net.do	viva	viva
+370	05	2437	Wind Telecom	smart.wind4g.com.do		
+372	02	1532	Haiti:Digicel:Internet	wap.digicelha.com		
+372	03	1533	NATCOM INTERNET	natcom		
+374	12	1739	Bmobile internet	internet		
+374	13	1740	INTERNET Trinidad	web.digiceltt.com		
+376	350	2291	Turks And Caicos:Lime:Internet	internet		
+400	01	1354	Azercell	default		
+400	02	495	Bakcell	default		
+400	03	1355	FONEX	default		
+400	04	1356	Nar Mobile	default		
+401	01	1588	Beeline Internet	internet.beeline.kz	@internet.beeline	beeline
+401	01	2436	izi	izi.me		
+401	02	1589	Kcell Internet	internet		
+401	07	2164	ALTEL INTERNET	internet		
+401	77	1986	Tele2 Internet	internet		
+402	11	564	B-Mobile	default		
+402	77	2165	TashiCell	ticlnet		
+404	01	2378	Vodafone live	portalnmms		
+404	02	1961	AIRTEL LIVE	airtelfun.com		
+404	04	802	Idea_Internet	internet		
+404	09	1543	Reliance Net	smartnet		
+404	21	1545	Loop Mobile	www		
+404	34	1549	bsnlnet	bsnlnet		
+404	41	1550	Aircel-GPRS-Postpaid	aircelgprs.po		
+404	42	1551	Aircel-GPRS-Postpaid	aircelgprs.po		
+404	68	1556	MTNL	mtnl.net	mtnl	mtnl123
+404	70	1557	Mobile Office	airtelgprs.com		
+404	83	1559	Reliance Net	smartnet		
+405	025	1982	TATA DOCOMO DIVE-IN	TATA.DOCOMO.DIVE.IN		
+405	813	2002	Uninor Internet	uninor		
+405	823	2264	Videocon	vinternet.com		
+405	840	2018	Videocon	vinternet.com		
+405	881	2265	STEL	gprs.stel.in		
+405	912	2266	Cheers	internet		
+410	01	1656	Mobilink WAP GPRS	connect.mobilinkworld.com	Mobilink	Mobilink
+410	03	1657	Ufone WAP	Ufone.internet		
+410	04	1980	ZONG WAP	zonginternet		
+410	06	1975	Telenor WAP	internet		
+412	01	452	AWCC	default		
+412	20	453	Roshan	default		
+412	40	455	MTN	default		
+412	50	2221	Etisalat	default		
+413	01	1931	Mobitel	default		
+413	02	1599	Dialog	default		
+413	03	1600	Etisalat	default		
+413	05	1932	Airtel	default		
+413	08	1933	Hutch	default		
+414	01	1611	MPT	default		
+414	05	1996	Ooredoo Internet	Internet		
+415	01	1920	Alfa Internet	internet.mic1.com.lb	mic1	mic1
+415	03	1921	touch	touch		
+416	01	1578	Zain JO Internet	zain	zain	zain
+416	03	1580	Umniah internet	net		
+416	770	849	Orange Internet	net.orange.jo	net	net
+417	01	1088	Syriatel Net	net.syriatel.com		
+417	02	1089	MTN WAP	internet		
+418	05	1969	Asiacell Internet	net.asiacell.com		
+418	08	2166	SanaTel	default		
+418	20	1971	ZAIN-GPRS	internet	atheer	atheer
+418	40	1983	Korek 9595	internet.korek.com		
+418	45	2345	Mobitel	default		
+418	62	2234	Itisaluna	default		
+418	92	2167	Omnnea	default		
+419	02	1585	MI	pps	pps	pps
+419	03	1586	Ooredoo Action	action.ooredoo.com		
+419	04	1992	VIVA - KW	viva		
+420	01	1683	STC - GPRS	jawalnet.com.sa		
+420	03	1684	Mobily WEB	web1		
+420	04	1972	zain-Internet Wap	zain		
+421	01	1877	SabaFon	default		
+421	02	1878	MTN	default		
+421	03	2349	Yemen Mobile	default		
+421	04	2168	HiTS-UNITEL	default		
+422	02	970	Oman Mobile Internet	taif	taif	taif
+422	03	971	Nawras Internet	isp.nawras.com.om	test	test
+424	02	451	Etisalat Data Package	etisalat.ae		
+424	03	1970	du Internet	du		
+425	01	796	3G Portal	uwap.orange.co.il		
+425	02	797	Cellcom Internet	sphone		
+425	03	798	Sphone Pelephone	sphone.pelephone.net.il	pcl@3g	pcl
+425	08	1990	GolanTelecom Internet	internet.golantelecom.net.il		
+425	14	2169	YouPhone	data.youphone.co.il		
+425	15	2170	Home Cellular Internet	hcminternet		
+425	16	2171	Rami Levi 3G	internet.rl		
+426	01	1372	Batelco Internet	internet.batelco.com		
+426	02	2014	Zain BH Internet	internet	internet	internet
+426	04	2015	VIVAGPRS	viva.bh		
+427	01	1675	Internet	data		
+427	02	2393	Voda internet	web.vodafone.com.qa		
+428	88	2347	Unitel	default		
+428	91	2172	Skytel	default		
+428	98	2173	G.Mobile	default		
+428	99	1612	MobiCom	default		
+429	01	962	Namaste / NT Mobile	default		
+429	02	1923	Ncell	default		
+429	04	1924	SmartCell	default		
+432	11	1562	MCI-GPRS	mcinet		
+432	14	1563	MCI-GPRS	mcinet		
+432	19	1564	MCI-GPRS	mcinet		
+432	20	1987	rightel	rightel		
+432	35	1967	Irancell-GPRS	mtnirancell		
+432	70	2352	MCI-GPRS	mcinet		
+432	93	2358	MCI-GPRS	mcinet		
+434	04	1867	Beeline-UZB Internet	internet.beeline.uz	beeline	beeline
+434	05	1868	UCELL Internet	internet		
+434	06	2235	Perfectum Mobile	default		
+434	07	1869	MTS-UZB Internet	net.mts.uz	mts	mts
+436	01	1724	Tcell	default		
+436	02	1725	Tcell	default		
+436	03	1726	Megafon	default		
+436	04	1727	Babilon-M	default		
+436	05	1728	Tacom	default		
+436	12	2174	Tcell	default		
+437	01	867	Beeline	default		
+437	03	2175	Fonex	default		
+437	05	2176	MegaCom	default		
+437	09	2177	O!	default		
+438	01	1729	MTS (BARASH Communication)	default		
+438	02	1730	TM-Cell	default		
+440	10	850	sp-mode	spmode.ne.jp		
+440	11	2429	楽天(rakuten.jp)	rakuten.jp		
+440	20	1894	Application	plus.acs.jp	ym	ym
+440	51	1581	RATEL	ratel.com	ratel@ratel.com	ratel
+440	51	2109	Rakuten	a.rmobile.jp	rakuten@vdm	0000
+450	05	1891	SKT LTE INTERNET	lte.sktelecom.com		
+450	11	2353	SKT 3G INTERNET	web.sktelecom.com		
+450	06	1892	LG uplus	internet.lguplus.co.kr		
+450	08	1890	KT	lte.ktfwing.com		
+452	01	1299	Mobi-wap-gprs 2	m-wap	mms	mms
+452	02	1300	Vina-wap-gprs	m3-world	mms	mms
+452	04	1899	Viettel-wap-gprs 1	v-internet		
+452	05	1994	Vietnamobile_GPRS3	internet		
+452	07	2178	Gmobile-wap-gprs2	internet		
+452	08	2179	e-internet	e-internet		
+454	00	1526	1O1O	mobile		
+454	02	759	1O1O	mobile		
+454	03	760	3 LTE	mobile.lte.three.com.hk		
+454	04	1960	3(2G) GPRS	web-g.three.com.hk		
+454	06	761	SmarTone	SmarTone		
+454	10	765	one2free	hkcsl		
+454	12	767	CMHK Data	cmhk		
+454	15	768	SmarTone	SmarTone		
+454	16	769	PCCW-HKT	pccw		
+454	18	770	1O1O	mobile		
+455	00	1613	SmarTone Macau	smartgprs		
+455	01	1614	CTM Data	ctm-mobile		
+455	03	1615	3 Macau	mobile.three.com.mo		
+456	01	868	Cellcard	default		
+456	02	869	Smart	default		
+456	04	2180	qb	default		
+456	08	2181	Metfone	default		
+456	11	2236	Excell	default		
+456	18	871	Cellcard	default		
+457	01	1590	LTC	default		
+457	02	1591	ETL	default		
+457	03	2346	Unitel	default		
+457	08	1592	Beeline	default		
+460	00	1435	中国移动 (China Mobile) GPRS	cmnet		
+460	01	1436	沃3G连接互联网 (China Unicom)	3gnet		
+460	11	2237	ctlte	ctlte		
+466	01	1881	遠傳電信(Far EasTone) (Internet)	internet		
+466	89	1886	VIBO-vibo	vibo		
+466	92	1884	中華電信(Chunghwa) (Internet)	internet		
+466	93	1887	台灣大哥大(TW Mobile) (Internet)	Internet		
+466	97	1888	台灣大哥大(TW Mobile) (Internet)	Internet		
+466	99	1889	台灣大哥大(TW Mobile) (Internet)	Internet		
+470	01	1362	GP-INTERNET	gpinternet		
+472	01	1624	Dhiraagu	default		
+472	02	2033	OoredooData	OoredooData		
+502	10	1630	DiGi Internet	diginet		
+502	12	1628	Maxis Internet	max4g	maxis	wap
+502	13	1633	Celcom Internet	celcom4g		
+502	17	1631	Maxis Internet	max4g	maxis	wap
+502	18	1632	U Mobile Internet	my3g		
+505	01	1345	Telstra Internet	telstra.wap		
+505	02	30	Optus Yes Internet	yesinternet		
+505	02	2145	Virgin Internet	yesinternet		
+505	03	15	Vodafone live!	live.vodafone.com		
+505	12	1351	3Internet	3netaccess		
+505	88	492	VF Internet	vfinternet.au		
+510	01	1537	indosatgprs	indosatgprs		
+510	08	788	AXIS-SNS	AXIS		
+510	10	787	internet	internet		
+510	21	789	Indosat-SNS	indosatgprs		
+510	89	1966	3-SNS	3gprs		
+514	01	2182	Telin	default		
+514	02	2183	Timor Telecom	default		
+514	03	2268	Viettel Timor-Leste	default		
+515	02	1653	myGlobe Internet	internet.globe.com.ph		
+515	03	1654	SMARTLTE	smartlte		
+515	05	1655	Sun Internet	minternet		
+515	18	2184	Redinternet	redinternet		
+520	00	1096	CAT3G INTERNET	internet		
+520	00	2336	TRUE-H INTERNET	internet	true	true
+520	01	1097	AIS Internet	internet		
+520	03	1098	AIS Internet	internet		
+520	04	1997	TRUE-H INTERNET	internet	true	true
+520	05	1897	dtac Internet	www.dtac.co.th		
+520	15	1723	TOT 3G Internet	internet		
+520	18	1896	dtac Internet	www.dtac.co.th		
+520	99	1898	TRUE INTERNET	internet	true	true
+525	01	31	SingTel (PostPaid)	e-ideas		
+525	03	1706	Sunsurf Mobile	sunsurf		
+525	04	2238	Sunsurf Mobile	sunsurf		
+525	05	1707	SH Data Postpaid	shwap		
+528	02	2350	B-Mobile	default		
+528	11	1379	DSTCom	default		
+530	01	2364	VFNZ Internet	vodafone		
+530	05	968	Data	Internet		
+530	05	2105	Default	wapaccess.co.nz		
+530	24	969	2Degrees Internet	internet		
+537	01	1649	BeMobile	default		
+537	03	1651	PNG WAP	wap.digicelpng.com		
+539	01	1733	U-Call	default		
+539	43	1734	Shoreline Communication	default		
+539	88	2220	Digicel	default		
+540	01	2185	BREEZE	default		
+540	02	2123	BeMobile	default		
+541	00	2239	AIL	default		
+541	01	1301	SMILE	default		
+541	05	2219	Digicel	default		
+542	01	1481	Vodafone	default		
+542	02	2186	Digicel	default		
+544	11	1957	Bluesky	default		
+545	01	2240	Kiribati - TSKL	default		
+545	09	2187	Kiribati - Frigate Net	default		
+546	01	943	Mobilis	default		
+547	20	1648	Vini	default		
+548	01	1426	Telecom Cook	default		
+549	01	1302	Digicel	default		
+549	27	1876	Bluesky	default		
+550	01	1482	FSMTC	default		
+552	01	1671	PNCC	default		
+552	80	2188	Palau Mobile	default		
+602	01	675	Mobinil Web	mobinilweb		
+602	02	2380	vodafone internet	internet.vodafone.net	internet	internet
+602	03	1968	Etisalat WAP	etisalat		
+603	01	1470	mobilis wap	wap	wap	wap
+603	02	1471	djezzy.internet	djezzy.internet		
+603	03	1977	Ooredoo internet	internet		
+604	00	902	Internet	internet.orange.ma		
+604	01	903	MobileZone	wap.iamgprs.ma		
+604	02	1985	WEB	www.wana.ma		
+605	01	1936	weborange	weborange		
+605	02	1731	Internet	internet.tn		
+605	03	1732	Ooredoo TN Internet	internet.ooredoo.tn		
+606	00	1973	Libyana	default		
+606	01	2006	Madar	default		
+606	02	2189	Al-Jeel Phone	default		
+606	03	2348	Libya Phone	default		
+606	06	2190	Hatef Libya	default		
+607	01	736	Gamcel	default		
+607	02	737	Africel	default		
+607	03	738	Comium	default		
+607	04	2191	QCell	default		
+608	01	1721	Orange Wap SN	wap	wap	wap
+608	02	1722	Tigo Internet SN	web.sentel.com		
+608	03	2192	Expresso Internet SN	expresso	wap	wap
+609	01	1616	Mattel	default		
+609	02	1617	Chinguitel	default		
+609	10	1618	Mauritel	default		
+610	02	2034	Orange 3G/4G	internet	internet	internet
+611	01	739	Orange S.A.	default		
+611	02	740	Sotelgui	default		
+611	03	2193	Telecel Guinee	default		
+611	04	2225	MTN	default		
+611	05	741	Cellcom	default		
+612	02	1420	Moov Internet CI	moov	web	web
+612	03	1421	Oweb	orangeciweb	web	web
+612	04	1422	Koz Internet CI	gprs.koz.ci	web	web
+612	05	1423	MTN Internet CI	web.mtn.ci	vide	vide
+613	01	1946	Telmob	default		
+613	02	1368	Airtel	default		
+613	03	1369	Telecel Faso	default		
+614	04	1943	Orange Internet	orange.ne		
+615	01	1095	Togo Cell	default		
+615	03	1947	Moov	default		
+616	01	1376	Libercom	default		
+616	02	1377	Moov	default		
+616	03	1378	MTN	default		
+616	04	1944	BBCOM	default		
+616	05	1945	Glo	default		
+617	01	1621	Orange Internet	orange		
+618	01	2194	Lonestar Cell	default		
+618	02	2195	Libercell	default		
+618	04	1601	Comium	default		
+618	07	2035	Orange	Orange		
+618	20	2196	LIBTELCO	default		
+619	01	1716	Airtel	default		
+619	02	1717	Tigo	default		
+619	03	1718	Africell	default		
+619	04	1074	Comium	default		
+619	05	1075	Africell	default		
+619	25	1076	Mobitel	default		
+620	01	1515	MTN Internet GH	internet		
+620	02	2383	Vodafone Internet GH	browse		
+620	03	2108	Tigo Internet GH	web.tigo.com.gh		
+620	07	2222	Glo Internet GH	glowap	glo	glo
+621	20	1638	Airtel Internet	internet.ng.zain.com	internet	internet
+621	30	1639	MTN WAP	web.gprs.mtnnigeria.net	web	web
+621	50	2115	Glo Direct	glosecure	gprs	gprs
+621	60	1979	etisalat WAP	etisalat		
+622	01	1093	Airtel	default		
+622	02	1094	Tawali	default		
+622	03	2227	Tigo	default		
+622	04	2197	Salam	default		
+623	01	1408	CTP	default		
+623	02	1409	TC	default		
+623	03	1410	Internet browsing	orangeca3g		
+623	04	2198	Nationlink	default		
+625	01	1445	CVMOVEL	default		
+625	02	1446	T+	default		
+626	01	1086	CSTmovel	default		
+627	01	746	Orange GQ	default		
+627	03	2199	Hits GQ	default		
+628	01	1488	Libertis	default		
+628	02	1489	Moov	default		
+628	03	1490	Airtel	default		
+628	04	2200	Azur	default		
+629	01	1411	Airtel	default		
+629	10	1412	Libertis Telecom	default		
+630	01	1405	Vodacom Internet CD	vodanet		
+630	89	2036	Tigo Internet CD	tigo.web		
+631	02	1334	UNITEL	default		
+631	04	2201	MOVICEL	default		
+632	02	1524	Areeba	default		
+632	03	1948	Orange Bissau	4Gogb		
+632	07	2241	Guinetel	default		
+633	01	1685	Cable & Wireless	default		
+633	02	1686	Mediatech International	default		
+633	10	1687	Airtel	default		
+634	01	1688	Zain SD	default		
+634	02	1689	MTN	default		
+634	07	2202	Sudani One	default		
+634	09	2242	Privet Network	default		
+635	10	1682	MTN	default		
+635	12	2243	Rwandatel	default		
+635	13	2203	Tigo	default		
+635	14	2204	Airtel	default		
+636	01	681	ETH-MTN	default		
+637	01	2205	Telesom	default		
+637	04	2244	Somafone	default		
+637	10	2206	Nationlink	default		
+637	25	2245	Hormuud	default		
+637	30	1082	Golis	default		
+637	57	2246	Unittel	default		
+637	71	2207	Somtel	default		
+637	82	2208	Telcom	default		
+638	01	1462	Evatis	default		
+639	02	865	safaricom GPRS	safaricom	saf	data
+639	03	866	Airtel Internet	internet		
+639	05	2209	Yu Internet	Internet		
+639	07	2210	Orange Internet	bew.orange.co.ke		
+640	04	1744	Vodacom WAP	Wap		
+641	01	1753	Airtel Internet UG	internet		
+641	10	1754	MTN Internet UG	yellopix.mtn.co.ug		
+641	11	1755	UTL Internet UG	utweb		
+641	14	1756	Orange Internet UG	orange.ug		
+641	22	1757	Warid Telecom Internet UG	web.waridtel.co.ug		
+642	01	1373	Spacetel	default		
+642	02	1374	Tempo	default		
+642	03	1375	Onatel	default		
+642	07	2355	Smart Mobile	default		
+642	08	2211	HiTs Telecom	default		
+642	82	2212	Leo	default		
+643	01	1634	mCel	default		
+643	03	2213	Movitel	default		
+643	04	2381	Vodacom	default		
+645	01	1319	Airtel	default		
+645	02	1320	MTN	default		
+645	03	1321	ZAMTEL	default		
+646	02	1606	Orange MG Internet	orangenet		
+647	00	1676	Orange World re	orangerun	orange	orange
+647	02	1677	OnlyWap	onlywap	only	only
+647	10	1008	Full Internet SRR	sl2sfr		
+648	03	1879	Telecel	default		
+648	04	1880	Econet	default		
+649	01	941	MTC	default		
+649	02	2214	switch	default		
+649	03	942	Leo	default		
+650	01	1625	TNM	default		
+650	10	1626	Airtel	default		
+651	01	2392	VCL Internet GPRS	internet		
+653	10	1091	Swazi MTN	default		
+654	01	872	HURI - SNPT	default		
+655	01	24	LTE.Vodacom	lte.vodacom.za		
+655	02	1965	Telkom Mobile Internet	internet		
+655	07	1308	Cell C GPRS	internet		
+655	07	2335	VIRGIN_INTERNET_1	vdata		
+655	10	1309	MTN GPRS	myMTN	mtnwap	mtnwap
+657	01	2247	Eritel	default		
+702	67	570	DigiCell	default		
+702	99	2354	Smart	default		
+704	01	1520	Internet CLARO	internet.ideasclaro		
+704	02	1521	Broadband TIGO	broadband.tigo.gt		
+704	03	1522	Movistar INTERNET	internet.movistar.gt	movistargt	movistargt
+706	01	1954	Internet CLARO	internet.ideasclaro		
+706	02	1087	Digicel Internet	web.digicelsv.com		
+706	03	1998	Internet Tigo	internet.tigo.sv		
+706	04	2009	Movistar INTERNET	internet.movistar.sv	movistarsv	movistarsv
+708	001	773	Internet Claro	internet.ideasclaro		
+708	02	1528	INTERNET TIGO	internet.tigo.hn		
+708	04	2248	Honduras:Digicel:Internet	web.digicelhn.com		
+710	21	1641	Enitel WEB	internet.ideasalo.ni	internet	internet
+710	30	2010	Movistar INTERNET	internet.movistar.ni	movistarni	movistarni
+710	73	1642	Enitel WEB	internet.ideasalo.ni	internet	internet
+712	01	627	KOLBI 3G	kolbi3g		
+712	03	1953	Internet CLARO CR	internet.ideasclaro		
+712	04	2003	Movistar INTERNET	internet.movistar.cr	movistarcr	movistarcr
+712	019	2267	Internet Tuyo	tm7datos		
+714	01	973	Internet	apn01.cwpanama.com.pa		
+714	02	974	Movistar INTERNET	internet.movistar.pa	movistarpa	movistarpa
+714	03	1925	WEB Claro	web.claro.com.pa	CLAROWEB	CLAROWEB
+714	04	1926	Digicel Internet	web.digicelpanama.com		
+716	06	1929	Movistar INTERNET	movistar.pe	movistar@datos	movistar
+716	10	1647	CLARO DATOS	claro.pe	claro	claro
+716	15	2359	Bitel - Internet	bitel		
+716	17	1930	Entel PE	entel.pe		
+722	01	2249	Quam_WEB	internet.movil	internet	internet
+722	07	1337	Movistar WAP	wap.gprs.unifon.com.ar	wap	wap
+722	31	1338	Claro AR	igprs.claro.com.ar		
+722	34	1341	Personal Datos	datos.personal.com	datos	datos
+722	36	2250	Argentina:Nuestro:Internet	gprs.nuestro.com.ar	gprs	
+724	02	1385	TIM Connect	timbrasil.br	tim	tim
+724	05	529	Java Session	java.claro.com.br	claro	claro
+724	06	530	Vivo Internet	zap.vivo.com.br	vivo	vivo
+724	07	1388	SCTL GPRS	sercomtel.com.br	sercomtel	sercomtel
+724	15	539	Sercomtel:Dados	sercomtel.com.br	sercomtel	sercomtel
+724	16	540	Oi GPRS Internet	gprs.oi.com.br		
+724	19	543	TelemigC GPRS	gprs.telemigcelular.com.br	celular	celular
+724	24	1389	OI:INTERNET:2	gprs.oi.com.br	oi	oi
+724	32	1390	CTBC:Dados:1	ctbc.br	CTBC	1212
+724	39	1383	Nextel WAP	wap.nextel3g.net.br		
+724	54	2215	Porto Seguro Conecta	portoconecta.br		
+730	01	1427	Internet Movil	bam.entelpcs.cl	entelpcs	entelpcs
+730	09	1430	Internet Nextel	wap.nextelmovil.cl		
+730	02	1428	Movistar APLICACIONES	wap.tmovil.cl	wap	wap
+730	03	1429	Banda Ancha Movil	bam.clarochile.cl	clarochile	clarochile
+730	08	2216	Internet	movil.vtr.com	vtrmovil	vtrmovil
+732	101	1442	COMCEL	internet.comcel.com.co	COMCELWEB	COMCELWEB
+732	103	624	TIGO WEB	web.colombiamovil.com.co		
+732	103	2218	Internet ETB	moviletb.net.co	etb	etb
+732	103	2337	Internet Éxito	movilexito.net.co		
+732	103	2338	UNE	www.une.net.co	une	une
+732	123	625	Movistar INTERNET	internet.movistar.com.co	movistar	movistar
+732	123	2339	Virgin Mobile	web.vmc.net.co		
+732	130	626	Avantel	lte.avantel.com.co		
+734	01	1870	Digitel 412	internet.digitel.ve		
+734	02	1871	Digitel 412	internet.digitel.ve		
+734	03	1872	Digitel 412	internet.digitel.ve		
+734	04	1873	Movistar INTERNET	internet.movistar.ve		
+734	06	1874	MODEM	int.movilnet.com.ve		
+736	01	1380	VIVA3G	internet.nuevatel.com		
+736	02	1381	ENTEL WAP GPRS	wap.movil.com.bo		
+736	03	1382	WAPTIGO	wap.tigo.bo		
+738	01	1525	Digicel	default		
+738	02	2217	GT&T Cellink Plus	default		
+740	00	1472	Movistar INTERNET	internet.movistar.com.ec	movistar	movistar
+740	01	1473	Internet Claro	internet.claro.com.ec		
+740	02	1474	CNT 3G	internet3gsp.alegro.net.ec		
+744	01	1672	VOX INTERNET	vox.internet		
+744	02	1673	Claro PY	igprs.claro.com.py	ctigprs	ctigprs999
+744	04	1927	TIGO PY	internet.tigo.py		
+744	05	1928	Personal Datos Py	internet	personal	personal
+746	02	1083	Telesur	default		
+746	03	1084	Suriname:Digicel:Internet	web.digicelsr.com		
+748	01	1862	wapANCEL	wap		
+748	07	1863	Movistar INTERNET	webapn.movistar.com.uy	movistar	movistar
+748	10	1864	Claro UY	igprs.claro.com.uy	ctigprs	ctigprs999
+283	10	1940	Orange Armenia Internet	Internet		
+652	02	567	Orange WAP BW	internet.orange.co.bw		
+624	02	1434	Orange CM	orangecmgprs	orange	orange
+250	50	2251	Sberbank-Telecom Internet	internet.sberbank-tele.com		
+206	30	2144	Unleashed	web.be		
+334	140	2469	Altan	internet.altan		
+334	140	2470	IENTC	internet.ientc.com		
+334	140	2471	NeWWW	internet.newww.com		
+250	43	2999	Sprint	signalq		

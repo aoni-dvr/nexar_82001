@@ -1,0 +1,723 @@
+###################################################################################
+#
+# QNX Neutrino on the AMBA Evaluation Kit,
+# based on ARM Cortex A53
+#
+####################################################################################
+
+[+keeplinked]
+[+compress]
+[image=0x48000]
+
+[virtual=aarch64le,raw] .bootstrap = {
+    startup-ambarella-cv2 -v -P 4 -R 4M,1M,fio_work,1 -R 1M,1M,audio_dma,1 -S
+    PATH=/proc/boot:/bin:/usr/bin:/sbin:/usr/sbin:/usr/lib
+    LD_LIBRARY_PATH=/proc/boot:/lib:/lib/dll:/lib/dll/pci:/usr/lib procnto-smp-instr -ae -v -P 129
+}
+[+script] .script = {
+    display_msg Welcome to QNX Neutrino 7.1 on the AMBA BUB
+
+    procmgr_symlink ../../proc/boot/ldqnx-64.so.2 /usr/lib/ldqnx-64.so.2
+
+    # optimized for AARCH64 targets using NEON
+    LIBC_STRINGS=aarch64_neon
+
+    # Start some common servers
+    slogger2 &
+    pipe &
+    mqueue
+
+    #######################################################################
+    ## clock manager
+    #######################################################################
+    display_msg Starting clock manager...
+    clock-ambarella -vv
+
+    #######################################################################
+    ## Serial driver
+    #######################################################################
+    display_msg "Starting Serial driver (UART0)..."
+    devc-ambarella -e -F -S 0xe4000000,53
+    waitfor /dev/ser1
+    #reopen /dev/ser1
+    display_msg Serial driver INIT DONE (UART0)...
+
+    display_msg "Starting Serial driver (UART1)..."
+    devc-ambarella -e -F -S 0xE0016000,91
+    waitfor /dev/ser2
+    #reopen /dev/ser2
+    display_msg Serial driver INIT DONE (UART1)...
+
+    #######################################################################
+    ## Random service
+    #######################################################################
+    display_msg "Starting random service ..."
+    random -t
+    waitfor /dev/random 5
+
+    #######################################################################
+    ## gpio driver
+    #######################################################################
+    display_msg "Starting gpio manager..."
+    gpio-ambarella
+    waitfor /dev/gpio
+
+    #######################################################################
+    ## rng driver
+    #######################################################################
+    display_msg "Starting rng manager..."
+    rng-ambarella
+    waitfor /dev/rng
+
+    #######################################################################
+    ## rtc driver
+    #######################################################################
+    display_msg "Starting rtc manager..."
+    rtc-ambarella
+    waitfor /dev/rtc
+
+    #######################################################################
+    ## timer manager
+    #######################################################################
+    display_msg "Starting timer manager..."
+    timer-ambarella
+    waitfor /dev/amba_tmr
+
+    #######################################################################
+    ## SD driver
+    #######################################################################
+    display_msg Starting SDMMC driver for SD card(SD0)...
+    devb-sdmmc-ambarella blk cache=16m cam pnp,bounce=512k sdio addr=0xE0004000,irq=104,delay=0x6541,hs=baseclk=80000000,bw=4,timing=~sdr104 &
+    #waitfor /dev/hd0
+
+    #######################################################################
+    ## USB
+    #######################################################################
+
+    #######################################################################
+    ## NAND flash driver
+    #######################################################################
+    display_msg Starting NAND flash driver...
+    fio-ambarella
+
+    #######################################################################
+    ## QSPI flash driver
+    #######################################################################
+    display_msg Starting QSPI flash driver...
+    nor-ambarella
+    devf-qspi-ambarella -r &
+
+    #######################################################################
+    ## I2C devices
+    #######################################################################
+    display_msg Starting i2c drivers(I2C)
+    i2c-ambarella -C 0 --u 0 &
+    waitfor /dev/i2c0
+
+    i2c-ambarella -C 1 --u 1 &
+    waitfor /dev/i2c1
+
+    i2c-ambarella -C 2 --u 2 &
+    waitfor /dev/i2c2
+
+    i2c-ambarella -C 3 --u 3 &
+    waitfor /dev/i2c3
+
+    #######################################################################
+    ## SPI manager
+    #######################################################################
+    display_msg Starting SPI manager...
+    spi-ambarella -C 0
+    spi-ambarella -C 1
+    spi-ambarella -C 2
+    spi-ambarella -C 3
+    spi-ambarella -S
+
+    #######################################################################
+    ## OTP driver
+    #######################################################################
+    display_msg Starting OTP manager...
+    otp-ambarella
+
+    #######################################################################
+    ## CAN
+    #######################################################################
+
+    #######################################################################
+    ## DMA
+    #######################################################################
+    display_msg Starting DMA driver (/dev/dma/)...
+    dma-ambarella
+    waitfor /dev/dma
+
+    #######################################################################
+    ## deva
+    #######################################################################
+    io-audio -vv -c /etc/io-audio.config
+    waitfor /dev/snd
+
+    #######################################################################
+    ## gdma driver
+    #######################################################################
+    display_msg "Starting gdma manager..."
+    gdma-ambarella
+    waitfor /dev/gdma
+
+    #######################################################################
+    ## AmbaPrint
+    #######################################################################
+    display_msg Starting AmbaPrint...
+    #[port 0/1][request queue number][ring buffer size in bytes][burst 0/1][level to flush ring buffer][timeout to flush ring buffer in ms]
+    comsvc-ambarella-print 0 400 2097152 0 2 1000 &
+    waitfor /dev/mqueue/AmbaPrintQueue
+    display_msg AmbaPrint Init Done
+
+    #######################################################################
+    ## Networking
+    #######################################################################
+    #display_msg Starting Network driver...
+    #sh -c "io-pkt-v6-hc -d /proc/boot/libeth-ambarella.so"
+    #ifconfig eth0 up
+    #dhclient -m -lf /dev/shmem/dhclient.leases -pf /dev/shmem/dhclient.pid -nw eth0
+
+    #######################################################################
+    ## REMOTE_DEBUG (gdb or Momentics)
+    ##  - refer to the help documentation for the gdb, qconn and the IDE
+    ##    for more information on remote debugging
+    ##  - the commands shown require that NETWORK is enabled too
+    #######################################################################
+    #devc-pty
+    #waitfor /dev/ptyp0 4
+    #waitfor /dev/socket 4
+    #PATH=$PATH:/usr/bin qconn port=8000
+
+    #######################################################################
+    ## CV driver
+    #######################################################################
+    display_msg Starting devcv-ambarella
+    devcv_schdr &
+    waitfor /dev/ambacv
+
+    #######################################################################
+    ## DSP driver
+    #######################################################################
+    display_msg Starting devdsp
+    devdsp &
+
+    # Start inetd for telnet access
+    #inetd
+
+    # Start the main shell
+    display_msg Init Shell...
+
+    SYSNAME=nto
+    TERM=qansi
+    HOME=/
+    PATH=:/bin:/usr/bin:/sbin:/usr/sbin:/proc/boot:/usr/lib
+    LD_LIBRARY_PATH=:/lib:/usr/lib:/lib/dll:/proc/boot
+
+    display_msg Shell Init done...
+
+    # Workaround for a performance issue with memcpy() on aarch64 targets
+    LD_PRELOAD=/proc/boot/libstringsa64.so
+
+    reopen /dev/ser2
+
+    display_msg execute amba_icam ...
+    amba_icam &
+    display_msg amba_icam is running ...
+
+    ENV=$HOME/.kshrc
+    [+session] ksh &
+}
+
+/.kshrc = {
+    alias pidin="pidin -f NlpabIhmJT"
+}
+
+# Redirect console messages
+[type=link] /bin/sh=/proc/boot/ksh
+[type=link] /dev/console=/dev/ser2
+[type=link] /tmp=/dev/shmem
+
+# Shared libraries
+libc.so
+libgcc_s.so.1
+ldqnx-64.so.2
+libregex.so
+libqh.so
+libm.so
+libncursesw.so
+libstringsa64.so
+libfdt.so
+
+# Shared libraries from Ambarella
+libwrap_std.so
+
+###########################################################################
+## icam
+###########################################################################
+amba_icam
+
+libcomsvc_cfs.so
+libcomsvc_codec.so
+libcomsvc_container.so
+libcomsvc_dcf.so
+libcomsvc_fifo.so
+libcomsvc_wrapper.so
+libcomsvc_exif.so
+libcomsvc_draw.so
+libfoss_lvgl.so
+libfoss_mbedtls.so
+
+###########################################################################
+## icam_cnntestbed
+###########################################################################
+libicam_cnntestbed.so
+libCtSSD.so
+libCtUtils.so
+libCtSingleFD.so
+libCtFrcnnProc.so
+libCtDetCls.so
+
+###########################################################################
+## helper scripts
+###########################################################################
+
+###########################################################################
+## Tracelog
+###########################################################################
+libtracelog.so.1
+
+###########################################################################
+## Slogger2
+###########################################################################
+libslog2.so.1
+libslog2parse.so.1
+
+###########################################################################
+## uncomment for SPI driver
+###########################################################################
+#spi-ambarella.so
+
+###########################################################################
+## uncomment for NETWORK driver
+###########################################################################
+libeth-ambarella.so
+libsocket.so
+libcrypto.so
+libqcrypto.so
+qcrypto-openssl.so
+libz.so
+
+###########################################################################
+## uncomment for CAN driver
+###########################################################################
+#[perms=+x] canctl
+
+###########################################################################
+## uncomment for USB
+###########################################################################
+libusbdi.so.2
+devu-hcd-ehci.so
+
+###########################################################################
+## uncomment for CV driver
+###########################################################################
+devcv_schdr
+libcv_schdr.so
+libcv_AmbaCV_Flexidag.so
+libcv_stereopriv_cv2.so
+libcv_vopriv_cv2.a
+libcv_mvacpriv_cv2.a
+libambacv.so
+libflexidagio.so
+libcv_FlexidagUt.so
+libcv_accelerator.so
+libcv_FlexidagNetTest.so
+libcv_FlexidagAmbaFetchChipInfo.so
+libcv_protection.so
+libcv_vputils_cv2.so
+libSvcCvAlgoUtil.so
+libcv_SCAOpenOD.so
+libcv_SCAOpenSeg.so
+libcv_SCAAppTest.so
+libcv_SCAAmbaStereo_cv2.so
+libimg_stu.a
+libimg_stu_refflow.a
+
+###########################################################################
+## uncomment for BSP
+###########################################################################
+libbsp.so
+libperif.so
+
+###########################################################################
+## uncomment for Dsp driver
+###########################################################################
+devdsp
+libdsp_wrapper.so
+libdsp_imgkernelcore.a
+libdsp_imgkernel.a
+libimg_fma.a
+libimg_cal.a
+libdsp_audio.so
+libaacdec.so
+libaacenc.so
+
+###########################################################################
+## uncomment for Image
+###########################################################################
+libcomsvc_af.so
+libimgaaa.so
+libimg_proc.so
+libcomsvc_misc.so
+libimgfrw.so
+libmonfrw.so
+libimg_ituner.a
+libimg_tuner.a
+
+###########################################################################
+## BLOCK drivers libraries
+###########################################################################
+[type=link] libcam.so=libcam.so.2
+libcam.so.2
+io-blk.so
+cam-disk.so
+#cam-cdrom.so
+#fs-qnx6.so
+fs-dos.so
+
+###########################################################################
+## SPINOR
+###########################################################################
+libspinor-ambarella.so
+
+###########################################################################
+## nvm
+###########################################################################
+libnvm-ambarella.so
+
+###########################################################################
+## FS
+###########################################################################
+libfs-ambarella.so
+
+###########################################################################
+## GPIO
+###########################################################################
+libgpio-ambarella.so
+
+###########################################################################
+## RTC
+###########################################################################
+rtc-ambarella
+
+###########################################################################
+## Common Service Libraries
+###########################################################################
+[type=link] libcomsvc-ambarella-misc.so=libcomsvc-ambarella-misc.so.1
+[type=link] libcomsvc-ambarella-print.so=libcomsvc-ambarella-print.so.1
+[type=link] libcomsvc-ambarella-shell.so=libcomsvc-ambarella-shell.so.1
+libcomsvc-ambarella-misc.so
+libcomsvc-ambarella-print.so
+libcomsvc-ambarella-shell.so
+
+comsvc-ambarella-print
+comsvc-ambarella-test
+
+###########################################################################
+## Executables
+###########################################################################
+[data=c dperms=0755]
+
+###########################################################################
+## libqcrypto support
+###########################################################################
+[perms=644] /etc/qcrypto.conf = {
+openssl     tags=*
+}
+
+###########################################################################
+## uncomment for board gpio manager
+###########################################################################
+gpio-ambarella
+
+###########################################################################
+## uncomment for board rng manager
+###########################################################################
+rng-ambarella
+
+###########################################################################
+## uncomment for board clock manager
+###########################################################################
+clock-ambarella
+
+###########################################################################
+## uncomment for board internal timer/wdt manager
+###########################################################################
+timer-ambarella
+wdt-ambarella
+
+###########################################################################
+## uncomment for board internal dma/gdma manager
+###########################################################################
+dma-ambarella
+gdma-ambarella
+
+###########################################################################
+## uncomment for diag commands
+###########################################################################
+diag-ambarella
+# Note !! memtester is GPL. So this should be only enabled for internal testing usage
+#/usr/sbin/memtester=../prebuilt/aarch64le/sbin/memtester
+
+###########################################################################
+## uncomment for SD driver
+###########################################################################
+devb-sdmmc-ambarella
+libsd-ambarella.so
+
+###########################################################################
+## uncomment for QSPI flash driver
+###########################################################################
+nor-ambarella
+devf-qspi-ambarella
+flashctl
+
+fio-ambarella
+libnand-ambarella.so
+
+###########################################################################
+## uncomment for NETWORK driver
+###########################################################################
+io-pkt-v6-hc
+
+###########################################################################
+## uncomment for io-audio
+###########################################################################
+deva-mixer-ambacodec.so
+deva-ctrl-amba.so
+/sbin/io-audio=${QNX_TARGET}/aarch64le/sbin/io-audio
+/etc/io-audio.config=../prebuilt/aarch64le/sbin/io-audio.config
+[uid=0 gid=0 perms=0755] /usr/lib/libsecpol.so=${QNX_TARGET}/aarch64le/lib/libsecpol.so
+[uid=0 gid=0 perms=0755] /usr/lib/libasound.so=${QNX_TARGET}/aarch64le/lib/libasound.so
+
+#useful commands
+libc++.so.1
+iperf2
+ptpd-avb
+ptpd
+
+###########################################################################
+## dhclient support
+###########################################################################
+dhclient
+/sbin/ifconfig=ifconfig
+[search=${QNX_TARGET}/sbin perms=a+x] /sbin/dhclient-script=dhclient-script
+[search=${QNX_TARGET}/etc]/etc/dhclient.conf=dhclient.conf
+
+###########################################################################
+## uncomment for USB
+###########################################################################
+io-usb-otg
+usb
+devb-umass
+
+###########################################################################
+## uncomment for REMOTE_DEBUG
+###########################################################################
+devc-pty
+qconn
+/usr/bin/pdebug=pdebug
+
+###########################################################################
+## uncomment for Serial driver
+###########################################################################
+devc-ambarella
+
+###########################################################################
+## uncomment for KAL
+###########################################################################
+libkal-ambarella.so
+
+
+###########################################################################
+## uncomment for io wrapper
+###########################################################################
+libio-mw.so
+libio-utility.so
+
+###########################################################################
+## uncomment for I2C, SPI drivers
+###########################################################################
+i2c-ambarella
+spi-ambarella
+
+###########################################################################
+## OTP driver
+###########################################################################
+otp-ambarella
+
+###########################################################################
+## Network services (telnet) support
+###########################################################################
+devc-pty
+tftp
+
+/etc/hosts=${QNX_TARGET}/etc/hosts
+/etc/services=${QNX_TARGET}/etc/services
+
+/etc/inetd.conf = {
+ftp        stream tcp nowait root  /usr/sbin/ftpd           in.ftpd -l
+telnet     stream tcp nowait root  /usr/sbin/telnetd        in.telnetd
+}
+
+/etc/ftpusers=${QNX_TARGET}/etc/ftpusers
+
+/etc/ftpd.conf = {
+/* Make things a+rw by default */
+umask all 0000
+}
+
+[uid=0 gid=0 perms=0644] /etc/passwd = {
+root:x:0:0:Superuser:/root:/bin/sh
+sshd:x:15:6:sshd:/var/chroot/sshd:/bin/false
+qnxuser:x:1000:1000:QNX User:/home/qnxuser:/bin/sh
+}
+
+# Enabled Username/Password: root/root, qnxuser/qnxuser
+[uid=0 gid=0 perms=0600] /etc/shadow = {
+root:@S@NKlWES1quMp1wmqugkUSnFEpPGn58kIs4wQOgDDNs06vimR+bbGPUKM+9P6jbFUzo3Rm+Qe5MS+17xKhwaeJEg==@Mjg5ZTJiMTM0YTRjYTE2ZGFjMDdhZTFlY2NlMDVmNmE=:1468494669:0:0
+sshd:*:1231323780:0:0
+qnxuser:@S@HZERXjgixvb3157FFeraShhvTVw+10ccUtVUVZbi0fUwpzlzBZFw5gHiFd1XHKit8D39Whe749XAY8fV4P5ANQ==@Y2ZlOTg3M2RhNTM4Y2M2ODY0OWZhODdiNDRkMmU5Nzg=:1468488235:0:0
+}
+
+[uid=0 gid=0 perms=0644] /etc/group = {
+root:x:0:root
+sshd:x:6:
+qnxuser:x:qnxuser
+}
+
+###########################################################################
+## PAM configurations addon build file
+###########################################################################
+[uid=0 gid=0 perms=4755] /bin/login=login
+[uid=0 gid=0 perms=4755] /bin/passwd=passwd
+[uid=0 gid=0 perms=4755] /bin/su=su
+[uid=0 gid=0 perms=0755] /usr/sbin/sshd=sshd
+[uid=0 gid=0 perms=0755] /usr/sbin/ftpd=ftpd
+[uid=0 gid=0 perms=0755] /usr/sbin/inetd=inetd
+[uid=0 gid=0 perms=0755] /usr/sbin/telnetd=telnetd
+
+[uid=0 gid=0 type=dir dperms=0755] /usr
+[uid=0 gid=0 type=dir dperms=0755] /usr/lib
+[uid=0 gid=0 type=dir dperms=0755] /etc
+[uid=0 gid=0 type=dir dperms=0755] /etc/pam.d
+[uid=0 gid=0 perms=0644] /etc/pam.d/login=${QNX_TARGET}/etc/pam.d/login
+[uid=0 gid=0 perms=0644] /etc/pam.d/on=${QNX_TARGET}/etc/pam.d/on
+[uid=0 gid=0 perms=0644] /etc/pam.d/passwd=${QNX_TARGET}/etc/pam.d/passwd
+[uid=0 gid=0 perms=0644] /etc/pam.d/su=${QNX_TARGET}/etc/pam.d/su
+[uid=0 gid=0 perms=0644] /etc/pam.d/ftpd=${QNX_TARGET}/etc/pam.d/ftpd
+
+[uid=0 gid=0 perms=0755] /usr/lib/pam_ftpusers.so=pam_ftpusers.so
+[uid=0 gid=0 perms=0755] /usr/lib/pam_rootok.so=pam_rootok.so
+[uid=0 gid=0 perms=0755] /usr/lib/pam_qnx.so=pam_qnx.so
+#[uid=0 gid=0 perms=0755] /usr/lib/pam_deny.so=pam_deny.so
+#[uid=0 gid=0 perms=0755] /usr/lib/pam_echo.so=pam_echo.so
+#[uid=0 gid=0 perms=0755] /usr/lib/pam_exec.so=pam_exec.so
+#[uid=0 gid=0 perms=0755] /usr/lib/pam_group.so=pam_group.so
+#[uid=0 gid=0 perms=0755] /usr/lib/pam_mac.so=pam_mac.so
+#[uid=0 gid=0 perms=0755] /usr/lib/pam_permit.so=pam_permit.so
+#[uid=0 gid=0 perms=0755] /usr/lib/pam_radius.so=pam_radius.so
+#[uid=0 gid=0 perms=0755] /usr/lib/pam_self.so=pam_self.so
+
+###########################################################################
+## disk commands
+###########################################################################
+###########################################################################
+df
+du
+#chkqnx6fs
+#mkqnx6fs
+mount
+sync
+umount
+
+###########################################################################
+## network commands
+###########################################################################
+arp
+fs-nfs3
+hostname
+ifconfig
+if_up
+netstat
+nicinfo
+ping
+qtalk
+route
+setconf
+
+###########################################################################
+## Slogger
+###########################################################################
+slogger2
+slog2info
+
+###########################################################################
+## general commands
+###########################################################################
+#awk
+cat
+chmod
+cksum
+cp
+date
+dd
+devb-ram
+diff
+env
+fdisk
+grep
+in32
+isendrecv
+ksh
+ln
+ls
+mkdosfs
+chkdosfs
+mv
+on
+out32
+pidin
+pipe
+random
+rm
+shutdown
+slay
+sleep
+stty
+top
+touch
+uname
+use
+waitfor
+wc
+which
+mqueue
+split
+mkdir
+hogs
+ps
+errno
+
+###########################################################################
+## END OF BUILD SCRIPT
+###########################################################################
+
+[uid=0 gid=0 perms=0444] pci_hw.cfg = {
+[slots]
+10ee;7024;0;1
+
+}

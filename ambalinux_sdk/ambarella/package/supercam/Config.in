@@ -1,0 +1,63 @@
+menuconfig BR2_PACKAGE_SUPERCAM
+	bool "supercam apps"
+	help
+	  This is the Apps for Amba supercam.
+
+config BR2_PACKAGE_SUPERCAM_FRAMESHARE
+	bool "amba_example_frameshare"
+	default y
+	depends on BR2_PACKAGE_SUPERCAM
+	help
+	  This is the Example to share Frame data with Linux for SSP.
+
+config BR2_PACKAGE_SUPERCAM_METADATA
+        bool "amba_example_metadata"
+        default y
+        depends on BR2_PACKAGE_SUPERCAM
+        help
+          This is the Example to share Meta data with Linux for SSP.
+
+config BR2_PACKAGE_SUPERCAM_STATUSUPDATE
+        bool "amba_example_statusupdate"
+        default y
+        depends on BR2_PACKAGE_SUPERCAM
+        select BR2_PACKAGE_SUPERCAM_LIB_TCP
+        help
+          This is the Example to share status with Linux for SSP.
+
+config BR2_PACKAGE_SUPERCAM_PREVMETADATA
+        bool "amba_example_prevmetadata"
+        default y
+        depends on BR2_PACKAGE_SUPERCAM
+        help
+          This is the Example for Sending preview meta data.
+
+config BR2_PACKAGE_SUPERCAM_LOGTHREADX
+		bool "amba_example_logthreadx"
+		default y
+		depends on BR2_PACKAGE_SUPERCAM
+		help
+		  This is the Example for Linux to log threadx msg .
+
+config BR2_PACKAGE_SUPERCAM_LIB_TCP
+        bool "supercam_lib_tcp"
+        default y
+        depends on BR2_PACKAGE_SUPERCAM
+        help
+          This is Supercam TCP library.
+
+config BR2_PACKAGE_SUPERCAM_LIB_SHM
+        bool "supercam_lib_shm"
+        default y
+        depends on BR2_PACKAGE_SUPERCAM
+        help
+          This is Supercam SHM library.
+
+config BR2_PACKAGE_SUPERCAM_LIB_CAMCTRL
+        bool "supercam_lib_camctrl"
+        default y
+        depends on BR2_PACKAGE_SUPERCAM
+        help
+          This is Supercam camctrl library.
+
+

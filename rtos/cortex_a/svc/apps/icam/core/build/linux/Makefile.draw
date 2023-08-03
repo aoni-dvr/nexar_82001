@@ -1,0 +1,19 @@
+# svc draw function
+DRAW_O_PREFIX = ../../src/draw
+
+
+libsvc_icamcore-objs += $(DRAW_O_PREFIX)/SvcGui.o
+libsvc_icamcore-objs += $(DRAW_O_PREFIX)/SvcGuiDiagBox.o
+libsvc_icamcore-objs += $(DRAW_O_PREFIX)/SvcGuiCheckBox.o
+libsvc_icamcore-objs += $(DRAW_O_PREFIX)/SvcGuiTextView.o
+
+ifeq ($(CONFIG_ICAM_32BITS_OSD_USED),y)
+ifeq  ($(CONFIG_SVC_LVGL_USED),y)
+libsvc_icamcore-objs += $(DRAW_O_PREFIX)/SvcOsd32bits_LVGL.o
+else
+libsvc_icamcore-objs += $(DRAW_O_PREFIX)/SvcOsd32bits.o
+endif
+else
+libsvc_icamcore-objs += $(DRAW_O_PREFIX)/SvcOsd.o
+libsvc_icamcore-objs += $(DRAW_O_PREFIX)/SvcGuiOsdPalette.o
+endif

@@ -1,0 +1,80 @@
+#!/bin/sh
+
+mount_mnt_nfs ()
+{
+	n=0
+	mkdir /new_root
+	sleep 0.5
+	while [ $n -le 7 ]; do
+		echo "mount -t nfs -o nolock ${1}:/ /new_root"
+		mount -t nfs -o nolock ${1}:/ /new_root 2>/dev/null
+		if [ $? -eq 0 ]; then
+			cd /new_root
+			chroot . /usr/local/share/script/chroot.sh
+			break;
+		fi
+		n=$(($n + 1))
+		sleep 1
+	done
+}
+
+if [ "`xxd -p /sys/firmware/devicetree/base/cpus/cpu@0/reg`" == "00000000" ]; then
+	echo -e "\e[1;32m\n [cluster0] \n\e[0m"
+	sys_conf=`devmem 0xffed080034`
+	bootmode=`echo "$(( ${sys_conf} & 0x30 ))"`
+	#modprobe phy-cadence-torrent
+	#modprobe i2c-ambarella
+	if [ ${bootmode} -eq 16 ]; then
+		echo -e "spinand boot"
+		#modprobe ambarella_combo_nand
+	elif [ ${bootmode} -eq 32 ]; then
+		echo -e "emmc boot"
+		#modprobe sdhci-ambarella
+		#modprobe mmc_block
+	else
+		echo -e "spinor boot"
+		#modprobe ambarella-spinor
+	fi
+	mkdir /new_root
+	eval `cat /proc/cmdline |tr ' ' '\n'|grep "="|grep root`
+	#mount -t ubifs ubi0:linux /new_root
+	#mount -t squashfs /dev/mtdblock5 /new_root
+	#mount -t ext2 /dev/mmcblk0p5 /new_root
+	#modprobe rpmsg_echo
+	#modprobe amba_rproc dyndbg
+	#modprobe veth dyndbg
+	ifconfig veth0 172.16.1.1 netmask 255.255.255.0
+	ifconfig veth1 172.16.2.1 netmask 255.255.255.0
+	ifconfig veth2 172.16.3.1 netmask 255.255.255.0
+	echo 1 > /proc/sys/net/ipv4/ip_forward
+
+	mount -t ${rootfstype} ${root} /new_root
+	if [ "`cat /proc/mounts | grep /new_root`" != "" ]; then
+		cd /new_root
+		chroot . /usr/local/share/script/chroot.sh
+	fi
+elif [ "`xxd -p /sys/firmware/devicetree/base/cpus/cpu@0/reg`" == "00010000" ]; then
+	echo -e "\e[1;32m\n [cluster1] \n\e[0m"
+	#modprobe rpmsg_echo
+	#modprobe amba_rproc dyndbg
+	#modprobe veth dyndbg
+	ifconfig veth0 172.16.1.2 netmask 255.255.255.0
+	route add default gw 172.16.1.1
+	mount_mnt_nfs 172.16.1.1
+elif [ "`xxd -p /sys/firmware/devicetree/base/cpus/cpu@0/reg`" == "00020000" ]; then
+	echo -e "\e[1;32m\n [cluster2] \n\e[0m"
+	#modprobe rpmsg_echo
+	#modprobe amba_rproc dyndbg
+	#modprobe veth dyndbg
+	ifconfig veth0 172.16.2.2 netmask 255.255.255.0
+	route add default gw 172.16.2.1
+	mount_mnt_nfs 172.16.2.1
+elif [ "`xxd -p /sys/firmware/devicetree/base/cpus/cpu@0/reg`" == "00030000" ]; then
+	echo -e "\e[1;32m\n [cluster3] \n\e[0m"
+	#modprobe rpmsg_echo
+	#modprobe amba_rproc dyndbg
+	#modprobe veth dyndbg
+	ifconfig veth0 172.16.3.2 netmask 255.255.255.0
+	route add default gw 172.16.3.1
+	mount_mnt_nfs 172.16.3.1
+fi

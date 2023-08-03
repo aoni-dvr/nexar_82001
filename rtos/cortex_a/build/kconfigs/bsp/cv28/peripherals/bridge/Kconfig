@@ -1,0 +1,24 @@
+menu "Sensor and LCD bridge Driver"
+
+menuconfig SENSOR_BRIDGE_MAX9295_9296
+    bool "MAXIM MAX9295/9296"
+    default n
+
+menuconfig SENSOR_BRIDGE_MAX9295_96712
+    bool "MAXIM MAX9295/96712"
+    default n
+
+menuconfig SENSOR_BRIDGE_MAX96707_9286
+    bool "MAXIM MAX96707/9286"
+    default n
+
+menuconfig SENSOR_BRIDGE_MAX96717_96716
+    bool "MAXIM MAX96717/96716"
+    default n
+
+
+
+menuconfig SENSOR_BRIDGE_MAX96717_96722
+    bool "MAXIM MAX96717/96722"
+    default n
+endmenu

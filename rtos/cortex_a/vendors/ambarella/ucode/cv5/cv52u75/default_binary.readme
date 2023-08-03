@@ -1,0 +1,30 @@
+== The binaries for enc/dec start from cabac_init_ctx_daddr ==
+#ifndef DEFAULT_BINARY_H
+#define DEFAULT_BINARY_H
+
+#include <dsp_types.h>
+
+typedef struct {
+  uint32_t  crc;
+  uint32_t  version_no;
+
+  uint16_t  year;
+  uint8_t   month;
+  uint8_t   mday;
+
+  char manufacture_id[8];
+
+  uint32_t idsp_default_cfg_daddr;
+  uint32_t mctf_passthrough_cr_daddr;
+  uint32_t cabac_init_ctx_daddr;
+  uint32_t jpeg_dht_lm_daddr;
+  uint32_t jpeg_dht_ch_daddr;
+  uint32_t jpeg_dqt_daddr;
+  uint32_t h264_orig_inv_lvl_scale_daddr;
+  uint32_t h264_dequant_coef_daddr;
+  uint32_t encoder_data_daddr;
+  uint32_t crypto_data_daddr;
+
+} default_binary_index_t;
+
+#endif // DEFAULT_BINARY_H

@@ -1,0 +1,296 @@
+
+#include <vp_vas.h>
+
+// subdags
+#include "subdags/calc_image_v.vpp"
+#include "subdags/calc_esti_road_disp.vpp"
+#include "subdags/calc_delata_d_tbl.vpp"
+#include "subdags/sub_main.vpp"
+#include "subdags/calc_3d_esti_road_disp.vpp"
+
+#define INPUT_DISP_WIDTH				(1920)
+#define INPUT_DISP_HEIGHT				(768)
+#define STIXEL_WIDTH					(12)
+#define DISP_POOLING_WIDTH				(INPUT_DISP_WIDTH/STIXEL_WIDTH)
+
+#define MAX_DISPARITY					(256)
+#define DELTA_D_DISTANCE				(5)
+//#define MIN_OBJ_PIXEL_HEIGHT			(30)
+
+DAG STIXEL_GEN_ESTI_ROAD = {
+
+	// ------------------------- Load input ---------------------------- // 	
+	VP_input(
+		cfg_f32, float32_t, vector(18)
+	);
+
+	VP_typeconv(
+		cfg_f32,
+		VP_tensor(cfg_f16, float16_t, vector(18))
+	);
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(image_v0, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 0, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(base_line, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 1, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(focal_length, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 2, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(det_obj_height, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 3, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+	VP_typeconv(
+		det_obj_height,
+		VP_tensor(det_obj_pixel_height, uint16_t, vector(1)),
+	);
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(split_pos_ft, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 4, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+	VP_typeconv(
+		split_pos_ft,
+		VP_tensor(split_pos, uint16_t, vector(1)),
+	);
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(gc_line_inv_m_0, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 5, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);	
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(gc_line_c_0, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 6, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(cam_sin_pitch_0, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 7, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(cam_cos_pitch_0, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 8, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(gc_line_inv_m_1, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 10, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(gc_line_c_1, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 11, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(cam_sin_pitch_1, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 12, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(cam_cos_pitch_1, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 13, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+
+	//Z = plane_x_coef*X + plane_y_coef*Y+ plane_constant_coef
+	VP_crop(
+		cfg_f16,
+		VP_tensor(plane_x_coef, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 14, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(plane_y_coef, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 15, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(plane_constant_coef, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 16, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(fuse_plane_start_x_ft, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 17, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+	VP_typeconv(
+		fuse_plane_start_x_ft,
+		VP_tensor(fuse_plane_start_x, uint16_t, vector(1)),
+	);
+
+	// ---------------------------- Start ------------------------------- // 	
+	// Generate column index (u16 and float16)
+	// [0, 1, 2, 3, 4...]
+	VP_index(
+    	VP_tensor(column_index, uint16_t, vector(1, 1, 1, INPUT_DISP_HEIGHT)),
+    	w = INPUT_DISP_HEIGHT,
+    	h = 1,
+    	d = 1,
+    	p = 1,
+    	dim_coordinate = 0
+    );
+	// ---
+
+	VP_scalar(delata_distance, int16_t, DELTA_D_DISTANCE);
+
+	call =
+	{
+		callee=Sub_Main,
+		$in_line_inv_m=gc_line_inv_m_0,
+		$in_line_c=gc_line_c_0,
+		$in_disparity_width=INPUT_DISP_HEIGHT,
+		$in_col_index=column_index,	
+		$in_obj_pixel_height=det_obj_pixel_height,
+
+		$out_esti_road_disparity=esti_road_disparity_0,
+		$out_virtual_obj_top_v=virtual_obj_top_v_0,
+		$out_road_disp_coef=road_disp_coef_0,
+	};
+
+	call =
+	{
+		callee=Sub_Main,
+		$in_line_inv_m=gc_line_inv_m_1,
+		$in_line_c=gc_line_c_1,
+		$in_disparity_width=INPUT_DISP_HEIGHT,		
+		$in_col_index=column_index,		
+		$in_obj_pixel_height=det_obj_pixel_height,
+
+		$out_esti_road_disparity=esti_road_disparity_1,
+		$out_virtual_obj_top_v=virtual_obj_top_v_1,
+		$out_road_disp_coef=road_disp_coef_1,	
+	};
+
+	// [ ... road section 0 ... road section 1 ... ]
+	VP_gteb(
+		column_index, 
+		split_pos,
+		VP_tensor(road_section_1_mask, uint8_t, vector(1, 1, 1, INPUT_DISP_HEIGHT), bitvector = 1)
+	);
+
+	VP_muxb(		
+		esti_road_disparity_1, 
+		esti_road_disparity_0, 
+		road_section_1_mask,
+		VP_tensor(esti_road_disparity, float16_t, vector(1, 1, 1, INPUT_DISP_HEIGHT))
+	);
+
+	// create a column vector filled with 0
+	VP_index(
+    	VP_tensor(zero_column, uint8_t, vector(1, 1, DISP_POOLING_WIDTH, 1)),
+    	w = 1,
+    	h = DISP_POOLING_WIDTH,
+    	d = 1,
+    	p = 1,
+    	dim_coordinate = 0
+    );
+
+    VP_add(
+    	zero_column,
+    	esti_road_disparity,
+    	VP_tensor(esti_road_disparity_2D_map, float16_t, vector(1, 1, DISP_POOLING_WIDTH, INPUT_DISP_HEIGHT))
+    );	    	
+
+	VP_muxb(		
+		virtual_obj_top_v_1, 
+		virtual_obj_top_v_0, 
+		road_section_1_mask,
+		VP_tensor(virtual_obj_top_v, uint16_t, vector(1, 1, 1, INPUT_DISP_HEIGHT))
+	);
+
+	VP_muxb(		
+		road_disp_coef_1, 
+		road_disp_coef_0, 
+		road_section_1_mask,
+		VP_tensor(road_disp_coef, uint16_t, vector(1, 1, 1, INPUT_DISP_HEIGHT))
+	);
+
+	call =
+	{
+		callee=Calc_Delta_D_Tbl,	
+		$max_disparity_val=MAX_DISPARITY,
+		$delata_distance=delata_distance,
+		$sin_pitch=cam_sin_pitch_1,
+		$cos_pitch=cam_cos_pitch_1,
+		$focal_length=focal_length,
+		$camera_v0=image_v0,
+		$base_line=base_line,
+							
+		$deleta_d_out=deleta_disparity_table,
+	};
+
+	call =
+	{
+		callee=Calc_3D_Esti_Road_Disp,	
+		$x_coef=plane_x_coef,
+		$y_coef=plane_y_coef,
+		$const_coef=plane_constant_coef,
+		$stixel_width=STIXEL_WIDTH,
+		$disp_pooling_width=DISP_POOLING_WIDTH,
+		$disp_height=INPUT_DISP_HEIGHT,
+		$esti_map=esti_3D_road_disparity_2D_map,							
+	};
+
+	VP_gtb(
+		column_index, 
+		fuse_plane_start_x,		
+		VP_tensor(fuse_3d_esti_mask, uint8_t, vector(1, 1, 1, INPUT_DISP_HEIGHT), bitvector = 1)
+	);  
+
+	VP_muxb(		
+		esti_3D_road_disparity_2D_map, 
+		esti_road_disparity_2D_map, 
+		fuse_3d_esti_mask,
+		VP_tensor(fuse_esti_disparity, float16_t, vector(1, 1, DISP_POOLING_WIDTH, INPUT_DISP_HEIGHT))
+	);	
+
+	VP_output(esti_road_disparity_out, fuse_esti_disparity);	
+
+	VP_output(virtual_obj_top_v_out, virtual_obj_top_v);
+	VP_output(road_disp_coef_out, road_disp_coef);
+	
+	VP_output(deleta_disparity_table_out, deleta_disparity_table);
+}

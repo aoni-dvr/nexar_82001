@@ -1,0 +1,37 @@
+execute H2_DDR_INIT.csf
+
+; ======================================================
+; Prepare
+; ======================================================
+LOCAL &path
+&path=CDIR()
+&path="&path/../../../../.."
+
+;WinCloseAll
+;wait.100ms
+
+Register
+DebugList
+SourcePathReset
+
+; ======================================================
+; Load program
+; ======================================================
+; LOCAL &src_path
+; &src_path="&path/ambarella/bootloader/amboot"
+; PRINT "Add Source path to &src_path"
+; 
+; wait.100ms
+; 
+; SetDirSourcePath &src_path
+; LoadImage "&path/ambarella/bootloader/out/h2bub/amboot/bld_debug.elf
+
+; ======================================================
+; Below are for debugging purpose.
+; You can uncomment and change to your target for debug.
+; ======================================================
+
+;wait.100ms
+;Break.Delete
+;SetBREAK main %HW
+;go va_after_mmuon

@@ -1,0 +1,31 @@
+Rval = 0x00000000, AmbaDSP_ImgArchComponentIF.c, img_arch_init_architecture(), ID = 0, description : test ik_init_mode != HARD or SOFT case
+Rval = 0x01100001, AmbaDSP_ImgArchComponentIF.c, img_arch_init_architecture(), ID = 1, description : test (p_ik_working_buffer_info->init_flag != 1UL) fail case
+Rval = 0x01100001, AmbaDSP_ImgArchComponentIF.c, img_arch_init_architecture(), ID = 2, description : test (p_ik_working_buffer_info->ik_version_major != IK_VERSION_MAJOR) fail case
+Rval = 0x01100001, AmbaDSP_ImgArchComponentIF.c, img_arch_init_architecture(), ID = 3, description : test (p_ik_working_buffer_info->ik_version_minor != IK_VERSION_MINOR) fail case
+Rval = 0x01100001, AmbaDSP_ImgArchComponentIF.c, img_arch_init_architecture(), ID = 4, description : test (p_ik_working_buffer_info->number_of_context != context_number) fail case
+Rval = 0x01100001, AmbaDSP_ImgArchComponentIF.c, img_arch_init_architecture(), ID = 5, description : test (p_ik_working_buffer_info->buffer_size != mem_size) fail case
+Rval = 0x00000000, AmbaDSP_ImgArchComponentIF.c, img_arch_get_context_number(), ID = 6, description : test (p_ik_working_buffer_info->init_flag == 1U) fail case
+Rval = 0x01100200, AmbaDSP_ImgArchComponentIF.c, img_arch_check_ik_working_buffer(), ID = 7, description : test (p_ik_working_buffer_info->safety_state != IK_SAFETY_STATE_OK) fail case
+Rval = 0x00000000, AmbaDSP_ImgArchSystemApi.c, img_arch_unregiste_system_memcpy(), ID = 8, description : test unregist system API memcpy case
+Rval = 0x01100005, AmbaDSP_ImgArchSystemApi.c, img_arch_check_system_control_callback_function(), ID = 9, description : test check system API memcpy NULL fail case
+Rval = 0x01100005, AmbaDSP_ImgArchSystemApi.c, img_arch_unregiste_system_memset(), ID = 10, description : test unregist system API memset case
+Rval = 0x01100005, AmbaDSP_ImgArchSystemApi.c, img_arch_check_system_control_callback_function(), ID = 11, description : test check system API memset NULL fail case
+Rval = 0x01100005, AmbaDSP_ImgArchSystemApi.c, img_arch_unregiste_system_memcmp(), ID = 12, description : test unregist system API memcmp case
+Rval = 0x01100005, AmbaDSP_ImgArchSystemApi.c, img_arch_check_system_control_callback_function(), ID = 13, description : test check system API memcmp NULL fail case
+Rval = 0x01100005, AmbaDSP_ImgArchSystemApi.c, img_arch_unregiste_system_create_mutex(), ID = 14, description : test unregist system API create mutex case
+Rval = 0x01100005, AmbaDSP_ImgArchSystemApi.c, img_arch_check_system_control_callback_function(), ID = 15, description : test check system API create mutex NULL fail case
+Rval = 0x01100005, AmbaDSP_ImgArchSystemApi.c, img_arch_unregiste_system_destroy_mutex(), ID = 16, description : test unregist system API destroy mutex case
+Rval = 0x01100005, AmbaDSP_ImgArchSystemApi.c, img_arch_check_system_control_callback_function(), ID = 17, description : test check system API destroy mutex NULL fail case
+Rval = 0x01100005, AmbaDSP_ImgArchSystemApi.c, img_arch_unregiste_system_lock_mutex(), ID = 18, description : test unregist system API lock mutex case
+Rval = 0x01100005, AmbaDSP_ImgArchSystemApi.c, img_arch_check_system_control_callback_function(), ID = 19, description : test check system API lock mutex NULL fail case
+Rval = 0x01100005, AmbaDSP_ImgArchSystemApi.c, img_arch_unregiste_system_unlock_mutex(), ID = 20, description : test unregist system API unlock mutex case
+Rval = 0x01100005, AmbaDSP_ImgArchSystemApi.c, img_arch_check_system_control_callback_function(), ID = 21, description : test check system API unlock mutex NULL fail case
+Rval = 0x01100005, AmbaDSP_ImgArchSystemApi.c, img_arch_unregiste_system_print(), ID = 22, description : test unregist system API print case
+Rval = 0x01100005, AmbaDSP_ImgArchSystemApi.c, img_arch_check_system_control_callback_function(), ID = 23, description : test check system API print NULL fail case
+Rval = 0x01100005, AmbaDSP_ImgArchSystemApi.c, img_arch_unregiste_system_clean_cache(), ID = 24, description : test unregist system API clean cache case
+Rval = 0x01100005, AmbaDSP_ImgArchSystemApi.c, img_arch_check_system_control_callback_function(), ID = 25, description : test check system API clean cache NULL fail case
+Rval = 0x01100005, AmbaDSP_ImgArchSystemApi.c, img_arch_unregiste_system_virtual_to_physical_address(), ID = 26, description : test unregist system API vir to phy case
+Rval = 0x01100005, AmbaDSP_ImgArchSystemApi.c, img_arch_check_system_control_callback_function(), ID = 27, description : test check system API vir to phy NULL fail case
+Rval = 0x01100005, AmbaDSP_ImgArchSystemApi.c, img_arch_unregiste_system_physical_to_virtual_address(), ID = 28, description : test unregist system API phy to vir case
+Rval = 0x01100005, AmbaDSP_ImgArchSystemApi.c, img_arch_check_system_control_callback_function(), ID = 29, description : test check system API phy to vir NULL fail case
+Rval = 0x00000000, AmbaDSP_ImgArchSystemApi.c, img_arch_check_system_control_callback_function(), ID = 30, description : test check system API not NULL OK case

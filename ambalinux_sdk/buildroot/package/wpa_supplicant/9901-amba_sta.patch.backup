@@ -1,0 +1,28 @@
+diff --git a/wpa_supplicant/ctrl_iface.c b/wpa_supplicant/ctrl_iface.c
+index 8efc08d..d922903 100644
+--- a/wpa_supplicant/ctrl_iface.c
++++ b/wpa_supplicant/ctrl_iface.c
+@@ -2820,6 +2820,7 @@ static int wpa_supplicant_ctrl_iface_scan_result(
+ 	char *pos, *end;
+ 	int ret;
+ 	const u8 *ie, *ie2, *osen_ie, *p2p, *mesh, *owe;
++	char ssid_txt[32 * 4 + 1];
+ 
+ 	mesh = wpa_bss_get_ie(bss, WLAN_EID_MESH_ID);
+ 	p2p = wpa_bss_get_vendor_ie(bss, P2P_IE_VENDOR_TYPE);
+@@ -2946,8 +2947,15 @@ static int wpa_supplicant_ctrl_iface_scan_result(
+ 		pos += ret;
+ 	}
+ 
++#if 0
+ 	ret = os_snprintf(pos, end - pos, "\t%s",
+ 			  wpa_ssid_txt(bss->ssid, bss->ssid_len));
++#else
++	/* Added by Ambarella for script Chinese SSID grep-able */
++	os_snprintf(ssid_txt, bss->ssid_len + 1, "%s", bss->ssid);
++	ret = os_snprintf(pos, end - pos, "\t%s",
++			  ssid_txt);
++#endif
+ 	if (os_snprintf_error(end - pos, ret))
+ 		return -1;
+ 	pos += ret;

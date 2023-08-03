@@ -1,0 +1,11 @@
+Unit test for libwrap_std.a
+Syntax:
+%C
+
+Options:
+
+    N/A
+
+Examples:
+ # Just run it
+ test_libwrap_std

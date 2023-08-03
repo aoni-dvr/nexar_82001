@@ -1,0 +1,11 @@
+RPMSG core
+Syntax:
+%C
+
+Options:
+
+    N/A
+
+Examples:
+ # Just run it
+ rpmsg_core

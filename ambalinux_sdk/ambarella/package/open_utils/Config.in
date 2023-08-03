@@ -1,0 +1,18 @@
+menuconfig BR2_PACKAGE_OPEN_UTILS
+	bool "open_utils"
+	help
+	  The open source utilities.
+
+config BR2_PACKAGE_OPEN_UTIL_FSSTRESS
+	bool "fsstress"
+	default y
+	depends on BR2_PACKAGE_OPEN_UTILS
+	help
+	  It is used to test file system.
+
+config BR2_PACKAGE_OPEN_UTIL_INOTIFY
+	bool "inotify"
+	default y
+	depends on BR2_PACKAGE_OPEN_UTILS
+	help
+	  It is the example to use inotify to monitor files/dirs.

@@ -1,0 +1,111 @@
+
+#include "vp_vas.h"
+
+#define INPUT_W     1280
+#define INPUT_H     720
+
+DAG yuv420sp2bgr_prim = {
+    VP_input(
+        data_rgb,
+        uint8_t,
+        vector(1, 3, INPUT_H, INPUT_W)
+    );
+    
+    /* dot the converted matrix
+     *
+     *                                             R
+     * [ Y ] = [  0.299,  0.587 ,  0.114    ] x [  G   ]
+     *                                             B
+     */
+    /* convolution 2d with immediate, per-channel exponent, apply pooling, bias, negscale */
+    VP_conv2iepbs(
+        data_rgb /* activation input to convolution */,
+        VP_imm("kernel_y.bin", data_format(0, 1, 7, 0), vector(1, 3, 1, 1)),
+        undef,
+        undef,
+        undef,
+        VP_tensor(data_y, uint8_t),
+        start_w = 0,
+        start_h = 0,
+        stride_w = 1,
+        stride_h = 1,
+        out_w = INPUT_W,
+        out_h = INPUT_H,
+        pool_mode = 0,
+        pool_w = 1,
+        pool_h = 1,
+        zr = true,
+        strong_zero = true,
+        disable_reserved = true
+    );
+    
+    
+    /* dot the converted matrix
+     *
+     *                                             R
+     * [ U ] = [ -0.169, -0.331 ,  0.5     ] x [   G   ]
+     *   V        0.5  , -0.419 , -0.081           B
+     */
+    /* convolution 2d with immediate, per-channel exponent, apply pooling, bias, negscale */
+    VP_conv2iepbs(
+        data_rgb /* activation input to convolution */,
+        VP_imm("kernel.bin", data_format(1, 1, 7, 0), vector(2, 3, 1, 1)),
+        undef,
+        undef,
+        undef,
+        VP_tensor(uv44_bias, int8_t),
+        start_w = 0,
+        start_h = 0,
+        stride_w = 1,
+        stride_h = 1,
+        out_w = INPUT_W,
+        out_h = INPUT_H,
+        pool_mode = 0,
+        pool_w = 1,
+        pool_h = 1,
+        zr = true,
+        strong_zero = true,
+        disable_reserved = true
+    );
+
+    /* add immediate (yuv444_bias = [U+127+1, V+127+1]) */
+    VP_addi(
+        uv44_bias,
+        VP_imm("7F", int8_t, vector(1)),
+        VP_tensor(uv44_stage1, uint8_t),
+        strong_zero = true,
+        disable_reserved = true
+    );
+    VP_addi(
+        uv44_stage1,
+        VP_imm("01", uint8_t, vector(1)),
+        VP_tensor(uv44, uint8_t),
+        strong_zero = true,
+        disable_reserved = true
+    );
+    VP_resamp(
+        uv44 /* source tensor */,
+        VP_tensor(data_uv20),
+        replicate_w = false,
+        replicate_h = false,
+        resamp_mode = 0,
+        initial_phase_w = 0, /* 13.13 = 0 */
+        initial_phase_h = 0,
+        phase_inc_w = 16384,  /* 11.13 = 2 */
+        phase_inc_h = 16384,
+        out_w = INPUT_W/2,
+        out_h = INPUT_H/2
+    );
+
+    /* primary output data (output_y) */
+    VP_output(
+        output_y,
+        data_y,
+    );
+    VP_output(
+        output_data_uv20,
+        data_uv20,
+        dram_format = 1,
+    );
+
+  }

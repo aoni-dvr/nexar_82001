@@ -1,0 +1,72 @@
+menu "DSP Driver"
+
+menuconfig BUILD_DSP_VISUAL
+        bool "Build DSP driver"
+        default y
+
+if BUILD_DSP_VISUAL
+config ENABLE_DSP_COMMAND_PARM_DBG
+    bool "Enable DSP command debug"
+    default y
+
+config ENABLE_DSP_DEBUG_LOG
+    bool "Enable DSP Debug Log"
+    default y
+
+config ENABLE_DSP_MONITOR
+    bool "Enable DSP monitor"
+    default n
+
+config DISABLE_SHADOW_MEMORY_WITH_DSP_MONITOR
+	bool "Use rpmsg instead of shadow memory for DSP monitor"
+	default n
+	help
+	  Asil RPMSG must use with shadow memory. QNX not support Asil RPMSG, so that must disable shadow memory.
+
+config ENABLE_DSP_DIAG
+    bool "Enable DSP diagnosis"
+    default n
+
+
+config DSP_PROT_CACHE_BUF_SIZE
+	hex "dsp protocol cache buffer size"
+	default 0x300000
+
+config DSP_PROT_BUF_SIZE
+	hex "dsp protocol buffer size"
+	default 0x800000
+
+config DSP_BIN_BUF_SIZE
+	hex "dsp binary buffer size"
+	default 0xC00000
+
+config DSP_DATA_BUF_SIZE
+	hex "dsp data buffer size"
+    default 0x3AE00000 if SVC_APPS_ICAM && SOC_CV2FS
+    default 0x38F00000 if SVC_APPS_ICAM && SOC_CV2
+    default 0x38F00000 if SVC_APPS_ICAM && SOC_CV22
+    default 0x33C00000 if SVC_APPS_ICAM && SOC_CV25
+    default 0x1E000000 if SVC_APPS_ICAM && SOC_CV28
+    default 0x24200000 if SVC_APPS_ICAM && SOC_H32
+	default 0x20000000
+endif
+
+menuconfig BUILD_DSP_AUDIO
+        bool "Build Audio modules"
+        default y
+
+if BUILD_DSP_AUDIO
+config ENABLE_AAC_ENCODER
+    bool "Enable AAC encoder"
+    default y
+
+config ENABLE_AAC_DECODER
+    bool "Enable AAC decoder"
+    default y
+endif
+
+menuconfig BUILD_IK
+        bool "Build Ik"
+        default y
+
+endmenu

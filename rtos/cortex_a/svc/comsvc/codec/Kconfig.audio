@@ -1,0 +1,12 @@
+
+menu "Audio"
+
+config BUILD_COMAMBA_CODEC_AUDIO
+    depends on BUILD_COMMON_SERVICE_CODEC
+    bool "Build Codec audio"
+    default y
+    config AENC_NUM 
+        hex "Audio encoder number (Max = 0x6)"  
+        default 0x1
+
+endmenu

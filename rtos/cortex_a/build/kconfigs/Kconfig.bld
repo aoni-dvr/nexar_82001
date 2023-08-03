@@ -1,0 +1,66 @@
+
+choice
+	prompt "Boot sequence after amboot"
+	default BLD_SEQ_ATF
+	help
+	  Choice next image to run after amboot
+
+config BLD_SEQ_SHELL
+	bool "Boot to shell of amboot"
+	help
+	  Run shell, bst->amboot
+
+config BLD_SEQ_LINUX
+	bool "Boot up Linux by amboot"
+	help
+	  Run Linux (Non-Secure AArch64)
+	  bst->bl2->bl31(->bl32)->amboot->linux
+	  bst->amboot->linux
+
+config BLD_SEQ_SRTOS
+	bool "Boot up RTOS by amboot"
+	help
+	  Run Secure-RTOS
+	  bst->bl2->bl31(->bl32)->amboot->rtos
+	  bst->amboot->rtos
+
+config BLD_SEQ_ATF
+	bool "Boot up ATF by amboot"
+	help
+	  Run ATF BL3x
+	  bst->amboot->atf
+
+endchoice # Boot sequence after amboot
+
+if BLD_SEQ_ATF
+choice
+	prompt "Boot sequence after ATF at A53"
+	default BLD_SEQ_ATF_XEN if XEN_SUPPORT
+	default BLD_SEQ_ATF_SRTOS if (THREADX || QNX)
+	default BLD_SEQ_ATF_LINUX if LINUX
+	help
+	  Choice next image to boot up after ATF.
+
+config BLD_SEQ_ATF_SRTOS
+	bool "Boot Secure RTOS atfer ATF"
+	depends on (THREADX || QNX)
+	help
+	  Next image to boot up is RTOS after ATF.
+	  bst->amboot->atf->rtos
+
+config BLD_SEQ_ATF_LINUX
+	bool "Boot Non-Secure Linux after ATF"
+	select BUILD_FOSS_LIBFDT
+	help
+	  Next image to boot up is Linux under Non-Secure world after ATF.
+	  bst->amboot->atf->linux
+
+config BLD_SEQ_ATF_XEN
+	bool "Boot Non-Secure Xen after ATF"
+	depends on XEN_SUPPORT
+	help
+	  Next image to boot up is Xen under Non-Secure world after ATF.
+
+endchoice # Boot sequence after ATF
+endif # BLD_SEQ_ATF
+

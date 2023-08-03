@@ -1,0 +1,6 @@
+# safe
+ifeq ($(CONFIG_BUILD_MONFRW_GRAPH), y)
+EXTRA_SRCVPATH += $(ICAM_CORE_SRC)/safe/inc
+EXTRA_INCVPATH += $(srctree)/svc/comsvc/monfrw/main/inc
+SRCS += SvcSafe.c
+endif

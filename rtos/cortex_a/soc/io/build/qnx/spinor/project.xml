@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<module name="gpio-ambarella">
+  <classification>SDK</classification>
+  <description>
+    <short>SPINOR ambarella library</short>
+    <abstract><![CDATA[
+	                The gpio-ambarella library operates the SPINOR Controller, and is needed by certain device drivers to perform SPINOR changement.
+	        ]]></abstract>
+  </description>
+  <supports>
+    <availability>
+      <cpu isa="arm">
+        <byteOrder>le</byteOrder>
+      </cpu>
+    </availability>
+  </supports>
+  <contents>
+    <component id="SharedObj" generated="true">
+      <location basedir="arm/so.le">		                libspinor-ambarella.so		        </location>
+    </component>
+    <component id="SharedArchive" generated="true">
+      <location basedir="arm/so.le">		                libspinor-ambarellaS.a		        </location>
+    </component>
+  </contents>
+</module>

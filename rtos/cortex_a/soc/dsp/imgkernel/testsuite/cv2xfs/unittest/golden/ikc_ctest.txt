@@ -1,0 +1,245 @@
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_QueryArchMemorySize(), ID = 0, description : OK case
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_InitArch(), ID = 1, description : OK case
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_InitDefBinary(), ID = 2, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcRefUtility.c, getDirectionalCenterWeightValue(), ID = 3, description : test if (blend_strength < 8) false OK case
+Rval = 0x00000000, AmbaDSP_IkcRefUtility.c, get_center_shift_value(), ID = 4, description : test if (temp > 31) true OK case
+Rval = 0x00000000, AmbaDSP_IkcRefUtility.c, get_cutoff_value(), ID = 5, description : test (fine_target < 128) false OK case
+Rval = 0x00000000, AmbaDSP_IkcRefUtility.c, get_ring_shift_value(), ID = 6, description : test if (tmp_index > 4) true OK case
+Rval = 0x00000000, AmbaDSP_IkcRefUtility.c, comp_lev_dep_mul_shift(), ID = 7, description : test if( *p_adjusted_shift > 10 ) true OK case
+Rval = 0x00000000, AmbaDSP_IkcRefUtility.c, cfa_noise_filter_auto_to_manual(), ID = 8, description : test if (cnf_manual->shift_center_red < cnf_manual->shift_fine_ring1) true OK case
+Rval = 0x00000000, AmbaDSP_IkcRefUtility.c, set_ircorrect_mul_shift(), ID = 9, description : test (b1 > 511.0) false OK case
+Rval = 0x00000000, AmbaDSP_IkcRefUtility.c, make_curve(), ID = 10, description : test if ((array_length-1) == misra_int32_T0) true OK case
+Rval = 0x00000000, AmbaDSP_IkcRefUtility.c, find_shift_and_8bit_mantissa(), ID = 11, description : test s > 7 false OK case
+Rval = 0x01100000, AmbaDSP_IkcUnitConfig.c, ikc_check_version(), ID = 12, description : test (ik_major_num != IK_VERSION_MAJOR) true NG case
+Rval = 0x00000000, AmbaDSP_IkcUnitConfig.c, ikc_check_version(), ID = 13, description : test (ikc_major_num != IKC_VERSION_MAJOR) false OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitConfig.c, ikc_get_minor_version(), ID = 14, description : test NULL ptr NG case
+Rval = 0x00000000, AmbaDSP_IkcUnitConfig.c, ikc_get_minor_version(), ID = 15, description : test if(p_minor_ver != NULL) true OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitConfig.c, ikc_input_mode(), ID = 16, description : test if (rval == IK_OK) false NG case
+Rval = 0x00000000, AmbaDSP_IkcUnitConfig.c, ikc_input_mode(), ID = 17, description : test flip H and flip V true OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitConfig.c, ikc_input_mode(), ID = 18, description : test if(p_in_input->p_sensor_info->sensor_mode == IK_SENSOR_MODE_RCCC) true OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitConfig.c, ikc_input_mode(), ID = 19, description : test ((p_in_input->p_sensor_info->compression > 0UL)&&(p_in_input->p_sensor_info->compression < 9UL)) true OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitConfig.c, ikc_input_mode(), ID = 20, description : test ((p_in_input->p_sensor_info->compression > 0UL)&&(p_in_input->p_sensor_info->compression < 9UL)) false OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitConfig.c, ikc_input_mode_sub(), ID = 21, description : test if (rval == IK_OK) false NG case
+Rval = 0x01100004, AmbaDSP_IkcUnitConfig.c, ikc_input_mode_sub(), ID = 22, description : test if(p_in_input_sub->is_yuv_mode == 0UL) false NG case
+Rval = 0x00000000, AmbaDSP_IkcUnitConfig.c, ikc_input_mode_sub(), ID = 23, description : test flip H and flip V true OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_decompression(), ID = 24, description : test if (rval == IK_OK) false NG case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_decompression(), ID = 25, description : test (p_in_decompress->compress_mode >= IK_RAW_COMPACT_8B) true OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_decompression(), ID = 26, description : test (p_in_decompress->compress_mode >= IK_RAW_COMPACT_8B) false OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_decompression(), ID = 27, description : test (p_in_decompress->compress_mode >= IK_RAW_COMPACT_8B) true OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_decompression(), ID = 28, description : test (p_in_decompress->compress_mode >= IK_RAW_COMPACT_8B) false OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_decompression_sub(), ID = 29, description : test if (rval == IK_OK) false NG case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_decompression_sub(), ID = 30, description : test (p_in_decompress->compress_mode == 0UL) true OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_decompression_sub(), ID = 31, description : test (p_in_decompress->compress_mode >= IK_RAW_COMPACT_8B) true OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_decompression_sub(), ID = 32, description : test (p_in_decompress->compress_mode >= IK_RAW_COMPACT_8B) false OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_decompression_sub(), ID = 33, description : test (p_in_decompress->compress_mode >= IK_RAW_COMPACT_8B) true OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_decompression_sub(), ID = 34, description : test (p_in_decompress->compress_mode >= IK_RAW_COMPACT_8B) false OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_hdr_blend(), ID = 35, description : test if (rval == IK_OK) false NG case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_hdr_blend(), ID = 36, description : test if(p_in_hdr_blend->exp_num <= 1u) true OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_hdr_blend_sub(), ID = 37, description : test if (rval == IK_OK) false NG case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_hdr_blend_sub(), ID = 38, description : test if(p_in_hdr_blend->exp_num <= 1u) true OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_front_end_tone_curve(), ID = 39, description : test if (rval == IK_OK) false NG case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_front_end_tone_curve(), ID = 40, description : test if(p_in_hdr_tone_curve->p_fe_tone_curve->decompand_enable == 1u) true OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_front_end_tone_curve_sub(), ID = 41, description : test if (rval == IK_OK) false NG case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_front_end_tone_curve_sub(), ID = 42, description : test if(p_in_hdr_tone_curve->p_fe_tone_curve->decompand_enable == 1u) true OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_hdr_black_level(), ID = 43, description : test if (rval == IK_OK) false NG case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_hdr_black_level(), ID = 44, description : test if (p_in_hdr_blc->rgb_ir_mode != 0UL) true OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_hdr_black_level(), ID = 45, description : test else if(i == 2UL) false OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_hdr_black_level_sub(), ID = 46, description : test if (rval == IK_OK) false NG case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_hdr_black_level_sub(), ID = 47, description : test if(p_in_hdr_blc->exp_num <= 1UL) true OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_hdr_black_level_sub(), ID = 48, description : test if (p_in_hdr_blc->rgb_ir_mode != 0UL) true OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_hdr_black_level_sub(), ID = 49, description : test if(p_in_hdr_blc->exp_num <= 1UL) false and if (p_in_hdr_blc->rgb_ir_mode != 0UL) true OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_hdr_black_level_sub(), ID = 50, description : test else if(i == 2UL) false OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_hdr_dgain(), ID = 51, description : test if (rval == IK_OK) false NG case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_hdr_dgain(), ID = 52, description : test if (p_in_hdr_dgain->rgb_ir_mode != 0UL) true OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_hdr_dgain(), ID = 53, description : test else if(i == 2UL) false OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_hdr_dgain_sub(), ID = 54, description : test if (rval == IK_OK) false NG case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_hdr_dgain_sub(), ID = 55, description : test if(p_in_hdr_dgain->exp_num <= 1UL) true OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_hdr_dgain_sub(), ID = 56, description : test if (p_in_hdr_dgain->rgb_ir_mode != 0UL) true OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_hdr_dgain_sub(), ID = 57, description : test if(p_in_hdr_dgain->exp_num <= 1UL) false and if (p_in_hdr_dgain->rgb_ir_mode != 0UL) true OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_hdr_dgain_sub(), ID = 58, description : test else if(i == 2UL) false OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_contrast_enhancement(), ID = 59, description : test if (rval == IK_OK) false NG case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_contrast_enhancement(), ID = 60, description : test if (p_in_ce->sensor_pattern == IKC_BAYER_PATTERN_BG) true OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_contrast_enhancement(), ID = 61, description : test if (p_in_ce->sensor_pattern == IKC_BAYER_PATTERN_GB) true OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_contrast_enhancement(), ID = 62, description : test sensor_pattern out of range OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_contrast_enhancement_input(), ID = 63, description : test if (rval == IK_OK) false NG case
+Rval = 0x01100005, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_contrast_enhancement_output(), ID = 64, description : test if (rval == IK_OK) false NG case
+Rval = 0x01100005, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_contrast_enhancement_sub(), ID = 65, description : test if (rval == IK_OK) false NG case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_contrast_enhancement_sub(), ID = 66, description : test if (p_in_ce->sensor_pattern == IKC_BAYER_PATTERN_BG) true OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_contrast_enhancement_sub(), ID = 67, description : test if (p_in_ce->sensor_pattern == IKC_BAYER_PATTERN_GB) true OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_contrast_enhancement_sub(), ID = 68, description : test sensor_pattern out of range OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_contrast_enhancement_input_sub(), ID = 69, description : test if (rval == IK_OK) false NG case
+Rval = 0x01100005, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_before_ce_gain(), ID = 70, description : test if (rval == IK_OK) false NG case
+Rval = 0x01100005, AmbaDSP_IkcUnitHdrCeFilters.c, ikc_before_ce_gain_sub(), ID = 71, description : test if (rval == IK_OK) false NG case
+Rval = 0x01100005, AmbaDSP_IkcUtility.c, ikc_check_uint8_parameter_valid_range(), ID = 72, description : test if (parameter_name==NULL) true NG case
+Rval = 0x00000000, AmbaDSP_IkcUtility.c, ikc_check_uint8_parameter_valid_range(), ID = 73, description : test if (parameter_name==NULL) false OK case
+Rval = 0x01100008, AmbaDSP_IkcUtility.c, ikc_check_uint8_parameter_valid_range(), ID = 74, description : test (parameter_value < min_value) true NG case
+Rval = 0x01100008, AmbaDSP_IkcUtility.c, ikc_check_uint8_parameter_valid_range(), ID = 75, description : test (parameter_value > max_value) true NG case
+Rval = 0x01100005, AmbaDSP_IkcUtility.c, ikc_check_int8_parameter_valid_range(), ID = 76, description : test if (parameter_name==NULL) true NG case
+Rval = 0x00000000, AmbaDSP_IkcUtility.c, ikc_check_int8_parameter_valid_range(), ID = 77, description : test if (parameter_name==NULL) false OK case
+Rval = 0x01100008, AmbaDSP_IkcUtility.c, ikc_check_int8_parameter_valid_range(), ID = 78, description : test (parameter_value < min_value) true NG case
+Rval = 0x01100008, AmbaDSP_IkcUtility.c, ikc_check_int8_parameter_valid_range(), ID = 79, description : test (parameter_value > max_value) true NG case
+Rval = 0x01100005, AmbaDSP_IkcUtility.c, ikc_check_uint16_parameter_valid_range(), ID = 80, description : test if (parameter_name==NULL) true NG case
+Rval = 0x00000000, AmbaDSP_IkcUtility.c, ikc_check_uint16_parameter_valid_range(), ID = 81, description : test if (parameter_name==NULL) false OK case
+Rval = 0x01100008, AmbaDSP_IkcUtility.c, ikc_check_uint16_parameter_valid_range(), ID = 82, description : test (parameter_value < min_value) true NG case
+Rval = 0x01100008, AmbaDSP_IkcUtility.c, ikc_check_uint16_parameter_valid_range(), ID = 83, description : test (parameter_value > max_value) true NG case
+Rval = 0x01100005, AmbaDSP_IkcUtility.c, ikc_check_int16_parameter_valid_range(), ID = 84, description : test if (parameter_name==NULL) true NG case
+Rval = 0x00000000, AmbaDSP_IkcUtility.c, ikc_check_int16_parameter_valid_range(), ID = 85, description : test if (parameter_name==NULL) false OK case
+Rval = 0x01100008, AmbaDSP_IkcUtility.c, ikc_check_int16_parameter_valid_range(), ID = 86, description : test (parameter_value < min_value) true NG case
+Rval = 0x01100008, AmbaDSP_IkcUtility.c, ikc_check_int16_parameter_valid_range(), ID = 87, description : test (parameter_value > max_value) true NG case
+Rval = 0x01100005, AmbaDSP_IkcUtility.c, ikc_check_uint32_parameter_valid_range(), ID = 88, description : test if (parameter_name==NULL) true NG case
+Rval = 0x00000000, AmbaDSP_IkcUtility.c, ikc_check_uint32_parameter_valid_range(), ID = 89, description : test if (parameter_name==NULL) false OK case
+Rval = 0x01100008, AmbaDSP_IkcUtility.c, ikc_check_uint32_parameter_valid_range(), ID = 90, description : test (parameter_value < min_value) true NG case
+Rval = 0x01100008, AmbaDSP_IkcUtility.c, ikc_check_uint32_parameter_valid_range(), ID = 91, description : test (parameter_value > max_value) true NG case
+Rval = 0x01100005, AmbaDSP_IkcUtility.c, ikc_check_int32_parameter_valid_range(), ID = 92, description : test if (parameter_name==NULL) true NG case
+Rval = 0x00000000, AmbaDSP_IkcUtility.c, ikc_check_int32_parameter_valid_range(), ID = 93, description : test if (parameter_name==NULL) false OK case
+Rval = 0x01100008, AmbaDSP_IkcUtility.c, ikc_check_int32_parameter_valid_range(), ID = 94, description : test (parameter_value < min_value) true NG case
+Rval = 0x01100008, AmbaDSP_IkcUtility.c, ikc_check_int32_parameter_valid_range(), ID = 95, description : test (parameter_value > max_value) true NG case
+Rval = 0x01100005, AmbaDSP_IkcUtility.c, ikc_check_cr_size_validation(), ID = 96, description : test if (parameter_name==NULL) true NG case
+Rval = 0x01100007, AmbaDSP_IkcUtility.c, ikc_check_cr_size_validation(), ID = 97, description : test if ((parameter_value != expected_value)) true NG case
+Rval = 0x01100005, AmbaDSP_IkcUtility.c, ikc_check_addr_validation(), ID = 98, description : test if (parameter_name==NULL) true NG case
+Rval = 0x01100005, AmbaDSP_IkcUtility.c, ikc_check_addr_validation(), ID = 99, description : test (ikc_valid_mem_start > addr) true NG case
+Rval = 0x01100005, AmbaDSP_IkcUtility.c, ikc_check_addr_validation(), ID = 100, description : test (ikc_valid_mem_end < addr) true NG case
+Rval = 0x01100005, AmbaDSP_IkcUtility.c, ikc_check_addr_null(), ID = 101, description : test if (parameter_name==NULL) true NG case
+Rval = 0x00000000, AmbaDSP_IkcUtility.c, clamp(), ID = 102, description : test if (x < minimun) true OK case
+Rval = 0x00000000, AmbaDSP_IkcUtility.c, clamp(), ID = 103, description : test if (x > maximun) true OK case
+Rval = 0x00000000, AmbaDSP_IkcUtility.c, shift_int32_right_int32_offset(), ID = 104, description : test if (offset>=0) false OK case
+Rval = 0x00000000, AmbaDSP_IkcUtility.c, double_round(), ID = 105, description : test if (d < 0.0) true OK case
+Rval = 0x01100000, AmbaDSP_IkcUtility.c, calib_geometry_check(), ID = 106, description : test NULL ptr NG case
+Rval = 0x01100000, AmbaDSP_IkcUtility.c, calib_geometry_check(), ID = 107, description : test NULL ptr NG case
+Rval = 0x01100000, AmbaDSP_IkcUtility.c, calib_geometry_check(), ID = 108, description : test calib factor_den or factor_num zero NG case
+Rval = 0x01100101, AmbaDSP_IkcUtility.c, calib_geometry_check(), ID = 109, description : test (p_calib_geo->start_x> p_vin_geo->start_x) true NG case
+Rval = 0x01100101, AmbaDSP_IkcUtility.c, calib_geometry_check(), ID = 110, description : test (p_calib_geo->start_y> p_vin_geo->start_y) true NG case
+Rval = 0x01100101, AmbaDSP_IkcUtility.c, calib_geometry_check(), ID = 111, description : test ((p_calib_geo->start_y+calib_non_binning_height)<(p_vin_geo->start_y+vin_non_binning_height)) true NG case
+Rval = 0x01100005, AmbaDSP_IkcUnitAaa.c, ikc_aaa(), ID = 112, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitAaa.c, ikc_aaa(), ID = 113, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitAaa.c, ikc_aaa(), ID = 114, description : OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitCaWarp.c, ikc_cawarp(), ID = 115, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitCaWarp.c, ikc_cawarp(), ID = 116, description : OK case
+Rval = 0x01100105, AmbaDSP_IkcUnitCaWarp.c, ikc_cawarp(), ID = 117, description : Invalid geometry fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitCaWarp.c, ikc_cawarp_internal(), ID = 118, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitCaWarp.c, ikc_cawarp_internal(), ID = 119, description : OK case
+Rval = 0x01100008, AmbaDSP_IkcUnitCaWarp.c, ikc_cawarp_internal(), ID = 120, description : Invalid grid number fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitWarp.c, ikc_warp(), ID = 121, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitWarp.c, ikc_warp(), ID = 122, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitWarp.c, ikc_warp(), ID = 123, description : OK case
+Rval = 0x01100007, AmbaDSP_IkcUnitWarp.c, ikc_warp(), ID = 124, description : Invalid buffer size fail case
+Rval = 0x01100104, AmbaDSP_IkcUnitWarp.c, ikc_warp(), ID = 125, description : Invalid warp geometry fail case
+Rval = 0x01100101, AmbaDSP_IkcUnitWarp.c, ikc_warp(), ID = 126, description : Invalid window geometry fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitWarp.c, ikc_warp_radius(), ID = 127, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitWarp.c, ikc_warp_radius(), ID = 128, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitWarp.c, ikc_warp_radius(), ID = 129, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitWarp.c, ikc_warp_radius(), ID = 130, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitWarp.c, ikc_warp_radius(), ID = 131, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitWarp.c, ikc_warp_radius(), ID = 132, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitWarp.c, ikc_warp_radius(), ID = 133, description : OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitWarp.c, ikc_warp_internal(), ID = 134, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitWarp.c, ikc_warp_internal(), ID = 135, description : OK case
+Rval = 0x01100007, AmbaDSP_IkcUnitWarp.c, ikc_warp_internal(), ID = 136, description : Invalid buffer size fail case
+Rval = 0x01100101, AmbaDSP_IkcUnitWarp.c, ikc_warp_internal(), ID = 137, description : Invalid window geometry fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitWarp.c, ikc_warp_radius_internal(), ID = 138, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitResampler.c, ikc_main_resampler(), ID = 139, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitResampler.c, ikc_main_resampler(), ID = 140, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitResampler.c, ikc_main_resampler(), ID = 141, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitResampler.c, ikc_main_resampler(), ID = 142, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitResampler.c, ikc_main_resampler(), ID = 143, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitResampler.c, ikc_main_resampler(), ID = 144, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitResampler.c, ikc_main_resampler(), ID = 145, description : OK case
+Rval = 0x01100101, AmbaDSP_IkcUnitResampler.c, ikc_main_resampler(), ID = 146, description : Invalid window geometry fail case
+Rval = 0x01100101, AmbaDSP_IkcUnitResampler.c, ikc_main_resampler(), ID = 147, description : Invalid window geometry fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitResampler.c, radius2hw_scale_code(), ID = 148, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitResampler.c, radius2hw_scale_code(), ID = 149, description : OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitResampler.c, ikc_cfa_prescale(), ID = 150, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitResampler.c, ikc_cfa_prescale(), ID = 151, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitResampler.c, ikc_cfa_prescale(), ID = 152, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitResampler.c, ikc_cfa_prescale(), ID = 153, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitResampler.c, ikc_cfa_prescale(), ID = 154, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitResampler.c, ikc_cfa_prescale(), ID = 155, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitResampler.c, ikc_cfa_prescale(), ID = 156, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitResampler.c, ikc_cfa_prescale(), ID = 157, description : OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitVignette.c, ikc_vignette(), ID = 158, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitVignette.c, ikc_vignette(), ID = 159, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitVignette.c, ikc_vignette(), ID = 160, description : OK case
+Rval = 0x01100107, AmbaDSP_IkcUnitVignette.c, ikc_vignette(), ID = 161, description : wrong binning mode fail case
+Rval = 0x01100107, AmbaDSP_IkcUnitVignette.c, ikc_vignette(), ID = 162, description : wrong binning mode fail case
+Rval = 0x01100107, AmbaDSP_IkcUnitVignette.c, ikc_vignette(), ID = 163, description : wrong binning mode fail case
+Rval = 0x01100107, AmbaDSP_IkcUnitVignette.c, ikc_vignette(), ID = 164, description : Invalid calib window geometry fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitVignette.c, ikc_vignette_sub(), ID = 165, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitVignette.c, ikc_vignette_sub(), ID = 166, description : OK case
+Rval = 0x01100107, AmbaDSP_IkcUnitVignette.c, ikc_vignette_sub(), ID = 167, description : Invalid calib window geometry fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitStaticBadPixel.c, ikc_static_bad_pixel(), ID = 168, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitStaticBadPixel.c, ikc_static_bad_pixel(), ID = 169, description : OK case
+Rval = 0x01100106, AmbaDSP_IkcUnitStaticBadPixel.c, ikc_static_bad_pixel(), ID = 170, description : wrong offset alignment fail case
+Rval = 0x01100106, AmbaDSP_IkcUnitStaticBadPixel.c, ikc_static_bad_pixel(), ID = 171, description : wrong binning mode fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitStaticBadPixel.c, ikc_static_bad_pixel_internal(), ID = 172, description : null-ptr fail case
+Rval = 0x01100008, AmbaDSP_IkcUnitStaticBadPixel.c, ikc_static_bad_pixel_internal(), ID = 173, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitYuvFilters.c, ikc_chroma_scale(), ID = 174, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitYuvFilters.c, ikc_chroma_scale(), ID = 175, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitYuvFilters.c, ikc_chroma_scale(), ID = 176, description : OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitYuvFilters.c, ikc_chroma_median(), ID = 177, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitYuvFilters.c, ikc_chroma_median(), ID = 178, description : OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitYuvFilters.c, ikc_chroma_noise(), ID = 179, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitYuvFilters.c, ikc_chroma_noise(), ID = 180, description : OK case
+Rval = 0x01100008, AmbaDSP_IkcUnitYuvFilters.c, ikc_chroma_noise(), ID = 181, description : Invalid parameter fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitRgbFilters.c, ikc_demosaic_filter(), ID = 182, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitRgbFilters.c, ikc_demosaic_filter(), ID = 183, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitRgbFilters.c, ikc_demosaic_filter(), ID = 184, description : OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitRgbFilters.c, ikc_color_correction_enable(), ID = 185, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitRgbFilters.c, ikc_color_correction_reg_y2y(), ID = 186, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitRgbFilters.c, ikc_color_correction(), ID = 187, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitRgbFilters.c, ikc_color_correction_out(), ID = 188, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitRgbFilters.c, ikc_rgb2yuv(), ID = 189, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitRgbFilters.c, ikc_rgb12y(), ID = 190, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitRgbFilters.c, ikc_rgb12y(), ID = 191, description : OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitRgbFilters.c, ikc_pre_cc_gain(), ID = 192, description : test if (rval == IK_OK) false NG case
+Rval = 0x00000000, AmbaDSP_IkcUnitRgbFilters.c, ikc_pre_cc_gain(), ID = 193, description : test if (p_in_pre_cc_gain->p_pre_cc_gain->enable == 1u) true OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitCfaFilters.c, ikc_dynamic_bad_pixel(), ID = 194, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitCfaFilters.c, ikc_dynamic_bad_pixel(), ID = 195, description : OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitCfaFilters.c, ikc_grgb_mismatch(), ID = 196, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitCfaFilters.c, ikc_cfa_leakage_anti_aliasing(), ID = 197, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitCfaFilters.c, ikc_cfa_leakage_anti_aliasing(), ID = 198, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitCfaFilters.c, ikc_cfa_leakage_anti_aliasing(), ID = 199, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitCfaFilters.c, ikc_cfa_leakage_anti_aliasing(), ID = 200, description : OK case
+Rval = 0x01100008, AmbaDSP_IkcUnitCfaFilters.c, ikc_cfa_leakage_anti_aliasing(), ID = 201, description : fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitCfaFilters.c, ikc_cfa_noise(), ID = 202, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitCfaFilters.c, ikc_after_ce_gain(), ID = 203, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitCfaFilters.c, ikc_rgb_ir(), ID = 204, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitCfaFilters.c, ikc_rgb_ir(), ID = 205, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitCfaFilters.c, ikc_rgb_ir(), ID = 206, description : OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitCfaFilters.c, ikc_rgb_ir_sub(), ID = 207, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitCfaFilters.c, ikc_rgb_ir_sub(), ID = 208, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitCfaFilters.c, ikc_rgb_ir_sub(), ID = 209, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitCfaFilters.c, ikc_rgb_ir_sub(), ID = 210, description : OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitMctfAlgo.c, ikc_mctf(), ID = 211, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitMctfAlgo.c, ikc_mctf(), ID = 212, description : OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitMctfAlgo.c, ikc_mctf_pos_dep33(), ID = 213, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitSharpen.c, ikc_asf(), ID = 214, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitSharpen.c, ikc_asf(), ID = 215, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitSharpen.c, ikc_asf(), ID = 216, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitSharpen.c, ikc_asf(), ID = 217, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitSharpen.c, ikc_asf(), ID = 218, description : OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitSharpen.c, ikc_sharpen(), ID = 219, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitSharpen.c, ikc_sharpen(), ID = 220, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitSharpen.c, ikc_sharpen(), ID = 221, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitSharpen.c, ikc_sharpen(), ID = 222, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitSharpen.c, ikc_sharpen(), ID = 223, description : OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitSharpen.c, ikc_sharpen_both(), ID = 224, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitSharpen.c, ikc_sharpen_both(), ID = 225, description : OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitSharpen.c, ikc_sharpen_coring(), ID = 226, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitSharpen.c, ikc_sharpen_coring_idx_scale(), ID = 227, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitSharpen.c, ikc_sharpen_min_coring(), ID = 228, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitSharpen.c, ikc_sharpen_max_coring(), ID = 229, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitSharpen.c, ikc_sharpen_scale_coring(), ID = 230, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitSharpen.c, ikc_lnl(), ID = 231, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitSharpen.c, ikc_lnl(), ID = 232, description : OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitSharpen.c, ikc_lnl_tbl(), ID = 233, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitSharpen.c, ikc_fnlshp(), ID = 234, description : null-ptr fail case
+Rval = 0x00000000, AmbaDSP_IkcUnitSharpen.c, ikc_fnlshp(), ID = 235, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitSharpen.c, ikc_fnlshp(), ID = 236, description : OK case
+Rval = 0x00000000, AmbaDSP_IkcUnitSharpen.c, ikc_fnlshp(), ID = 237, description : OK case
+Rval = 0x01100005, AmbaDSP_IkcUnitSharpen.c, ikc_fnlshp_both(), ID = 238, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitSharpen.c, ikc_fnlshp_coring(), ID = 239, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitSharpen.c, ikc_fnlshp_coring_idx_scale(), ID = 240, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitSharpen.c, ikc_fnlshp_min_coring(), ID = 241, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitSharpen.c, ikc_fnlshp_max_coring(), ID = 242, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitSharpen.c, ikc_fnlshp_scale_coring(), ID = 243, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_IkcUnitSharpen.c, ikc_fnlshp_both_3d(), ID = 244, description : null-ptr fail case

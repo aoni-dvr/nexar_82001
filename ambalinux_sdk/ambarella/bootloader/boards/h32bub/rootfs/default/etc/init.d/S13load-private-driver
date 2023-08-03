@@ -1,0 +1,89 @@
+#!/bin/sh
+
+AMBARELLA_CONF=ambarella.conf
+[ -r /etc/$AMBARELLA_CONF ] && . /etc/$AMBARELLA_CONF
+
+load_dsplog()
+{
+  if [ -r /lib/modules/"$kernel_ver"/extra/dsplog.ko ]; then
+    modprobe dsplog
+  fi
+}
+
+install_audio()
+{
+  #Audio
+  echo "Install Auido..."
+  modprobe snd-soc-core pmdown_time=300
+  modprobe snd-soc-ambarella
+  modprobe snd-soc-ambarella-i2s
+  modprobe snd-soc-ak4951-amb
+  modprobe snd-soc-ambdummy
+  modprobe snd-soc-simple-card
+
+}
+
+install_ethernet()
+{
+  #Ethernet
+  modprobe libphy
+  modprobe micrel
+  modprobe ambarella_eth
+}
+
+install_usb()
+{
+  #Install USB module
+  modprobe ehci-hcd
+  modprobe ehci-ambarella
+  modprobe ohci-hcd
+  modprobe ambarella_udc
+}
+
+install_mmc()
+{
+  #SD/MMC
+  modprobe ambarella_sd
+  modprobe mmc_block
+}
+
+install_input()
+{
+  #Install input module
+  modprobe gpio_keys
+}
+
+misc_init()
+{
+  #Change USB mode to HOST
+  echo host > /proc/ambarella/usbphy0
+
+  #modprobe ambad
+}
+
+start()
+{
+  install_ethernet
+  install_input
+  install_mmc
+  install_usb
+  misc_init
+  install_audio
+}
+
+case $1 in
+  start)
+    echo -n "Loading S6LM private driver: "
+    start
+    if [ $? -eq 0 ]
+    then
+      echo "OK!"
+    else
+      echo "Failed!"
+    fi
+    ;;
+  stop)
+    ;;
+  restart)
+    ;;
+esac

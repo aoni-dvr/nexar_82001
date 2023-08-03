@@ -1,0 +1,381 @@
+/* CV2 DSP error code c file
+Revision: 43821
+Last Changed Rev: 43505
+Last Changed Date: 2021-11-02 18:46:15 -0700 (Tue, 02 Nov 2021)
+*/
+
+/****************************************************************************/
+
+#include <ucode_error.h>
+
+/* module_idx 0 ERR_CODE_MOD_MM */
+const char* const mm_err_code[] =
+{
+  MM_ERR_UNKNOWN_MSG,                /* 0x00000u */
+  MM_ERR_TILED_FMT_MSG,              /* 0x00001u */
+  MM_ERR_INVALID_FB_ID_MSG,          /* 0x00002u */
+  MM_ERR_REQ_FB_FATAL_0_MSG,         /* 0x00003u */
+  MM_ERR_REQ_FB_FATAL_1_MSG,         /* 0x00004u */
+  MM_ERR_REQ_FB_FATAL_2_MSG,         /* 0x00005u */
+  MM_ERR_FB_USED_CNT_MSG,            /* 0x00006u */
+  MM_ERR_FB_NUM_USED_MSG,            /* 0x00007u */
+  MM_ERR_INC_FB_FATAL_MSG,           /* 0x00008u */
+  MM_ERR_DEC_FB_FATAL_MSG,           /* 0x00009u */
+  MM_ERR_FB_INVALID_FB_TYPE_MSG,     /* 0x0000au */
+  MM_ERR_SET_FB_EXT_FAILED_MSG,      /* 0x0000bu */
+  MM_ERR_FB_ID_NOT_A_FRAME_MSG,      /* 0x0000cu */
+  MM_ERR_GET_FB_AUX_FAILED_MSG,      /* 0x0000du */
+  MM_ERR_INVALID_FBP_TYPE_MSG,       /* 0x0000eu */
+  MM_ERR_INVALID_FBP_INDEX_MSG,      /* 0x0000fu */
+  MM_ERR_INVALID_IF_EXT_MSG,         /* 0x00010u */
+  MM_ERR_INVALID_IF_TILED_MSG,       /* 0x00011u */
+  MM_ERR_FBP_USED_MSG,               /* 0x00012u */
+  MM_ERR_FBP_INF_MSG,                /* 0x00013u */
+  MM_ERR_FBUF_USED_MSG,              /* 0x00014u */
+  MM_ERR_FRM_NUM_MAX_MSG,            /* 0x00015u */
+  MM_ERR_INVALID_MEM_PAR_ID_MSG,     /* 0x00016u */
+  MM_ERR_INVALID_FRM_BLK_SIZE_MSG,   /* 0x00017u */
+  MM_ERR_INVALID_CHROMA_FORMAT_MSG,  /* 0x00018u */
+  MM_ERR_INVALID_FB_NUM_TOTAL_MSG,   /* 0x00019u */
+  MM_ERR_INVALID_BUF_WIDTH_MSG,      /* 0x0001au */
+  MM_ERR_INVALID_BUF_HEIGHT_MSG,     /* 0x0001bu */
+  MM_ERR_INVALID_IMG_INF_IDX_MSG,    /* 0x0001cu */
+  MM_ERR_MFRM_BLK_SIZE_MSG,          /* 0x0001du */
+  MM_ERR_INVALID_MCB_NUM_MSG,        /* 0x0001eu */
+  MM_ERR_INVALID_MCB_USED_MSG,       /* 0x0001fu */
+  MM_ERR_INVALID_MCB_USED_NUM_MSG,   /* 0x00020u */
+  MM_ERR_INVALID_MCBL_SIZE_MSG,      /* 0x00021u */
+  MM_ERR_POP_MCB_FAILED_MSG,         /* 0x00022u */
+  MM_ERR_PUSH_MCB_FAILED_MSG,        /* 0x00023u */
+  MM_ERR_INVALID_MCBL_ID_MSG,        /* 0x00024u */
+  MM_ERR_INVALID_MCB_ID_TO_FREE_MSG, /* 0x00025u */
+  MM_ERR_INVALID_MEM_PAR_TYPE_MSG,   /* 0x00026u */
+  MM_ERR_INVALID_ALIGNMENT_MSG,      /* 0x00027u */
+  MM_ERR_INVALID_SIZE_MSG,           /* 0x00028u */
+  MM_ERR_TOO_MANY_PAR_MSG,           /* 0x00029u */
+  MM_ERR_NO_MORE_SMEM_MSG,           /* 0x0002au */
+  MM_ERR_NO_MORE_DRAM_MSG,           /* 0x0002bu */
+  MM_ERR_INVALID_MEM_PAR_MSG,        /* 0x0002cu */
+  MM_ERR_INVALID_SUP_SUB_PAR_MSG,    /* 0x0002du */
+  MM_ERR_UNKNOWN_PAR_LEVEL_MSG,      /* 0x0002eu */
+  MM_ERR_TOO_MANY_SUP_PAR_MSG,       /* 0x0002fu */
+  MM_ERR_TOO_MANY_SUB_PAR_MSG,       /* 0x00030u */
+  MM_ERR_TOO_MANY_SUP_SUB_PAR_MSG,   /* 0x00031u */
+  MM_ERR_INVALID_SUP_PAR_ID_MSG,     /* 0x00032u */
+  MM_ERR_SUB_PAR_OVER_LIMIT_MSG,     /* 0x00033u */
+  MM_ERR_INVALID_MEM_PAR_LEVEL_MSG,  /* 0x00034u */
+  MM_ERR_SUB_PAR_SIZE_MSG,           /* 0x00035u */
+  MM_ERR_INVALID_WIDTH_PITCH_MSG,    /* 0x00036u */
+  MM_ERR_INVALID_DBP_USED_MSG,       /* 0x00037u */
+  MM_ERR_INVALID_DBUF_PITCH_MSG,     /* 0x00038u */
+  MM_ERR_INVALID_DBUF_WIDTH_MSG,     /* 0x00039u */
+  MM_ERR_INVALID_CBUF_USED_MSG,      /* 0x0003au */
+  MM_ERR_INVALID_CBUF_SIZE_MSG,      /* 0x0003bu */
+  MM_ERR_INVALID_READER_USED_MSG,    /* 0x0003cu */
+  MM_ERR_INVALID_READER_ID_MSG,      /* 0x0003du */
+  MM_ERR_CBUF_RD_NUM_BYTES_MSG,      /* 0x0003eu */
+  MM_ERR_INVALID_BDT_USED_MSG,       /* 0x0003fu */
+  MM_ERR_INVALID_BD_NUM_MSG,         /* 0x00040u */
+  MM_ERR_INVALID_PADDED_WIDTH_MSG,   /* 0x00041u */
+  MM_ERR_INVALID_HEAP_SIZE_MSG,      /* 0x00042u */
+  MM_ERR_UNDEFINED_AES_SYMBOL_MSG,   /* 0x00043u */
+  MM_ERR_AES_FAILED_EXIT_MSG,        /* 0x00044u */
+  MM_ERR_AES_LEN_ALIGN_MSG,          /* 0x00045u */
+  MM_ERR_STACK_OVERFLOW_MSG,         /* 0x00046u */
+  MM_ERR_UTEST_MSG,                  /* 0x00047u */
+  MM_ERR_SMEM_2_DRAM_ALIGN_MSG,      /* 0x00048u */
+  MM_ERR_BAD_BDT_ID_MSG,             /* 0x00049u */
+  MM_ERR_WRITE_DRAM_OUTOF_RANGE_MSG, /* 0x0004au */
+};
+
+/* module_idx 1 ERR_CODE_MOD_API */
+const char* const api_err_code[] =
+{
+  API_ERR_UNKNOWN_MSG,              /* 0x10000u */
+  API_ERR_INTER_MSG_HOLD_MODE_MSG,  /* 0x10001u */
+  API_ERR_DSP_INIT_DATA_MSG,        /* 0x10002u */
+  API_ERR_INVALID_DSP_FP_TYPE_MSG,  /* 0x10003u */
+  API_ERR_WITHOUT_MUTEX_MSG,        /* 0x10004u */
+  API_ERR_INVALID_MSG_INFO_TBL_MSG, /* 0x10005u */
+  API_ERR_INVALID_CMD_API_ID_MSG,   /* 0x10006u */
+  API_ERR_INVALID_CMD_INFO_TBL_MSG, /* 0x10007u */
+  API_ERR_MSG_QUEUE_FULL_MSG,       /* 0x10008u */
+  API_ERR_INVALID_MSG_API_ID_MSG,   /* 0x10009u */
+  API_ERR_INVALID_CNT_VAL_MSG,      /* 0x1000au */
+  API_ERR_TIME_OUT_MSG,             /* 0x1000bu */
+  API_ERR_HEADER_CMD_CODE_MSG,      /* 0x1000cu */
+  API_ERR_INVALID_CMD_SEQ_MSG,      /* 0x1000du */
+  API_ERR_TOO_MANY_ENTRIES_MSG,     /* 0x1000eu */
+  API_ERR_INVALID_DSP_CMD_CODE_MSG, /* 0x1000fu */
+  API_ERR_BAD_ECHO_CMD_PIDX_MSG     /* 0x10010u */
+};
+
+/* module_idx 2 ERR_CODE_MOD_MSG */
+const char* const msg_err_code[] =
+{
+  MSG_ERR_UNKNOWN_MSG,           /* 0x20000u */
+  MSG_ERR_INVALID_ORC_ALL_MSG,   /* 0x20001u */
+  MSG_ERR_Q_TYPE_ORC_ALL_MSG,    /* 0x20002u */
+  MSG_ERR_Q_TYPE_ENTRY_SIZE_MSG, /* 0x20003u */
+  MSG_ERR_NO_MORE_QUEUES_MSG,    /* 0x20004u */
+  MSG_ERR_INVALID_MSG_Q_IDX_MSG, /* 0x20005u */
+  MSG_ERR_QUEUE_IS_FULL_MSG      /* 0x20006u */
+};
+
+/* module_idx 3 ERR_CODE_MOD_BOOT */
+const char* const boot_err_code[] =
+{
+  BOOT_ERR_UNKNOWN_MSG,           /* 0x30000u */
+  BOOT_ERR_DSP_DEBUG_DSIZE_MSG,   /* 0x30001u */
+  BOOT_ERR_CHIP_ID_DADDR_MSG,     /* 0x30002u */
+  BOOT_ERR_DELTA_AUDIO_TICKS_MSG, /* 0x30003u */
+  BOOT_ERR_DSP_PROF_ID_MSG,       /* 0x30004u */
+  BOOT_ERR_FIRST_DEF_CMD_MSG,     /* 0x30005u */
+  BOOT_ERR_ORC_MSG_T_SIZE_MSG,    /* 0x30006u */
+  BOOT_ERR_CALC_SBLK_FAILED_MSG,  /* 0x30007u */
+  BOOT_ERR_UNKNOWN_VALUES_MSG,    /* 0x30008u */
+  BOOT_ERR_INVALID_IN_IDX_MSG,    /* 0x30009u */
+  BOOT_ERR_INVALID_OUT_IDX_MSG    /* 0x3000au */
+};
+
+/* module_idx 4 ERR_CODE_MOD_IENG */
+const char * const ieng_err_code[] =
+{
+  IENG_ERR_UNKNOWN_MSG,            /* 0x40000u */
+  IENG_ERR_BAD_VALUE_MSG,          /* 0x40001u */
+  IENG_ERR_IDSP_LD_STR_MSG         /* 0x40002u */
+};
+
+/* module_idx 5 ERR_CODE_MOD_VPROC */
+const char * const vproc_err_code[] =
+{
+  VPROC_ERR_UNKNOWN_MSG,         /* 0x50000u */
+  VPROC_ERR_BAD_VALUE_MSG,
+  VPROC_ERR_SETUP_CMD_MSG,
+  VPROC_ERR_FLOW_MAX_CFG_MSG,
+  VPROC_ERR_CFG_CMD_MSG,
+  VPROC_ERR_IMG_PYR_CMD_MSG,
+  VPROC_ERR_PREV_CMD_MSG,
+  VPROC_ERR_WARP_CMD_MSG,
+  VPROC_ERR_MULT_STRM_PP_MSG,
+  VPROC_ERR_SET_EF_BUF_IMG_MSG,
+  VPROC_ERR_VPROC_GRPING_MSG,
+  VPROC_ERR_MC_PROC_ORDER_MSG,
+  VPROC_ERR_SET_EXT_MEM_MSG,
+  VPROC_ERR_PIN_OUT_DECI_MSG,
+  VPROC_ERR_LN_DEC_SETUP_MSG,
+  VPROC_ERR_GRP_CMD_MSG,
+  VPROC_ERR_BOUNDING_CHECK_MSG,
+  VPROC_ERR_INPUT_FID_MSG,
+  VPROC_ERR_NOT_ENOUGH_SMEM_MSG,
+  VPROC_ERR_NOT_ENOUGH_DRAM_MSG,
+  VPROC_ERR_GRP_INFO_MSG,
+  VPROC_ERR_BAT_PROC_ORDER_MSG,
+  VPROC_ERR_SMEM_WIN_WIDTH_MSG,
+  VPROC_ERR_NULL_IK_ADDR_MSG,
+  VPROC_ERR_INVALID_FB_ID_MSG,
+  VPROC_ERR_ABNORMAL_TILE_MSG,
+  VPROC_ERR_UNHANDLED_CMD_MSG,
+  VPROC_ERR_IN_Q_ID_MSG,
+  VPROC_ERR_OUT_PIN_MSG
+};
+
+/* module_idx 6 ERR_CODE_MOD_IDSPDRV */
+const char * const idspdrv_err_code[] =
+{
+  IDSPDRV_ERR_MSG_UNKNOWN,
+  IDSPDRV_ERR_MSG_PARAM_OUT_OF_RANGE,
+  IDSPDRV_ERR_MSG_INVALID_ALIGNMENT,
+  IDSPDRV_ERR_MSG_CFG_BUF_TOO_SMALL,
+  IDSPDRV_ERR_MSG_INCONSISTENT_SEC_ID,
+  IDSPDRV_ERR_MSG_NULL_ADDR,
+  IDSPDRV_ERR_MSG_OUTPUT_TOO_WIDE,
+  IDSPDRV_ERR_MSG_UNSUPPORTED_FEATURE,
+  IDSPDRV_ERR_MSG_WARP_ACTWIN_WIDE,
+  IDSPDRV_ERR_MSG_WARP_ACTWIN_TALL,
+  IDSPDRV_ERR_MSG_WARP_ACTWIN_START_LATE,
+  IDSPDRV_ERR_MSG_TRANSFER_SIZE_TOO_BIG
+};
+
+/* module_idx 7 ERR_CODE_MOD_VIN */
+const char * const vin_err_code[] =
+{
+  VIN_ERR_UNKNOWN_MSG,                  /* 0x70000u */
+  EM_VIN_API,                           /* 0x70001u */
+  EM_VIN_BAD_VIN_THREAD_ID,             /* 0x70002u */
+  EM_VIN_NULL_CMD_INFO_TBL,             /* 0x70003u */
+  EM_VIN_ASSERT_CHECK_AES,              /* 0x70004u */
+  EM_VIN_SC_CHECK_FAIL,                 /* 0x70005u */
+  EM_VIN_MISMATCH_VIN_ID,               /* 0x70006u */
+  EM_VIN_BAD_YUV_ENC_FBP_ID,            /* 0x70007u */
+  EM_VIN_BAD_FB_ID,                     /* 0x70008u */
+  EM_VIN_BAD_SDBD_INFO_FOV_ID,          /* 0x70009u */
+  EM_VIN_NULL_CMD_CHAN_DADDR,           /* 0x7000au */
+  EM_VIN_SHORT_OF_DRAM,                 /* 0x7000bu */
+  EM_VIN_SHORT_OF_SMEM,                 /* 0x7000cu */
+  EM_VIN_CAP_RM_INIT_NOT_SET,           /* 0x7000du */
+  EM_VIN_SENSOR_RAW_OUT_NOT_EN,         /* 0x7000eu */
+  EM_VIN_CE_OUT_NOT_EN,                 /* 0x7000fu */
+
+  EM_VIN_YUV422_OUT_NOT_EN,             /* 0x70010u */
+  EM_VIN_SHORT_OF_DATA_SMEM,            /* 0x70011u */
+  EM_VIN_MISMATCH_IDSP_STR_ID,          /* 0x70012u */
+  EM_VIN_NULL_FOV_FBP_IDS,              /* 0x70013u */
+  EM_VIN_NON_ZERO_RESET_CNT,            /* 0x70014u */
+  EM_VIN_NULL_DATA_Q_OUT,               /* 0x70015u */
+  EM_VIN_MISMATCH_BATCH_ADDR,           /* 0x70016u */
+  EM_VIN_MISMATCH_BATCH_ID,             /* 0x70017u */
+  EM_VIN_MISMATCH_BATCH_SZ,             /* 0x70018u */
+  EM_VIN_BAD_PIC_REPEAT_CNT,            /* 0x70019u */
+  EM_VIN_BAD_SRC_FP_NUM,                /* 0x7001au */
+  EM_VIN_BAD_VPROC_BINDING_NUM,         /* 0x7001bu */
+  EM_VIN_BAD_ENC_BINDING_NUM,           /* 0x7001cu */
+  EM_VIN_BAD_ENC_BIND_SRC_CH_NUM,       /* 0x7001du */
+  EM_VIN_BAD_DST_FP_TYPE,               /* 0x7001eu */
+  EM_VIN_BAD_BIND_MSG,                  /* 0x7001fu */
+
+  EM_VIN_BAD_BIND_SRC_CH_NUM,           /* 0x70020u */
+  EM_VIN_RUN_OUT_EXT_YUV_FB,            /* 0x70021u */
+  EM_VIN_WRONG_DRAM,                    /* 0x70022u */
+
+};
+
+
+/* module_idx 8 ERR_CODE_MOD_PREV */
+const char * const prev_err_code[] =
+{
+  PREV_ERR_UNKNOWN_MSG
+};
+
+
+/* module_idx 9 ERR_CODE_MOD_PROC_HL */
+const char* const hl_proc_err_code[] = {
+  HLP_ERRM_UNKNOWN,         /* 0x90000u */
+  HLP_ERRM_BAD_VALUE,       /* 0x90001u */
+  HLP_ERRM_WRITEQ_LWQ_FULL, /* 0x90002u */
+  HLP_ERRM_REQEXT_RUNOUTFB, /* 0x90003u */
+  HLP_ERRM_SET_EXT_MEM,     /* 0x90004u */
+  HLP_ERRM_CMPR_CFG         /* 0x90005u */
+};
+
+/* module_idx 10 ERR_CODE_MOD_VOUT */
+const char* const vout_err_code[] =
+{
+  ERR_MSG_INVALID_PREV_VOUT_SRC,             /* 0xa0000u */
+  ERR_MSG_INVALID_NEW_VOUT_SRC,              /* 0xa0001u */
+  ERR_MSG_VOUT_SRC_WHEN_PREP,                /* 0xa0002u */
+  ERR_MSG_WRONG_NEXT_VOUT_ID,                /* 0xa0003u */
+  ERR_MSG_WRONG_COUNTER_VAL,                 /* 0xa0004u */
+  ERR_MSG_NEXT_FRM_A_TOO_LARGE,              /* 0xa0005u */
+  ERR_MSG_NEXT_FRM_B_TOO_LARGE,              /* 0xa0006u */
+  ERR_MSG_WRITE_CMD_Q_SBASE_NULL,            /* 0xa0007u */
+  ERR_MSG_READ_CMD_Q_SBASE_NULL,             /* 0xa0008u */
+  ERR_MSG_INVALID_VOUT_ID_IN_CMD,            /* 0xa0009u */
+  ERR_MSG_VOUT_CMD_VOUT_ID_NOT_MATCH,        /* 0xa000au */
+  ERR_MSG_VOUT_UNSUPPORTED_CSC_TYPE,         /* 0xa000bu */
+  ERR_MSG_UNKNOW_CMD_CODE_FROM_VOUT_CMD,     /* 0xa000cu */
+  ERR_MSG_INVALID_NUM_CMDS_IN_BUF,           /* 0xa000du */
+};
+
+/* module_idx 11 ERR_CODE_MOD_ENC */
+const char * const enc_err_code[] =
+{
+  ENC_ERRM_BAD_VALUE,                         /* 0xb0000u */
+  ENC_ERRM_ENC_CMEM_GP_OVERFLOW,              /* 0xb0001u */
+  ENC_ERRM_UNKNOWN_CODING_TYPE,               /* 0xb0002u */
+  ENC_ERRM_API,                               /* 0xb0003u */
+  ENC_ERRM_API_CHK,                           /* 0xb0004u */
+  ENC_ERRM_RC_BAD_VALUE,                      /* 0xb0005u */
+  ENC_ERRM_RC_CMEM_RC_OVERFLOW,               /* 0xb0006u */
+  ENC_ERRM_VDSP_BOUNDING_CHECK,               /* 0xb0007u */
+};
+
+/* module_idx 12 ERR_CODE_MOD_ENG0 */
+const char * const eng0_err_code[] =
+{
+  ENG0_ERRM_BAD_VALUE,                        /* 0xc0000u */
+  ENG0_ERRM_NOT_SUPPORTED,                    /* 0xc0001u */
+  ENG0_ERRM_CMEM_GP_SIZE,                     /* 0xc0002u */
+  ENG0_ERRM_BITS_INFO_SIZE,                   /* 0xc0003u */
+};
+
+/* module_idx 13 ERR_CODE_MOD_PROXY */
+const char * const proxy_err_code[] =
+{
+  PROXY_ERRM_BAD_VALUE,                       /* 0xd0000u */
+  PROXY_ERRM_NOT_SUPPORTED,                   /* 0xd0001u */
+  PROXY_ERRM_CMEM_GP_SIZE,                    /* 0xd0002u */
+};
+
+/* module_idx 14 ERR_CODE_MOD_DEC */
+const char* const dec_err_code[] =
+{
+  DEC_ERR_UNKNOWN_MSG,
+  DEC_ERR_MSG_MDXF_SHARE_SBUF_SHORT,
+  DEC_ERR_MSG_SCHED_WORKSPACE_SHORT,
+  DEC_ERR_MSG_INVALID_FP_NO,
+  DEC_ERR_MSG_INVALID_MSG_Q,
+  DEC_ERR_MSG_INVALID_DATA_Q,
+  DEC_ERR_MSG_INVALID_OUT_PIN,
+  DEC_ERR_MSG_UNKNOWN_ORC_MSG,
+  DEC_ERR_MSG_UNKNOWN_DSP_CMD,
+  DEC_ERR_MSG_DSP_CMD_WRONG_STATE,
+  DEC_ERR_MSG_PROXY_PIC_UNDERFLOW,
+  DEC_ERR_UNKNOWN_MSG,
+  DEC_ERR_UNKNOWN_MSG,
+  DEC_ERR_UNKNOWN_MSG,
+  DEC_ERR_UNKNOWN_MSG,
+  DEC_ERR_UNKNOWN_MSG,
+  DEC_ERR_MSG_PICS_IN_HCB_MISMATCH,
+  DEC_ERR_MSG_SPS_STORAGE_NOT_ALIGN,
+  DEC_ERR_MSG_PPS_STORAGE_NOT_ALIGN,
+  DEC_ERR_MSG_SH_STORAGE_NOT_ALIGN,
+  DEC_ERR_MSG_RECON_CMD_NOT_ALIGN,
+  DEC_ERR_MSG_RECON_MSG_NOT_ALIGN,
+  DEC_ERR_MSG_AVCDEC_EXCEED_MAX_NUM,
+  DEC_ERR_MSG_ASCENDING_PTS_IN_BWD,
+  DEC_ERR_MSG_QUIT_ON_ERROR,
+  DEC_ERR_MSG_RECON_NOT_START_OF_PIC,
+  DEC_ERR_MSG_RECON_PIC_IDX_MISMATCH,
+  DEC_ERR_MSG_RECON_SPS_INVALID,
+  DEC_ERR_MSG_RECON_SPS_IDX_MISMATCH,
+  DEC_ERR_MSG_RECON_FB_SIZE_SHORT,
+  DEC_ERR_MSG_RECON_PPS_IDX_MISMATCH,
+  DEC_ERR_MSG_RECON_OUTPUT_FLD_PAIR,
+  DEC_ERR_MSG_RECON_DBP_SZ_OVERFLOW,
+  DEC_ERR_MSG_RESIDUAL_FBUF,
+  DEC_ERR_MSG_BITS_FIFO_WP_MISMATCH,
+  DEC_ERR_MSG_BITS_FIFO_OVERFLOW,
+  DEC_ERR_MSG_HCB_NOT_ALIGN,
+  DEC_ERR_MSG_GET_SH_IDX_MISMATCH,
+  DEC_ERR_MSG_PUT_SH_IDX_MISMATCH,
+  DEC_ERR_MSG_FREE_DPB_IDX,
+  DEC_ERR_MSG_GET_FB_FR_DPB,
+  DEC_ERR_MSG_GET_FRM_NUM_FR_DPB,
+  DEC_ERR_MSG_INVALID_PICSTRUCT,
+  DEC_ERR_MSG_INVALID_IS_USED,
+  DEC_ERR_MSG_OUT_DPB_UNPAIR,
+  DEC_ERR_MSG_SLIDING_WIN_IDR,
+  DEC_ERR_MSG_TESTBIN_CRC,
+  DEC_ERR_MSG_TESTBIN_FRM_LMT
+};
+
+/* module_idx 15 ERR_CODE_IDSP_HW_TIMEOUT */
+const char* const idsp_hw_timeout_err_code[] =
+{
+  IDSP_HW_TIMEOUT_MSG
+};
+
+/* module_idx 16 ERR_CODE_ENC_HW */
+const char * const enc_hw_err_code[] =
+{
+  ENC_HW_ERRM_ENC_0,
+};
+
+/* module_idx 17 ERR_CODE_ENC_CRC */
+const char * const enc_crc_err_code[] =
+{
+  ENC_CRC_ERRM_ENC_0,
+  ENC_CRC_ERRM_ENC_1,
+};
+

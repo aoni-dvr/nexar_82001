@@ -1,0 +1,57 @@
+if SVC_APPS_UT
+
+menu "UT Project"
+menuconfig APP_PROJECT_NAME
+    string "APP_PROJECT_NAME"
+	default "UT"
+
+	config DSP_WORK_SIZE
+    hex "dsp work buffer size, reside in dsp data buffer"
+    default 0x0
+
+	config DSP_LOG_BUF_SIZE
+    hex "dsp log buffer size, reside in dsp data buffer"
+    default 0x0
+	
+	config DSP_SUB_PART
+    hex "dsp sub part number, When cv2xfs, 0x0 imply to cv2fs; 0x1 imply to cv22fs"
+    default 0x0
+
+	config ENABLE_DSP_DATA_BUF
+    bool "Enable dsp data buffer"
+    default y
+
+    config ENABLE_SMALL_DSP_DATA_BUF
+    bool "use small dsp data buffer"
+    default n
+
+    config BUILD_CALIB_REGRESSION
+    bool "Enable Calib Regression"
+    default n
+
+    config ENABLE_AUDIO_SERVICE
+    bool "Enable audio service sample code"
+    default y
+
+    config ENABLE_CVBS
+    bool "Enable CVBS sample code"
+    default y
+
+    config ENABLE_HDMI
+    bool "Enable HDMI sample code"
+    default y
+
+    config ENABLE_DIAG
+    bool "Enable diag relative test command"
+    default y	
+
+    config ENABLE_IMGFRWK
+    bool "Enable ImageFrameWork"
+    default y
+
+    config ENABLE_UTG_IPC
+    bool "Enable IPC with UTG, only valid when cv2xfs"
+    default n
+endmenu
+
+endif

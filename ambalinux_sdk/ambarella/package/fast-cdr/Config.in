@@ -1,0 +1,8 @@
+config BR2_PACKAGE_FAST_CDR
+	bool "Fast-CDR"
+	default n
+	help
+	  Fast-CDR
+	  eProsima Fast CDR is a C++ library that provides two serialization mechanisms.
+
+

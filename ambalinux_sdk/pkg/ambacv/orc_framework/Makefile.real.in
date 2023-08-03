@@ -1,0 +1,1347 @@
+# Copyright (c) 2017-2018 Ambarella, Inc.
+#
+# This file and its contents ("Software") are protected by intellectual
+# property rights including, without limitation, U.S. and/or foreign copyrights.
+# This Software is also the confidential and proprietary information of
+# Ambarella, Inc. and its licensors.  You may not use, reproduce, disclose,
+# distribute, modify, or otherwise prepare derivative works of this Software
+# or any portion thereof except pursuant to a signed license agreement or
+# nondisclosure agreement with Ambarella, Inc. or its authorized affiliates.
+# In the absence of such an agreement, you agree to promptly notify and
+# return this Software to Ambarella, Inc.
+#
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+# INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT,
+# MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL AMBARELLA, INC. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT,
+# INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; COMPUTER FAILURE OR MALFUNCTION;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# -*- makefile -*-
+
+SRCDIR   = @srcdir@
+
+# use ucode source area
+override CV_COMMON_DIR  = @cv_common_dir@
+override ORC_COMMON_DIR = @orc_common_dir@
+override TEST_SRCDIR    = @test_srcdir@
+
+# Make sure the makefile creates these in the build directory
+USER_SUBDIRS := include include/enc
+
+# used by ppp files - touching these should make ppp files out of date
+
+ifneq (@amalgam_diag@,0)
+PM_SOURCES := UcodeConfig.pm
+else
+PM_SOURCES :=
+endif
+
+USER_CPP_INCDIRS := @orc_common_dir@/include/ @cv_common_dir@/inc/ @cv_common_dir@/inc/cvapi @cv_common_dir@/inc/cvsched_common include
+USER_PPP_INCDIRS := @orc_common_dir@/include/ @cv_common_dir@/inc/ @cv_common_dir@/inc/cvapi @cv_common_dir@/inc/cvsched_common include
+
+ifneq (@build_scheduler@,0)
+USER_CPP_INCDIRS += $(SRCDIR)/scheduler/orcvis $(SRCDIR)/scheduler/sched_core
+USER_PPP_INCDIRS += $(SRCDIR)/scheduler/orcvis $(SRCDIR)/scheduler/sched_core
+endif
+
+ifeq ($(CVCHIP),CHIP_CV6)
+USER_CPP_INCDIRS += $(SRCDIR)/scheduler/cv6_visorc
+endif
+
+ifneq (@asil_prototype_mode@,0)
+USER_CPP_INCDIRS += $(SRCDIR)/scheduler/asildev/common
+endif
+
+H2PPP_SRCS :=
+HEADER_SRCS :=
+
+
+USER_TARGETS :=
+
+MANIFESTS :=
+
+DATA_TARGETS :=
+
+TABLE_FILES  :=
+
+LIBRARIES :=
+
+INSTALL_ROOT    := @install_root@/orc
+LIB_ROOT        := @lib_root@/orc
+INSTALL_GROUP   := @install_group@
+
+SOD_TARGET       := sod
+SOD_SRCS         :=
+SOD_BUILD_LIBS   :=
+SOD_BUILD_TBARS  :=
+SOD_LIB_OBJECTS  :=
+SOD_BINDUMP      := orcsod
+
+VP_TARGET        := vp
+VP_SRCS          :=
+VP_BUILD_LIBS    :=
+VP_BUILD_TBARS   :=
+VP_LIB_OBJECTS   := 
+VP_BINDUMP       := orcvp
+
+BUILD_HEADERS    :=
+
+VASGEN_FILES     :=
+
+AUTOGEN_FILES    :=
+
+# make test specific variables
+TEST_RULES       :=
+TEST_TARGETS     :=
+TEST_OBJECTS     :=
+TEST_SOURCES     :=
+TEST_FLAGS       := -m32 -DORCVIS -DMISRA_COMPLIANCE -DASIL_COMPLIANCE
+TEST_INCFLAGS    := -I$(SRCDIR)/scheduler/asildev/testbench
+
+###############################################################################
+# 1 - core
+# 2 - subdir
+# 3 - sources
+# 4 - manifests
+# 5 - table_files
+
+define CONFIGURE_LIBRARY
+
+LIBRARIES += $(2)
+
+$(2)/LIB_AR   := $(2)/lib$(notdir $(2)).a
+
+$(2)_AR_OBJECTS := \
+	$$(patsubst %.c,%.o,$$(filter %.c,$(3))) \
+	$$(patsubst %.vasm,%.o,$$(filter %.vasm,$(3))) \
+	$$(patsubst %.vasm.ppp,%.o,$$(filter %.vasm.ppp,$(3)))
+
+$$($(2)/LIB_AR): $$($(2)_AR_OBJECTS) $(MAKEFILE_DEPS) $(FORCE_RULE)
+	@echo "  Creating library file $$@"
+	ar cr $$@ $$($(2)_AR_OBJECTS)
+
+$(2)/LIB_TBAR := $(2)/$(notdir $(2)).tbar
+
+$$($(2)/LIB_TBAR): $(4) $(5) $(MAKEFILE_DEPS) $(FORCE_RULE)
+	@echo "  Generating task archive $$@"
+	rm -f $$@
+	touch $$@
+	$$(if $$(filter %.mnft,$(4)),table_ar $$@ -a $$(filter %.mnft,$$^) $(TABLE_AR_FLAGS),)
+	$$(if $$(filter %.tbar,$(4)),table_ar $$@ -cat $$(filter %.tbar,$$^) $(TABLE_AR_FLAGS),)
+
+$(2)/build_version.h: force
+	if [ -f $(CV_COMMON_DIR)/build/create_build_version.sh ] ; then                         \
+	  $(CV_COMMON_DIR)/build/create_build_version.sh $(SRCDIR)/$(2) $(realpath $(2)) $(CV_COMMON_DIR);  \
+	fi
+
+BUILD_HEADERS += $(2)/build_version.h
+
+$(1)_BUILD_LIBS   += $$($(2)/LIB_AR)
+$(1)_LIB_OBJECTS  += $$($(2)_AR_OBJECTS)
+$(1)_BUILD_TBARS  += $$($(2)/LIB_TBAR)
+$(1)_SRCS         += $(3)
+
+endef
+
+define CONFIGURE_LIBRARY_ACE
+LIBRARIES += $(2)
+
+$(2)/LIB_AR   := $(2)/lib$(notdir $(2))_ace.a
+
+$(2)_AR_OBJECTS := \
+	$$(patsubst %.c,%.o,$$(filter %.c,$(3))) \
+	$$(patsubst %.vasm,%.o,$$(filter %.vasm,$(3))) \
+	$$(patsubst %.vasm.ppp,%.o,$$(filter %.vasm.ppp,$(3)))
+
+$$($(2)/LIB_AR): $$($(2)_AR_OBJECTS) $(MAKEFILE_DEPS) $(FORCE_RULE)
+	@echo "  Creating library file $$@"
+	ar cr $$@ $$($(2)_AR_OBJECTS)
+
+$(2)/LIB_TBAR := $(2)/$(notdir $(2))_ace.tbar
+
+$$($(2)/LIB_TBAR): $(4) $(5) $(MAKEFILE_DEPS) $(FORCE_RULE)
+	@echo "  Generating task archive $$@"
+	rm -f $$@
+	touch $$@
+	$$(if $$(filter %.mnft,$(4)),table_ar $$@ -a $$(filter %.mnft,$$^) $(TABLE_AR_FLAGS),)
+	$$(if $$(filter %.tbar,$(4)),table_ar $$@ -cat $$(filter %.tbar,$$^) $(TABLE_AR_FLAGS),)
+
+$(2)/build_version.h: force
+	if [ -f $(CV_COMMON_DIR)/build/create_build_version.sh ] ; then                         \
+	  $(CV_COMMON_DIR)/build/create_build_version.sh $(SRCDIR)/$(2) $(realpath $(2)) $(CV_COMMON_DIR);  \
+	fi
+
+BUILD_HEADERS += $(2)/build_version.h
+
+$(1)_BUILD_LIBS   += $$($(2)/LIB_AR)
+$(1)_LIB_OBJECTS  += $$($(2)_AR_OBJECTS)
+$(1)_BUILD_TBARS  += $$($(2)/LIB_TBAR)
+$(1)_SRCS         += $(3)
+
+endef
+
+define CONFIGURE_LIBRARY_HW
+LIBRARIES += $(2)
+
+$(2)/LIB_AR   := $(2)/lib$(notdir $(2))_hw.a
+
+$(2)_AR_OBJECTS := \
+	$$(patsubst %.c,%.o,$$(filter %.c,$(3))) \
+	$$(patsubst %.vasm,%.o,$$(filter %.vasm,$(3))) \
+	$$(patsubst %.vasm.ppp,%.o,$$(filter %.vasm.ppp,$(3)))
+
+$$($(2)/LIB_AR): $$($(2)_AR_OBJECTS) $(MAKEFILE_DEPS) $(FORCE_RULE)
+	@echo "  Creating library file $$@"
+	ar cr $$@ $$($(2)_AR_OBJECTS)
+
+$(2)/LIB_TBAR := $(2)/$(notdir $(2))_hw.tbar
+
+$$($(2)/LIB_TBAR): $(4) $(5) $(MAKEFILE_DEPS) $(FORCE_RULE)
+	@echo "  Generating task archive $$@"
+	rm -f $$@
+	touch $$@
+	$$(if $$(filter %.mnft,$(4)),table_ar $$@ -a $$(filter %.mnft,$$^) $(TABLE_AR_FLAGS),)
+	$$(if $$(filter %.tbar,$(4)),table_ar $$@ -cat $$(filter %.tbar,$$^) $(TABLE_AR_FLAGS),)
+
+$(2)/build_version.h: force
+	if [ -f $(CV_COMMON_DIR)/build/create_build_version.sh ] ; then                         \
+	  $(CV_COMMON_DIR)/build/create_build_version.sh $(SRCDIR)/$(2) $(realpath $(2)) $(CV_COMMON_DIR);  \
+	fi
+
+BUILD_HEADERS += $(2)/build_version.h
+
+$(1)_BUILD_LIBS   += $$($(2)/LIB_AR)
+$(1)_LIB_OBJECTS  += $$($(2)_AR_OBJECTS)
+$(1)_BUILD_TBARS  += $$($(2)/LIB_TBAR)
+$(1)_SRCS         += $(3)
+
+endef
+
+###############################################################################
+# 1 - core
+# 2 - subdir
+# 3 - sources
+# 4 - manifests
+# 5 - table_files
+# 6 - base original source directory
+
+define CONFIGURE_LIBRARY_ORCANY
+
+LIBRARIES += $(2)
+
+$(2)/LIB_AR   := $(2)/lib$(notdir $(2)).a
+
+$(2)_AR_OBJECTS := \
+	$$(patsubst %.c,%.o,$$(filter %.c,$(3))) \
+	$$(patsubst %.vasm,%.o,$$(filter %.vasm,$(3))) \
+	$$(patsubst %.vasm.ppp,%.o,$$(filter %.vasm.ppp,$(3)))
+
+$$($(2)/LIB_AR): $$($(2)_AR_OBJECTS) $(MAKEFILE_DEPS) $(FORCE_RULE)
+	@echo "  Creating library file $$@"
+	ar cr $$@ $$($(2)_AR_OBJECTS)
+
+$(2)/LIB_TBAR := $(2)/$(notdir $(2)).tbar
+
+$$($(2)/LIB_TBAR): $(4) $(5) $(MAKEFILE_DEPS) $(FORCE_RULE)
+	@echo "  Generating task archive $$@"
+	rm -f $$@
+	touch $$@
+	$$(if $$(filter %.mnft,$(4)),table_ar $$@ -a $$(filter %.mnft,$$^) $(TABLE_AR_FLAGS),)
+	$$(if $$(filter %.tbar,$(4)),table_ar $$@ -cat $$(filter %.tbar,$$^) $(TABLE_AR_FLAGS),)
+
+$(2)/build_version.h: force
+	if [ -f $(CV_COMMON_DIR)/build/create_build_version.sh ] ; then                         \
+	  $(CV_COMMON_DIR)/build/create_build_version.sh $(SRCDIR)/$(6) $(realpath $(2)) $(CV_COMMON_DIR);  \
+	fi
+
+BUILD_HEADERS += $(2)/build_version.h
+
+$(1)_BUILD_LIBS   += $$($(2)/LIB_AR)
+$(1)_LIB_OBJECTS  += $$($(2)_AR_OBJECTS)
+$(1)_BUILD_TBARS  += $$($(2)/LIB_TBAR)
+$(1)_SRCS         += $(3)
+
+endef
+
+define GENERATE_VAS_TARGETS
+$(1) := $(patsubst %.vas,%.vdg,$(filter %.vas,$(2)))
+$(1) += $(patsubst %.vas,%.h,$(filter %.vas,$(2)))
+$(1) += $(patsubst %.vas,%.dagbin,$(filter %.vas,$(2)))
+endef
+
+###############################################################################
+# 1 - subdir
+# 2 - list of dags to autogenerate / autodag to run
+# 3 - any flags to pass into $(VAS) -auto
+# 4 - any flags to pass into cvtask_autogen.py
+# 5 - sources
+# 6 - manifests
+
+define ADD_AUTOGEN_FILES
+
+$(1)/build_$(2)/cvtask_autogen/$(2).c: $(SRCDIR)/$(1)/$(2).vas
+	rm -rf $(1)/build_$(2)
+	mkdir -p $(1)/build_$(2)
+	cd $(1)/build_$(2) && \
+	$(VAS) $(SRCDIR)/$(1)/$(2).vas -Werror -auto -I@cv_common_dir@/inc/cvapi $(3) && \
+	cvtask_autogen.py --version 3 --daglevelfiles --path . --workdir ./cvtask_autogen $(4)
+
+# Add autogenerated code to dependency list
+$(patsubst %.c,%.d,$(filter %.c,$($(5)))) : CPPFLAGS += -I$(1)/build_$(2)/cvtask_autogen
+$(patsubst %.c,%.o,$(filter %.c,$($(5)))) : CPPFLAGS += -I$(1)/build_$(2)/cvtask_autogen
+
+# Update file lists as well
+AUTOGEN_FILES += $(1)/build_$(2)/cvtask_autogen/$(2).c
+$(5)          += $(1)/build_$(2)/cvtask_autogen/$(2).c
+$(6)          += $(1)/build_$(2)/cvtask_autogen/$(2)_ag_cvtask.mnft
+
+endef
+
+define GENERATE_AUTOGEN_FILES
+
+$(foreach autogen,$(2),$(eval $(call ADD_AUTOGEN_FILES,$(1),$(notdir $(basename $(autogen))),$(3),$(4),$(5),$(6))))
+
+endef
+
+
+##############################################################################
+# This gets called in the sub-makes to build test programs
+# just a silly syntax thing - the expansion doesn't work well in
+# functions because of the commas.
+RPATH_PREFIX := -Wl,-rpath,
+
+###############################################################################
+# Macro : ADD_TEST_OBJECT_RULE
+# Args :
+# 1 - Source file to build
+# 2 - base name of test
+# 3 - base directory of test
+# 4 - base directory of ORC
+#
+# This creates the directory "$(3)/$(2)_obj" as the target to place compiled
+# source files to, and adds a rule to properly compile the source into that
+# directory.  This also adds the object file to both $(2)_OBJECTS and the
+# TEST_OBJECTS variable - for easy cleaning.
+
+define ADD_TEST_OBJECT_RULE
+
+$(2)_OBJECTS  += $(addprefix $(3)/$(2)_obj/,$(patsubst %.c,%.o,$(notdir $(1))))
+TEST_OBJECTS  += $(addprefix $(3)/$(2)_obj/,$(patsubst %.c,%.o,$(notdir $(1))))
+TEST_SOURCES  += $(1)
+
+ifneq ($$(strip $$($(2)_INC_PATHS)),)
+$(addprefix $(3)/$(2)_obj/,$(patsubst %.c,%.o,$(notdir $(1)))): TEST_INCFLAGS += $$(addprefix -I,$(SRCDIR)/$$($(2)_INC_PATHS))
+endif
+
+$(addprefix $(3)/$(2)_obj/,$(patsubst %.c,%.o,$(notdir $(1)))): $(1) $(MAKEFILE_DEPS) $(FORCE_RULE)
+	@echo "  [TEST] GCC Compiling $$(subst $(4)/,,$$@) << $$(subst $(4)/,,$$(subst $(SRCDIR)/,,$$<))"
+	mkdir -p $$(dir $$@)
+	gcc $$(CPPFLAGS) $$(TEST_INCFLAGS) $$($(2)_CPP_FLAGS) $(TEST_FLAGS) -c -o $$@ $$<
+
+endef
+
+
+###############################################################################
+# Macro : BUILD_TEST_RULES
+# Args:
+# 1 - Name of test
+# 2 - Base directory of test
+# 3 - Base directory of ORC
+#
+# The function takes one argument, but it uses that argument to find
+# variables.  If you call this function with the argument "foo", the
+# variables that should be defined are:
+
+# foo_BIN              : name of executable to build
+# foo_TEST_SOURCES     : source files (including path) used to build the test
+#                        that are not part of the CVScheduler
+# foo_SCHED_SOURCES    : source files (including path) used to build the test
+#                        that *are* part of the CVScheduler
+# foo_CPP_FLAGS        : flags required for build
+# foo_DYN_LIB_PATHS    : -L options used to dynamically link test
+# foo_DYN_LIBS         : -l options used to dynamically link test
+# foo_STATIC_LIB_PATHS : -L options use to statically link test
+# foo_STATIC_LIBS      : -l options used to statically link test
+# foo_LOCAL_LIBS       : list of libraries (static or dynamic) that need to be
+#                        built so the test can be linked.
+# foo_INC_PATHS        : directories that should be in include path (without
+#                        the -I)
+# foo_EXTRA_LINK_OPTIONS : extra link options specified by the user
+# foo_VERBOSE_OPTIONS  : options that should be given to test program when run
+#                        with VERBOSE_TEST=1
+
+# The rules that are written for you are:
+
+# $(foo_BIN)       : Builds the test
+# foo              : Runs the test
+
+define BUILD_TEST_RULES
+
+$(1)_OBJECTS      :=
+
+$(foreach testsrc,$($(1)_TEST_SOURCES),$(eval $(call ADD_TEST_OBJECT_RULE,$(testsrc),$(1),$(2),$(3))))
+$(foreach testsrc,$($(1)_SCHED_SOURCES),$(eval $(call ADD_TEST_OBJECT_RULE,$(testsrc),$(1),$(2),$(3))))
+
+ifdef VALGRIND_TEST
+$(1)_PRE_OPTIONS += valgrind
+endif
+ifdef VERBOSE_TEST
+$(1)_POST_OPTIONS += $$($(1)_VERBOSE_OPTIONS)
+endif
+ifdef DEBUG_TEST
+$(1)_POST_OPTIONS += $$($(1)_DEBUG_OPTIONS)
+endif
+
+$($(1)_BIN): $($(1)_OBJECTS) $$($(1)_LOCAL_LIBS) $(MAKEFILE_DEPS) $(FORCE_RULE)
+	@echo "  [TEST] Linking $$(subst $(3)/,,$$@)"
+	@gcc $(TEST_FLAGS) -o $$@ $($(1)_OBJECTS)				 \
+	   $$(addprefix -L,$$($(1)_DYN_LIB_PATHS)		 \
+	     $$($(1)_STATIC_LIB_PATHS))				 \
+	   $$($(1)_DYN_LIBS) $$($(1)_STATIC_LIBS)		 \
+	     $$(addprefix $$(RPATH_PREFIX),$$($(1)_DYN_LIB_PATHS))  \
+	     $$($(1)_EXTRA_LINK_OPTIONS)
+
+$(1): $($(1)_BIN)
+	@echo "=========================================================="
+	@echo ""
+	@echo $($(1)_BIN)
+	$$($(1)_PRE_OPTIONS) $($(1)_BIN) $$($(1)_POST_OPTIONS)
+	@echo ""
+	@echo "=========================================================="
+
+TEST_TARGETS += $($(1)_BIN)
+TEST_RULES   += $(1)
+
+endef
+
+##############################################################################
+
+# just to remove duplicates, in case multiple subdirs mention the same file
+H2PPP_SRCS := $(sort $(H2PPP_SRCS))
+
+###############################################################################
+
+# In addition to the 3 variables above, the user should define:
+
+# SOD_TARGET / SOD_SRCS
+# VP_TARGET / VP_SRCS
+
+# H2PPP_SRCS - .h files that should have perl modules generated for them
+# PM_SRCS - perl modules that are used by ppp files (all ppp files will be 
+#           regenerated when these change)
+
+# USER_PPP_INCDIRS - Directories to add to PPP search path
+# USER_CPP_INCDIRS - Directories to add to cpp search path
+# USER_VPATH_DIRS - Directories to add to source file search path
+# USER_MAKEFILE_DEPS - Makefiles that when touched should trigger
+#                      recompilation
+
+
+##############################################################################
+
+MAKEFILE_DEPS = Makefile $(USER_MAKEFILE_DEPS)
+
+##############################################################################
+
+UCODE_COMMON_INCLUDE = $(ORC_COMMON_DIR)/include
+
+CPP	    = cpp
+
+CCC	    = orc-gcc
+VCC	    = vis-gcc
+
+VISAS	    = vis-as
+
+VLD	    = vis-ld
+
+VOC	    = vis-objcopy
+
+C2PH	    = a1c2ph
+PPP	    = ppp
+
+VAS	    = vas
+VDGDUMP	    = vdgdump
+
+###############################################################################
+
+# In case include files define rules, make sure the first rule in the
+# Makefile points to the intended default rule.
+firstrule : default
+
+##############################################################################
+
+SUBDIR_MAKES :=
+
+ifeq (@build_scheduler@,0)
+SUBDIR_MAKES +=
+else
+SUBDIR_MAKES += scheduler
+endif
+ifeq (@flexidag_mode@,0)
+SUBDIR_MAKES +=
+else
+SUBDIR_MAKES += flexidag
+endif
+SUBDIR_MAKES += cvtask cvlib
+
+BINEXPAND_TOOL	= binexpand
+
+ifneq (@flexidag_mode@,0)
+include $(SRCDIR)/flexidag/util/include.mk
+endif
+
+ifeq ($(CVCHIP),CHIP_CV2A)
+include $(SRCDIR)/util/crcexpand/include.mk
+endif
+
+ifeq ($(CVCHIP),CHIP_CV22A)
+include $(SRCDIR)/util/crcexpand/include.mk
+endif
+
+include $(SRCDIR)/util/fmtreloc/include.mk
+
+include $(addsuffix /include.mk,$(SUBDIR_MAKES))
+
+###############################################################################
+
+PPP_INCDIRS = . $(SRCDIR) $(UCODE_COMMON_INCLUDE) $(USER_PPP_INCDIRS)
+CPP_INCDIRS = . $(SRCDIR) $(UCODE_COMMON_INCLUDE) $(USER_CPP_INCDIRS)
+
+CPP_INCS = $(addprefix -I,$(CPP_INCDIRS))
+PPP_INCS = $(addprefix -I,$(PPP_INCDIRS))
+
+CPPFLAGS = $(DEFINES) $(CPP_INCS) -D$(CVCHIP)
+
+JUST_CFLAGS = -Wall -fno-inline -Werror -Wno-implicit-function-declaration -Wpadded
+OPT = -O3
+
+CFLAGS = $(JUST_CFLAGS) $(CPPFLAGS) $(OPT)
+
+ifdef VERBOSE_TABLE_AR
+TABLE_AR_FLAGS = -verbose
+else
+TABLE_AR_FLAGS =
+endif
+
+ifdef VERBOSE_VAS
+VAS_VERBOSE_FLAGS = -v
+else
+VAS_VERBOSE_FLAGS =
+endif
+
+ifdef VAS_NOTES
+VAS_NOTES_FLAGS = -show-notes
+else
+VAS_NOTES_FLAGS =
+endif
+
+ifdef VERBOSE_VDGDUMP
+VDGDUMP_VERBOSE_FLAGS = -v
+else
+VDGDUMP_VERBOSE_FLAGS =
+endif
+
+VASFLAGS = $(VAS_NOTES_FLAGS) $(VAS_VERBOSE_FLAGS) -I@cv_common_dir@/inc/cvapi -cv-check
+LOCAL_VASFLAGS          :=
+LOCAL_VASERRORFLAGS     := -Werror
+VDGDUMPFLAGS = $(VDGDUMP_VERBOSE_FLAGS)
+
+##############################################################################
+
+VP_CVTASK_LIBS       := @vp_cvtask_libs@ @vp_default_cvtask_libs@
+VP_CVTASK_LIB_FILES  := $(foreach task,$(VP_CVTASK_LIBS),$(task)/lib$(task).a)
+VP_CVTASK_TBARS      := $(foreach task,$(VP_CVTASK_LIBS),$(task)/$(task).tbar)
+
+VP_CVLIB_LIBS        := @default_vp_cvlib_libs@
+VP_CVLIB_LIB_FILES   := $(foreach task,$(VP_CVLIB_LIBS),$(task)/lib$(task).a)
+VP_CVLIB_TBARS       := $(foreach task,$(VP_CVLIB_LIBS),$(task)/$(task).tbar)
+
+VP_LIB_FILES         := $(addprefix cvtask/orcvp/,$(VP_CVTASK_LIB_FILES))
+VP_LIB_LINK_TBARS    := $(addprefix cvtask/orcvp/,$(VP_CVTASK_TBARS))
+VP_LIB_FILES         += $(addprefix cvlib/orcvp/,$(VP_CVLIB_LIB_FILES))
+VP_LIB_LINK_TBARS    += $(addprefix cvlib/orcvp/,$(VP_CVLIB_TBARS))
+
+SOD_CVTASK_LIBS      := @sod_cvtask_libs@ @sod_default_cvtask_libs@
+SOD_CVTASK_LIB_FILES := $(foreach task,$(SOD_CVTASK_LIBS),$(task)/lib$(task).a)
+SOD_CVTASK_TBARS     := $(foreach task,$(SOD_CVTASK_LIBS),$(task)/$(task).tbar)
+
+SOD_CVLIB_LIBS       := @default_sod_cvlib_libs@
+SOD_CVLIB_LIB_FILES  := $(foreach task,$(SOD_CVLIB_LIBS),$(task)/lib$(task).a)
+SOD_CVLIB_TBARS      := $(foreach task,$(SOD_CVLIB_LIBS),$(task)/$(task).tbar)
+
+SOD_LIB_FILES        := $(addprefix cvtask/orcsod/,$(SOD_CVTASK_LIB_FILES))
+SOD_LIB_LINK_TBARS   := $(addprefix cvtask/orcsod/,$(SOD_CVTASK_TBARS))
+SOD_LIB_FILES        += $(addprefix cvlib/orcsod/,$(SOD_CVLIB_LIB_FILES))
+SOD_LIB_LINK_TBARS   += $(addprefix cvlib/orcsod/,$(SOD_CVLIB_TBARS))
+
+ifeq (@flexidag_mode@,0)
+ifeq (@build_scheduler@,0)
+
+ifeq ($(CVCHIP),CHIP_CV1)
+LIB_CV_PREFIX        := cv1
+endif
+ifeq ($(CVCHIP),CHIP_CV2)
+LIB_CV_PREFIX        := cv2
+endif
+ifeq ($(CVCHIP),CHIP_CV22)
+LIB_CV_PREFIX        := cv22
+endif
+ifeq ($(CVCHIP),CHIP_CV25)
+LIB_CV_PREFIX        := cv25
+endif
+ifeq ($(CVCHIP),CHIP_CV28)
+LIB_CV_PREFIX        := cv28
+endif
+ifeq ($(CVCHIP),CHIP_CV5)
+LIB_CV_PREFIX        := cv5
+endif
+ifeq ($(CVCHIP),CHIP_CV52)
+LIB_CV_PREFIX        := cv52
+endif
+ifeq ($(CVCHIP),CHIP_CV2A)
+LIB_CV_PREFIX        := cv2a
+endif
+ifeq ($(CVCHIP),CHIP_CV22A)
+LIB_CV_PREFIX        := cv22a
+endif
+ifeq ($(CVCHIP),CHIP_CV6)
+LIB_CV_PREFIX        := cv6
+endif
+
+ifeq (@amalgam_diag@,0)
+LIB_CV_SUFFIX        := _hw
+else
+ifneq (@use_ace_platform@,0)
+LIB_CV_SUFFIX        := _ace
+else
+LIB_CV_SUFFIX        := 
+endif
+endif
+
+ifeq ($(CVCHIP),CHIP_CV6)
+VP_LIB_FILES         += scheduler/$(LIB_CV_PREFIX)_visorc/lib$(LIB_CV_PREFIX)_visorc$(LIB_CV_SUFFIX).a
+VP_LIB_LINK_TBARS    += scheduler/$(LIB_CV_PREFIX)_visorc/$(LIB_CV_PREFIX)_visorc$(LIB_CV_SUFFIX).tbar
+else
+VP_LIB_FILES         += scheduler/$(LIB_CV_PREFIX)_orcvp/lib$(LIB_CV_PREFIX)_orcvp$(LIB_CV_SUFFIX).a
+VP_LIB_LINK_TBARS    += scheduler/$(LIB_CV_PREFIX)_orcvp/$(LIB_CV_PREFIX)_orcvp$(LIB_CV_SUFFIX).tbar
+endif
+ifeq ($(CVCHIP),CHIP_CV1)
+SOD_LIB_FILES        += scheduler/$(LIB_CV_PREFIX)_orcsod/lib$(LIB_CV_PREFIX)_orcsod$(LIB_CV_SUFFIX).a
+SOD_LIB_LINK_TBARS   += scheduler/$(LIB_CV_PREFIX)_orcsod/$(LIB_CV_PREFIX)_orcsod$(LIB_CV_SUFFIX).tbar
+endif
+
+endif   #ifeq (@build_scheduler@,0)
+endif   #ifeq (@flexidag_mode@,0)
+
+##############################################################################
+
+ifeq ($(CVCHIP),CHIP_CV1)
+CORES := VP SOD
+else
+CORES := VP
+endif
+
+SOD_ASM_SUFFIX                 := vasm
+SOD_AS_SUFFIX                  := vs
+SOD_LD_MAP                     := sod.map
+SOD_LD_SCR                     := $(ORC_COMMON_DIR)/ldscripts/orcsod.ld
+SOD_SLOT_LD_SCR                := $(ORC_COMMON_DIR)/ldscripts/visorc_standalone
+SOD_LDFLAGS                    := 
+SOD_LD                         := $(VLD)
+SOD_C_DEFINES                  := -DORCSOD -DORCVIS -DUSE_MISRA
+SOD_ASM_DEFINES                := -DORCSOD -DORCVIS -DUSE_MISRA
+SOD_LINK_LIBS                  := $(addprefix $(LIB_ROOT)/,$(SOD_LIB_FILES))
+SOD_LIB_TBARS                  := $(addprefix $(LIB_ROOT)/,$(SOD_LIB_LINK_TBARS))
+SOD_OC                         := $(VOC)
+SOD_OCFLAGS                    := -O binary
+
+VP_ASM_SUFFIX                  := vasm
+VP_AS_SUFFIX                   := vs
+VP_LD_MAP                      := vp.map
+ifeq ($(CVCHIP),CHIP_CV6)
+VP_LD_SCR                      := $(ORC_COMMON_DIR)/ldscripts/visorc_cv6.ld
+else
+VP_LD_SCR                      := $(ORC_COMMON_DIR)/ldscripts/orcvp.ld
+endif
+VP_SLOT_LD_SCR                 := $(ORC_COMMON_DIR)/ldscripts/visorc_standalone
+VP_LDFLAGS                     := 
+VP_LD                          := $(VLD)
+VP_C_DEFINES                   := -DORCVP -DORCVIS -DUSE_MISRA
+VP_ASM_DEFINES                 := -DORCVP -DORCVIS -DUSE_MISRA
+VP_LINK_LIBS                   := $(addprefix $(LIB_ROOT)/,$(VP_LIB_FILES))
+VP_LIB_TBARS                   := $(addprefix $(LIB_ROOT)/,$(VP_LIB_LINK_TBARS))
+VP_OC                          := $(VOC)
+VP_OCFLAGS                     := -O binary
+
+DATA_TARGETS += visorc_cvtable.tbar
+
+ifeq (@amalgam_diag@,1)
+SOD_C_DEFINES   += -DAMALGAM_DIAG
+SOD_ASM_DEFINES += -DAMALGAM_DIAG
+VP_C_DEFINES    += -DAMALGAM_DIAG
+VP_ASM_DEFINES  += -DAMALGAM_DIAG
+endif
+
+ifeq (@use_ace_platform@,1)
+SOD_C_DEFINES   += -DUSE_ACE_PLATFORM
+SOD_ASM_DEFINES += -DUSE_ACE_PLATFORM
+VP_C_DEFINES    += -DUSE_ACE_PLATFORM
+VP_ASM_DEFINES  += -DUSE_ACE_PLATFORM
+endif
+
+ifeq (@rtl_diag@,1)
+SOD_C_DEFINES   += -DRTL_DIAG
+SOD_ASM_DEFINES += -DRTL_DIAG
+VP_C_DEFINES    += -DRTL_DIAG
+VP_ASM_DEFINES  += -DRTL_DIAG
+endif
+
+ifeq (@chide_diag@,1)
+SOD_C_DEFINES   += -DCHIDE_DIAG
+SOD_ASM_DEFINES += -DCHIDE_DIAG
+VP_C_DEFINES    += -DCHIDE_DIAG
+VP_ASM_DEFINES  += -DCHIDE_DIAG
+endif
+
+ifneq (@flexidag_mode@,0)
+SOD_C_DEFINES   += -DSTANDALONE_MODE
+SOD_ASM_DEFINES += -DSTANDALONE_MODE
+VP_C_DEFINES    += -DSTANDALONE_MODE
+VP_ASM_DEFINES  += -DSTANDALONE_MODE
+endif
+
+ifneq (@misra_compliance_mode@,0)
+SOD_C_DEFINES   += -DMISRA_COMPLIANCE
+SOD_ASM_DEFINES += -DMISRA_COMPLIANCE
+VP_C_DEFINES    += -DMISRA_COMPLIANCE
+VP_ASM_DEFINES  += -DMISRA_COMPLIANCE
+endif
+
+ifneq (@has_hsm@,0)
+SOD_C_DEFINES   += -DHAS_HSM
+SOD_ASM_DEFINES += -DHAS_HSM
+VP_C_DEFINES    += -DHAS_HSM
+VP_ASM_DEFINES  += -DHAS_HSM
+endif
+
+ifeq ($(CVCHIP),CHIP_CV2A)
+SOD_C_DEFINES   += -DASIL_COMPLIANCE
+SOD_ASM_DEFINES += -DASIL_COMPLIANCE
+VP_C_DEFINES    += -DASIL_COMPLIANCE
+VP_ASM_DEFINES  += -DASIL_COMPLIANCE
+else
+ifeq ($(CVCHIP),CHIP_CV22A)
+SOD_C_DEFINES   += -DASIL_COMPLIANCE
+SOD_ASM_DEFINES += -DASIL_COMPLIANCE
+VP_C_DEFINES    += -DASIL_COMPLIANCE
+VP_ASM_DEFINES  += -DASIL_COMPLIANCE
+else
+ifneq (@asil_compliance_mode@,0)
+SOD_C_DEFINES   += -DASIL_COMPLIANCE
+SOD_ASM_DEFINES += -DASIL_COMPLIANCE
+VP_C_DEFINES    += -DASIL_COMPLIANCE
+VP_ASM_DEFINES  += -DASIL_COMPLIANCE
+endif
+endif
+endif
+
+ifneq (@asil_prototype_mode@,0)
+SOD_C_DEFINES   += -DASIL_PROTOTYPE
+SOD_ASM_DEFINES += -DASIL_PROTOTYPE
+VP_C_DEFINES    += -DASIL_PROTOTYPE
+VP_ASM_DEFINES  += -DASIL_PROTOTYPE
+endif
+
+ifeq (@add_core_logger@,1)
+VP_C_DEFINES    += -DINCLUDE_CORE_CVTASK_LOGGER
+VP_ASM_DEFINES  += -DINCLUDE_CORE_CVTASK_LOGGER
+endif
+
+ifeq (@add_core_muxer@,1)
+VP_C_DEFINES    += -DINCLUDE_CORE_CVTASK_MUXER
+VP_ASM_DEFINES  += -DINCLUDE_CORE_CVTASK_MUXER
+endif
+
+##############################################################################
+
+GCC_LIB_DIR = `tv2 -libpath $(VCC) -nostrict_arch`
+GCC_LIB = $(GCC_LIB_DIR)/gcc-lib/me32le-elf/3.2.3/libgcc.a
+
+###############################################################################
+
+ALL_TARGETS          := $(USER_TARGETS)
+ALL_SRCS	     :=
+ALL_MAPS             :=
+
+ALL_INTERMEDIATE     :=
+ALL_PPP_SRCS	     :=
+ALL_PPP_PRODUCTS     :=
+ALL_PPP_DEPS	     :=
+
+ALL_VAS_SRCS         :=
+ALL_VAS_DEPS         :=
+ALL_VDG_PRODUCTS     :=
+
+ALL_C_SRCS	     :=
+ALL_GEN_C	     :=
+ALL_C_FILES	     :=
+ALL_C_DEPS	     :=
+
+ALL_ASM_SRCS	     :=
+ALL_GEN_ASM	     :=
+ALL_ASM_FILES	     :=
+ALL_ASM_DEPS	     :=
+
+ALL_AS_SRCS	     :=
+ALL_GEN_AS	     :=
+ALL_C_AS_FILES	     :=
+ALL_ASM_AS_FILES     :=
+ALL_AS_FILES	     :=
+
+ALL_OBJECTS          :=
+
+ALL_C_AS_FILES_vs    :=
+
+ALL_C_DEP_FILES_vs    :=
+
+HELPERS               :=
+
+# 1 - CORE_NAME
+# 2 - cpp-asm extension (vasm)
+# 3 - raw asm extension (vs)
+define CONFIGURE_VARS
+################################
+
+ifeq (@flexidag_mode@,0)
+ALL_TARGETS       += $$($(1)_TARGET).exe
+ALL_TARGETS       += $$($(1)_BINDUMP).bin
+else    #ifneq (@flexidag_mode@,0)
+ALL_TARGETS       += $$($(1)_TARGET)_slot0.exe
+ALL_TARGETS       += $$($(1)_BINDUMP)_slot0.bin
+ALL_TARGETS       += $$($(1)_TARGET)_slotx.exe
+ALL_TARGETS       += $$($(1)_BINDUMP)_slotx.bin
+ALL_TARGETS       += $$($(1)_BINDUMP)_patchup.bin
+endif   #ifneq (@flexidag_mode@,0)
+
+$(1)_ALL_SRCS     := $$($(1)_SRCS)
+ALL_SRCS          += $$($(1)_SRCS)
+
+################################
+# PPP
+
+$(1)_PPP_SRCS     := $$(filter %.ppp,$$($(1)_ALL_SRCS))
+ALL_PPP_SRCS      += $$($(1)_PPP_SRCS)
+$(1)_PPP_PRODUCTS := $$(patsubst %.ppp,%,$$($(1)_PPP_SRCS))
+ALL_PPP_PRODUCTS  += $$($(1)_PPP_PRODUCTS)
+ALL_INTERMEDIATE  += $$($(1)_PPP_PRODUCTS)
+
+$(1)_PPP_DEPS     := $$(patsubst %.ppp,%.d,$$($(1)_PPP_SRCS))
+ALL_PPP_DEPS      += $$($(1)_PPP_DEPS)
+
+################################
+# VAS
+
+$(1)_VAS_SRCS     := $$(filter %.vas,$$($(1)_ALL_SRCS))
+ALL_VAS_SRCS      += $$($(1)_VAS_SRCS) 
+
+$(1)_VDG_PRODUCTS := $$(patsubst %.vas,%.vdg,$$($(1)_VAS_SRCS))
+
+$(1)_VAS_DEPS     := $$(patsubst %.vas,%.d,$$($(1)_VAS_SRCS))
+ALL_VAS_DEPS      += $$($(1)_VAS_DEPS)
+
+ALL_VDG_PRODUCTS  += $$($(1)_VDG_PRODUCTS)
+ALL_INTERMEDIATE  += $$($(1)_VDG_PRODUCTS)
+
+################################
+# C
+
+# C original sources
+$(1)_C_SRCS       := $$(filter %.c,$$($(1)_ALL_SRCS))
+ALL_C_SRCS        += $$($(1)_C_SRCS)
+
+# C from ppp
+$(1)_GEN_C        := $$(patsubst %.c.ppp,%.c,$$(filter %.c.ppp,$$($(1)_PPP_SRCS)))
+ALL_GEN_C         += $$($(1)_GEN_C)
+ALL_INTERMEDIATE  += $$($(1)_GEN_C)
+
+
+# C files from either (source or from ppp)
+$(1)_C_FILES      := $$($(1)_C_SRCS) $$($(1)_GEN_C)
+ALL_C_FILES       += $$($(1)_C_FILES)
+
+$(1)_C_DEPS       := $$(patsubst %.c,%.d,$$($(1)_C_FILES))
+ALL_C_DEPS        += $$($(1)_C_DEPS)
+
+################################
+# ASM
+
+# asm original sources
+$(1)_ASM_SRCS     := $$(filter %.$(2),$$($(1)_ALL_SRCS))
+ALL_ASM_SRCS      += $$($(1)_ASM_SRCS)
+
+# asm from ppp
+$(1)_GEN_ASM      := $$(patsubst %.$(2).ppp,%.$(2),$$(filter %.$(2).ppp,$$($(1)_PPP_SRCS)))
+ALL_GEN_ASM       += $$($(1)_GEN_ASM)
+ALL_INTERMEDIATE  += $$($(1)_GEN_ASM)
+
+# asm files from any
+$(1)_ASM_FILES    := $$($(1)_ASM_SRCS) $$($(1)_GEN_ASM) 
+ALL_ASM_FILES     += $(1)_ASM_FILES
+$(1)_ASM_DEPS     := $$(patsubst %.$(2),%.d,$$($(1)_ASM_FILES))
+ALL_ASM_DEPS      += $$($(1)_ASM_DEPS)
+
+################################
+# AS
+
+# as original sources
+$(1)_AS_SRCS      := $$(filter %.$(2),$$($(3)_SRCS))
+ALL_AS_SRCS       += $$($(1)_AS_SRCS)
+
+# as from ppp
+$(1)_GEN_AS       := $$(patsubst %.$(3).ppp,%.$(3),$$(filter %.$(3).ppp,$$($(1)_PPP_SRCS)))
+ALL_GEN_AS        += $$($(1)_GEN_AS)
+ALL_INTERMEDIATE  += $$($(1)_GEN_AS)
+
+# as files from C
+$(1)_C_AS_FILES   := $$(patsubst %.c,%.$(3),$$($(1)_C_FILES))
+ALL_C_AS_FILES    += $$($(1)_C_AS_FILES)
+ALL_C_AS_FILES_$(3) += $$($(1)_C_AS_FILES)
+ALL_C_DEP_FILES_$(3) += $$(patsubst %.c,%.d,$$($(1)_C_FILES))
+ALL_INTERMEDIATE  += $$($(1)_C_AS_FILES)
+
+# as from asm
+$(1)_ASM_AS_FILES := $$(patsubst %.$(2),%.$(3),$$($(1)_ASM_FILES))
+ALL_ASM_AS_FILES  += $$($(1)_ASM_AS_FILES)
+ALL_INTERMEDIATE  += $$($(1)_ASM_AS_FILES)
+
+# as files from any
+$(1)_AS_FILES     := $$($(1)_AS_SRCS) $$($(1)_GEN_AS) $$($(1)_C_AS_FILES) \
+                     $$($(1)_ASM_AS_FILES)
+ALL_AS_FILES      += $$($(1)_AS_FILES)
+# no deps for as files
+
+################################
+# OBJECTS
+
+# compute objects this crazy way because I want to preserve the order
+# in the sources
+$(1)_SRCS_AFTER_PPP   := $$(patsubst %.ppp,%,$$($(1)_ALL_SRCS))
+$(1)_SRCS_AFTER_C2O   := $$(patsubst %.c,%.o,$$($(1)_SRCS_AFTER_PPP))
+$(1)_SRCS_AFTER_ASM2O := $$(patsubst %.$(2),%.o,$$($(1)_SRCS_AFTER_C2O))
+$(1)_SRCS_AFTER_AS2O  := $$(patsubst %.$(3),%.o,$$($(1)_SRCS_AFTER_ASM2O))
+
+$(1)_OBJECTS_INCL_LIBS := $$(filter-out %.vas,$$(filter-out %.h,$$($(1)_SRCS_AFTER_AS2O)))
+
+$(1)_OBJECTS          := $$(filter-out $$($(1)_LIB_OBJECTS),$$($(1)_OBJECTS_INCL_LIBS))
+
+
+
+ALL_OBJECTS           += $$($(1)_OBJECTS_INCL_LIBS)
+
+
+
+################################
+# Misc
+
+ALL_MAPS += $$($(1)_LD_MAP)
+
+################################
+endef
+
+$(foreach core,$(CORES),\
+   $(eval $(call CONFIGURE_VARS,$(core),$($(core)_ASM_SUFFIX),$($(core)_AS_SUFFIX))))
+
+HEADER_PPP_SRCS     := $(filter %.ppp,$(HEADER_SRCS))
+HEADER_PPP_PRODUCTS := $(patsubst %.ppp,%,$(HEADER_PPP_SRCS))
+HEADER_PPP_DEPS     := $(patsubst %.ppp,%.d,$(HEADER_PPP_SRCS))
+
+ALL_SRCS += $(HEADER_PPP_SRCS)
+H_PPP_SRCS += $(HEADER_PPP_SRCS)
+ALL_PPP_SRCS += $(HEADER_PPP_SRCS)
+ALL_INTERMEDIATE += $(HEADER_PPP_PRODUCTS)
+ALL_PPP_DEPS += $(HEADER_PPP_DEPS)
+
+##############################################################################
+# PM files from .h files
+
+GEN_PM_HEADERS := $(patsubst %.h,%_h.pm,$(H2PPP_SRCS))
+GEN_PM_DEPS    := $(patsubst %.h,%.hh.d,$(H2PPP_SRCS))
+
+##############################################################################
+
+H_PPP_SRCS	 += $(filter %.h.ppp,$(ALL_SRCS))
+ALL_PPP_PRODUCTS += $(patsubst %.h.ppp,%.h,$(H_PPP_SRCS))
+
+VAS_SRCS         := $(filter %.vas,$(ALL_SRCS))
+VAS_HEADERS      := $(patsubst %.vas,%.h,$(VAS_SRCS))
+
+GEN_HEADERS	 := $(patsubst %.h.ppp,%.h,$(H_PPP_SRCS)) $(VAS_HEADERS) $(BUILD_HEADERS)
+
+GEN_HEADER_DEPS	 := $(patsubst %.h,%.h.d,$(GEN_HEADERS))
+
+##############################################################################
+
+ALL_INTERMEDIATE += $(VAS_HEADERS) $(TABLE_FILES)
+
+###############################################################################
+
+CODE_DEPS      = $(ALL_C_DEPS) $(ALL_ASM_DEPS)
+
+ALL_DEPS      :=				\
+	$(GEN_PM_DEPS)				\
+	$(GEN_HEADER_DEPS)			\
+	$(ALL_PPP_DEPS)				\
+	$(ALL_VAS_DEPS)				\
+	$(CODE_DEPS)
+
+ALL_GEN_FILES := $(GEN_PM_HEADERS) $(GEN_HEADERS) \
+                 $(ALL_GEN_C) $(ALL_GEN_ASM) $(ALL_GEN_AS) $(VASGEN_FILES)
+
+ALL_HEADER_DEPS :=				\
+	$(GEN_HEADER_DEPS)			\
+	$(GEN_PM_DEPS)				\
+	$(ALL_PPP_DEPS)				\
+	$(ALL_VAS_DEPS)
+
+###############################################################################
+
+
+INSTALL_DIRS :=
+INSTALL_FILES :=
+
+# 1 - library
+define ADD_INSTALL_TARGETS
+
+INSTALL_DIRS  += $(INSTALL_ROOT)/$(1)
+INSTALL_FILES += $(INSTALL_ROOT)/$$($(1)/LIB_TBAR) $(INSTALL_ROOT)/$$($(1)/LIB_AR)
+
+$(INSTALL_ROOT)/$$($(1)/LIB_TBAR) : $$($(1)/LIB_TBAR)
+	@echo "  Installing $$<"
+	mkdir -m 0755 -p $(INSTALL_ROOT)/$(1)
+	install -m 0664 $$($(1)/LIB_TBAR) $(INSTALL_ROOT)/$$($(1)/LIB_TBAR)
+
+$(INSTALL_ROOT)/$$($(1)/LIB_AR) : $$($(1)/LIB_AR)
+	@echo "  Installing $$<"
+	mkdir -m 0755 -p $(INSTALL_ROOT)/$(1)
+	install -m 0664 $$($(1)/LIB_AR) $(INSTALL_ROOT)/$$($(1)/LIB_AR)
+
+endef
+
+$(foreach lib,$(LIBRARIES),$(eval $(call ADD_INSTALL_TARGETS,$(lib))))
+
+###############################################################################
+
+ifdef FORCE
+FORCE_RULE = force
+endif
+
+###############################################################################
+
+VPATH_DIRS = $(SRCDIR) $(USER_VPATH_DIRS)
+
+vpath %.ppp	$(VPATH_DIRS)
+vpath %.h	$(VPATH_DIRS)
+vpath %.c	$(VPATH_DIRS)
+vpath %.masm	$(VPATH_DIRS)
+vpath %.vasm	$(VPATH_DIRS)
+vpath %.pm	$(VPATH_DIRS)
+vpath %.mnft    $(VPATH_DIRS)
+vpath %.vas     $(VPATH_DIRS)
+
+###############################################################################
+
+ifndef VERBOSE_MAKE
+.SILENT:
+endif
+
+.SUFFIXES:
+
+.SECONDARY: $(ALL_INTERMEDIATE)
+
+.PHONY: default build dirs headers code data tools nuke clean clobber force install
+
+###############################################################################
+# RULES
+
+default: build
+
+build: dirs
+	$(MAKE) tools TOOLS_PASS=1
+	$(MAKE) autogen AUTOGEN_PASS=1
+	$(MAKE) vasgen VASGEN_PASS=1
+	$(MAKE) headers HEADER_PASS=1
+	$(MAKE) code CODE_PASS=1
+	$(MAKE) data DATA_PASS=1
+
+ifeq ($(USER_SUBDIRS),)
+dirs:
+else
+dirs:
+	mkdir -p $(USER_SUBDIRS)
+endif
+
+autogen: $(AUTOGEN_FILES)
+
+vasgen: $(VASGEN_FILES)
+
+headers: $(GEN_HEADERS)
+
+code: $(ALL_TARGETS)
+
+data: $(DATA_TARGETS)
+
+tools: $(TOOLS)
+
+##############################################################################
+
+visorc_cvtable.tbar : $(MANIFESTS) $(TABLE_FILES) $(VP_LIB_TBARS) $(SOD_LIB_TBARS) $(MAKEFILE_DEPS) $(VP_BUILD_TBARS) $(SOD_BUILD_TBARS) $(FORCE_RULE)
+	@echo "  Generating archive file $@"
+	$(if $(strip $(MANIFESTS)), table_ar $@ -a $(filter %.mnft,$^) $(TABLE_AR_FLAGS), rm -f $@; touch $@)
+	test -z "$(strip $(VP_LIB_TBARS))" -a -z "$(strip $(SOD_LIB_TBARS))" ||\
+	table_ar $@ -cat $(VP_LIB_TBARS) $(SOD_LIB_TBARS) $(TABLE_AR_FLAGS)
+	test -z "$(strip $(VP_BUILD_TBARS))" -a -z "$(strip $(SOD_BUILD_TBARS))" || \
+	table_ar $@ -cat $(VP_BUILD_TBARS) $(SOD_BUILD_TBARS) $(TABLE_AR_FLAGS)
+
+##############################################################################
+
+# General PPP rules
+
+%.d : %.ppp $(PM_SOURCES) $(GEN_PM_HEADERS) $(MAKEFILE_DEPS)
+	@echo "  Generating dependency file $(notdir $@) from $(notdir $<)"
+	set -e; $(PPP) -perl ambperl -M -deps $@ -o $* $(PPP_INCS) $<;		   \
+	  perl -pi -e 's|(\Q$*\E)[ :]+|\1 \1.d : |g' $@; [ -s $@ ] || rm -f $@
+
+# Qualify by ALL_PPP_PRODUCTS so make doesn't waste its time
+# considering ppp sources for all files, including intermediates.
+# The sort is just to remove duplicates, which would otherwise be an error
+$(sort $(ALL_PPP_PRODUCTS)) : % : %.ppp \
+   $(PM_SOURCES) $(GEN_PM_HEADERS) $(MAKEFILE_DEPS) $(FORCE_RULE)
+	@echo "  PPP preprocessing file $(notdir $<)"
+	$(PPP) -perl ambperl $(PPP_INCS) -o $@ $<
+
+##############################################################################
+
+# PM from header rules
+
+%.hh.d : %.h $(MAKEFILE_DEPS) 
+	@echo "  Generating dependency file $(notdir $@) from $(notdir $<)"
+	$(CCC) -MM -MP -MT $@ -MT $(@:.hh.d=_h.pm) -MF $@ -x c \
+	  $(CPPFLAGS) $(CODE_DEFINES) $< ||		       \
+	  { rm -f $@; false; }
+
+%_h.pm : %.h $(PM_SOURCES) $(MAKEFILE_DEPS) $(FORCE_RULE)
+	@echo "  Generating $(notdir $@) from $(notdir $<)"
+	$(CPP) $(CODE_DEFINES) $(CPP_INCS) $< > $(@:_h.pm=.h.c) \
+	   || rm -f  $(@:_h.pm=.h.c)
+	$(C2PH) $(@:_h.pm=.h.c) -fmt perl > $@ 2>/dev/null; \
+	exit_code=$$?;					    \
+	if [ $$exit_code != 0 ]; then			    \
+	  echo "$(C2PH) failed on $<";			    \
+	  rm -f $@ $(@:_h.pm=.h.c);			    \
+	  false;					    \
+	fi
+	rm -f $(@:_h.pm=.h.c)
+
+##############################################################################
+
+ifdef HEADER_PASS
+ifneq ($(ALL_HEADER_DEPS),)
+-include $(ALL_HEADER_DEPS)
+endif
+endif
+
+##############################################################################
+
+%.d : %.vasm $(MAKEFILE_DEPS)
+	@echo "  Generating dependency file $(notdir $@) from $(notdir $<)"
+	$(VCC) -MM -MP -MF $@ -MT $@ -MT $(@:.d=.o) -x c $(CPPFLAGS) \
+	  -x assembler-with-cpp $< ||			      \
+	  { rm -f $@; false; }
+
+$(ALL_C_DEP_FILES_vs): %.d : %.c $(MAKEFILE_DEPS)
+	@echo "  Generating dependency file $(notdir $@) from $(notdir $<)"
+	$(VCC) -MM -MP -MF $@ -MT $@ -MT $(@:.d=.vs) -x c $(CPPFLAGS) -I$(dir $*) $< ||\
+	  { rm -f $@; false; }
+
+##############################################################################
+
+
+$(ALL_C_AS_FILES_vs) : %.vs : %.c $(MAKEFILE_DEPS) $(FORCE_RULE) $(FMTRELOC_TOOL)
+	@echo "  Compiling $(notdir $<)"
+	$(VCC) -I$(dir $*) $(CFLAGS) -S -o $@pre $<
+	$(FMTRELOC_TOOL) $@pre $@
+
+%.vs : %.vasm $(MAKEFILE_DEPS) $(FORCE_RULE)
+	@echo "  Preprocessing $(notdir $<)"
+	$(CPP) -x assembler-with-cpp $(CPPFLAGS) -o $@ $<
+
+%.o : %.vs $(MAKEFILE_DEPS) $(FORCE_RULE)
+	@echo "  Assembling $(notdir $<)"
+	$(VISAS) -o $@ $< -I$(dir $*)
+
+%.vdg %.h %.dagbin : %.vas $(MAKEFILE_DEPS) $(FORCE_RULE)
+	@echo "  Vector assembling $(notdir $<)"
+	$(VAS) $(VASFLAGS) $(LOCAL_VASFLAGS) $(LOCAL_VASERRORFLAGS) -e $*.h -o $*.vdg $< -b $*.dagbin
+
+$(ALL_VAS_DEPS): %.d : %.vas $(MAKEFILE_DEPS)
+	@echo "  Generating dependency file $(notdir $@) from $(notdir $<)"
+	$(VAS) -I$(dir $*) -MM -MP -MF $@ -MT $@ -MT $(@:.d=.vdg) -MT $(@:.d=.h) $< || \
+	  { rm -f $@; false; }
+
+# cancel built-in rule
+%.o : %.c
+
+###############################################################################
+# 1 - core name
+define ADD_CORE_DEFINES
+
+$$($(1)_C_AS_FILES)    : DEFINES += $$($(1)_C_DEFINES)
+
+$$($(1)_C_DEPS)	       : DEFINES += $$($(1)_C_DEFINES)
+
+$$($(1)_ASM_AS_FILES)  : DEFINES += $$($(1)_ASM_DEFINES)
+
+$$($(1)_ASM_DEPS)      : DEFINES += $$($(1)_ASM_DEFINES)
+
+$$($(1)_PPP_PRODUCTS)  : PPP_INCDIRS += $$($(1)_PPP_INCDIRS)
+endef
+
+$(foreach core,$(CORES),$(eval $(call ADD_CORE_DEFINES,$(core))))
+
+##############################################################################
+
+ifeq (@flexidag_mode@,0)
+
+# 1 core name
+define LINK_RULE
+$$($(1)_TARGET).exe : $$($(1)_OBJECTS) $$($(1)_BUILD_LIBS) $$($(1)_LINK_LIBS)
+	@echo "  Linking $$@"
+	$$($(1)_LD) $$($(1)_LDFLAGS) -T $$($(1)_LD_SCR) -Map $$($(1)_LD_MAP) \
+	  -o $$@ $$($(1)_OBJECTS) --whole-archive $$($(1)_LINK_LIBS) $$($(1)_LIBS) $$($(1)_BUILD_LIBS) --no-whole-archive  $$($(1)_LD_LIBGCC) $$(GCC_LIB) 
+
+ifeq ($(CVCHIP),CHIP_CV2A)
+$$($(1)_BINDUMP).bin : $$($(1)_TARGET).exe $(CRCEXPAND_TOOL)
+	@echo "  Creating $$@"
+	$$($(1)_OC) $$($(1)_OCFLAGS) $$($(1)_TARGET).exe $$@
+	$(CRCEXPAND_TOOL) -i $$@ -o $$($(1)_BINDUMP)_crc.bin
+	@mv $$($(1)_BINDUMP)_crc.bin $$@
+else
+ifeq ($(CVCHIP),CHIP_CV22A)
+$$($(1)_BINDUMP).bin : $$($(1)_TARGET).exe $(CRCEXPAND_TOOL)
+	@echo "  Creating $$@"
+	$$($(1)_OC) $$($(1)_OCFLAGS) $$($(1)_TARGET).exe $$@
+	$(CRCEXPAND_TOOL) -i $$@ -o $$($(1)_BINDUMP)_crc.bin
+	@mv $$($(1)_BINDUMP)_crc.bin $$@
+else
+$$($(1)_BINDUMP).bin : $$($(1)_TARGET).exe
+	@echo "  Creating $$@"
+	$$($(1)_OC) $$($(1)_OCFLAGS) $$($(1)_TARGET).exe $$@
+endif
+endif
+
+endef
+
+$(foreach core,$(CORES),$(eval $(call LINK_RULE,$(core))))
+
+else    # ifneq (@flexidag_mode@,0)
+
+SLOTS := 0 x
+
+# 1 core name
+# 2 slot number
+define LINK_RULE_SLOT
+$$($(1)_TARGET)_slot$(2).exe : $$($(1)_OBJECTS) $$($(1)_BUILD_LIBS) $$($(1)_LINK_LIBS)
+	@echo "  Linking $$@"
+	$$($(1)_LD) $$($(1)_LDFLAGS) -T $$($(1)_SLOT_LD_SCR)_slot$(2).ld -Map $$($(1)_LD_MAP)_slot$(2).map \
+	  -o $$@ $$($(1)_OBJECTS) --whole-archive $$($(1)_LINK_LIBS) $$($(1)_LIBS) $$($(1)_BUILD_LIBS) --no-whole-archive  $$($(1)_LD_LIBGCC) $$(GCC_LIB) 
+
+$$($(1)_BINDUMP)_slot$(2).bin : $$($(1)_TARGET)_slot$(2).exe
+	@echo "  Creating $$@"
+	$$($(1)_OC) $$($(1)_OCFLAGS) $$($(1)_TARGET)_slot$(2).exe $$@
+endef
+
+# 1 core name
+define LINK_RULE_ALLSLOT
+$(foreach slot,$(SLOTS),$(eval $(call LINK_RULE_SLOT,$(1),$(slot))))
+$$($(1)_BINDUMP)_patchup.bin : $$($(1)_BINDUMP)_slot0.bin $$($(1)_BINDUMP)_slotx.bin $(FLEXIPATCH_TOOL)
+	@echo "  Creating patchup $$@"
+	$(FLEXIPATCH_TOOL) $$@ $$($(1)_BINDUMP)_slot0.bin $$($(1)_BINDUMP)_slotx.bin
+endef
+
+$(foreach core,$(CORES),$(eval $(call LINK_RULE_ALLSLOT,$(core))))
+
+endif   # ifneq (@flexidag_mode@,0)
+
+##############################################################################
+
+ifdef CODE_PASS
+-include $(CODE_DEPS)
+endif
+
+#############################################################################
+
+install: $(INSTALL_FILES)
+	@echo "Install complete"
+
+##############################################################################
+
+force:
+
+##############################################################################
+
+test:
+	$(MAKE) $(TEST_RULES)
+
+show_tests:
+	@echo CVScheduler will run these tests
+	@echo $(TEST_RULES)
+
+##############################################################################
+
+clean:
+	@echo "Cleaning..."
+	rm -f $(ALL_INTERMEDIATE) $(ALL_GEN_FILES) $(ALL_DEPS) $(ALL_OBJECTS) \
+	  $(DATA_TARGETS) $(TABLE_FILES) $(TEST_OBJECTS) $(TEST_TARGETS)
+
+clobber: clean
+	@echo "Clobbering..."
+	rm -f $(ALL_TARGETS) $(ALL_MAPS) $(TEST_OBJECTS) $(TEST_TARGETS)
+
+# "make nuke" is a lot like "make clean" except
+# that it operates on files' suffixes.  This means that it will remove
+# files that the makefile doesn't know about if they match the proper
+# suffixes.  This is useful when you remove files from the make (so
+# make no longer knows about them), but you want to remove their
+# products from the build.  In contrast, the clean targets only
+# remove known files, which is somewhat cleaner, but doesn't handle
+# the case where the makefiles have changed.  That's why the top-level
+# does a "make nuke" whenever a makefile has changed.
+
+# If you made a harmless change to a makefile and you want to
+# re-touch, "make -t" is insufficient, since it will clobber all
+# generated files and then replace them with zero-length files (from
+# touch).  Instead, use "make -t KEEP_GEN=1" to preserve the generated
+# files when the makefile changes.
+ifdef KEEP_GEN
+nuke:
+	@echo "Disabling the nuking of generated files"
+else
+nuke: clean
+	@echo "Nuking any files that look generated"
+	rm -f libvers_* $(TOP_TARGETS)
+	for X in $(SUBDIRS); do			  \
+	  find $$X -name \*.o  | xargs rm -f;	  \
+	  find $$X -name \*.d  | xargs rm -f;	  \
+	  find $$X -name \*.h  | xargs rm -f;	  \
+	  find $$X -name \*.c  | xargs rm -f;	  \
+	  find $$X -name \*.cc | xargs rm -f;	  \
+	  find $$X -name \*.vdg | xargs rm -f;	  \
+	  find $$X -name \*.dagbin | xargs rm -f; \
+	done
+endif

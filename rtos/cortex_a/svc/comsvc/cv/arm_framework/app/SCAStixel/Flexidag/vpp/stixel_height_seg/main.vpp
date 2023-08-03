@@ -1,0 +1,366 @@
+
+#include <vp_vas.h>
+
+#include "subdags/calc_avg_disparity.vpp"
+
+#define TRANS_INPUT_DISP_WIDTH		(768)
+#define TRANS_INPUT_DISP_HEIGHT		(320)
+
+#define MAX_DISPARITY				(256)
+
+// 4095
+#define IN_DISPARITY_SHIFT			(4)
+#define IN_DISPARITY_SHIFT_HEX		"04"
+#define INVALID_DISPARITY		"FF 0F" // in sub-pixel
+#define INVALID_DISPARITY_RSH	(255) // in pixel, INVALID_DISPARITY >> IN_DISPARITY_SHIFT
+
+// original membership val is [-1.0, 1.0]
+// multiply by MEMBERSHIP_WEIGHT, and cast to integer
+// 10
+#define MEMBERSHIP_WEIGHT					"0A"
+// -10: -1 x MEMBERSHIP_WEIGHT
+#define INVALID_MEMBERSHIP					"F6 FF"
+
+#define INVALID_DELTA_D_VALUE				"00 00"
+#define HIGH_HEIGHT_SCORE_IN_INVALID_AREA	"FF 00"
+#define LOW_HEIGHT_SCORE_IN_INVALID_AREA	"00 00"
+
+#define INPUT_DISP_SIZE			        (TRANS_INPUT_DISP_WIDTH*TRANS_INPUT_DISP_HEIGHT)
+
+DAG STIXEL_HEIGHT_SEG = {	
+
+	// ------------------------- Load input ---------------------------- // 
+	// seen as u16
+	VP_input(
+		disparity_in, uint16_t, 
+		vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_WIDTH)
+	);
+
+	VP_input(
+		bottom_pos, uint16_t, 
+		vector(1, 1, 1, TRANS_INPUT_DISP_HEIGHT)
+	);
+
+	VP_input(
+		delta_disp_table, uint16_t, 
+		vector(1, 1, 1, MAX_DISPARITY)
+	);
+
+	VP_input(
+		filter_disparity, uint16_t, vector(1, 1, 1, 1)
+	);
+
+	VP_rshi(
+		disparity_in,
+		VP_const_tensor(IN_DISPARITY_SHIFT_HEX, uint8_t, vector(1)),
+		VP_tensor(rsh_disparity, uint16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_WIDTH))
+	);
+
+	VP_scalar(rsh_invalid_disp, uint16_t, INVALID_DISPARITY_RSH);
+
+	// Get bottom disparity value of each stixel 
+	// ----------------------------------------------------------------------	
+	VP_index(
+		VP_tensor(y_disp_index, uint16_t, vector(1, 1, 1, TRANS_INPUT_DISP_HEIGHT)),
+		w = TRANS_INPUT_DISP_HEIGHT,
+		h = 1,
+		d = 1,
+		p = 1,
+		dim_coordinate = 0
+	);
+	
+	VP_mergeh(
+        bottom_pos,
+        y_disp_index,
+        VP_tensor(bottom_disparity_index, uint16_t, vector(1, 1, 2, TRANS_INPUT_DISP_HEIGHT))
+    );
+	
+	VP_gather(rsh_disparity, bottom_disparity_index,
+		VP_tensor(bottom_disparity, uint16_t, vector(1, 1, 1, TRANS_INPUT_DISP_HEIGHT)),
+		block_w = 1,
+		block_h = 1,
+		block_d = 1,
+		start_w = 0,
+		start_h = 0,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);	
+
+	// Get delta disparity of each stixel 
+	// ----------------------------------------------------------------------
+	VP_gather(delta_disp_table, bottom_disparity,
+		VP_tensor(delta_disp, uint16_t, vector(1, 1, 1, TRANS_INPUT_DISP_HEIGHT)),
+		block_w = 1,
+		block_h = 1,
+		block_d = 1,
+		start_w = 0,
+		start_h = 0,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);	
+
+	// May cause NaN
+	VP_recip(
+		delta_disp,
+		VP_tensor(inv_delta_disp, float16_t, vector(1, 1, 1, TRANS_INPUT_DISP_HEIGHT))
+	);			
+	
+	// Get membership of each pixel
+	// ----------------------------------------------------------------------
+	VP_reshape(
+		bottom_disparity,
+		VP_tensor(bottom_disparity_reshape, uint16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, 1)),
+		w = 1,
+		h = TRANS_INPUT_DISP_HEIGHT,
+		d = 1,
+		p = 1
+	);
+
+	VP_reshape(
+		inv_delta_disp,
+		VP_tensor(inv_delta_disp_reshape, float16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, 1)),
+		w = 1,
+		h = TRANS_INPUT_DISP_HEIGHT,
+		d = 1,
+		p = 1
+	);
+
+	VP_sub(
+		rsh_disparity, bottom_disparity_reshape,
+		VP_tensor(disparity_diff, int16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_WIDTH))
+	);	
+
+	VP_mul(
+		disparity_diff, inv_delta_disp_reshape,
+		VP_tensor(diff_div_delta, float16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_WIDTH))
+	);
+
+	VP_mul(
+		diff_div_delta, diff_div_delta,
+		VP_tensor(diff_div_delta_square, float16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_WIDTH))
+	);	
+	
+	VP_sub(
+		VP_const_tensor("01", uint8_t, vector(1)), diff_div_delta_square,
+		VP_tensor(exponent, float16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_WIDTH))
+	);
+
+	VP_exp(
+		exponent,
+		VP_tensor(membership_tmp, float16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_WIDTH))
+	);
+
+	VP_sub(
+		membership_tmp, VP_const_tensor("01", uint8_t, vector(1)),
+		VP_tensor(membership, float16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_WIDTH))
+	);
+
+	VP_muli(
+		membership, VP_const_tensor(MEMBERSHIP_WEIGHT, uint8_t, vector(1)),
+		VP_tensor(weighted_membership_tmp, int16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_WIDTH))
+	);
+
+	// Set membership value of invalid disparity
+	// ----------------------------------------------------------------------
+	VP_eqb(
+		rsh_disparity, 
+		rsh_invalid_disp,
+		VP_tensor(invalid_disp_mask, uint8_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_WIDTH), bitvector = 1)
+	);	
+
+	VP_muxb(		
+		VP_const_tensor(INVALID_MEMBERSHIP, int16_t, vector(1)), 
+		weighted_membership_tmp, 
+		invalid_disp_mask,
+		VP_tensor(weighted_membership, int16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_WIDTH))
+	);
+
+	// Accmulate membership value along each row
+	// ----------------------------------------------------------------------
+	VP_cdf(
+		weighted_membership,
+		VP_tensor(integral_weighted_membership, int16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_WIDTH))
+	);	
+
+	// background score
+	// ----------------------------------------------------------------------
+	VP_crop(
+        integral_weighted_membership,
+        VP_tensor(background_score, int16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_WIDTH)),
+        w = TRANS_INPUT_DISP_WIDTH, h = TRANS_INPUT_DISP_HEIGHT, d = 1, p = 1,
+        start_w = -1, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+    );
+
+    // foreground score
+	// ----------------------------------------------------------------------
+	VP_sub(
+		bottom_pos, VP_const_tensor("01", uint8_t, vector(1)),
+		VP_tensor(bottom_pos_m1, uint16_t, vector(1, 1, 1, TRANS_INPUT_DISP_HEIGHT))
+	);
+	
+	VP_mergeh(
+        bottom_pos_m1,
+        y_disp_index,
+        VP_tensor(bottom_pos_m1_index, uint16_t, vector(1, 1, 2, TRANS_INPUT_DISP_HEIGHT))
+    );
+
+    VP_gather(integral_weighted_membership, bottom_pos_m1_index,
+		VP_tensor(bottom_integral_membership, int16_t, vector(1, 1, 1, TRANS_INPUT_DISP_HEIGHT)),
+		block_w = 1,
+		block_h = 1,
+		block_d = 1,
+		start_w = 0,
+		start_h = 0,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);	
+
+	VP_reshape(
+		bottom_integral_membership,
+		VP_tensor(bottom_integral_membership_reshape, int16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, 1)),
+		w = 1,
+		h = TRANS_INPUT_DISP_HEIGHT,
+		d = 1,
+		p = 1
+	);
+    
+	VP_sub(
+		bottom_integral_membership_reshape, background_score,
+		VP_tensor(foreground_score, int16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_WIDTH))
+	);
+
+	// height score
+	// ----------------------------------------------------------------------
+	VP_sub(
+		background_score, foreground_score,
+		VP_tensor(height_score_0, int16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_WIDTH))
+	);
+
+	// get the mask that the row have deltaD:0
+	// ----------------------------------------------------------------------
+    VP_reshape(
+		delta_disp,
+		VP_tensor(delta_disp_reshape, uint16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, 1)),
+		w = 1,
+		h = TRANS_INPUT_DISP_HEIGHT,
+		d = 1,
+		p = 1
+	);
+
+	VP_eqib(
+		delta_disp_reshape, 
+		VP_const_tensor(INVALID_DELTA_D_VALUE, uint16_t, vector(1)),
+		VP_tensor(invalid_delta_d_mask, uint8_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, 1), bitvector = 1)
+	);
+
+	// Set high height score where deltaD of the row is zero
+	// ----------------------------------------------------------------------
+	VP_muxb(		
+		VP_const_tensor(HIGH_HEIGHT_SCORE_IN_INVALID_AREA, int16_t, vector(1)), 
+		height_score_0, 
+		invalid_delta_d_mask,
+		VP_tensor(height_score_1, int16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_WIDTH))
+	);	
+
+	// Get mask where the region are both invalid and bottom 
+	// ----------------------------------------------------------------------
+	VP_index(
+		VP_tensor(height_score_index, uint16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_WIDTH)),
+		w = TRANS_INPUT_DISP_WIDTH,
+		h = TRANS_INPUT_DISP_HEIGHT,
+		d = 1,
+		p = 1,
+		dim_coordinate = 0
+	);
+
+	VP_reshape(
+		bottom_pos,
+		VP_tensor(bottom_pos_reshape, uint16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, 1)),
+		w = 1,
+		h = TRANS_INPUT_DISP_HEIGHT,
+		d = 1,
+		p = 1
+	);
+
+	VP_eqb(
+		height_score_index, 
+		bottom_pos_reshape,
+		VP_tensor(bottom_eqb_mask, uint8_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_WIDTH), bitvector = 1)
+	);
+
+	VP_bwand(
+		bottom_eqb_mask, 
+		invalid_delta_d_mask,
+		VP_tensor(invalid_and_bottom_mask, uint8_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_WIDTH), bitvector = 1)
+	);
+
+	// Set the score of bottom position to the biggest value of the invalid row
+	// ----------------------------------------------------------------------
+	VP_muxb(		
+		VP_const_tensor(LOW_HEIGHT_SCORE_IN_INVALID_AREA, int16_t, vector(1)), 
+		height_score_1, 
+		invalid_and_bottom_mask,
+		VP_tensor(height_score_2, int16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_WIDTH))
+	);
+	
+	// Get mask where the region are equal or below bottom 
+	// Set highest score to the region below bottom position
+	// ----------------------------------------------------------------------
+	VP_gteb(
+		height_score_index, 
+		bottom_pos_reshape,
+		VP_tensor(bottom_gteb_mask, uint8_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_WIDTH), bitvector = 1)
+	);
+
+	VP_muxb(		
+		VP_const_tensor(HIGH_HEIGHT_SCORE_IN_INVALID_AREA, int16_t, vector(1)), 
+		height_score_2, 
+		bottom_gteb_mask,
+		VP_tensor(height_score, int16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_WIDTH))
+	);	
+
+	// Search min value along each row
+	// ----------------------------------------------------------------------
+	VP_mmrw(		
+		height_score,
+		VP_tensor(min_height_score, int16_t, vector(1, 1, 1, TRANS_INPUT_DISP_HEIGHT)),
+		VP_tensor(min_height_score_pos, uint16_t, vector(1, 1, 1, TRANS_INPUT_DISP_HEIGHT)),
+		op = 0 // min
+	);
+
+	// Force height = 1 on if bottom disparity is less than specified value
+	// ----------------------------------------------------------------------
+	VP_lteb(
+		bottom_disparity, 
+		filter_disparity,		
+		VP_tensor(bottom_small_disparity_mask, uint8_t, vector(1, 1, 1, TRANS_INPUT_DISP_HEIGHT), bitvector = 1)
+	);
+
+	VP_muxb(		
+		bottom_pos_m1, 
+		min_height_score_pos, 
+		bottom_small_disparity_mask,
+		VP_tensor(filter_min_height_score_pos, uint16_t, vector(1, 1, 1, TRANS_INPUT_DISP_HEIGHT))
+	);
+
+	// Calculate average disparity of each stixel
+	// ----------------------------------------------------------------------
+	call =
+	{
+		callee=Calc_Avg_Disparity,
+		$top_pos=filter_min_height_score_pos,
+		$bottom_pos=bottom_pos,
+		$disparity=rsh_disparity,
+		$disparity_width=TRANS_INPUT_DISP_WIDTH,
+		$disparity_height=TRANS_INPUT_DISP_HEIGHT,
+		$invalid_disp_mask=invalid_disp_mask,
+
+		$avg_disparity=stixel_avg_disparity,
+	};
+
+    VP_output(min_height_score_pos_out, filter_min_height_score_pos);
+    VP_output(stixel_avg_disparity_out, stixel_avg_disparity);
+}

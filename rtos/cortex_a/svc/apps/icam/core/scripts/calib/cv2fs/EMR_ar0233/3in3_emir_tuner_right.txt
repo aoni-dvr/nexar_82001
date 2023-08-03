@@ -1,0 +1,52 @@
+system.calib_mode EMIR
+system.type SV
+system.chip_rev A9AQ
+system.output_prefix EMIRROR_r
+lens[0].disto_type 0
+lens[0].real_table   0.000000 0.032474 0.097420 0.162366 0.227313 0.292263 0.324741 0.389702 0.454673 0.519656 0.584654 0.649669 0.714705 0.779764 0.844850 0.909964 0.975111 1.040293 1.105514 1.170777 1.203425 1.268757 1.334141 1.399578 1.465074 1.530631 1.596255 1.661959 1.727738 1.793591 1.859519 1.925529 1.991622 2.057805 2.124080 2.190453 2.256928 2.323510 2.390204 2.457015 2.523948 2.591010 2.658206 2.725543 2.793027 2.860665 2.928465 2.962427 2.996434 3.030485 3.064582 3.098725 3.132917 3.167158 3.201451 3.235795 3.270193 3.304646
+lens[0].expect_table 0.000000 0.032478 0.097447 0.162454 0.227528 0.292697 0.325326 0.390691 0.456222 0.521947 0.587895 0.654096 0.720578 0.787371 0.854505 0.922011 0.989921 1.058266 1.127080 1.196397 1.231254 1.301390 1.372118 1.443476 1.515502 1.588238 1.661726 1.736020 1.811157 1.887177 1.964127 2.042058 2.121024 2.201079 2.282281 2.364690 2.448370 2.533386 2.619807 2.707707 2.797161 2.888249 2.981055 3.075668 3.172179 3.270686 3.371293 3.422416 3.474106 3.526377 3.579243 3.632720 3.686823 3.741570 3.796976 3.853059 3.909837 3.967329 
+lens[0].table_length 58
+sensor[0].cell_size 0.003
+optical_center[0].x 1028
+optical_center[0].y 660
+camera[0].pos_x 909
+camera[0].pos_y 556
+camera[0].pos_z 975
+camera[0].rotate_type 0
+
+sensor[0].start_x 0
+sensor[0].start_y 0
+sensor[0].width 1920
+sensor[0].height 1080
+vin[0].start_x 0
+vin[0].start_y 0
+vin[0].width 1920
+vin[0].height 1080
+roi[0].start_x 160
+roi[0].start_y 90
+roi[0].width 1600
+roi[0].height 900
+vout[0].start_x 0
+vout[0].start_y 0
+vout[0].width 1024
+vout[0].height 576
+
+vin[0].h_subsample_factor_num 1
+vin[0].h_subsample_factor_den 1
+vin[0].v_subsample_factor_num 1
+vin[0].v_subsample_factor_den 1
+view_single.type 0
+calib_points[0].world_pos_x 3000.0 3000.0 1600.0 1600.0
+calib_points[0].world_pos_y -6428.0 -6428.0 -6428.0 -6428.0
+calib_points[0].world_pos_z 1600.0 620.0 1600.0 620.0
+calib_points[0].raw_pos_x 989 983 1279 1273
+calib_points[0].raw_pos_y 281 482 285 496
+tile_size[0].width 32
+tile_size[0].height 32
+optimize[0].level 0
+internal[0].debug_id 0
+internal[0].wait_line_th 0
+internal[0].dma_th 0
+internal[0].raw_pos_horflip_enable 0
+internal[0].out_of_roi_refine_enable 1
+internal[0].auto_roi_refine_enable 0

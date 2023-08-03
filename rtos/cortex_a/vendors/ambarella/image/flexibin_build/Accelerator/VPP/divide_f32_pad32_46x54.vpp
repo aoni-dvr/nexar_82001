@@ -1,0 +1,40 @@
+#include "vp_vas.h"
+//PAD32(46*54)=2496
+#define IN_WIDTH 2496
+#define IN_HEIGHT 1
+#define IN_DEPTH 1
+#define IN_PLANE 1
+
+DAG divF32 = {
+
+	VP_input(input0, float32_t, vector(IN_PLANE, IN_DEPTH, IN_HEIGHT, IN_WIDTH));
+	
+	VP_input(input1, float32_t, vector(IN_PLANE, IN_DEPTH, IN_HEIGHT, IN_WIDTH));
+
+//========================================
+
+	//change type to float16 since HW does not support float32 computation
+	VP_typeconv(input0, 
+				VP_tensor(input0_f16, float16_t)
+	);
+
+	VP_typeconv(input1, 
+				VP_tensor(input1_f16, float16_t)
+	);
+
+	//get reciprocal
+	VP_recip(input1_f16,
+			VP_tensor(input1_recip_f16, float16_t),
+			strong_zero = 1,
+			disable_reserved = 1
+	);
+	
+	VP_mul(input0_f16, input1_recip_f16,
+			VP_tensor(output, float32_t),
+			strong_zero = 1,
+			disable_reserved = 1
+	);
+
+//=============================================
+	VP_output(div_output, output);
+}

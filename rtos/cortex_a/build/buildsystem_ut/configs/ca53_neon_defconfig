@@ -1,0 +1,82 @@
+#
+# Automatically generated file; DO NOT EDIT.
+# Ambarella SDK Configuration
+#
+
+#
+# Chip Configuration
+#
+# CONFIG_SOC_A9AQ is not set
+CONFIG_SOC_CV2A=y
+
+#
+# CPU Options
+#
+# CONFIG_CPU_ARMV7 is not set
+CONFIG_CPU_ARMV8=y
+CONFIG_MMU=y
+CONFIG_AEABI=y
+# CONFIG_CPU_CORTEX_A9 is not set
+CONFIG_CPU_CORTEX_A53=y
+CONFIG_ARM32=y
+# CONFIG_ARM64 is not set
+CONFIG_EXE_ARM=y
+# CONFIG_EXE_THUMB is not set
+# CONFIG_VFP_V3 is not set
+CONFIG_VFP_SIMDV8=y
+# CONFIG_VFP_SOFT is not set
+# CONFIG_CC_AMBAVER_LIB_DATE is not set
+
+#
+# GCC Options
+#
+CONFIG_CC_STD_C99=y
+# CONFIG_CC_STD_GNU99 is not set
+# CONFIG_CC_OPTIMIZE_0 is not set
+# CONFIG_CC_OPTIMIZE_1 is not set
+CONFIG_CC_OPTIMIZE_2=y
+# CONFIG_CC_OPTIMIZE_3 is not set
+CONFIG_CC_FRAME_WARN=0
+CONFIG_CC_DEBUG_INFO=y
+# CONFIG_CC_READABLE_ASM is not set
+# CONFIG_CC_DEBUG_INFO_REDUCED is not set
+# CONFIG_CC_DEBUG_INFO_SPLIT is not set
+# CONFIG_CC_FRAME_POINTER is not set
+# CONFIG_CC_FUNCTION_TRACER is not set
+
+#
+# Warnings
+#
+CONFIG_CC_WEXTRA=y
+
+#
+# Disable any extra warning
+#
+# CONFIG_CC_W_NO_CLOBBERED is not set
+# CONFIG_CC_W_NO_CAST_FUNCTION_TYPE is not set
+# CONFIG_CC_W_NO_EMPTY_BODY is not set
+# CONFIG_CC_W_NO_EXPANSION_TO_DEFINED is not set
+# CONFIG_CC_W_NO_IGNORED_QUALIFIERS is not set
+# CONFIG_CC_W_NO_MISSING_FIELD_INITIALIZERS is not set
+# CONFIG_CC_W_NO_MISSING_PARAMETER_TYPE is not set
+# CONFIG_CC_W_NO_OLD_STYLE_DECLARATION is not set
+# CONFIG_CC_W_NO_OVERRIDE_INIT is not set
+# CONFIG_CC_W_NO_SIGN_COMPARE is not set
+# CONFIG_CC_W_NO_TYPE_LIMITS is not set
+# CONFIG_CC_W_NO_UNUSED_BUT_SET_PARAMETER is not set
+# CONFIG_CC_W_NO_UNUSED_PARAMETER is not set
+
+#
+# Additional 
+#
+
+#
+# Options for Fastboot profiling
+#
+# CONFIG_CC_ENABLE_INSTRUMENT_FUNC is not set
+# CONFIG_CC_DUMP_RTL_EXPAND is not set
+
+#
+# LTO and debug info can not be combined.
+#
+# CONFIG_BUT_VCAST is not set

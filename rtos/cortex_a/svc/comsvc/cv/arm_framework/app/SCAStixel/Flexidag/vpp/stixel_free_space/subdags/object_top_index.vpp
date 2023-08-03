@@ -1,0 +1,62 @@
+DAG Object_Top_Index =
+{	
+	arg=
+	{
+		$obj_top_x_index=0,
+		$disparity_in_width=0,
+		$disparity_in_height=0,
+
+		$obj_top_index_map_out=0,
+	};
+
+	// Transfer [x0, x1, x2, ..... xw] to
+	// [x00, x01, x02, ..... x0w, x10, x11, x12, ..... x1w ... xhw]
+	// [y00, y01, y02, ..... y0w, y10, y11, y12, ..... y1w ... xyw]
+	VP_index(
+    	VP_tensor(obj_top_y_index_set, uint16_t, vector(1, 1, $disparity_in_height, $disparity_in_width)),
+    	w = $disparity_in_width,
+    	h = $disparity_in_height,
+    	d = 1,
+    	p = 1,
+    	dim_coordinate = 1
+    );
+
+	VP_index(
+    	VP_tensor(zero_index_map, uint16_t, vector(1, 1, $disparity_in_height, $disparity_in_width)),
+    	w = $disparity_in_width,
+    	h = $disparity_in_height,
+    	d = 1,
+    	p = 1,
+    	dim_coordinate = 2
+    );
+
+	VP_add(
+		$obj_top_x_index, 
+		zero_index_map,
+		VP_tensor(obj_top_x_index_set, uint16_t, vector(1, 1, $disparity_in_height, $disparity_in_width))
+	);
+
+	VP_reshape(
+		obj_top_x_index_set,
+		VP_tensor(obj_top_x_index_set_reshape, uint16_t, vector(1, 1, 1, $disparity_in_height*$disparity_in_width)),
+		w = $disparity_in_height*$disparity_in_width,
+		h = 1,
+		d = 1,
+		p = 1
+	);
+
+	VP_reshape(
+		obj_top_y_index_set,
+		VP_tensor(obj_top_y_index_set_reshape, uint16_t, vector(1, 1, 1, $disparity_in_height*$disparity_in_width)),
+		w = $disparity_in_height*$disparity_in_width,
+		h = 1,
+		d = 1,
+		p = 1
+	);
+
+	VP_mergeh(
+    	obj_top_x_index_set_reshape,
+    	obj_top_y_index_set_reshape,
+    	VP_tensor($obj_top_index_map_out, uint16_t, vector(1, 1, 2, $disparity_in_height*$disparity_in_width))
+    );
+}

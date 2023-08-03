@@ -1,0 +1,126 @@
+; Array variable which cannot be re-defined
+ifdefined CMD_direction
+if result = 0 then  ; 0 means undefined
+    NUM_direction=2
+    strdim CMD_direction NUM_direction
+    CMD_direction[0]='-'
+    CMD_direction[1]='+'
+endif
+ifdefined CMD_mask
+if result = 0 then  ; 0 means undefined
+    strdim CMD_mask 10
+endif
+
+; Configuration variable
+ifdefined shmoo_per_byte
+if result = 0 then  ; 0 means undefined
+shmoo_per_byte=0
+endif
+ifdefined reboot_on_failure
+if result = 0 then  ; 0 means undefined
+reboot_on_failure=1
+endif
+ifdefined BEGIN_ddrc
+if result = 0 then  ; 0 means undefined
+    BEGIN_ddrc=0
+    END_ddrc=1
+endif
+ifdefined CMD_dram_test
+if result = 0 then  ; 0 means undefined
+    CMD_dram_test='diag dram 0x20000000 0x200000 task 999'
+endif
+ifdefined CMD_shmoo
+if result = 0 then  ; 0 means undefined
+    CMD_shmoo='read'
+endif
+ifdefined CMD_step
+if result = 0 then  ; 0 means undefined
+    CMD_step=1
+endif
+shmoo_interval=30000
+max_steps=100
+CMD_watch_dog='diag ddr wdt 1'
+CMD_shmoo_dump='diag ddr dump'
+CMD_shmoo_prefix='diag ddr task'
+
+
+; Mask setup according to parameters
+if shmoo_per_byte = 0 then 
+    CMD_mask[0]='0xffffffff'
+    NUM_mask=1
+elseif shmoo_per_byte = 2 then
+    CMD_mask[0]='0x0000ffff'
+    CMD_mask[1]='0xffff0000'
+    NUM_mask=2
+else
+    CMD_mask[0]='0x000000ff'
+    CMD_mask[1]='0x0000ff00'
+    CMD_mask[2]='0x00ff0000'
+    CMD_mask[3]='0xff000000'
+    NUM_mask=4
+endif
+
+;
+; Reboot for a clean start
+;
+sendln 'reboot yes'
+timeout=100
+waitln 'AmbaShell'
+if result = 0 then
+    sendln '::Wait timeout'
+else
+    int2str s result
+    ;sendln '::Get message ' s
+    pause 2
+endif
+
+sendln CMD_shmoo_dump
+pause 2
+
+for i BEGIN_ddrc END_ddrc
+    for j 0 NUM_direction-1
+        for k 0 NUM_mask-1
+            ;
+            ; Do shmoo item
+            ;
+            sprintf2 CMD_compose 'shmoo %d %s %s %d %d %s' i CMD_shmoo CMD_direction[j] shmoo_interval CMD_step CMD_mask[k]
+            settitle CMD_compose
+            sendln CMD_dram_test
+            sendln CMD_watch_dog
+            sendln CMD_shmoo_prefix ' ' CMD_compose
+
+            ;
+            ; Wait result
+            ;
+            timeout = (shmoo_interval * max_steps) / 1000
+            if reboot_on_failure=1 then
+                waitln 'FAIL' 'Done' 'AmbaShell ;)' 'PicSize different' 'wait flag fail' 'IDSP HANGED'
+            else
+                waitln 'Done' 'AmbaShell ;)'
+            endif
+            if result = 0 then
+                sendln '::Wait timeout'
+            else
+                int2str s result
+                ;sendln '::Get message ' s
+            endif
+            pause 2
+
+            ;
+            ; Reboot for a clean start
+            ;
+            sendln 'reboot yes'
+            timeout=100
+            waitln 'AmbaShell'
+            if result = 0 then
+                sendln '::Wait timeout'
+            else
+                int2str s result
+                ;sendln '::Get message ' s
+                pause 2
+            endif
+        next
+    next
+next
+
+

@@ -1,0 +1,4 @@
+include 'quick_shmoo_cv5_lpddr4_1_vref.ttl'
+include 'quick_shmoo_cv5_lpddr5_2_delay.ttl'
+include 'quick_shmoo_cv5_lpddr5_3_dll.ttl'
+

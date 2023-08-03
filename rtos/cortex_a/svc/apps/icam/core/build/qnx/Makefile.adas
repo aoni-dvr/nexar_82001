@@ -1,0 +1,8 @@
+# adas
+ifeq ($(CONFIG_BUILD_AMBA_ADAS),y)
+ifeq ($(CONFIG_ICAM_PROJECT_EMIRROR),y)
+# emr_bsd
+SRCS += SvcBsd.c
+endif
+SRCS += SvcCalibAdas.c
+endif

@@ -1,0 +1,49 @@
+menu "Recoder"
+
+config BUILD_COMSVC_RECODER
+    depends on BUILD_COMMON_SERVICE_CODEC
+    bool "Build Recoder"
+    default y
+
+if BUILD_COMSVC_RECODER
+config AMBA_REC_RMA_PRIV_SIZE
+    hex "record master private size"
+    default 0x10000
+config AMBA_REC_RSC_PRIV_SIZE
+    hex "record source private size"
+    default 0x9000
+config AMBA_REC_DRSC_TEXTLEN
+    hex "data record source text length"
+    default 0x80
+config AMBA_REC_MAX_VRSC_QUELEN
+    hex "video record source queue length"
+    default 0x600 if SOC_CV5 || SOC_CV52
+    default 0x200
+config AMBA_REC_MAX_ARSC_QUELEN
+    hex "audio record source queue length"
+    default 0x200
+config AMBA_REC_MAX_DRSC_QUELEN
+    hex "data record source queue length"
+    default 0x200
+config AMBA_REC_RBX_PRIV_SIZE
+    hex "record box private size"
+    default 0x8300
+config AMBA_REC_RDT_PRIV_SIZE
+    hex "record destination private size"
+    default 0x400
+config AMBA_REC_NMLEVT_BUF_NUM
+    hex "normal event record buffer number"
+    default 0x3
+config AMBA_REC_RBX_MP4_BUF_NUM
+    hex "record box mp4 fragment buffer number"
+    default 0x00000002
+config AMBA_REC_GDMA_USED
+    bool "use GDMA for buffer copy"
+	default n if SOC_CV5 || SOC_CV52
+	default y
+config AMBA_REC_FMP4_MEHD_BOX
+    bool "insert mehd box in fmp4"
+	default n
+endif
+
+endmenu

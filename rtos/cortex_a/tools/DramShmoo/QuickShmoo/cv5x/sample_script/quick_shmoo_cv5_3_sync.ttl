@@ -1,0 +1,2 @@
+CMD_shmoo='sync'
+include 'quick_shmoo_cv5_mainDLL.ttl'

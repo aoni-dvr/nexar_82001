@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<module name="nor-ambarella">
+	<type>Element</type>
+	<classification>Driver</classification>
+
+	<description>
+            <short>ambarella nor Driver</short>
+	        <abstract>
+	                <![CDATA[The nor driver for the Ambarella BSP.]]>
+	        </abstract>
+	</description>
+
+	<supports>
+		<availability>
+			<cpu isa="aarch64">
+			<byteOrder>le</byteOrder>
+			</cpu>
+		</availability>
+	</supports>
+
+	<source available="false">
+		<location type="">.</location>
+	</source>
+	<GroupOwner>hw</GroupOwner>
+
+	<contents>
+		<component id="ambarella" generated="true">
+			<location basedir="{cpu}/{endian}"
+				 runtime="true">nor-ambarella</location>
+		</component>
+	</contents>
+
+	<requires>
+		<part build="false" location="lib/nor"/>
+	</requires>
+
+</module>

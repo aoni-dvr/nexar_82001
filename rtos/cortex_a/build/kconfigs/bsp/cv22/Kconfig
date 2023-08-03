@@ -1,0 +1,32 @@
+if SOC_CV22
+
+source build/kconfigs/bsp/cv22/peripherals/Kconfig
+
+comment "Board Configuration"
+choice CV22_BSP_SELECTION
+	prompt "BSP"
+	default BSP_CV22BUB_OPTION_A_V300
+
+config BSP_CV22BUB_OPTION_A_V300
+	bool "CV22 Bringup Board Option-A V300"
+config BSP_CV22DK
+	bool "CV22 DK"
+endchoice
+
+choice CV22_DRAM_SELECTION
+	prompt "Dram"
+	default CV22_LPDDR4_MT53D512M32D2DS_1392MHZ
+
+config CV22_LPDDR4_MT53D512M32D2DS_1392MHZ
+	bool "MT53D512M32D2DS 1392MHz"
+config CV22_LPDDR4_MT53D512M32D2DS_1800MHZ
+	bool "MT53D512M32D2DS 1800MHz"
+endchoice
+
+config ATT_MAP
+	string "Att Map File Name"
+	default "AmbaUserMemProt"
+	help
+		File name of the Att Map file (remove '.c')
+
+endif

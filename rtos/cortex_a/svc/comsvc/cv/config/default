@@ -1,0 +1,146 @@
+#
+# This file is used to customize the build of ambacv module.
+# It is included in both Makfile and link bash script, so please follow the
+#   syntax carefully. Whitespace and quote DO mater .
+#
+
+# cvtasks to be built from source code
+ifneq ($(CONFIG_DISABLE_ARM_CVTASK),y)
+CVTASK_AS_SRC="HLMobilenetSSD"
+endif
+
+# add algo cvtasks if it exists
+cvtRoot = $(srctree)/$(CV_COMSVC_DIR)/arm_framework/cvtask
+cvtDirs = $(patsubst $(cvtRoot)/%/,%,$(wildcard $(cvtRoot)/*/))
+cvtAlgo = " AmbanetOsd AmbanetConfig AmbaOdARM AmbaTracker "
+CVTASK_AS_SRC+=$(filter $(cvtAlgo),$(cvtDirs))
+
+# cvtask to be linked by binary
+CVTASK_AS_BIN=""
+
+# application-specific tbar manifest file(s)
+# can have zero/single/multiple file names, whitespace separated
+# can be ommited if not needed
+APP_MNFT_FILES=""
+
+# application-specific csv files
+# can have zero/single/multiple file names, whitespace separated
+# can be ommited if not needed
+APP_CSV_FILES=""
+
+CVAPP_AS_SRC = "vputils_$(PROJECT)"
+CVAPP_AS_SRC += "accelerator/build/threadx"
+CVAPP_AS_SRC += "FlexidagSimplePipe"
+CVAPP_AS_SRC += "FlexidagAmbaFetchChipInfo"
+CVAPP_AS_SRC += "protection"
+CVAPP_AS_SRC += "SCAOpenOD"
+CVAPP_AS_SRC += "SCAOpenSeg"
+CVAPP_AS_SRC += "SCAPlain"
+CVAPP_AS_SRC += "SvcCvAlgoUtil"
+CVAPP_AS_SRC += "SCAAppTest"
+
+
+ifeq ($(CONFIG_AMBALINK_BOOT_OS),y)
+CVAPP_AS_SRC += "SCALinux"
+endif
+ifeq ($(CONFIG_CV_FLEXIDAG_UT),y)
+CVAPP_AS_SRC += "FlexidagUt"
+CVAPP_AS_SRC += "FlexidagNetTest"
+CVAPP_AS_SRC += "FlexidagAmbaSofFex"
+endif
+
+ifeq ($(CONFIG_CV_FLEXIDAG_AMBAODFC),y)
+CVAPP_AS_SRC += "SCAAmbaOD"
+CVTASK_AS_BIN += " AmbaOdv36_ARM"
+endif
+
+ifeq ($(CONFIG_CV_FLEXIDAG_AMBAODEM),y)
+ifneq ($(CONFIG_CV_FLEXIDAG_AMBAODFC),y)
+CVAPP_AS_SRC += "SCAAmbaOD"
+CVTASK_AS_BIN += " AmbaOdv36_ARM"
+endif
+endif
+
+ifeq ($(CONFIG_CV_FLEXIDAG_AMBASEGFC),y)
+CVAPP_AS_SRC += "SCAAmbaSeg"
+endif
+ifeq ($(CONFIG_CV_FLEXIDAG_AMBASEGAVM),y)
+ifneq ($(CONFIG_CV_FLEXIDAG_AMBASEGFC),y)
+CVAPP_AS_SRC += "SCAAmbaSeg"
+endif
+endif
+
+ifeq ($(CONFIG_CV_FLEXIDAG_AMBAOD37FC),y)
+CVAPP_AS_SRC += "SCAAmbaOD37"
+CVTASK_AS_BIN += " AmbaODv4_arm"
+endif
+
+ifeq ($(CONFIG_CV_FLEXIDAG_AMBASEG39FC),y)
+CVAPP_AS_SRC += "SCAAmbaSeg39"
+endif
+
+ifeq ($(CONFIG_CV_FLEXIDAG_AMBAPERCEPTION),y)
+CVAPP_AS_BIN += "SCAAmbaPerception"
+ifneq ($(CONFIG_CV_FLEXIDAG_AMBAOD37FC),y)
+CVTASK_AS_BIN += " AmbaODv4_arm"
+endif
+endif
+
+ifeq ($(CONFIG_CV_FLEXIDAG_STIXEL),y)
+CVAPP_AS_SRC += "SCAStixel"
+endif
+ifeq ($(CONFIG_CV_FLEXIDAG_STIXEL_V2),y)
+CVAPP_AS_SRC += "SCAStixelV2"
+endif
+
+ifeq ($(CONFIG_BUILD_CTFW),y)
+CVAPP_AS_SRC += "Ctfw/build/threadx"
+CVAPP_AS_SRC += "CtfwTask/build/threadx"
+endif
+
+ifeq ($(CONFIG_CVALGO_CT_SAMPLE),y)
+CVAPP_AS_SRC += "CtSingleFD"
+CVAPP_AS_SRC += "CtSSD"
+CVAPP_AS_SRC += "CtDetCls"
+CVAPP_AS_SRC += "CtUtils"
+CVAPP_AS_SRC += "CtFrcnnProc"
+CVAPP_AS_SRC += "CtSingleFDHeader"
+endif
+
+ifeq ($(CONFIG_CVCAM_AMBANET_TEST),y)
+CVTASK_AS_SRC += " AmbaOd"
+CVTASK_AS_BIN += " AmbaTracker AmbaOdv4ARM AmbanetOsd AmbanetConfig"
+APP_MNFT_FILES += "adas_box_cv22_braive.mnft"
+APP_MNFT_FILES += "amba_emirror.mnft"
+APP_MNFT_FILES += "amba_adas.mnft"
+APP_MNFT_FILES += "ambaod_fc.mnft"
+APP_MNFT_FILES += "ambaod_em.mnft"
+APP_MNFT_FILES += "ambanet_regression.mnft"
+APP_MNFT_FILES += "ambanet_regression_4k.mnft"
+APP_CSV_FILES += "ambanet.csv"
+APP_CSV_FILES += "amba_emirror.csv"
+APP_CSV_FILES += "amba_adas.csv"
+APP_CSV_FILES += "ambaod_em.csv"
+APP_CSV_FILES += "ambaod_fc.csv"
+APP_CSV_FILES += "ambanet_regression.csv"
+APP_CSV_FILES += "ambanet_regression_4k.csv"
+# AmbaFacePlate
+CVTASK_AS_BIN += " AmbaFacePlateARM"
+APP_MNFT_FILES += "ambafaceplate.mnft"
+APP_CSV_FILES += "ambafaceplate.csv"
+endif
+
+ifeq ($(CONFIG_RCPRJ_REGRESSION),y)
+APP_MNFT_FILES += "mnetssd_sensor_multiapp_superdag.mnft"
+APP_CSV_FILES += "mnetssd_sensor_multiapp_superdag.csv"
+endif
+
+ifeq ($(CONFIG_SOC_CV2FS), y)
+CVAPP_AS_SRC += "SCAAmbaStereo_cv2a"
+endif
+
+ifeq ($(CONFIG_THREADX), y)
+ifeq ($(CONFIG_SOC_CV2), y)
+CVAPP_AS_SRC += "SCAAmbaStereo_cv2"
+endif
+endif

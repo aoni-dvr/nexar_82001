@@ -1,0 +1,236 @@
+#
+# For a description of the syntax of this configuration file,
+# see Documentation/kbuild/kconfig-language.txt.
+#
+comment "Chip Configuration"
+
+choice
+	prompt "Ambarella SOC"
+	default SOC_CV22
+	help
+	  Select Ambarella SOC series
+
+#config SOC_A9AQ
+#	bool "Ambarella A9AQ SOC"
+#	select CPU_CORTEX_A9
+#	help
+#	  CPU is Dual-Core Cortex A9
+
+config SOC_H22
+	bool "Ambarella H22 SOC"
+	select CPU_CORTEX_A53
+	help
+	  CPU is Quard-Core Cortex A53
+
+config SOC_CV2
+	bool "Ambarella CV2 SOC"
+	select CPU_CORTEX_A53
+	help
+	  CPU is Quard-Core Cortex A53
+
+config SOC_CV22
+	bool "Ambarella CV22 SOC"
+	select CPU_CORTEX_A53
+	help
+	  CPU is Quard-Core Cortex A53
+
+config SOC_CV25
+	bool "Ambarella CV25 SOC"
+	select CPU_CORTEX_A53
+	help
+	  CPU is Quard-Core Cortex A53
+
+config SOC_CV28
+	bool "Ambarella CV28 SOC"
+	select CPU_CORTEX_A53
+	help
+	  CPU is Dual-Core Cortex A53
+
+config SOC_CV2FS
+	bool "Ambarella CV2FS SOC"
+	select CPU_CORTEX_A53
+	help
+	  CPU is Quard-Core Cortex A53
+
+config SOC_CV22FS
+	bool "Ambarella CV22FS SOC"
+	select CPU_CORTEX_A53
+	help
+	  CPU is Quard-Core Cortex A53
+
+config SOC_H32
+	bool "Ambarella H32 SOC"
+	select CPU_CORTEX_A53
+	help
+	  CPU is Quard-Core Cortex A53
+
+config SOC_CV5
+	bool "Ambarella CV5 SOC"
+	select CPU_CORTEX_A76
+	help
+	  CPU is Dual-Core Cortex A76
+
+config SOC_CV52
+	bool "Ambarella CV52 SOC"
+	select CPU_CORTEX_A76
+	help
+	  CPU is Dual-Core Cortex A76
+
+endchoice
+
+config SOC_NAME
+    string
+    default "cv2" if SOC_CV2
+    default "cv22" if SOC_CV22
+    default "cv25" if SOC_CV25
+    default "cv28" if SOC_CV28
+    default "h22" if SOC_H22
+    default "h32" if SOC_H32
+    default "cv2fs" if SOC_CV2FS
+    default "cv22fs" if SOC_CV22FS
+    default "cv5x" if SOC_CV5
+    default "cv5x" if SOC_CV52
+
+menu "CPU Options"
+
+config CPU_ARMV7
+	bool
+	default n
+
+config CPU_ARMV8
+	bool
+	default n
+
+config MMU
+	bool
+
+config AEABI
+	bool
+
+config CPU_CORTEX_A9
+	bool
+	default n
+	select CPU_ARMV7
+	select MMU
+	select AEABI
+	help
+	  Optimize with "-march=armv7-a -mcpu=cortex-a9"
+
+config CPU_CORTEX_A53
+	bool
+	default n
+	select CPU_ARMV8
+	select MMU
+	select AEABI
+	help
+	  Optimize with "-march=armv8-a -mtune=cortex-a53 -mcpu=cortex-a53"
+
+config CPU_CORTEX_A76
+	bool
+	default n
+	select CPU_ARMV8
+	select MMU
+	select AEABI
+	help
+	  Optimize with "-march=armv8-a -mtune=cortex-a76 -mcpu=cortex-a76"
+
+if CPU_ARMV8
+
+choice
+	prompt "Instruction Set"
+	default ARM32
+	help
+	  Select instruction set
+
+config ARM32
+	bool "A32"
+	depends on !CPU_CORTEX_A76
+	help
+	  ARM 32-bit (AArch32) support.
+
+config ARM64
+	bool "A64"
+	help
+	  ARM 64-bit (AArch64) support.
+
+endchoice
+
+#if ARM64
+#
+#choice
+#	prompt "C Language Data Type Model"
+#	default ABI_LP64
+#	help
+#	  Two legitimate ABI for AArch64 are LP64 and ILP32.
+#	  Not all legacy code can be easily ported to 64-bit (LP64).
+#	  ILP32 enables a recompilation of 32-bit source code to a 64-bit ISA but
+#	  using the 32-bit data model removing the need for the port and enabling
+#	  the legacy code to run on a 64-bit only CPU.
+#
+#config ABI_LP64
+#	bool "LP64"
+#	help
+#	  The AArch64-LP64 uses the AArch64 instruction set coupled with a data model,
+#	  where Long and Pointer are 64-bit, Ints are 32-bit.
+#
+#config ABI_ILP32
+#	bool "ILP32"
+#	help
+#	  The AArch64-ILP32 uses the AArch64 instruction set coupled with a data model,
+#	  where Int, Long and Pointer are 32-bit.
+#
+#endchoice
+#
+#endif # ARM64
+
+endif # CPU_ARMV8
+
+choice
+	prompt "Execution state"
+	default EXE_ARM
+	help
+	  Generate code that supports calling between the ARM and Thumb
+	  instruction sets.
+
+config EXE_ARM
+	bool "ARM instruction sets"
+
+config EXE_THUMB
+	bool "THUMB instruction sets"
+
+endchoice
+
+choice
+	prompt "VFP type"
+	default VFP_V3 if CPU_ARMV7
+	default VFP_SIMDV8 if CPU_ARMV8
+	help
+	  Select ARM Floating Point architecture (VFP) type.
+	  VFP provides hardware support for floating point operations in
+	  half-, single- and double-precision floating point arithmetic.
+	  It is fully IEEE 754 compliant with full software library support.
+
+config VFP_V3
+	bool "VFPv3"
+	help
+	  VFPv3 or VFPv3-D32 is an optional extension to the ARM,
+	  Thumb and ThumbEE instruction sets in the ARMv7-A and ARMv7-R
+	  profiles. VFPv3 implementation is with either thirty-two or
+	  sixteen double word registers.
+
+config VFP_SIMDV8
+	bool "Advanced SIMD (NEON) Extension support"
+	depends on CPU_ARMV8
+	help
+	  ARMv8 Advanced SIMD with crypto.
+
+config VFP_SOFT
+	bool "Software floating-point"
+	help
+	   Using software floating-point.
+
+endchoice
+
+
+endmenu # "CPU Options"
+

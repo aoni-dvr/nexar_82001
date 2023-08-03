@@ -1,0 +1,70 @@
+# For a description of the syntax of this configuration file,
+# see build/scripts/Documentation/kbuild/kconfig-language.txt.
+#
+mainmenu "Ambarella SDK Configuration"
+
+# OS (SDK platform)
+source build/kconfigs/Kconfig.linux
+
+# Force to use Linux KAL
+config LINUX_BUILDROOT
+	bool
+	default y
+	select BUILD_SSP_KAL
+
+menuconfig BUILD_MAL
+        bool "Build Memory Abstraction Layer (MAL) support library"
+		depends on DEVICE_TREE_SUPPORT
+        default y
+
+if BUILD_MAL
+source vendors/ambarella/wrapper/mal/Kconfig
+endif
+
+# boot
+source boot/Kconfig
+
+# BSP
+source bsp/Kconfig
+
+source build/kconfigs/Kconfig.linux.conf.boot
+
+# For architecture and building system
+source build/kconfigs/Kconfig.arch
+source build/kconfigs/Kconfig.toolchain
+
+# For BLD
+source build/kconfigs/Kconfig.bld
+
+# SSP
+source svc/Kconfig.ssp
+
+# Ambalink
+#source svc/comsvc/ambalink/Kconfig
+config ENABLE_AMBALINK
+	bool "Enable AmbaLink"
+	default y if CPU_CORTEX_R52
+	default n
+	help
+	  Enable AmbaLink module. (RPMSG only for Linux)
+
+# CV
+source soc/vision/Kconfig
+
+# Common Service
+source svc/comsvc/Kconfig
+
+#source vendors/arm/arm-trusted-firmware/Kconfig
+
+# App
+source svc/apps/Kconfig
+
+comment "3rd Party"
+
+source build/kconfigs/Kconfig.foss
+
+source vendors/arm/arm-trusted-firmware/Kconfig
+
+# Flash Partitions
+source build/kconfigs/Kconfig.fwprog
+

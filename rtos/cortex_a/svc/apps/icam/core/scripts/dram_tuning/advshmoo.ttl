@@ -1,0 +1,60 @@
+;└─ Choose FormatID that is used to run advanced shmoo
+FormatID         = $5; 
+
+;└─ Select app modes for increasing DRAM Loading
+
+RecMode          = '$[REC_1][NUM_1][RECID_0_1]#!';      0: OFF, 1:On
+CvMode           = '$[CV_1][NUM_1]#!';                  0: OFF, 1:On
+
+;└─ Dump Result into SD card. path is at c:\\DRR_tuning_Result.txt
+WriteFile        = $0; 0: Disable, 1:Enable
+
+
+;└─ Select DRAM parameters to tune in advanced shmoo task
+; 1 : do shmoo,  else : do not do shmoo
+
+pad_dds          = $0;
+pad_pdds         = $0;
+pad_ca_dds       = $0;
+pad_ca_pdds      = $0;
+pad_term         = $0;
+pad_vref         = $0;
+rddly            = $1;
+wrdly            = $0;
+dll0             = $0;
+dll1             = $0;
+dll2             = $0;
+ddr4_dds         = $0;
+ddr4_vref        = $0;
+ddr4_odt         = $0;
+lpddr4_pdds      = $0;
+lpddr4_ca_vref   = $0;
+lpddr4_dq_vref   = $0;
+lpddr4_ca_odt    = $0;
+lpddr4_dq_odt    = $0;
+
+
+;└─ Fill some misc value
+; Duration : The duration (ms) that it waits to check whether the tuning value is stable
+; StoreDevice : The storage device type to store shmoo result, 1:NAND/SpiNand, 2:SpiNOR, 3:eMMC
+; CoreMask : The core mask to shmoo task
+
+Duration         = $3000;
+StoreDevice      = $1;
+CoreMask         = $2;
+
+
+sprintf2 mode_command "svc_advshmoo set_mode %s %s %01X %01X" RecMode CvMode WriteFile FormatID
+sendln mode_command
+
+
+sprintf2 item_command "svc_advshmoo set_shmoo_item %01X %01X %01X %01X %01X %01X %01X %01X %01X %01X %01X %01X %01X %01X %01X %01X %01X %01X %01X" pad_dds pad_pdds pad_ca_dds pad_ca_pdds pad_term pad_vref rddly  wrdly  dll0  dll1 dll2 ddr4_dds ddr4_vref ddr4_odt lpddr4_pdds lpddr4_ca_vref lpddr4_dq_vref lpddr4_ca_odt lpddr4_dq_odt
+sendln item_command
+
+
+sprintf2 misc_command "svc_advshmoo set_misc_info %01X %01X %01X" Duration StoreDevice CoreMask
+sendln misc_command
+
+
+sprintf2 start_command "svc_advshmoo shmoo_start"
+sendln start_command

@@ -1,0 +1,24 @@
+
+config BR2_PACKAGE_AMBACOMM
+	bool "ambacomm"
+	help
+	  Ambacomm communication library
+
+config BR2_PACKAGE_AMBACOMM_EXAMPLES
+        bool "AMBACOMM Examples"
+        depends on BR2_PACKAGE_AMBACOMM
+        help
+          AMBACOMM Examples
+
+config BR2_PACKAGE_AMBACOMM_TOOLS
+        bool "AMBACOMM Tools"
+        depends on BR2_PACKAGE_AMBACOMM
+        help
+          AMBACOMM tools
+
+
+config BR2_PACKAGE_AMBACOMM_TESTS
+        bool "AMBACOMM tests"
+        depends on BR2_PACKAGE_AMBACOMM
+        help
+          AMBACOMM tests

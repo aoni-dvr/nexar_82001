@@ -1,0 +1,41 @@
+diff --git a/vendors/foss/syscall/libgloss/fstat.c b/vendors/foss/syscall/libgloss/fstat.c
+index 2efb6fff5..cb294f3a3 100644
+--- a/vendors/foss/syscall/libgloss/fstat.c
++++ b/vendors/foss/syscall/libgloss/fstat.c
+@@ -54,6 +54,9 @@ int _fstat(int fd, struct stat *st)
+     case STDERR_FILENO:
+         st->st_mode = S_IFCHR;
+         return 0;
++    default:
++        errno = EBADF;
++        return -1;
+     }
+ 
+     return 0;
+diff --git a/vendors/foss/syscall/libgloss/isatty.c b/vendors/foss/syscall/libgloss/isatty.c
+index c00019fbe..316675ce0 100644
+--- a/vendors/foss/syscall/libgloss/isatty.c
++++ b/vendors/foss/syscall/libgloss/isatty.c
+@@ -52,6 +52,9 @@ int _isatty(int file)
+     case STDIN_FILENO:
+     case STDERR_FILENO:
+         return 1;
++    default:
++        errno = EBADF;
++        return 0;
+     }
+ 
+     errno = ENOTTY;
+diff --git a/vendors/foss/syscall/libgloss/write.c b/vendors/foss/syscall/libgloss/write.c
+index 3568e665d..d441bef91 100644
+--- a/vendors/foss/syscall/libgloss/write.c
++++ b/vendors/foss/syscall/libgloss/write.c
+@@ -98,7 +98,7 @@ int _write(int file, char *ptr, int len)
+             }
+             p++;
+         }
+-        AmbaUART_Write(AMBA_UART_APB_CHANNEL0, 0U, i, (const UINT8 *)wbuf, &rc, 10);
++        AmbaUART_Write(AMBA_UART_APB_CHANNEL0, 0U, i, (const UINT8 *)wbuf, (UINT32 *)&rc, 10);
+         K_ASSERT(rc == i);
+         if (s >= len) {
+             break;

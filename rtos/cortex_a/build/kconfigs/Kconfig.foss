@@ -1,0 +1,79 @@
+#
+#
+
+menu "FOSS Options"
+
+config BUILD_FOSS_LIB
+	bool "Build FOSS libraries"
+	default n
+	help
+	  Build Free and Open Source Software libraries
+
+if BUILD_FOSS_LIB
+config BUILD_FOSS_JSMN
+	bool "Build JSMN json parser"
+	default n
+
+if BUILD_SSP_ENET
+config LZ4_ENET
+	bool "Build ethernet porting layer for lz4"
+	depends on BUILD_FOSS_LZ4
+	default n
+endif
+endif
+
+config BUILD_FOSS_LWIP
+	bool "Build lwIP FOSS library"
+	depends on !LINUX
+	default n
+
+if BUILD_SSP_ENET
+config LWIP_ENET
+	bool "Build ethernet porting layer for lwIP"
+	depends on BUILD_FOSS_LWIP
+	default y
+endif
+
+config BUILD_FOSS_MBEDTLS
+	bool "Build mbedtls FOSS library"
+	default n
+
+
+config BUILD_FOSS_LVGL
+       bool "Build LVGL libraries"
+       default y if SVC_APPS_ICAM
+
+config BUILD_FOSS_LZ4
+        bool "Build lz4 FOSS library"
+        default n
+
+
+if ENABLE_AMBALINK
+
+config LIBMETAL
+	bool
+	default n
+
+config OPENAMP
+	bool "OpenAMP"
+	default n
+	select LIBMETAL
+	help
+	  Open Asymmetric Multi Processing (OpenAMP) .
+
+if OPENAMP
+config OPENAMP_NUM_EPT
+    int "Number of end-point per RPMSG device"
+    default 8
+    help
+      Max. number of end-pointer per RPMSG device.
+
+endif # OPENAMP
+
+endif # ENABLE_AMBALINK
+
+config BUILD_FOSS_LIBFDT
+	bool "Build device tree library"
+	default n
+
+endmenu

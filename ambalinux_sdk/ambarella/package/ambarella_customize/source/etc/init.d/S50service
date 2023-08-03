@@ -1,0 +1,102 @@
+#!/bin/sh
+
+if [ "$1" = "stop" ]; then
+	exit 0
+fi
+
+mkdir -p /tmp/lib /tmp/run /tmp/disk /tmp/log /tmp/ppp
+mkdir -p /tmp/fuse /tmp/FL0
+
+#for dnsmasq.leases
+mkdir -p /var/lib/misc
+
+if [ ! -e "/dev/random" ]; then
+	ln -sf /dev/urandom /dev/random
+fi
+
+ln -sf /etc/resolv.conf /etc/ppp/resolv.conf
+
+# insmod amba vitual file system
+# kernel_ver=$(uname -r)
+# insmod lib/modules/$kernel_ver/kernel/fs/ambavfs/ambavfs.ko
+
+mount -t ambafs a: /tmp/FL0
+mount -t ambafs c: /mnt/extsd
+#project=nexar_cv25_d080
+if [ "`grep \"project=nexar_cv25\" /proc/cmdline`" != "" ]; then
+	/usr/local/share/script/ubifs_mount.sh
+fi
+
+#enable ipcbind and util_svc daemon
+if [ -x /usr/bin/ipcbind ]; then
+	/usr/bin/ipcbind -b
+	if [ -x /usr/bin/util_svc ]; then
+		/usr/bin/util_svc -b
+	fi
+
+	if [ -x /usr/bin/camctrlserver ]; then
+		/usr/bin/camctrlserver
+	fi
+fi
+
+#Enable Linux RPC Binder and Amba background Daemons.
+if [ -x /usr/bin/rpcbind ]; then
+	/usr/bin/rpcbind
+	if [ -x /usr/bin/AmbaNetFifoDaemon ]; then
+		/usr/bin/AmbaNetFifoDaemon
+	fi
+	if [ -x /usr/bin/AmbaEventNotifyDaemon ]; then
+		/usr/bin/AmbaEventNotifyDaemon
+	fi
+fi
+
+#Start linux time service for rtos get linux
+linux_time_service
+#Start rtos event, just for test
+rtos_api event_test&
+
+#for bootup speed, some modules are preloaded before hibernate
+if [ -x /usr/local/share/script/preload.sh ]; then
+	/usr/local/share/script/preload.sh
+fi
+
+if [ -x /usr/local/share/script/bt_preload.sh ]; then
+	/usr/local/share/script/bt_preload.sh
+fi
+
+mount -t debugfs none /sys/kernel/debug/
+
+#syslog
+if [ "`grep \"console=ttyS2\" /proc/cmdline`" != "" ]; then
+	if [ "`grep quiet /proc/cmdline`" != "" ]; then
+		klogd
+	fi
+	syslogd -O /dev/ttyS2
+elif [ "`grep \"console=ttyS1\" /proc/cmdline`" != "" ]; then
+	if [ "`grep quiet /proc/cmdline`" != "" ]; then
+		klogd
+	fi
+	syslogd -O /dev/ttyS1
+elif [ "`grep \"console=ttyS4\" /proc/cmdline`" != "" ]; then
+	if [ "`grep quiet /proc/cmdline`" != "" ]; then
+		klogd
+	fi
+	syslogd -O /dev/ttyS4
+fi
+
+#install ambacv module
+if [ "`grep \"project=nexar_cv25\" /proc/cmdline`" != "" ]; then
+	modprobe ambacv
+fi
+
+#wait for rpmsg_echo
+n=0
+while [ $n -lt 10 ] && [ -e /sys/module/rpmsg_echo/parameters/probed ]; do
+	if [ "`cat /sys/module/rpmsg_echo/parameters/probed`" == "1" ]; then
+		break
+	else
+		echo "${n}: waiting for rpmsg_echo"
+		n=$(($n + 1))
+		sleep 0.1
+	fi
+done

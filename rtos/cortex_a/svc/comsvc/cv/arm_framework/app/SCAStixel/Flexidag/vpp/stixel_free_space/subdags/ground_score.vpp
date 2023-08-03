@@ -1,0 +1,53 @@
+DAG Ground_Score =
+{
+	arg=
+	{
+		$disparity_in=0,
+		$disparity_in_width=0,
+		$disparity_in_height=0,
+		$default_invalid_penalty=0,
+		$invalid_disp_mask=0,
+		$esti_ground_disparity=0,
+		$ground_score_out=0,
+	};
+
+	VP_sub(
+		$disparity_in, $esti_ground_disparity,
+		VP_tensor(sign_road_diff, int16_t, vector(1, 1, $disparity_in_height, $disparity_in_width))
+	);
+
+	// penalty = abs_diff(estimated road disparity, real disparity)
+	VP_abs(
+		sign_road_diff, 
+		VP_tensor(abs_road_diff, uint16_t, vector(1, 1, $disparity_in_height, $disparity_in_width)),
+		disable_reserved = 1 // allow saturation
+	);
+
+    // in case of invalid disparity, set default penalty
+	VP_muxb(		
+		VP_const_tensor($default_invalid_penalty, uint16_t, vector(1)), 
+		abs_road_diff, 
+		$invalid_disp_mask,
+		VP_tensor(abs_road_diff_no_outlier, uint16_t, vector(1, 1, $disparity_in_height, $disparity_in_width))
+	);
+	
+	// horizontal flip
+	// sky to ground -> ground to sky
+	VP_hflip(
+		abs_road_diff_no_outlier, 
+		VP_tensor(h_flip_abs_road_diff_no_outlier, uint16_t, vector(1, 1, $disparity_in_height, $disparity_in_width))
+	);
+
+	// accumulate ground penalty, from left(ground) to right(sky)
+	VP_cdf(
+		h_flip_abs_road_diff_no_outlier,
+		VP_tensor(h_flip_ground_score, uint16_t, vector(1, 1, $disparity_in_height, $disparity_in_width))
+	);
+
+	// horizontal flip to original direction
+	// ground to sky -> sky to ground
+	VP_hflip(
+		h_flip_ground_score,
+		VP_tensor($ground_score_out, uint16_t, vector(1, 1, $disparity_in_height, $disparity_in_width))
+	);
+}

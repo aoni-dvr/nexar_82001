@@ -1,0 +1,5 @@
+config BR2_PACKAGE_DMS_EXAMPLE
+	bool "dms_example"
+	default n
+	help
+	  This is the Example to show DMS with Linux for APPLib/VA.

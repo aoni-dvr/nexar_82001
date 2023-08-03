@@ -1,0 +1,2461 @@
+/*
+ * Copyright (c) 2017-2020 Ambarella, Inc.
+ *
+ * This file and its contents ("Software") are protected by intellectual
+ * property rights including, without limitation, U.S. and/or foreign copyrights.
+ * This Software is also the confidential and proprietary information of
+ * Ambarella, Inc. and its licensors.  You may not use, reproduce, disclose,
+ * distribute, modify, or otherwise prepare derivative works of this Software
+ * or any portion thereof except pursuant to a signed license agreement or
+ * nondisclosure agreement with Ambarella, Inc. or its authorized affiliates.
+ * In the absence of such an agreement, you agree to promptly notify and
+ * return this Software to Ambarella, Inc.
+ *
+ * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT,
+ * MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL AMBARELLA, INC. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; COMPUTER FAILURE OR MALFUNCTION;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#ifdef MISRA_COMPLIANCE
+
+#include <orc_spr.h>
+#include <cv1-def.h>
+#include <orc_counters.h>
+
+.section .text
+.global _get_self_thread
+_get_self_thread:
+        l.mfspr             r11, r0, SPR_TH_ID
+        l.jr                r9
+        
+.global _get_cur_time
+_get_cur_time:
+        lv.gettimerstate    r11, VIS_TSR_CURRENTTIME
+        l.jr                r9
+
+.global _set_cur_time
+_set_cur_time:
+        lv.settimerstate    r3, VIS_TSR_CURRENTTIME
+        l.jr                r9
+
+.global _set_resch_time
+_set_resch_time:
+        lv.settimerstate    r3, VIS_TSR_RESCHEDULETIME
+        l.jr                r9
+
+.global _set_resch_time_delta
+_set_resch_time_delta:
+        lv.settimerstate    r3, VIS_TSR_RESCHEDULETIMEDELTA
+        l.jr                r9
+
+.global _wait_s_sync
+_wait_s_sync:
+        lv.wait.gpr.s   r3, 0
+        l.jr            r9
+
+.global _wait_d_sync
+_wait_d_sync:
+        lv.wait.gpr.d   r3, 0
+        l.jr            r9
+
+.global _wait_r_sync
+_wait_r_sync:
+        lv.wait.gpr.r   r3, 0
+        l.jr            r9
+
+.global _wait_r_d_sync
+_wait_r_d_sync:
+        lv.wait.gpr.r   r3, 0
+        lv.wait.gpr.d   r3, 0
+        l.jr            r9
+
+.global _set_counter
+_set_counter:
+        l.andi          r13, r3, 255
+        l.andi          r15, r4, 4095
+        l.andi          r17, r5, 4095
+        l.slli          r19, r13, 2
+        l.slli          r21, r15, 12
+        l.movhi         r23, 0xfffd
+        l.ori           r23, r23, 0xf000
+        l.add           r13, r19, r23
+        l.add           r15, r21, r17
+        l.sw            0(r13), r15
+        l.jr            r9
+
+.global _get_counter
+_get_counter:
+        l.andi          r13, r3, 255
+        l.slli          r17, r13, 2
+        l.movhi         r15, 0xfffd
+        l.ori           r15, r15, 0xf000
+        l.add           r19, r17, r15
+        l.lwz           r13, 0(r19)
+        l.srli          r15, r13, COUNTER_CUR_SHIFT
+        l.andi          r11, r15, COUNTER_CUR_MASK
+        l.jr            r9
+
+.global _visrc_ptr_to_u32
+_visrc_ptr_to_u32:
+.global _visrc_constptr_to_u32
+_visrc_constptr_to_u32:
+.global _visrc_volatileptr_to_u32
+_visrc_volatileptr_to_u32:
+.global _printrc_constptr_to_u32
+_printrc_constptr_to_u32:
+        l.ori           r11, r3, 0
+        l.jr            r9
+
+.global _visrc_u32_to_voidptr
+_visrc_u32_to_voidptr:
+.global _visrc_ptr_to_voidptr
+_visrc_ptr_to_voidptr:
+        l.ori           r11, r3, 0
+        l.jr            r9
+
+.global _visrc_u32_to_u8ptr
+_visrc_u32_to_u8ptr:
+.global _visrc_ptr_to_u8ptr
+_visrc_ptr_to_u8ptr:
+        l.ori           r11, r3, 0
+        l.jr            r9
+
+.global _visrc_ptr_to_i16ptr
+_visrc_ptr_to_i16ptr:
+        l.ori           r11, r3, 0
+        l.jr            r9
+
+.global _visrc_u32_to_u32ptr
+_visrc_u32_to_u32ptr:
+.global _visrc_ptr_to_u32ptr
+_visrc_ptr_to_u32ptr:
+.global _visrc_volptr_to_u32ptr
+_visrc_volptr_to_u32ptr:
+        l.ori           r11, r3, 0
+        l.jr            r9
+
+.global _visrc_u32_to_charptr
+_visrc_u32_to_charptr:
+.global _visrc_ptr_to_charptr
+_visrc_ptr_to_charptr:
+        l.ori           r11, r3, 0
+        l.jr            r9
+
+.global _visrc_u32_to_vp_static_rc
+_visrc_u32_to_vp_static_rc:
+        l.ori           r11, r3, 0
+        l.jr            r9
+
+.global _wait
+_wait:
+        l.sfeqi         r3, VIS_W_COPROC
+        l.bf            _wait_vis_w_coproc
+        l.sfeqi         r3, VIS_W_DRAM_DMA
+        l.bf            _wait_vis_w_dram_dma
+        l.sfeqi         r3, VIS_W_TIMER
+        l.bf            _wait_vis_w_timer
+        l.sfeqi         r3, VIS_W_COPROC_DMA
+        l.bf            _wait_vis_w_coproc_dma
+#ifdef CHIP_CV6
+        l.sfeqi         r3, VIS_W_INTERRUPT
+        l.bf            _wait_vis_w_interrupt
+#endif /* ?CHIP_CV6 */
+        l.jr            r9
+
+.global _wait_cs
+_wait_cs:
+        l.sfeqi         r3, VIS_W_COPROC
+        l.bf            _wait_vis_w_coproc_cs
+        l.sfeqi         r3, VIS_W_DRAM_DMA
+        l.bf            _wait_vis_w_dram_dma_cs
+        l.sfeqi         r3, VIS_W_TIMER
+        l.bf            _wait_vis_w_timer_cs
+        l.sfeqi         r3, VIS_W_COPROC_DMA
+        l.bf            _wait_vis_w_coproc_dma_cs
+#ifdef CHIP_CV6
+        l.sfeqi         r3, VIS_W_INTERRUPT
+        l.bf            _wait_vis_w_interrupt_cs
+#endif /* ?CHIP_CV6 */
+        l.jr            r9
+
+.global _wait_vis_w_coproc
+_wait_vis_w_coproc:
+        lv.wait         1
+        l.jr            r9
+
+.global _wait_vis_w_coproc_cs
+_wait_vis_w_coproc_cs:
+        lv.wait.hold    1
+        l.jr            r9
+
+.global _wait_vis_w_dram_dma
+_wait_vis_w_dram_dma:
+        lv.wait         2
+        l.jr            r9
+
+.global _wait_vis_w_dram_dma_cs
+_wait_vis_w_dram_dma_cs:
+        lv.wait.hold    2
+        l.jr            r9
+
+.global _wait_vis_w_timer
+_wait_vis_w_timer:
+        lv.wait         4
+        l.jr            r9
+
+.global _wait_vis_w_timer_cs
+_wait_vis_w_timer_cs:
+        lv.wait.hold    4
+        l.jr            r9
+
+.global _wait_vis_w_coproc_dma
+_wait_vis_w_coproc_dma:
+        lv.wait         8
+        l.jr            r9
+
+.global _wait_vis_w_coproc_dma_cs
+_wait_vis_w_coproc_dma_cs:
+        lv.wait.hold    8
+        l.jr            r9
+
+#ifdef CHIP_CV6
+.global _wait_vis_w_interrupt
+_wait_vis_w_interrupt:
+        lv.wait         16
+        l.jr            r9
+
+.global _wait_vis_w_interrupt_cs
+_wait_vis_w_interrupt_cs:
+        lv.wait.hold    16
+        l.jr            r9
+
+.global _vishw_send_interrupt
+_vishw_send_interrupt:
+        l.msync
+        lv.sendintr     r3
+        l.jr            r9
+#endif /* ?CHIP_CV6 */
+
+/*-= VP-COPROC POKES =--------------------------*/
+/* R3 : Value                                   */
+/* R4 : Base Address                            */
+/* R5 : Offset (if applicable)                  */
+/*----------------------------------------------*/
+
+/*===== WORD SIZED OPERATIONS ======================================*/
+.global _coproc_poke_word_offset
+_coproc_poke_word_offset:
+        l.add           r13,r4,r5
+        lv.poke.word    0(r13),r3
+        l.jr            r9
+
+.global _coproc_poke_word
+_coproc_poke_word:
+        lv.poke.word    0(r4),r3
+        l.jr            r9
+
+.global _coproc_poke_ldq_word_offset
+_coproc_poke_ldq_word_offset:
+        l.add               r13,r4,r5
+        lv.poke.word.ldq    0(r13),r3
+        l.jr                r9
+
+.global _coproc_poke_ldq_word
+_coproc_poke_ldq_word:
+        lv.poke.word.ldq    0(r4),r3
+        l.jr                r9
+
+.global _coproc_poke_stq_word_offset
+_coproc_poke_stq_word_offset:
+        l.add               r13,r4,r5
+        lv.poke.word.stq    0(r13),r3
+        l.jr                r9
+
+.global _coproc_poke_stq_word
+_coproc_poke_stq_word:
+        lv.poke.word.stq    0(r4),r3
+        l.jr                r9
+
+/*===== HALFWORD SIZED OPERATIONS ==================================*/
+.global _coproc_poke_half_offset
+_coproc_poke_half_offset:
+        l.add           r13,r4,r5
+        lv.poke.half    0(r13),r3
+        l.jr            r9
+
+.global _coproc_poke_half
+_coproc_poke_half:
+        lv.poke.half    0(r4),r3
+        l.jr            r9
+
+.global _coproc_poke_ldq_half_offset
+_coproc_poke_ldq_half_offset:
+        l.add               r13,r4,r5
+        lv.poke.half.ldq    0(r13),r3
+        l.jr                r9
+
+.global _coproc_poke_ldq_half
+_coproc_poke_ldq_half:
+        lv.poke.half.ldq    0(r4),r3
+        l.jr                r9
+
+.global _coproc_poke_stq_half_offset
+_coproc_poke_stq_half_offset:
+        l.add               r13,r4,r5
+        lv.poke.half.stq    0(r13),r3
+        l.jr                r9
+
+.global _coproc_poke_stq_half
+_coproc_poke_stq_half:
+        lv.poke.half.stq    0(r4),r3
+        l.jr                r9
+
+/*===== BYTE SIZED OPERATIONS ======================================*/
+.global _coproc_poke_byte_offset
+_coproc_poke_byte_offset:
+        l.add           r13,r4,r5
+        lv.poke.byte    0(r13),r3
+        l.jr            r9
+
+.global _coproc_poke_byte
+_coproc_poke_byte:
+        lv.poke.byte    0(r4),r3
+        l.jr            r9
+
+.global _coproc_poke_ldq_byte_offset
+_coproc_poke_ldq_byte_offset:
+        l.add               r13,r4,r5
+        lv.poke.byte.ldq    0(r13),r3
+        l.jr                r9
+
+.global _coproc_poke_ldq_byte
+_coproc_poke_ldq_byte:
+        lv.poke.byte.ldq    0(r4),r3
+        l.jr                r9
+
+.global _coproc_poke_stq_byte_offset
+_coproc_poke_stq_byte_offset:
+        l.add               r13,r4,r5
+        lv.poke.byte.stq    0(r13),r3
+        l.jr                r9
+
+.global _coproc_poke_stq_byte
+_coproc_poke_stq_byte:
+        lv.poke.byte.stq    0(r4),r3
+        l.jr                r9
+
+/*===== COPROC POKE BITS operations ====================================*/
+/* R3 : Value to poke                                                   */
+/* R4 : Address to poke to                                              */
+/* R5 : Mask to poke with (immediate, 8-bit)                            */
+/*======================================================================*/
+.global _coproc_poke_bits
+_coproc_poke_bits:
+        l.andi          r13, r5, 0x00FF
+        l.slli          r15, r13, 3
+        l.movhi         r17, hi(_cpokebits_jt)
+        l.ori           r17, r17, lo(_cpokebits_jt)
+        l.add           r13, r15, r17
+        l.jr            r13
+_cpokebits_jt:
+        lv.poke.bits        r4, r3, 0x0000
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0001
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0002
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0003
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0004
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0005
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0006
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0007
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0008
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0009
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x000A
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x000B
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x000C
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x000D
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x000E
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x000F
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0010
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0011
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0012
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0013
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0014
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0015
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0016
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0017
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0018
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0019
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x001A
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x001B
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x001C
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x001D
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x001E
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x001F
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0020
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0021
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0022
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0023
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0024
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0025
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0026
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0027
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0028
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0029
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x002A
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x002B
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x002C
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x002D
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x002E
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x002F
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0030
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0031
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0032
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0033
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0034
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0035
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0036
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0037
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0038
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0039
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x003A
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x003B
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x003C
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x003D
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x003E
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x003F
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0040
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0041
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0042
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0043
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0044
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0045
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0046
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0047
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0048
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0049
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x004A
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x004B
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x004C
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x004D
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x004E
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x004F
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0050
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0051
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0052
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0053
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0054
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0055
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0056
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0057
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0058
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0059
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x005A
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x005B
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x005C
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x005D
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x005E
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x005F
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0060
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0061
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0062
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0063
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0064
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0065
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0066
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0067
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0068
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0069
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x006A
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x006B
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x006C
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x006D
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x006E
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x006F
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0070
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0071
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0072
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0073
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0074
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0075
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0076
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0077
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0078
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0079
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x007A
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x007B
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x007C
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x007D
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x007E
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x007F
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0080
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0081
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0082
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0083
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0084
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0085
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0086
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0087
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0088
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0089
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x008A
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x008B
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x008C
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x008D
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x008E
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x008F
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0090
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0091
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0092
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0093
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0094
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0095
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0096
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0097
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0098
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x0099
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x009A
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x009B
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x009C
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x009D
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x009E
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x009F
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00A0
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00A1
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00A2
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00A3
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00A4
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00A5
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00A6
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00A7
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00A8
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00A9
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00AA
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00AB
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00AC
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00AD
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00AE
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00AF
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00B0
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00B1
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00B2
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00B3
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00B4
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00B5
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00B6
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00B7
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00B8
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00B9
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00BA
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00BB
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00BC
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00BD
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00BE
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00BF
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00C0
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00C1
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00C2
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00C3
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00C4
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00C5
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00C6
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00C7
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00C8
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00C9
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00CA
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00CB
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00CC
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00CD
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00CE
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00CF
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00D0
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00D1
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00D2
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00D3
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00D4
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00D5
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00D6
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00D7
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00D8
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00D9
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00DA
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00DB
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00DC
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00DD
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00DE
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00DF
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00E0
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00E1
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00E2
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00E3
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00E4
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00E5
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00E6
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00E7
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00E8
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00E9
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00EA
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00EB
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00EC
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00ED
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00EE
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00EF
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00F0
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00F1
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00F2
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00F3
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00F4
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00F5
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00F6
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00F7
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00F8
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00F9
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00FA
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00FB
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00FC
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00FD
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00FE
+        l.jr                r9
+        lv.poke.bits        r4, r3, 0x00FF
+        l.jr                r9
+
+.global _coproc_poke_bits_ldq
+_coproc_poke_bits_ldq:
+        l.andi          r13, r5, 0x00FF
+        l.slli          r15, r13, 3
+        l.movhi         r17, hi(_cpokebits_ldq_jt)
+        l.ori           r17, r17, lo(_cpokebits_ldq_jt)
+        l.add           r13, r15, r17
+        l.jr            r13
+_cpokebits_ldq_jt:
+        lv.poke.bits.ldq    r4, r3, 0x0000
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0001
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0002
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0003
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0004
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0005
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0006
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0007
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0008
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0009
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x000A
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x000B
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x000C
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x000D
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x000E
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x000F
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0010
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0011
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0012
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0013
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0014
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0015
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0016
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0017
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0018
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0019
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x001A
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x001B
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x001C
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x001D
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x001E
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x001F
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0020
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0021
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0022
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0023
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0024
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0025
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0026
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0027
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0028
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0029
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x002A
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x002B
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x002C
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x002D
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x002E
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x002F
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0030
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0031
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0032
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0033
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0034
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0035
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0036
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0037
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0038
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0039
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x003A
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x003B
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x003C
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x003D
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x003E
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x003F
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0040
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0041
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0042
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0043
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0044
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0045
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0046
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0047
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0048
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0049
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x004A
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x004B
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x004C
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x004D
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x004E
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x004F
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0050
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0051
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0052
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0053
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0054
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0055
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0056
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0057
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0058
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0059
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x005A
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x005B
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x005C
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x005D
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x005E
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x005F
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0060
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0061
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0062
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0063
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0064
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0065
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0066
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0067
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0068
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0069
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x006A
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x006B
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x006C
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x006D
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x006E
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x006F
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0070
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0071
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0072
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0073
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0074
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0075
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0076
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0077
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0078
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0079
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x007A
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x007B
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x007C
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x007D
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x007E
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x007F
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0080
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0081
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0082
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0083
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0084
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0085
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0086
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0087
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0088
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0089
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x008A
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x008B
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x008C
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x008D
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x008E
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x008F
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0090
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0091
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0092
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0093
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0094
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0095
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0096
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0097
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0098
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x0099
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x009A
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x009B
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x009C
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x009D
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x009E
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x009F
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00A0
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00A1
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00A2
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00A3
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00A4
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00A5
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00A6
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00A7
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00A8
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00A9
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00AA
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00AB
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00AC
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00AD
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00AE
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00AF
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00B0
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00B1
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00B2
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00B3
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00B4
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00B5
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00B6
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00B7
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00B8
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00B9
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00BA
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00BB
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00BC
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00BD
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00BE
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00BF
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00C0
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00C1
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00C2
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00C3
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00C4
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00C5
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00C6
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00C7
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00C8
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00C9
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00CA
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00CB
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00CC
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00CD
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00CE
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00CF
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00D0
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00D1
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00D2
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00D3
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00D4
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00D5
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00D6
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00D7
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00D8
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00D9
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00DA
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00DB
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00DC
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00DD
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00DE
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00DF
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00E0
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00E1
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00E2
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00E3
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00E4
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00E5
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00E6
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00E7
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00E8
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00E9
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00EA
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00EB
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00EC
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00ED
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00EE
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00EF
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00F0
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00F1
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00F2
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00F3
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00F4
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00F5
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00F6
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00F7
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00F8
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00F9
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00FA
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00FB
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00FC
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00FD
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00FE
+        l.jr                r9
+        lv.poke.bits.ldq    r4, r3, 0x00FF
+        l.jr                r9
+
+.global _coproc_poke_bits_stq
+_coproc_poke_bits_stq:
+        l.andi          r13, r5, 0x00FF
+        l.slli          r15, r13, 3
+        l.movhi         r17, hi(_cpokebits_stq_jt)
+        l.ori           r17, r17, lo(_cpokebits_stq_jt)
+        l.add           r13, r15, r17
+        l.jr            r13
+_cpokebits_stq_jt:
+        lv.poke.bits.stq    r4, r3, 0x0000
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0001
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0002
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0003
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0004
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0005
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0006
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0007
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0008
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0009
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x000A
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x000B
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x000C
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x000D
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x000E
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x000F
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0010
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0011
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0012
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0013
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0014
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0015
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0016
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0017
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0018
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0019
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x001A
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x001B
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x001C
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x001D
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x001E
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x001F
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0020
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0021
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0022
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0023
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0024
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0025
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0026
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0027
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0028
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0029
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x002A
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x002B
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x002C
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x002D
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x002E
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x002F
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0030
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0031
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0032
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0033
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0034
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0035
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0036
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0037
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0038
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0039
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x003A
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x003B
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x003C
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x003D
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x003E
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x003F
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0040
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0041
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0042
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0043
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0044
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0045
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0046
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0047
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0048
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0049
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x004A
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x004B
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x004C
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x004D
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x004E
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x004F
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0050
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0051
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0052
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0053
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0054
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0055
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0056
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0057
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0058
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0059
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x005A
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x005B
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x005C
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x005D
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x005E
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x005F
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0060
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0061
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0062
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0063
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0064
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0065
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0066
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0067
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0068
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0069
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x006A
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x006B
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x006C
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x006D
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x006E
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x006F
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0070
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0071
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0072
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0073
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0074
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0075
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0076
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0077
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0078
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0079
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x007A
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x007B
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x007C
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x007D
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x007E
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x007F
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0080
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0081
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0082
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0083
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0084
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0085
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0086
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0087
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0088
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0089
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x008A
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x008B
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x008C
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x008D
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x008E
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x008F
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0090
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0091
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0092
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0093
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0094
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0095
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0096
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0097
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0098
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x0099
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x009A
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x009B
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x009C
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x009D
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x009E
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x009F
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00A0
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00A1
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00A2
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00A3
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00A4
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00A5
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00A6
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00A7
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00A8
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00A9
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00AA
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00AB
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00AC
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00AD
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00AE
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00AF
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00B0
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00B1
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00B2
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00B3
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00B4
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00B5
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00B6
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00B7
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00B8
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00B9
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00BA
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00BB
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00BC
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00BD
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00BE
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00BF
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00C0
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00C1
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00C2
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00C3
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00C4
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00C5
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00C6
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00C7
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00C8
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00C9
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00CA
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00CB
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00CC
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00CD
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00CE
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00CF
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00D0
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00D1
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00D2
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00D3
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00D4
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00D5
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00D6
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00D7
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00D8
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00D9
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00DA
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00DB
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00DC
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00DD
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00DE
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00DF
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00E0
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00E1
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00E2
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00E3
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00E4
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00E5
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00E6
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00E7
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00E8
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00E9
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00EA
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00EB
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00EC
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00ED
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00EE
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00EF
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00F0
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00F1
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00F2
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00F3
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00F4
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00F5
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00F6
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00F7
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00F8
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00F9
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00FA
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00FB
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00FC
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00FD
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00FE
+        l.jr                r9
+        lv.poke.bits.stq    r4, r3, 0x00FF
+        l.jr                r9
+
+/*===== COPROC PEEK operations =========================================*/
+/* R3 : Index to peek from (0..15)                                      */
+/* R4 : Target address to store result to                               */
+/* R5 : Offset from target address (for _offset variants)               */
+/*======================================================================*/
+.global _coproc_peek_word
+_coproc_peek_word:
+        l.andi          r13, r3, 0x000F
+        l.addi          r19, r4, 0
+        l.slli          r15, r13, 3
+        l.movhi         r17, hi(_cpeek_w_jt)
+        l.ori           r17, r17, lo(_cpeek_w_jt)
+        l.add           r13, r15, r17
+        l.jr            r13
+.global _coproc_peek_word_offset
+_coproc_peek_word_offset:
+        l.andi          r13, r3, 0x000F
+        l.add           r19, r4, r5
+        l.slli          r15, r13, 3
+        l.movhi         r17, hi(_cpeek_w_jt)
+        l.ori           r17, r17, lo(_cpeek_w_jt)
+        l.add           r13, r15, r17
+        l.jr            r13
+_cpeek_w_jt:
+        lv.peek.word    0, 0(r19)
+        l.jr            r9
+        lv.peek.word    1, 0(r19)
+        l.jr            r9
+        lv.peek.word    2, 0(r19)
+        l.jr            r9
+        lv.peek.word    3, 0(r19)
+        l.jr            r9
+        lv.peek.word    4, 0(r19)
+        l.jr            r9
+        lv.peek.word    5, 0(r19)
+        l.jr            r9
+        lv.peek.word    6, 0(r19)
+        l.jr            r9
+        lv.peek.word    7, 0(r19)
+        l.jr            r9
+        lv.peek.word    8, 0(r19)
+        l.jr            r9
+        lv.peek.word    9, 0(r19)
+        l.jr            r9
+        lv.peek.word    10, 0(r19)
+        l.jr            r9
+        lv.peek.word    11, 0(r19)
+        l.jr            r9
+        lv.peek.word    12, 0(r19)
+        l.jr            r9
+        lv.peek.word    13, 0(r19)
+        l.jr            r9
+        lv.peek.word    14, 0(r19)
+        l.jr            r9
+        lv.peek.word    15, 0(r19)
+        l.jr            r9
+
+.global _coproc_peek_half_offset
+_coproc_peek_offset:
+        l.andi          r13, r3, 0x000F
+        l.add           r19, r4, r5
+        l.slli          r15, r13, 3
+        l.movhi         r17, hi(_cpeek_h_jt)
+        l.ori           r17, r17, lo(_cpeek_h_jt)
+        l.add           r13, r15, r17
+        l.jr            r13
+.global _coproc_peek_half
+_coproc_peek_half:
+        l.andi          r13, r3, 0x000F
+        l.addi          r19, r4, 0
+        l.slli          r15, r13, 3
+        l.movhi         r17, hi(_cpeek_h_jt)
+        l.ori           r17, r17, lo(_cpeek_h_jt)
+        l.add           r13, r15, r17
+        l.jr            r13
+_cpeek_h_jt:
+        lv.peek.half    0, 0(r19)
+        l.jr            r9
+        lv.peek.half    1, 0(r19)
+        l.jr            r9
+        lv.peek.half    2, 0(r19)
+        l.jr            r9
+        lv.peek.half    3, 0(r19)
+        l.jr            r9
+        lv.peek.half    4, 0(r19)
+        l.jr            r9
+        lv.peek.half    5, 0(r19)
+        l.jr            r9
+        lv.peek.half    6, 0(r19)
+        l.jr            r9
+        lv.peek.half    7, 0(r19)
+        l.jr            r9
+        lv.peek.half    8, 0(r19)
+        l.jr            r9
+        lv.peek.half    9, 0(r19)
+        l.jr            r9
+        lv.peek.half    10, 0(r19)
+        l.jr            r9
+        lv.peek.half    11, 0(r19)
+        l.jr            r9
+        lv.peek.half    12, 0(r19)
+        l.jr            r9
+        lv.peek.half    13, 0(r19)
+        l.jr            r9
+        lv.peek.half    14, 0(r19)
+        l.jr            r9
+        lv.peek.half    15, 0(r19)
+        l.jr            r9
+
+.global _coproc_peek_byte
+_coproc_peek_byte:
+        l.andi          r13, r3, 0x000F
+        l.addi          r19, r4, 0
+        l.slli          r15, r13, 3
+        l.movhi         r17, hi(_cpeek_b_jt)
+        l.ori           r17, r17, lo(_cpeek_b_jt)
+        l.add           r13, r15, r17
+        l.jr            r13
+.global _coproc_peek_byte_offset
+_coproc_peek_byte_offset:
+        l.andi          r13, r3, 0x000F
+        l.add           r19, r4, r5
+        l.slli          r15, r13, 3
+        l.movhi         r17, hi(_cpeek_b_jt)
+        l.ori           r17, r17, lo(_cpeek_b_jt)
+        l.add           r13, r15, r17
+        l.jr            r13
+_cpeek_b_jt:
+        lv.peek.byte    0, 0(r19)
+        l.jr            r9
+        lv.peek.byte    1, 0(r19)
+        l.jr            r9
+        lv.peek.byte    2, 0(r19)
+        l.jr            r9
+        lv.peek.byte    3, 0(r19)
+        l.jr            r9
+        lv.peek.byte    4, 0(r19)
+        l.jr            r9
+        lv.peek.byte    5, 0(r19)
+        l.jr            r9
+        lv.peek.byte    6, 0(r19)
+        l.jr            r9
+        lv.peek.byte    7, 0(r19)
+        l.jr            r9
+        lv.peek.byte    8, 0(r19)
+        l.jr            r9
+        lv.peek.byte    9, 0(r19)
+        l.jr            r9
+        lv.peek.byte    10, 0(r19)
+        l.jr            r9
+        lv.peek.byte    11, 0(r19)
+        l.jr            r9
+        lv.peek.byte    12, 0(r19)
+        l.jr            r9
+        lv.peek.byte    13, 0(r19)
+        l.jr            r9
+        lv.peek.byte    14, 0(r19)
+        l.jr            r9
+        lv.peek.byte    15, 0(r19)
+        l.jr            r9
+
+/*===== COPROC FLOW OPERATIONS =====================================*/
+.global _coproc_run
+_coproc_run:
+        lv.run          r3
+        l.jr            r9
+
+.global _vp_dummy_run
+_vp_dummy_run:
+        l.ori           r13, r0, 0
+        lv.run          r13
+        l.jr            r9
+
+.global _coproc_dmald
+_coproc_dmald:
+        lv.dmald        r3
+        l.jr            r9
+
+.global _coproc_dmast
+_coproc_dmast:
+        lv.dmast        r3
+        l.jr            r9
+
+.global _coproc_dmast_flush
+_coproc_dmast_flush:
+        lv.dmast.flush  r3
+        l.jr            r9
+
+.global _get_peek_value
+.global _get_peek_value_imm
+_get_peek_value:
+_get_peek_value_imm:
+        l.andi          r13, r3, 0x000F
+        l.addi          r15, r13, SPR_PEEK_BASE
+        l.mfspr         r11, r15, 0
+        l.jr            r9
+
+/*===== SPR MANAGEMENT OPERATIONS ==================================*/
+.global _write_spr_imm
+_write_spr_imm:
+        l.mtspr         r3, r4, 0
+        l.jr            r9
+
+.global _write_spr
+_write_spr:
+        l.mtspr         r3, r4, 0
+        l.jr            r9
+
+.global _read_spr_imm
+_read_spr_imm:
+        l.mfspr         r11, r3, 0
+        l.jr            r9
+
+.global _read_spr
+_read_spr:
+        l.mfspr         r11, r3, 0
+        l.jr            r9
+
+/*===== CONTROL FLOW OPERATIONS ====================================*/
+.global _preempt_hold
+_preempt_hold:
+        lv.nopreempt.start
+        l.jr            r9
+
+.global _preempt_release
+_preempt_release:
+        lv.nopreempt.end
+        l.jr            r9
+
+.global _vis_take_mutex
+_vis_take_mutex:
+        lv.wait.gpr.s   r3, 0
+        lv.nopreempt.start
+        l.jr            r9
+
+.global _vis_release_mutex
+_vis_release_mutex:
+        lv.nopreempt.end
+        lv.wait.gpr.d   r3, 0
+        l.jr            r9
+
+.global _orc_sleep
+_orc_sleep:
+        lv.nopreempt.start
+        lv.settimerstate        r3, 2
+        lv.wait                 4
+        l.jr                    r9
+
+/*===== DMA OPERATIONS : CMEM -> DRAM ==================================*/
+/* R3 : DRAM target address                                             */
+/* R4 : CMEM source address                                             */
+/* R5 : transfer size in uint32_t                                       */
+/*                                                                      */
+/* Requires "CMEM_SIZE" be 32768 bytes                                  */
+/*======================================================================*/
+.global _cmem_2_dram
+.global _cmem_2_dram_imm
+.global _visdma_cmem_2_dram
+.global _visdma_cmem_2_dram_imm
+_cmem_2_dram:
+_cmem_2_dram_imm:
+_visdma_cmem_2_dram:
+_visdma_cmem_2_dram_imm:
+#ifdef CHIP_CV6
+        l.msync
+#else /* !CHIP_CV6 */
+        l.lwa           r0, 0(r0)
+#endif /* ?CHIP_CV6 */
+        l.andi          r15, r4, 32767
+        l.addi          r13, r5, -1
+        l.srli          r17, r15,2
+#ifndef CHIP_CV6
+        l.addi          r0, r0, 0
+#endif /* ?CHIP_CV6 */
+        lv.cmem2dram    r3, r17, r13
+        lv.wait         2
+        l.jr            r9
+
+.global _cmem_2_dram_nowait
+.global _cmem_2_dram_imm_nowait
+.global _visdma_cmem_2_dram_nowait
+.global _visdma_cmem_2_dram_imm_nowait
+_cmem_2_dram_nowait:
+_cmem_2_dram_imm_nowait:
+_visdma_cmem_2_dram_nowait:
+_visdma_cmem_2_dram_imm_nowait:
+#ifdef CHIP_CV6
+        l.msync
+#else /* !CHIP_CV6 */
+        l.lwa           r0, 0(r0)
+#endif /* ?CHIP_CV6 */
+        l.andi          r15, r4, 32767
+        l.addi          r13, r5, -1
+        l.srli          r17, r15,2
+#ifndef CHIP_CV6
+        l.addi          r0, r0, 0
+#endif /* ?CHIP_CV6 */
+        lv.cmem2dram    r3, r17, r13
+        l.jr            r9
+
+/*===== DMA OPERATIONS : DRAM -> CMEM ==================================*/
+/* R3 : CMEM target address                                             */
+/* R4 : DRAM source address                                             */
+/* R5 : transfer size in uint32_t                                       */
+/*                                                                      */
+/* Requires "CMEM_SIZE" be 32768 bytes                                  */
+/*======================================================================*/
+.global _dram_2_cmem
+.global _dram_2_cmem_imm
+.global _visdma_dram_2_cmem
+.global _visdma_dram_2_cmem_imm
+_dram_2_cmem:
+_dram_2_cmem_imm:
+_visdma_dram_2_cmem:
+_visdma_dram_2_cmem_imm:
+#ifdef CHIP_CV6
+        l.msync
+#else /* !CHIP_CV6 */
+        l.lwa           r0, 0(r0)
+#endif /* ?CHIP_CV6 */
+        l.andi          r15, r3, 32767
+        l.addi          r13, r5, -1
+        l.srli          r17, r15, 2
+#ifndef CHIP_CV6
+        l.addi          r0, r0, 0
+#endif /* ?CHIP_CV6 */
+        lv.dram2cmem    r17, r4, r13
+        lv.wait         2
+        l.jr            r9
+
+.global _dram_2_cmem_nowait
+.global _dram_2_cmem_nowait_imm
+.global _visdma_dram_2_cmem_nowait
+.global _visdma_dram_2_cmem_nowait_imm
+_dram_2_cmem_nowait:
+_dram_2_cmem_nowait_imm:
+_visdma_dram_2_cmem_nowait:
+_visdma_dram_2_cmem_nowait_imm:
+#ifdef CHIP_CV6
+        l.msync
+#else /* !CHIP_CV6 */
+        l.lwa           r0, 0(r0)
+#endif /* ?CHIP_CV6 */
+        l.andi          r15, r3, 32767
+        l.addi          r13, r5, -1
+        l.srli          r17, r15, 2
+#ifndef CHIP_CV6
+        l.addi          r0, r0, 0
+#endif /* ?CHIP_CV6 */
+        lv.dram2cmem    r17, r4, r13
+        l.jr            r9
+
+/*===== DMA OPERATIONS : CMEM -> COPROC ================================*/
+/* R3 : COPROC target address                                           */
+/* R4 : CMEM source address                                             */
+/* R5 : transfer size in uint32_t                                       */
+/*                                                                      */
+/* Requires "CMEM_SIZE" be 32768 bytes                                  */
+/*======================================================================*/
+.global _cmem_2_coproc
+.global _cmem_2_coproc_imm
+.global _visdma_cmem_2_coproc
+.global _visdma_cmem_2_coproc_imm
+_cmem_2_coproc:
+_cmem_2_coproc_imm:
+_visdma_cmem_2_coproc:
+_visdma_cmem_2_coproc_imm:
+#ifdef CHIP_CV6
+        l.msync
+#else /* !CHIP_CV6 */
+        l.lwa           r0, 0(r0)
+#endif /* ?CHIP_CV6 */
+        l.andi          r15, r4, 32767
+        l.addi          r13, r5, -1
+        l.srli          r17, r15, 2
+        l.srli          r19, r3, 2
+#ifndef CHIP_CV6
+        l.addi          r0, r0, 0
+#endif /* ?CHIP_CV6 */
+        lv.cmem2coproc  r19, r17, r13
+        lv.wait         8
+        l.jr            r9
+
+.global _cmem_2_coproc_nowait
+.global _cmem_2_coproc_imm_nowait
+.global _visdma_cmem_2_coproc_nowait
+.global _visdma_cmem_2_coproc_imm_nowait
+_cmem_2_coproc_nowait:
+_cmem_2_coproc_imm_nowait:
+_visdma_cmem_2_coproc_nowait:
+_visdma_cmem_2_coproc_imm_nowait:
+#ifdef CHIP_CV6
+        l.msync
+#else /* !CHIP_CV6 */
+        l.lwa           r0, 0(r0)
+#endif /* ?CHIP_CV6 */
+        l.andi          r15, r4, 32767
+        l.addi          r13, r5, -1
+        l.srli          r17, r15, 2
+        l.srli          r19, r3, 2
+#ifndef CHIP_CV6
+        l.addi          r0, r0, 0
+#endif /* ?CHIP_CV6 */
+        lv.cmem2coproc  r19, r17, r13
+        l.jr            r9
+
+/*===== DMA OPERATIONS : COPROC -> CMEM ================================*/
+/* R3 : CMEM target address                                             */
+/* R4 : COPROC source address                                           */
+/* R5 : transfer size in uint32_t                                       */
+/*                                                                      */
+/* Requires "CMEM_SIZE" be 32768 bytes                                  */
+/*======================================================================*/
+.global _coproc_2_cmem
+.global _coproc_2_cmem_imm
+.global _visdma_coproc_2_cmem
+.global _visdma_coproc_2_cmem_imm
+_coproc_2_cmem:
+_coproc_2_cmem_imm:
+_visdma_coproc_2_cmem:
+_visdma_coproc_2_cmem_imm:
+        l.andi          r15, r3, 32767
+        l.addi          r13, r5, -1
+        l.srli          r17, r15, 2
+        l.srli          r19, r4, 2
+        lv.coproc2cmem  r17, r19, r13
+        lv.wait         8
+        l.jr            r9
+
+.global _coproc_2_cmem_nowait
+.global _coproc_2_cmem_nowait_imm
+.global _visdma_coproc_2_cmem_nowait
+.global _visdma_coproc_2_cmem_nowait_imm
+_coproc_2_cmem_nowait:
+_coproc_2_cmem_nowait_imm:
+_visdma_coproc_2_cmem_nowait:
+_visdma_coproc_2_cmem_nowait_imm:
+        l.andi          r15, r3, 32767
+        l.addi          r13, r5, -1
+        l.srli          r17, r15, 2
+        l.srli          r19, r4, 2
+        lv.coproc2cmem  r17, r19, r13
+        l.jr            r9
+
+#endif /* ?MISRA_COMPLIANCE */
+
+/*======================================================================*/
+/* Miscellaneous functions                                              */
+/*======================================================================*/
+.global _vis_dec_to_char
+_vis_dec_to_char:
+        l.sfgtui        r3, 0x0009
+        l.bf            _vd2c_oob
+        l.addi          r11, r3, 0x0030
+        l.jr            r9
+_vd2c_oob:
+        l.ori           r11, r0, 0x0078
+        l.jr            r9
+
+.global _vis_digit_to_u32
+_vis_digit_to_u32:
+        l.sfgtui        r3, 0x0039
+        l.bf            _vdg2c_oob
+        l.sfltui        r3, 0x0030
+        l.bf            _vdg2c_oob
+        l.addi          r11, r3, 0xffd0
+        l.jr            r9
+_vdg2c_oob:
+        l.ori           r11, r0, 0
+        l.jr            r9
+
+.global _visasm_membar
+_visasm_membar:
+#ifdef CHIP_CV6
+        l.msync
+#else /* !CHIP_CV6 */
+        l.lwa r0, 0(r0)
+        l.addi r0, r0, 0
+#endif /* ?CHIP_CV6 */
+        l.jr            r9
+
+.global _visasm_large_membar
+_visasm_large_membar:
+        l.movhi r15, 0xFFF0
+        l.sw    0x00C0(r15), r0
+        l.lwz   r17, 0x00C0(r15)
+        l.jr    r9
+
+.global _visasm_discard_l1_cache
+_visasm_discard_l1_cache:
+#ifdef CHIP_CV6
+        l.msync
+#else /* !CHIP_CV6 */
+        l.movhi   r15, 0xFFF0
+        l.sw      0x00C0(r15), r0
+        l.lwz     r17, 0x00C0(r15)
+#endif /* ?CHIP_CV6 */
+        l.addi    r15, r0, 3
+        l.mtspr   r0, r15, 0xc009
+#ifdef CHIP_CV6
+        l.msync
+#else /* !CHIP_CV6 */
+        l.lwa     r0, 0(r0)
+        l.addi    r0, r0, 0
+#endif /* ?CHIP_CV6 */
+        l.jr      r9
+
+.global _visasm_fl1
+_visasm_fl1:
+        l.fl1   r11, r3
+        l.jr    r9
+
+.global _visasm_ff1
+_visasm_ff1:
+        l.ff1   r11, r3
+        l.jr    r9
+
+/*======================================================================*/
+/* print passthrough functions - needed to reduce use of recasters      */
+/*======================================================================*/
+.global _sched_printf_ppppp
+_sched_printf_ppppp:
+.global _sched_printf_puuuu
+_sched_printf_puuuu:
+.global _sched_printf_epppp
+_sched_printf_epppp:
+.global _sched_printf_euppp
+_sched_printf_euppp:
+        l.j             _sched_printf
+
+.global _error_printf_epppp
+_error_printf_epppp:
+.global _error_printf_euppp
+_error_printf_euppp:
+        l.j             _error_printf
+

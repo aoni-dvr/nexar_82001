@@ -1,0 +1,282 @@
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_QueryArchMemorySize(), ID = 0, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_InitArch(), ID = 1, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_InitDefBinary(), ID = 2, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_InitCheckParamFunc(), ID = 3, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_SetDebugLogId(), ID = 4, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_InitContext(), ID = 5, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImgDebugPrint.c, AmbaIK_SetDebugLogId(), ID = 6, description : test OK case, if (filter_debug_log[all_ik_filters] == 1U) true
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetWindowSizeInfo(), ID = 7, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetWindowSizeInfo(), ID = 8, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFlipMode(), ID = 9, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetAwbStatInfo(), ID = 10, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetAeStatInfo(), ID = 11, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetAfStatInfo(), ID = 12, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetPgAfStatInfo(), ID = 13, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetAfStatExInfo(), ID = 14, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetPgAfStatExInfo(), ID = 15, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetHistogramInfo(), ID = 16, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetPgHistogramInfo(), ID = 17, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetResampStrength(), ID = 18, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_SetSafetyInfo(), ID = 19, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetVinSensorInfo(), ID = 20, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetVinSensorInfo(), ID = 21, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetRgbIr(), ID = 22, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFeToneCurve(), ID = 23, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFeStaticBlc(), ID = 24, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetDynamicBadPxlCor(), ID = 25, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetCfaLeakageFilter(), ID = 26, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetCfaNoiseFilter(), ID = 27, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetAntiAliasing(), ID = 28, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFeWbGain(), ID = 29, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetAfterCeWbGain(), ID = 30, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetBeforeCeWbGain(), ID = 31, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetDemosaic(), ID = 32, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetGrgbMismatch(), ID = 33, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetRgbTo12Y(), ID = 34, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetColorCorrection(), ID = 35, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetToneCurve(), ID = 36, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetRgbToYuvMatrix(), ID = 37, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetChromaScale(), ID = 38, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetChromaMedianFilter(), ID = 39, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetChromaFilter(), ID = 40, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetWideChromaFilter(), ID = 41, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetWideChromaFilterCombine(), ID = 42, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetLumaNoiseReduction(), ID = 43, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFirstLumaProcMode(), ID = 44, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetAdvSpatFltr(), ID = 45, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFnlShpNsBoth(), ID = 46, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFnlShpNsBothTdt(), ID = 47, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFnlShpNsNoise(), ID = 48, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFnlShpNsFir(), ID = 49, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFnlShpNsCoring(), ID = 50, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFnlShpNsCorIdxScl(), ID = 51, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFnlShpNsMinCorRst(), ID = 52, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFnlShpNsMaxCorRst(), ID = 53, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFnlShpNsSclCor(), ID = 54, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetVideoMctf(), ID = 55, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetVideoMctfTa(), ID = 56, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetVideoMctfAndFnlshp(), ID = 57, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetVinActiveWin(), ID = 58, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetDummyMarginRange(), ID = 59, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetDzoomInfo(), ID = 60, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetStaticBadPxlCorEnb(), ID = 61, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetVignetteEnb(), ID = 62, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetCawarpEnb(), ID = 63, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetWarpEnb(), ID = 64, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetWarpInfo(), ID = 65, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetCe(), ID = 66, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetCeInputTable(), ID = 67, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetCeOutputTable(), ID = 68, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetHdrBlend(), ID = 69, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetHdrRawOffset(), ID = 70, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFeWbGain(), ID = 71, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFeWbGain(), ID = 72, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFeStaticBlc(), ID = 73, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFeStaticBlc(), ID = 74, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x01100202, AmbaDSP_ImageUtility.c, AmbaIK_ExecuteConfig(), ID = 75, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x01100202, AmbaDSP_ImageUtility.c, AmbaIK_QueryDebugConfigSize(), ID = 76, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x01100202, AmbaDSP_ImageUtility.c, AmbaIK_DumpDebugConfig(), ID = 77, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_GetContextAbility(), ID = 78, description : OK case in ik_ctest_ir_only20.c
+Ability.Pipe = 0, Ability.StillPipe = 0, Ability.VideoPipe = 3
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFlipMode(), ID = 79, description : OK case in ik_ctest_ir_only20.c
+FlipInfo = 0
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetAwbStatInfo(), ID = 80, description : OK case in ik_ctest_ir_only20.c
+AwbStatInfo.AwbTileNumCol = 64
+AwbStatInfo.AwbTileNumRow = 64
+AwbStatInfo.AwbTileColStart = 0
+AwbStatInfo.AwbTileRowStart = 0
+AwbStatInfo.AwbTileWidth = 64
+AwbStatInfo.AwbTileHeight = 64
+AwbStatInfo.AwbTileActiveWidth = 64
+AwbStatInfo.AwbTileActiveHeight = 64
+AwbStatInfo.AwbPixMinValue = 0
+AwbStatInfo.AwbPixMaxValue = 16383
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetAeStatInfo(), ID = 81, description : OK case in ik_ctest_ir_only20.c
+AeStatInfo.AeTileNumCol = 24
+AeStatInfo.AeTileNumRow = 16
+AeStatInfo.AeTileColStart = 0
+AeStatInfo.AeTileRowStart = 0
+AeStatInfo.AeTileWidth = 170
+AeStatInfo.AeTileHeight = 256
+AeStatInfo.AePixMinValue = 0
+AeStatInfo.AePixMaxValue = 16383
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetAfStatInfo(), ID = 82, description : OK case in ik_ctest_ir_only20.c
+AfStatInfo.AfTileNumCol = 24
+AfStatInfo.AfTileNumRow = 16
+AfStatInfo.AfTileColStart = 0
+AfStatInfo.AfTileRowStart = 0
+AfStatInfo.AfTileWidth = 170
+AfStatInfo.AfTileHeight = 256
+AfStatInfo.AfTileActiveWidth = 170
+AfStatInfo.AfTileActiveHeight = 256
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetPgAfStatInfo(), ID = 83, description : OK case in ik_ctest_ir_only20.c
+PgAfStatInfo.AfTileNumCol = 32
+PgAfStatInfo.AfTileNumRow = 16
+PgAfStatInfo.AfTileColStart = 0
+PgAfStatInfo.AfTileRowStart = 0
+PgAfStatInfo.AfTileWidth = 128
+PgAfStatInfo.AfTileHeight = 256
+PgAfStatInfo.AfTileActiveWidth = 128
+PgAfStatInfo.AfTileActiveHeight = 256
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetAfStatExInfo(), ID = 84, description : OK case in ik_ctest_ir_only20.c
+AfStatExInfo.AfHorizontalFilter1Stage1Enb = 1
+AfStatExInfo.AfHorizontalFilter1Stage2Enb = 1
+AfStatExInfo.AfHorizontalFilter1Stage3Enb = 1
+AfStatExInfo.AfHorizontalFilter2Stage1Enb = 1
+AfStatExInfo.AfHorizontalFilter2Stage2Enb = 1
+AfStatExInfo.AfHorizontalFilter2Stage3Enb = 1
+AfStatExInfo.AfHorizontalFilter2Thresh = 50
+AfStatExInfo.AfTileFv1HorizontalShift = 8
+AfStatExInfo.AfTileFv2HorizontalShift = 8
+AfStatExInfo.AfHorizontalFilter1Gain[0] = 188
+AfStatExInfo.AfHorizontalFilter1Gain[1] = 467
+AfStatExInfo.AfHorizontalFilter1Gain[2] = -235
+AfStatExInfo.AfHorizontalFilter1Gain[3] = 375
+AfStatExInfo.AfHorizontalFilter1Gain[4] = -184
+AfStatExInfo.AfHorizontalFilter1Gain[5] = 276
+AfStatExInfo.AfHorizontalFilter1Gain[6] = -206
+AfStatExInfo.AfHorizontalFilter1Shift[0] = 7
+AfStatExInfo.AfHorizontalFilter1Shift[1] = 2
+AfStatExInfo.AfHorizontalFilter1Shift[2] = 2
+AfStatExInfo.AfHorizontalFilter1Shift[3] = 0
+AfStatExInfo.AfHorizontalFilter2Gain[0] = 188
+AfStatExInfo.AfHorizontalFilter2Gain[1] = 467
+AfStatExInfo.AfHorizontalFilter2Gain[2] = -235
+AfStatExInfo.AfHorizontalFilter2Gain[3] = 375
+AfStatExInfo.AfHorizontalFilter2Gain[4] = -184
+AfStatExInfo.AfHorizontalFilter2Gain[5] = 276
+AfStatExInfo.AfHorizontalFilter2Gain[6] = -206
+AfStatExInfo.AfHorizontalFilter2Shift[0] = 7
+AfStatExInfo.AfHorizontalFilter2Shift[1] = 2
+AfStatExInfo.AfHorizontalFilter2Shift[2] = 2
+AfStatExInfo.AfHorizontalFilter2Shift[3] = 0
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetPgAfStatExInfo(), ID = 85, description : OK case in ik_ctest_ir_only20.c
+PgAfStatExInfo.AfHorizontalFilter1Stage1Enb = 1
+PgAfStatExInfo.AfHorizontalFilter1Stage2Enb = 1
+PgAfStatExInfo.AfHorizontalFilter1Stage3Enb = 1
+PgAfStatExInfo.AfHorizontalFilter2Stage1Enb = 1
+PgAfStatExInfo.AfHorizontalFilter2Stage2Enb = 1
+PgAfStatExInfo.AfHorizontalFilter2Stage3Enb = 1
+PgAfStatExInfo.AfVerticalFilter1Thresh = 100
+PgAfStatExInfo.AfTileFv1HorizontalShift = 7
+PgAfStatExInfo.AfTileFv1HorizontalWeight = 255
+PgAfStatExInfo.AfVerticalFilter2Thresh = 100
+PgAfStatExInfo.AfTileFv2HorizontalShift = 7
+PgAfStatExInfo.AfTileFv2HorizontalWeight = 255
+PgAfStatExInfo.AfHorizontalFilter1Gain[0] = 188
+PgAfStatExInfo.AfHorizontalFilter1Gain[1] = 467
+PgAfStatExInfo.AfHorizontalFilter1Gain[2] = -235
+PgAfStatExInfo.AfHorizontalFilter1Gain[3] = 375
+PgAfStatExInfo.AfHorizontalFilter1Gain[4] = -184
+PgAfStatExInfo.AfHorizontalFilter1Gain[5] = 276
+PgAfStatExInfo.AfHorizontalFilter1Gain[6] = -206
+PgAfStatExInfo.AfHorizontalFilter1Shift[0] = 7
+PgAfStatExInfo.AfHorizontalFilter1Shift[1] = 2
+PgAfStatExInfo.AfHorizontalFilter1Shift[2] = 2
+PgAfStatExInfo.AfHorizontalFilter1Shift[3] = 0
+PgAfStatExInfo.AfHorizontalFilter2Gain[0] = 188
+PgAfStatExInfo.AfHorizontalFilter2Gain[1] = 467
+PgAfStatExInfo.AfHorizontalFilter2Gain[2] = -235
+PgAfStatExInfo.AfHorizontalFilter2Gain[3] = 375
+PgAfStatExInfo.AfHorizontalFilter2Gain[4] = -184
+PgAfStatExInfo.AfHorizontalFilter2Gain[5] = 276
+PgAfStatExInfo.AfHorizontalFilter2Gain[6] = -206
+PgAfStatExInfo.AfHorizontalFilter2Shift[0] = 7
+PgAfStatExInfo.AfHorizontalFilter2Shift[1] = 2
+PgAfStatExInfo.AfHorizontalFilter2Shift[2] = 2
+PgAfStatExInfo.AfHorizontalFilter2Shift[3] = 0
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetHistogramInfo(), ID = 86, description : OK case in ik_ctest_ir_only20.c
+HistInfo.AeTileMask[0] = 0xFFFFFF
+HistInfo.AeTileMask[1] = 0xFFFFFF
+HistInfo.AeTileMask[2] = 0xFFFFFF
+HistInfo.AeTileMask[3] = 0xFFFFFF
+HistInfo.AeTileMask[4] = 0xFFFFFF
+HistInfo.AeTileMask[5] = 0xFFFFFF
+HistInfo.AeTileMask[6] = 0xFFFFFF
+HistInfo.AeTileMask[7] = 0xFFFFFF
+HistInfo.AeTileMask[8] = 0xFFFFFF
+HistInfo.AeTileMask[9] = 0xFFFFFF
+HistInfo.AeTileMask[10] = 0xFFFFFF
+HistInfo.AeTileMask[11] = 0xFFFFFF
+HistInfo.AeTileMask[12] = 0xFFFFFF
+HistInfo.AeTileMask[13] = 0xFFFFFF
+HistInfo.AeTileMask[14] = 0xFFFFFF
+HistInfo.AeTileMask[15] = 0xFFFFFF
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetPgHistogramInfo(), ID = 87, description : OK case in ik_ctest_ir_only20.c
+PgHistInfo.AeTileMask[0] = 0xFFFFFF
+PgHistInfo.AeTileMask[1] = 0xFFFFFF
+PgHistInfo.AeTileMask[2] = 0xFFFFFF
+PgHistInfo.AeTileMask[3] = 0xFFFFFF
+PgHistInfo.AeTileMask[4] = 0xFFFFFF
+PgHistInfo.AeTileMask[5] = 0xFFFFFF
+PgHistInfo.AeTileMask[6] = 0xFFFFFF
+PgHistInfo.AeTileMask[7] = 0xFFFFFF
+PgHistInfo.AeTileMask[8] = 0xFFFFFF
+PgHistInfo.AeTileMask[9] = 0xFFFFFF
+PgHistInfo.AeTileMask[10] = 0xFFFFFF
+PgHistInfo.AeTileMask[11] = 0xFFFFFF
+PgHistInfo.AeTileMask[12] = 0xFFFFFF
+PgHistInfo.AeTileMask[13] = 0xFFFFFF
+PgHistInfo.AeTileMask[14] = 0xFFFFFF
+PgHistInfo.AeTileMask[15] = 0xFFFFFF
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetResampStrength(), ID = 88, description : OK case in ik_ctest_ir_only20.c
+ResamplerStr.CfaCutoffFreq = 0
+ResamplerStr.MainCutoffFreq = 0
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetVinSensorInfo(), ID = 89, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetRgbIr(), ID = 90, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFeToneCurve(), ID = 91, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFeStaticBlc(), ID = 92, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetDynamicBadPxlCor(), ID = 93, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetCfaLeakageFilter(), ID = 94, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetCfaNoiseFilter(), ID = 95, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetAntiAliasing(), ID = 96, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFeWbGain(), ID = 97, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetAfterCeWbGain(), ID = 98, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetBeforeCeWbGain(), ID = 99, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetRgbTo12Y(), ID = 100, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetDemosaic(), ID = 101, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetGrgbMismatch(), ID = 102, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetColorCorrection(), ID = 103, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetToneCurve(), ID = 104, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetRgbToYuvMatrix(), ID = 105, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetChromaScale(), ID = 106, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetChromaMedianFilter(), ID = 107, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetChromaFilter(), ID = 108, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetWideChromaFilter(), ID = 109, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetWideChromaFilterCombine(), ID = 110, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetLumaNoiseReduction(), ID = 111, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFirstLumaProcMode(), ID = 112, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetAdvSpatFltr(), ID = 113, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFnlShpNsBoth(), ID = 114, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFnlShpNsBothTdt(), ID = 115, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFnlShpNsNoise(), ID = 116, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFnlShpNsFir(), ID = 117, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFnlShpNsCoring(), ID = 118, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFnlShpNsCorIdxScl(), ID = 119, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFnlShpNsMinCorRst(), ID = 120, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFnlShpNsMaxCorRst(), ID = 121, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFnlShpNsSclCor(), ID = 122, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetVideoMctf(), ID = 123, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetVideoMctfTa(), ID = 124, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetVideoMctfAndFnlshp(), ID = 125, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetVinActiveWin(), ID = 126, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetDummyMarginRange(), ID = 127, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetDzoomInfo(), ID = 128, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetWarpInfo(), ID = 129, description : OK case in ik_ctest_ir_only20.c
+WarpEnb = 0
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetCawarpInfo(), ID = 130, description : OK case in ik_ctest_ir_only20.c
+CawarpEnb = 0
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetVignette(), ID = 131, description : OK case in ik_ctest_ir_only20.c
+VignetteEnb = 0
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetStaticBadPxlCor(), ID = 132, description : OK case in ik_ctest_ir_only20.c
+StaticBadPxlCorEnb = 0
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetCe(), ID = 133, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetCeInputTable(), ID = 134, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetCeOutputTable(), ID = 135, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetHdrBlend(), ID = 136, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetHdrRawOffset(), ID = 137, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetWindowSizeInfo(), ID = 138, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFeWbGain(), ID = 139, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFeWbGain(), ID = 140, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFeStaticBlc(), ID = 141, description : OK case in ik_ctest_ir_only20.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFeStaticBlc(), ID = 142, description : OK case in ik_ctest_ir_only20.c

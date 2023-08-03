@@ -1,0 +1,48 @@
+diff --git a/bsp/cv22/AmbaiCamPartition.c b/bsp/cv22/AmbaiCamPartition.c
+index 4374a5920..53ad96829 100755
+--- a/bsp/cv22/AmbaiCamPartition.c
++++ b/bsp/cv22/AmbaiCamPartition.c
+@@ -55,7 +55,7 @@ AMBA_PARTITION_CONFIG_s AmbaNAND_UserPartConfig[AMBA_NUM_USER_PARTITION] = {
+     [AMBA_USER_PARTITION_CALIBRATION_DATA]      = {"CALIB",           0x10, 16 * 1024 * 1024}, /* Calibration Data */
+     [AMBA_USER_PARTITION_USER_SETTING]          = {"USER_SETTING",    0x10, 16 * 1024 * 1024}, /* User Settings */
+ #else
+-    [AMBA_USER_PARTITION_SYS_SOFTWARE]          = {"SYS_SW",          0x29, 11 * 1024 * 1024},  /* System Software */
++    [AMBA_USER_PARTITION_SYS_SOFTWARE]          = {"SYS_SW",          0x29, 16 * 1024 * 1024},  /* System Software */
+     [AMBA_USER_PARTITION_DSP_uCODE]             = {"SECURE",          0x21, 12 * 1024 * 1024},  /* DSP uCode (ROM Region) */
+     [AMBA_USER_PARTITION_SYS_DATA]              = {"SYS_DATA",        0x21, 15 * 1024 * 1024},  /* System Data (ROM Region) */
+     #if defined(CONFIG_AMBALINK_BOOT_OS)
+diff --git a/build/kconfigs/Kconfig.toolchain b/build/kconfigs/Kconfig.toolchain
+index 36eddf647..1e2ed127d 100755
+--- a/build/kconfigs/Kconfig.toolchain
++++ b/build/kconfigs/Kconfig.toolchain
+@@ -279,18 +279,18 @@ config CC_DUMP_RTL_EXPAND
+ 
+ endmenu # Fastboot profiling
+ 
+-#config CC_CXX_SUPPORT
+-#	bool "Support C++ files (code size will be bigger)"
+-#	default n
+-#	select CC_USESTD
+-#	help
+-#	  Support C++ files, only *.cpp files.
+-#	  Note-1: libstd++.a is required. So the code size will be bigger.
+-#	  Note-2: cf. http://wiki.osdev.org/C++
+-#	    You need to implement __dso_handle, a handle for the DSO
+-#	    (Dynamic Shared Object) or just declare "void *__dso_handle = NULL;"
+-#	    The operators 'new' and 'delete' are necessary to be implemented
+-#	    for proper memory handle.
++config CC_CXX_SUPPORT
++	bool "Support C++ files (code size will be bigger)"
++	default n
++	select CC_USESTD
++	help
++	  Support C++ files, only *.cpp files.
++	  Note-1: libstd++.a is required. So the code size will be bigger.
++	  Note-2: cf. http://wiki.osdev.org/C++
++	    You need to implement __dso_handle, a handle for the DSO
++	    (Dynamic Shared Object) or just declare "void *__dso_handle = NULL;"
++	    The operators 'new' and 'delete' are necessary to be implemented
++	    for proper memory handle.
+ 
+ config CC_USESTD
+ 	bool

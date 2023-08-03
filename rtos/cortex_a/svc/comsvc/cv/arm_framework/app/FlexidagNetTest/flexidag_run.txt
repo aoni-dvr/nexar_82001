@@ -1,0 +1,2 @@
+c:\openseg.txt
+c:\openod.txt

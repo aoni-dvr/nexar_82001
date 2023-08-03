@@ -1,0 +1,97 @@
+/*
+ * Copyright (C) 2013 Ambarella,Inc. - http://www.ambarella.com/
+ * Author: Cao Rongrong <rrcao@ambarella.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+/dts-v1/;
+
+/include/ "ambarella-s6lm.dtsi"
+#include "config.h"
+#include "bsp.h"
+
+/ {
+	model = "Ambarella H32MBUB Board";
+	compatible = "ambarella,h32mbub", "ambarella,s6lm";
+
+	chosen {
+#if defined(CONFIG_AMBARELLA_ROOTFS_CPIO)
+		bootargs = "console=ttyS0";
+#else
+		bootargs = "console=ttyS0 ubi.mtd=lnx root=ubi0:rootfs rw rootfstype=ubifs init=/linuxrc";
+#endif
+	};
+
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+	};
+
+	n_apb@e4000000 {
+		i2c0: i2c@e4008000 {
+			status = "ok";
+
+			ambvin0@01 {
+				compatible = "ambarella,ambvin";
+				reg = <0x01>;	/* fake address, will be overwritten in runtime */
+			};
+
+		};
+
+		i2c2: i2c@e400a000 {
+			status = "ok";
+			pinctrl-0 = <&i2c2_pins_c>;
+		};
+	};
+
+	n_ahb@e0000000 {
+		sdmmc0: sdmmc0@e0004000 {
+			pwr-gpios = <&gpio 63 0x1>;
+			v18-gpios = <&gpio 85 0x1>;
+#if defined(CONFIG_BOOT_MEDIA_EMMC)
+			amb,fixed-cd = <1>;
+#endif
+		};
+
+		sdmmc1: sdmmc1@e0005000 {
+			pwr-gpios = <&gpio 62 0x1>;
+			v18-gpios = <&gpio 12 0x1>;
+			status = "disabled";
+		};
+
+		sdmmc2: sdmmc2@e0016000 {
+			status = "disabled";
+		};
+
+		mac0: ethernet@e000e000 {
+			amb,tx-clk-invert;
+			phy@0 {
+				reg = <0>;
+			};
+		};
+
+		hdmi@e000b000 {
+			amb,i2c-adapter = <2>;
+		};
+
+	};
+
+	rct@ed080000 {
+		usbphy: usbphy@ed080050 {
+			/* high will trigger the ocp interrupt */
+			amb,ocp-polarity = <0>;
+			pinctrl-names = "default";
+		};
+	};
+
+	bogus_bus {
+		dummycodec: codec@0 {
+ 			compatible = "ambarella,dummycodec";
+ 			reg = <0>;
+			#sound-dai-cells = <0>;
+		};
+	};
+};

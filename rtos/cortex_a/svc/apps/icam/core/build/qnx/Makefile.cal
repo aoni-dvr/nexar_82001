@@ -1,0 +1,31 @@
+# cal
+ifeq ($(CONFIG_ICAM_IMGCAL_USED),y)
+
+EXTRA_SRCVPATH += $(ICAM_CORE_SRC)/cal/module
+
+CALIB_ALGO_PREFIX   = $(srctree)/svc/comsvc/imgcal
+CALIB_CTUNER_PREFIX = $(srctree)/svc/comsvc/tune/ctuner
+
+EXTRA_INCVPATH += $(CALIB_ALGO_PREFIX)
+EXTRA_INCVPATH += $(CALIB_ALGO_PREFIX)/arch
+EXTRA_INCVPATH += $(CALIB_CTUNER_PREFIX)
+EXTRA_INCVPATH += $(CALIB_CTUNER_PREFIX)/inc
+ifeq ($(CONFIG_ICAM_EEPROM_USED),y)
+EXTRA_INCVPATH += $(srctree)/svc/comsvc/camera_module/inc            
+ifeq ($(CONFIG_BUILD_FOSS_LZ4),y)
+EXTRA_INCVPATH += $(srctree)/vendors/foss/lz4
+endif
+endif
+
+SRCS += SvcCalibMgr.c
+SRCS += SvcCalibLdc.c
+SRCS += SvcCalibCa.c
+SRCS += SvcCalibVig.c
+SRCS += SvcCalibBpc.c
+SRCS += SvcCalibWb.c                      
+ifeq ($(CONFIG_ICAM_EEPROM_USED),y)
+SRCS += SvcCalibModMgr.c
+SRCS += SvcCalibModBpc.c
+endif
+
+endif

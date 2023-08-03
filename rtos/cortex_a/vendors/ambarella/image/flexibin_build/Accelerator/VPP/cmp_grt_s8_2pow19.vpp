@@ -1,0 +1,18 @@
+#include "vp_vas.h"
+#include "idsp_top_globals.h"
+
+DAG cmp8u = {
+	VP_input(input0, int8_t, vector(1, 1, IN1_HEIGHT, IN1_WIDTH));
+
+	VP_input(input1, int8_t, vector(1, 1, IN2_HEIGHT, IN2_WIDTH));
+
+	VP_gtb(input0, input1,
+				VP_tensor(gtb_mask, int8_t));
+
+	VP_muxb(VP_imm("ff", int8_t, vector(1, 1, 1, 1)),
+	        VP_imm("00", int8_t, vector(1, 1, 1, 1)),
+			gtb_mask,
+			VP_tensor(output_temp, int8_t));
+
+	VP_output(output, output_temp);
+}

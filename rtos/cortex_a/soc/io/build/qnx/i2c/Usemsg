@@ -1,0 +1,16 @@
+%C [options]
+
+Options:
+-p          Base address of the controller
+-i          IRQ number
+-C          ChannelID
+-v          verbose
+
+Generic options:
+--b bus_speed       Default bus speed. (Default: 100000)
+--m max_msg_len     Minimum length of resmgr receive buffer.
+                    (Default: 128 bytes)
+--n nparts          Minimum number of iov_t's in resmgr context.
+                    (Default: 2)
+--u unit            Unit number. Number to append to device name
+                    prefix (/dev/i2c). (Default: 0)

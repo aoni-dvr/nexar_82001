@@ -1,0 +1,5 @@
+config BR2_PACKAGE_QUECTEL_LTE_QFLASH
+	bool "qflash"
+	default n
+	help
+	  This is the qflash for quectel lte.

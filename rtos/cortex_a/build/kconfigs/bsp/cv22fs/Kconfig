@@ -1,0 +1,39 @@
+if SOC_CV22FS
+
+source build/kconfigs/bsp/cv22fs/peripherals/Kconfig
+
+comment "Board Configuration"
+choice CV2FS_BSP_SELECTION
+	prompt "BSP"
+	default BSP_CV2FSBUB_OPTION_A_V100
+
+config BSP_CV2FSBUB_OPTION_A_V100
+	bool "CV2FS Bringup Board Option-A V100"
+	select NAND_S34ML04G2
+config BSP_CV2FSDK_OPTION_A_V110
+	bool "CV2FS DK"
+config BSP_CV2XFSDK_OPTION_B
+	bool "CV2FS DK OPTION B"
+
+endchoice
+
+choice CV2FS_DRAM_SELECTION
+        prompt "Dram"
+        default CV2FS_LPDDR4X_MT53D512M32D2DS_1800MHZ if BSP_CV2XFSDK_OPTION_B
+        default CV2FS_LPDDR4_MT53D512M32D2DS_1800MHZ
+
+config CV2FS_LPDDR4_MT53D512M32D2DS_804MHZ
+        bool "MT53D512M32D2DS 804MHz"
+config CV2FS_LPDDR4_MT53D512M32D2DS_1800MHZ
+        bool "MT53D512M32D2DS 1800MHz"
+config CV2FS_LPDDR4X_MT53D512M32D2DS_1800MHZ
+        bool "LPDDR4X MT53D512M32D2DS 1800MHz"
+endchoice
+
+config ATT_MAP
+	string "Att Map File Name"
+	default "AmbaUserMemProt"
+	help
+		File name of the Att Map file (remove '.c')
+
+endif

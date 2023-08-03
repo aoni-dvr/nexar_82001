@@ -1,0 +1,82 @@
+config ENABLE_EXFAT_SUPPORT
+    bool "Enable EXFAT SUPPORT"
+    default n
+    depends on PF_EXFAT_SUPPORT
+
+menu "PrFILE2 Config"
+
+config PF_CHAR_CODE_SET
+	string "The coding set for prfile2"
+	help
+		The coding set for prfile2
+	default ASCII
+
+config PF_MAX_DISK
+	int "MAX disk"
+	default 16
+
+config PF_MAX_VOLUME
+	int "MAX volume"
+	default 16
+
+config PF_MAX_FILE_NUM
+	int "MAX file number"
+	default 20
+
+config PF_MAX_DIR_NUM
+	int "Max dir number"
+	default 3
+
+config PF_MAX_CONTEXT_NUM
+	int "Max context num"
+	default 0
+
+config PF_AUTO_CONTEXT_REGISTRATION
+	bool "Auto context registration"
+	default n
+
+config PF_PARAM_CHECK_ENABLE
+	bool "Param check enable"
+	default y
+
+config PF_FREE_CLUSTER_SEARCH_SUPPORT
+	bool "Free cluster search support"
+	default n
+
+config PF_AUTO_REGCTX_SUPPORT
+	bool "Auto regctx support"
+	default n
+
+config PF_MAX_EMPTY_ENTRY_DETECT
+	hex "Max empty entry detect"
+	default 0x1000
+
+config PF_SEQUENTIAL_FILE_DETECT
+	bool "Sequential file detect"
+	default y
+
+config PF_UNICODE_INTERFACE_SUPPORT
+	bool "Unicode interface support"
+	default n
+
+config PF_EXFAT_SUPPORT
+	bool "exFAT support"
+	default y
+
+config PF_EXFAT_SET_PERCENT_IN_USE
+	bool "Set PercentInUse field for exFAT"
+	default y
+	depends on PF_EXFAT_SUPPORT
+
+config PF_EXFAT_FORMAT_SUPPORT
+	bool "Use exFAT format function"
+	default y
+	depends on PF_EXFAT_SUPPORT
+
+config PF_EXFAT_USE_FAT_CHAIN
+	bool "Use FAT chain"
+	default n
+	depends on PF_EXFAT_SUPPORT
+
+endmenu
+

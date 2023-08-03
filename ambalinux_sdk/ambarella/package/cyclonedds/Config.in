@@ -1,0 +1,8 @@
+config BR2_PACKAGE_CYCLONEDDS
+	bool "Eclipse Cyclone DDS"
+	default n
+	help
+	  Eclipse Cyclone DDS
+
+#config BR2_PACKAGE_ICEORYX
+

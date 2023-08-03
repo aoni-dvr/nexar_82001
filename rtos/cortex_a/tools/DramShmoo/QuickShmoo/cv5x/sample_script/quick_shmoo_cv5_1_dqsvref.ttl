@@ -1,0 +1,2 @@
+CMD_shmoo='dqsvref'
+include 'quick_shmoo_cv5_main.ttl'

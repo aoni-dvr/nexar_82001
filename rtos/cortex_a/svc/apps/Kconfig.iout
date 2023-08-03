@@ -1,0 +1,14 @@
+if SVC_APPS_IOUT
+
+menu "IOUT Project"
+menuconfig APP_PROJECT_NAME
+    string "APP_PROJECT_NAME"
+	default "IOUT"
+
+    config ENABLE_INTERNAL_DIAG_CMDS
+    bool "Enable Ambarella internal diag commands"
+    default n
+
+endmenu
+
+endif

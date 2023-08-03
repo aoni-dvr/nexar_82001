@@ -1,0 +1,3 @@
+config RPMSG_VETH
+	bool "Ambarella Virtual Ethernet"
+	default n

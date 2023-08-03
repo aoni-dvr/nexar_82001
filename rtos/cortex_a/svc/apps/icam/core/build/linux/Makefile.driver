@@ -1,0 +1,33 @@
+# svc drivers
+DRV_O_PREFIX = ../../src/driver
+DRV_INC_PREFIX = $(src)/$(DRV_O_PREFIX)
+
+ccflags-$(CONFIG_ICAM_EEPROM_USED) += -I$(srctree)/bsp/$(AMBA_CHIP_ID)/peripherals/bridge/inc
+ccflags-$(CONFIG_ICAM_EEPROM_USED) += -I$(srctree)/bsp/$(AMBA_CHIP_ID)/$(AMBA_BSP_NAME)
+ccflags-$(CONFIG_ICAM_CANBUS_DEMO) += -I$(srctree)/soc/io/src/common/inc/arm
+ccflags-$(CONFIG_ICAM_CANBUS_DEMO) += -I$(DRV_INC_PREFIX)/demo
+
+# wrapper hdmi/cvbs driver
+ifeq ($(CONFIG_ICAM_HDMI_EXIST),y)
+libsvc_icamcore-objs += $(DRV_O_PREFIX)/AmbaFPD_HDMI.o
+endif
+
+ifeq ($(CONFIG_ICAM_CVBS_EXIST),y)
+libsvc_icamcore-objs += $(DRV_O_PREFIX)/AmbaFPD_CVBS.o
+endif
+
+# eeprom driver
+ifeq ($(CONFIG_ICAM_EEPROM_USED),y)
+libsvc_icamcore-objs += $(DRV_O_PREFIX)/AmbaEEPROM.o
+libsvc_icamcore-objs += $(DRV_O_PREFIX)/AmbaEEPROM_UnitTest.o
+libsvc_icamcore-objs += $(DRV_O_PREFIX)/AmbaEEPROM_MAX9295_96712_MICRO_24AA256.o
+libsvc_icamcore-objs += $(DRV_O_PREFIX)/AmbaEEPROM_MAX9295_9296_MICRO_24AA256.o
+endif
+
+
+ifeq ($(CONFIG_ICAM_CANBUS_DEMO),y)
+libsvc_icamcore-objs += $(DRV_O_PREFIX)/demo/AmbaCAN.o
+libsvc_icamcore-objs += $(DRV_O_PREFIX)/demo/AmbaCANPeer.o
+libsvc_icamcore-objs += $(DRV_O_PREFIX)/demo/AmbaCSL_CAN.o
+libsvc_icamcore-objs += $(DRV_O_PREFIX)/demo/AmbaRTSL_CAN.o
+endif

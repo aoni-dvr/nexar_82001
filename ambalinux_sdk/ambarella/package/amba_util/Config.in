@@ -1,0 +1,4 @@
+menuconfig BR2_PACKAGE_AMBA_UTIL
+	bool "amba_util"
+	help
+	  This is the AMBA_UTIL implementation.

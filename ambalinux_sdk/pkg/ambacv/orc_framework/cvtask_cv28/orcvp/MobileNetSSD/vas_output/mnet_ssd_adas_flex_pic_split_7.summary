@@ -1,0 +1,129 @@
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2020 Ambarella International LP
+////////////////////////////////////////////////////////////////////////////////
+// This file and its contents ("Software") are protected by intellectual
+// property rights including, without limitation, U.S. and/or foreign
+// copyrights. This Software is also the confidential and proprietary
+// information of Ambarella International LP and its licensors. You may not use,
+// reproduce, disclose, distribute, modify, or otherwise prepare derivative
+// works of this Software or any portion thereof except pursuant to a signed
+// license agreement or nondisclosure agreement with Ambarella International LP
+// or its authorized affiliates. In the absence of such an agreement, you agree
+// to promptly notify and return this Software to Ambarella International LP.
+//
+// THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT,
+// MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+// IN NO EVENT SHALL AMBARELLA INTERNATIONAL LP OR ITS AFFILIATES BE LIABLE
+// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+// SERVICES; LOSS OF USE, DATA, OR PROFITS; COMPUTER FAILURE OR MALFUNCTION;
+// OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+// ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+////////////////////////////////////////////////////////////////////////////////
+
+=====================
+     vas summary     
+=====================
+DAG name: 'pre_split7_mnet_ssd_adas_flex_pic_prim_split_0'
+vas command: /opt/amba/cv28/tv2/release/Vas/cv28.qa.2020-09-02.773/bin/vas1 -auto -no-split-dag -recompile -no-pre-split -fs pre_split7_mnet_ssd_adas_flex_pic_split_0.vas /tmp/vascppwC7FmO.vii -max-name-id 160100000 -comp2-id-range 160100000~160110000 -info "(ARCH cv28 VERSION 77 CVTOOLS_RELEASE 2.2.0) run at 'Tue Sep  8 10:26:17 2020'"
+source op primitives:          0
+final operators:              19
+final descriptors:            31
+DAG code num bytes:         1228
+vmem num bytes:           508256(496 K)
+dcb num bytes:            131008(127 K)
+dcb:        12
+vcb:         0  full:    0
+hmb:        18  full:    0  const:    0
+smb:         1              const:    0
+scalar:      0
+subspace:    0
+subspace parent:    0
+total hmb input dram size: 778240 bytes
+total hmb output dram size: 778240 bytes
+total const data + dagbin size: 1276 bytes
+total dvi size: 1276 bytes
+total ddi size:    0 bytes
+
+total write traffic:
+    dcb:          739328 bytes
+    vcb:               0 bytes
+    hmb:          739328 bytes
+    smb:             768 bytes
+
+total read traffic
+    dcb:          739328 bytes
+    vcb:               0 bytes
+    hmb:          739328 bytes
+    smb:               0 bytes
+    scalar:            0 bytes
+
+VMEM usage >= 4K bytes:
+
+======================
+       VMEM map       
+======================
+vmem_base = 0x1000
+
+0x00000000      --------------------------------------
+                  -- nil -- (4096 bytes)
+0x00001000      --------------------------------------
+                  __vas_created_terminate__v0(software_managed) (96 bytes)
+0x00001060      --------------------------------------
+                  __pvcn_930_(hardware_managed) (21120 bytes)
+0x000062e0      --------------------------------------
+                  __pvcn_888_(hardware_managed) (25600 bytes)
+0x0000c6e0      --------------------------------------
+                  __pvcn_899_(hardware_managed) (25600 bytes)
+0x00012ae0      --------------------------------------
+                  __pvcn_833_(hardware_managed) (26880 bytes)
+0x000193e0      --------------------------------------
+                  __pvcn_844_(hardware_managed) (26880 bytes)
+0x0001fce0      --------------------------------------
+                  __pvcn_927_(hardware_managed) (26880 bytes)
+0x000265e0      --------------------------------------
+                  __pvcn_929_(hardware_managed) (26880 bytes)
+0x0002cee0      --------------------------------------
+                  __pvcn_789_(hardware_managed) (28160 bytes)
+0x00033ce0      --------------------------------------
+                  __pvcn_855_(hardware_managed) (28160 bytes)
+0x0003aae0      --------------------------------------
+                  __pvcn_877_(hardware_managed) (28160 bytes)
+0x000418e0      --------------------------------------
+                  __pvcn_822_(hardware_managed) (29440 bytes)
+0x00048be0      --------------------------------------
+                  __pvcn_925_(hardware_managed) (29440 bytes)
+0x0004fee0      --------------------------------------
+                  __pvcn_928_(hardware_managed) (29440 bytes)
+0x000571e0      --------------------------------------
+                  __pvcn_926_(hardware_managed) (30080 bytes)
+0x0005e760      --------------------------------------
+                  __pvcn_800_(hardware_managed) (30720 bytes)
+0x00065f60      --------------------------------------
+                  __pvcn_811_(hardware_managed) (30720 bytes)
+0x0006d760      --------------------------------------
+                  __pvcn_866_(hardware_managed) (30720 bytes)
+0x00074f60      --------------------------------------
+                  __pvcn_910_(hardware_managed) (33280 bytes)
+0x0007d160      --------------------------------------
+                  dag binary (1276 bytes)
+0x0007d65c      --------------------------------------
+                  -- nil -- (10660 bytes)
+0x00080000      --------------- (end) ----------------
+
+Mac count summary: 
+  total normalized mac count:          1478656
+    - Ice mac count:                                       0
+      - ice true mac count:                  0
+      - ice normalized mac count:            0
+    - Arithmetic normalized mac count:                739328
+    - Transfer normalized mac count:                  739328
+
+Estimated ICE cycle count: 0
+
+total vas running time: 0.99 seconds
+
+

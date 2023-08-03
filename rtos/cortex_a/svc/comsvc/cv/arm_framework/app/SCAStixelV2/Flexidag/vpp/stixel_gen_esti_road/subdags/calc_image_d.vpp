@@ -1,0 +1,51 @@
+DAG Calc_Image_D =
+{
+	arg=
+	{
+		$in_world_y=0,		
+		$in_world_z=0,
+		$sin_pitch=0,
+		$cos_pitch=0,
+		$focal_length=0,
+		$base_line=0,
+				
+		$image_d_out=0,
+	};
+
+	// Disparity = (BaseLine) * (camera.fv) / ( Y*sinTilt + Z*cosTilt )
+
+	VP_mul(
+		$base_line,
+		$focal_length,
+		VP_auto(base_line_mul_f, float16_t)
+	);
+
+	VP_mul(
+		$in_world_y,
+		$sin_pitch,
+		VP_auto(y_sin_pitch, float16_t)
+	);
+
+	VP_mul(
+		$in_world_z,
+		$cos_pitch,
+		VP_auto(z_cos_pitch, float16_t)
+	);
+
+	VP_add(
+		y_sin_pitch,
+		z_cos_pitch,
+		VP_auto(distance, float16_t)
+	);
+
+	VP_recip(
+		distance,
+		VP_auto(inv_distance, float16_t)
+	);
+
+	VP_mul(
+		base_line_mul_f,
+		inv_distance,
+		VP_auto($image_d_out, float16_t)
+	);
+}

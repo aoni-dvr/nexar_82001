@@ -1,0 +1,4 @@
+menuconfig BR2_PACKAGE_HTTP_CONTROL_SERVER
+	bool "http_control_server"
+	help
+	  This is the http_control_server implementation.

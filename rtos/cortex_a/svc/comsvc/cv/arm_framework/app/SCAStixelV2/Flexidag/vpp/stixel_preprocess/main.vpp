@@ -1,0 +1,126 @@
+#include "vp_vas.h"
+
+#define INPUT_DISP_WIDTH		(1920)
+#define INPUT_DISP_HEIGHT		(768)
+
+#define STIXEL_WIDTH			(12)
+#define DISP_POOLING_WIDTH		(INPUT_DISP_WIDTH/STIXEL_WIDTH)
+
+// 4095
+#define INVALID_DISPARITY		"FF 0F"
+
+DAG STIXEL_PREPROCESS = {
+
+	// ------------------------- Load input ---------------------------- // 
+	
+	// -- fusion diparity with 12.4 format
+	VP_input(
+		disparity_in, data_format(0, 1, 4, 0), 
+		vector(1, 1, INPUT_DISP_HEIGHT, INPUT_DISP_WIDTH)
+	);
+
+	VP_input(
+		esti_ground_disparity_in, float16_t, 
+		vector(1, 1, DISP_POOLING_WIDTH, INPUT_DISP_HEIGHT)
+	);
+
+	// ---------------------------- Start ------------------------------- // 
+
+	// replace default invalid value by zero
+	VP_eqib(
+	    disparity_in,
+	    VP_const_tensor(INVALID_DISPARITY, data_format(0, 1, 4, 0), vector(1)),
+	    VP_tensor(invalid_dispairty_mask, uint8_t, vector(1, 1, INPUT_DISP_HEIGHT, INPUT_DISP_WIDTH), bitvector = 1)
+	);
+
+	VP_muxb(		
+		VP_const_tensor("00 00", data_format(0, 1, 4, 0), vector(1)),
+		disparity_in,
+		invalid_dispairty_mask,
+		VP_tensor(dispairty_set_invalid_to_0, data_format(0, 1, 4, 0), vector(1, 1, INPUT_DISP_HEIGHT, INPUT_DISP_WIDTH))
+	);
+	// --- 
+
+	// pick the largest disparity within each window 
+	VP_mmwnd(
+		dispairty_set_invalid_to_0,
+		VP_tensor(maxpooling_dispairty, data_format(0, 1, 4, 0), vector(1, 1, INPUT_DISP_HEIGHT, DISP_POOLING_WIDTH)),		
+		op = 1, //max
+		window_w = STIXEL_WIDTH,
+		window_h = 1,
+		stride_w = STIXEL_WIDTH,
+		stride_h = 1,
+		out_w = DISP_POOLING_WIDTH,
+		out_h = INPUT_DISP_HEIGHT
+	);
+
+	// if maximum = 0, mean all the pixels in the window are invalid
+	VP_eqib(
+	    maxpooling_dispairty,
+	    VP_const_tensor("00 00", data_format(0, 1, 4, 0), vector(1)),
+	    VP_tensor(invalid_maxpooling_dispairty_mask, uint8_t, vector(1, 1, INPUT_DISP_HEIGHT, DISP_POOLING_WIDTH), bitvector = 1)
+	);
+
+	// pick the min disparity within each window 
+	VP_mmwnd(
+		disparity_in,
+		VP_tensor(minpooling_dispairty, data_format(0, 1, 4, 0), vector(1, 1, INPUT_DISP_HEIGHT, DISP_POOLING_WIDTH)),		
+		op = 0, //min
+		window_w = STIXEL_WIDTH,
+		window_h = 1,
+		stride_w = STIXEL_WIDTH,
+		stride_h = 1,
+		out_w = DISP_POOLING_WIDTH,
+		out_h = INPUT_DISP_HEIGHT
+	);
+
+	VP_add(
+		maxpooling_dispairty,
+		minpooling_dispairty,		
+		VP_tensor(med_dispairty_mul_2, data_format(0, 1, 4, 0), vector(1, 1, INPUT_DISP_HEIGHT, DISP_POOLING_WIDTH)),		
+	);
+
+	// divide by 2
+	VP_rshi(
+		med_dispairty_mul_2,
+		VP_const_tensor("01", uint8_t, vector(1)),		
+		VP_tensor(med_dispairty_tmp, data_format(0, 1, 4, 0), vector(1, 1, INPUT_DISP_HEIGHT, DISP_POOLING_WIDTH)),
+	);
+
+	VP_muxb(		
+		VP_const_tensor(INVALID_DISPARITY, data_format(0, 1, 4, 0), vector(1)),
+		med_dispairty_tmp,
+		invalid_maxpooling_dispairty_mask,
+		VP_tensor(med_dispairty, data_format(0, 1, 4, 0), vector(1, 1, INPUT_DISP_HEIGHT, DISP_POOLING_WIDTH))
+	);
+
+	VP_transpose(med_dispairty, 
+		VP_tensor(transposed_med_dispairty, data_format(0, 1, 4, 0), vector(1, 1, DISP_POOLING_WIDTH, INPUT_DISP_HEIGHT)),
+		to_w = 1,
+		to_h = 0,
+		to_d = 2,
+		to_p = 3
+  	);
+
+  	// regard disparity smaller than estimated ground as noise
+  	VP_typeconv(
+		esti_ground_disparity_in,
+		VP_auto(esti_ground_disparity_sub_pixel, data_format(0, 1, 4, 0))
+	);
+
+  	VP_ltb(
+		transposed_med_dispairty, 
+		esti_ground_disparity_sub_pixel,		
+		VP_tensor(less_than_ground_mask, uint8_t, vector(1, 1, DISP_POOLING_WIDTH, INPUT_DISP_HEIGHT), bitvector = 1)
+	);  	
+
+	VP_muxb(		
+		esti_ground_disparity_sub_pixel,
+		transposed_med_dispairty,
+		less_than_ground_mask,
+		VP_tensor(filtered_transposed_med_disp, data_format(0, 1, 4, 0), vector(1, 1, DISP_POOLING_WIDTH, INPUT_DISP_HEIGHT))
+	);
+
+	VP_output(transposed_med_dispairty_out, filtered_transposed_med_disp);  	
+
+}

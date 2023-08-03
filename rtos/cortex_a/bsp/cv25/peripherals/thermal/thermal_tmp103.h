@@ -1,0 +1,10 @@
+#ifndef __THERMAL_TMP103_H__
+#define __THERMAL_TMP103_H__
+
+#define THERMAL_TMP103_TEMPERTURE_REG       (0x00)
+#define THERMAL_TMP103_CONFIGURATION_REG    (0x01)
+#define THERMAL_TMP103_T_LOW_REG            (0x02)
+#define THERMAL_TMP103_T_HIGH_REG           (0x03)
+
+#endif//__THERMAL_TMP103_H__
+

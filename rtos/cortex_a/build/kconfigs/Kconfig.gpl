@@ -1,0 +1,20 @@
+#
+# For a description of the syntax of this configuration file,
+# see build/scripts/Documentation/kbuild/kconfig-language.txt.
+#
+
+menu "GPL Options"
+
+config BUILD_GPL_LIB
+	bool "Build GPL lib"
+	default n
+	help
+	  Enable this option to build GPL lib for experimental purpose only.
+	  The GPL programs are located at vendors/gpl.
+	  Please DO NOT enable options for MP.
+if BUILD_GPL_LIB
+config BUILD_GPL_MEMTESTER
+	bool "Build memtester in GPL library"
+	default n
+endif
+endmenu

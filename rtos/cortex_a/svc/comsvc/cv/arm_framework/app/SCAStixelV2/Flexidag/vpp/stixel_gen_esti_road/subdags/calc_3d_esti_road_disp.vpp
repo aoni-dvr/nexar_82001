@@ -1,0 +1,92 @@
+DAG Calc_3D_Esti_Road_Disp =
+{
+	arg=
+	{		
+		$x_coef=0,
+		$y_coef=0,
+		$const_coef=0,
+		
+		$stixel_width=0,
+		$disp_pooling_width=0,		
+		$disp_height=0,
+		
+		$esti_map=0,
+	};
+
+	VP_index(
+    	VP_tensor(pooling_col_index, uint16_t, vector(1, 1, $disp_height, $disp_pooling_width)),
+    	w = $disp_pooling_width,
+    	h = $disp_height,
+    	d = 1,
+    	p = 1,
+    	dim_coordinate = 0
+    );
+
+	VP_scalar(stixel_width_s, uint16_t, $stixel_width);
+
+    VP_mul
+	(
+		pooling_col_index,
+		stixel_width_s,
+		VP_auto(pooling_col_index_mul_stixel_w, uint16_t)
+	);
+
+    VP_index(
+    	VP_tensor(row_index, uint16_t, vector(1, 1, $disp_height, $disp_pooling_width)),
+    	w = $disp_pooling_width,
+    	h = $disp_height,
+    	d = 1,
+    	p = 1,
+    	dim_coordinate = 1
+    );
+
+	VP_mul
+	(
+		pooling_col_index_mul_stixel_w,
+		$x_coef,
+		VP_auto(x_term, float16_t)
+	);
+
+	VP_mul
+	(
+		row_index,
+		$y_coef,
+		VP_auto(y_term, float16_t)
+	);
+
+	VP_add
+	(
+		x_term,
+		y_term,
+		VP_auto(x_add_y, float16_t)
+	);
+
+	VP_add
+	(
+		x_add_y,
+		$const_coef,
+		VP_auto(z_term, float16_t)
+	);
+
+	VP_transpose(z_term, 
+		VP_tensor(tmp_esti_map, float16_t, vector(1, 1, $disp_pooling_width, $disp_height)),
+		to_w = 1,
+		to_h = 0,
+		to_d = 2,
+		to_p = 3
+  	);
+
+  	VP_ltib(
+		tmp_esti_map, 
+		VP_const_tensor("00 00", float16_t, vector(1)),
+		VP_tensor(less_than_0_mask, uint8_t, vector(1, 1, $disp_pooling_width, $disp_height), bitvector = 1)
+	);  
+
+	VP_muxb(		
+		VP_const_tensor("00 00", float16_t, vector(1)),
+		tmp_esti_map,
+		less_than_0_mask,
+		VP_tensor($esti_map, float16_t, vector(1, 1, $disp_pooling_width, $disp_height))
+	);
+
+}

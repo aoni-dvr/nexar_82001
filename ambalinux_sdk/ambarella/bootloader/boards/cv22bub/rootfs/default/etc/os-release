@@ -1,0 +1,5 @@
+NAME=Flexible
+ID=S5L
+VERSION=1.5.0
+PRETTY_NAME="Ambarella Flexible Linux S5L (1.5.0)"
+ANSI_COLOR="1;32"

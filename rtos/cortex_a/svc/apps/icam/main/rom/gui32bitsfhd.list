@@ -1,0 +1,135 @@
+<!------------------------------------------------------------------------------------------------------------- ->
+<!- @FileName       :: gui.list                                                                                 ->
+<!-                                                                                                             ->
+<!- @Copyright      :: Copyright (C) 2018 Ambarella Corporation. All rights reserved.                           ->
+<!-                                                                                                             ->
+<!-                    No part of this file may be reproduced, stored in a retrieval system,                    ->
+<!-                    or transmitted, in any form, or by any means, electronic, mechanical, photocopying,      ->
+<!-                    recording, or otherwise, without the prior consent of Ambarella Corporation.             ->
+<!-                                                                                                             ->
+<!- @Description    :: the file list for rom file system                                                        ->
+<!------------------------------------------------------------------------------------------------------------- ->
+
+<romfs>
+    <!- Relative path from the top directory of the build ->
+    <top>svc/apps/icam/main/rom/</top>
+    <!- font data ->
+    <file>bmp32bits/fonts.bin<alias>fonts.bin</alias></file>
+    <!- menu data ->
+    <!- record ->
+    <file>bmp32bits/icon_liveview_0_2x.bmp<alias>icon_liveview_0.bmp</alias></file>
+    <file>bmp32bits/icon_liveview_1_2x.bmp<alias>icon_liveview_1.bmp</alias></file>
+    <file>bmp32bits/icon_record_2x.bmp<alias>icon_record.bmp</alias></file>
+    <file>bmp32bits/icon_record_0_2x.bmp<alias>icon_record_0.bmp</alias></file>
+    <file>bmp32bits/icon_record_1_2x.bmp<alias>icon_record_1.bmp</alias></file>
+    <file>bmp32bits/icon_pan_0_2x.bmp<alias>icon_pan_0.bmp</alias></file>
+    <file>bmp32bits/icon_pan_1_2x.bmp<alias>icon_pan_1.bmp</alias></file>
+    <file>bmp32bits/icon_tilt_0_2x.bmp<alias>icon_tilt_0.bmp</alias></file>
+    <file>bmp32bits/icon_tilt_1_2x.bmp<alias>icon_tilt_1.bmp</alias></file>
+    <file>bmp32bits/icon_rotate_0_2x.bmp<alias>icon_rotate_0.bmp</alias></file>
+    <file>bmp32bits/icon_rotate_1_2x.bmp<alias>icon_rotate_1.bmp</alias></file>
+    <file>bmp32bits/icon_dim_0_2x.bmp<alias>icon_dim_0.bmp</alias></file>
+    <file>bmp32bits/icon_dim_1_2x.bmp<alias>icon_dim_1.bmp</alias></file>
+    <file>bmp32bits/icon_bsd_0_2x.bmp<alias>icon_bsd_0.bmp</alias></file>
+    <file>bmp32bits/icon_bsd_1_2x.bmp<alias>icon_bsd_1.bmp</alias></file>
+    <file>bmp32bits/icon_bsd_on_2x.bmp<alias>icon_bsd_on.bmp</alias></file>
+    <file>bmp32bits/icon_fcws_0_2x.bmp<alias>icon_fcws_0.bmp</alias></file>
+    <file>bmp32bits/icon_fcws_1_2x.bmp<alias>icon_fcws_1.bmp</alias></file>
+    <file>bmp32bits/icon_fcmd_0_2x.bmp<alias>icon_fcmd_0.bmp</alias></file>
+    <file>bmp32bits/icon_fcmd_1_2x.bmp<alias>icon_fcmd_1.bmp</alias></file>
+    <file>bmp32bits/icon_ldws_0_2x.bmp<alias>icon_ldws_0.bmp</alias></file>
+    <file>bmp32bits/icon_ldws_0_2x.bmp<alias>icon_ldws_0_2x.bmp</alias></file>
+    <file>bmp32bits/icon_ldws_1_2x.bmp<alias>icon_ldws_1.bmp</alias></file>
+    <file>bmp32bits/icon_dms_0_2x.bmp<alias>icon_dms_0.bmp</alias></file>
+    <file>bmp32bits/icon_dms_1_2x.bmp<alias>icon_dms_1.bmp</alias></file>
+    <file>bmp32bits/icon_wifi_0_2x.bmp<alias>icon_wifi_0.bmp</alias></file>
+    <file>bmp32bits/icon_wifi_1_2x.bmp<alias>icon_wifi_1.bmp</alias></file>
+    <file>bmp32bits/icon_od_0_2x.bmp<alias>icon_od_0.bmp</alias></file>
+    <file>bmp32bits/icon_od_1_2x.bmp<alias>icon_od_1.bmp</alias></file>
+    <file>bmp32bits/icon_format_0_2x.bmp<alias>icon_format_0.bmp</alias></file>
+    <file>bmp32bits/icon_format_1_2x.bmp<alias>icon_format_1.bmp</alias></file>
+    <file>bmp32bits/icon_emr2_0_2x.bmp<alias>icon_emr2_0.bmp</alias></file>
+    <file>bmp32bits/icon_emr2_1_2x.bmp<alias>icon_emr2_1.bmp</alias></file>
+    <file>bmp32bits/icon_defog_0_2x.bmp<alias>icon_defog_0.bmp</alias></file>
+    <file>bmp32bits/icon_defog_1_2x.bmp<alias>icon_defog_1.bmp</alias></file>
+    <file>bmp32bits/icon_dirt_detection_0_2x.bmp<alias>icon_dirt_detection_0.bmp</alias></file>
+    <file>bmp32bits/icon_dirt_detection_1_2x.bmp<alias>icon_dirt_detection_1.bmp</alias></file>
+    <file>bmp32bits/icon_layout_0_2x.bmp<alias>icon_layout_0.bmp</alias></file>
+    <file>bmp32bits/icon_layout_1_2x.bmp<alias>icon_layout_1.bmp</alias></file>
+    <!- playback ->
+    <file>bmp32bits/icon_playback_0_2x.bmp<alias>icon_playback_0.bmp</alias></file>
+    <file>bmp32bits/icon_playback_1_2x.bmp<alias>icon_playback_1.bmp</alias></file>
+    <file>bmp32bits/icon_play_0_2x.bmp<alias>icon_play_0.bmp</alias></file>
+    <file>bmp32bits/icon_play_1_2x.bmp<alias>icon_play_1.bmp</alias></file>
+    <file>bmp32bits/icon_stop_0_2x.bmp<alias>icon_stop_0.bmp</alias></file>
+    <file>bmp32bits/icon_stop_1_2x.bmp<alias>icon_stop_1.bmp</alias></file>
+    <file>bmp32bits/icon_next_0_2x.bmp<alias>icon_next_0.bmp</alias></file>
+    <file>bmp32bits/icon_next_1_2x.bmp<alias>icon_next_1.bmp</alias></file>
+    <file>bmp32bits/icon_prev_0_2x.bmp<alias>icon_prev_0.bmp</alias></file>
+    <file>bmp32bits/icon_prev_1_2x.bmp<alias>icon_prev_1.bmp</alias></file>
+    <file>bmp32bits/icon_backward_0_2x.bmp<alias>icon_backward_0.bmp</alias></file>
+    <file>bmp32bits/icon_backward_1_2x.bmp<alias>icon_backward_1.bmp</alias></file>
+    <file>bmp32bits/icon_forward_0_2x.bmp<alias>icon_forward_0.bmp</alias></file>
+    <file>bmp32bits/icon_forward_1_2x.bmp<alias>icon_forward_1.bmp</alias></file>
+    <!- warning icon ->
+    <file>bmp32bits/icon_bsd_warn_2x.bmp<alias>icon_bsd_warn.bmp</alias></file>
+    <file>bmp32bits/icon_bsd_r1_warn_2x.bmp<alias>icon_bsd_r1_warn.bmp</alias></file>
+    <file>bmp32bits/icon_fcmd_0_warning_0.bmp<alias>icon_fcmd_0_warning_0.bmp</alias></file>
+    <file>bmp32bits/icon_fcmd_0_warning_1.bmp<alias>icon_fcmd_0_warning_1.bmp</alias></file>
+    <file>bmp32bits/icon_fcmd_0_warning_2.bmp<alias>icon_fcmd_0_warning_2.bmp</alias></file>
+    <file>bmp32bits/icon_fcmd_0_warning_3.bmp<alias>icon_fcmd_0_warning_3.bmp</alias></file>
+    <file>bmp32bits/icon_fcmd_0_warning_4.bmp<alias>icon_fcmd_0_warning_4.bmp</alias></file>
+    <file>bmp32bits/icon_fcmd_0_warning_5.bmp<alias>icon_fcmd_0_warning_5.bmp</alias></file>
+    <file>bmp32bits/icon_fcmd_0_warning_0_2x.bmp<alias>icon_fcmd_0_warning_0_2x.bmp</alias></file>
+    <file>bmp32bits/icon_fcmd_0_warning_1_2x.bmp<alias>icon_fcmd_0_warning_1_2x.bmp</alias></file>
+    <file>bmp32bits/icon_fcmd_0_warning_2_2x.bmp<alias>icon_fcmd_0_warning_2_2x.bmp</alias></file>
+    <file>bmp32bits/icon_fcmd_0_warning_3_2x.bmp<alias>icon_fcmd_0_warning_3_2x.bmp</alias></file>
+    <file>bmp32bits/icon_fcmd_0_warning_4_2x.bmp<alias>icon_fcmd_0_warning_4_2x.bmp</alias></file>
+    <file>bmp32bits/icon_fcmd_0_warning_5_2x.bmp<alias>icon_fcmd_0_warning_5_2x.bmp</alias></file>
+    <file>bmp32bits/icon_fcws_0_warning_0.bmp<alias>icon_fcws_0_warning_0.bmp</alias></file>
+    <file>bmp32bits/icon_fcws_0_warning_1.bmp<alias>icon_fcws_0_warning_1.bmp</alias></file>
+    <file>bmp32bits/icon_fcws_0_warning_2.bmp<alias>icon_fcws_0_warning_2.bmp</alias></file>
+    <file>bmp32bits/icon_fcws_0_warning_3.bmp<alias>icon_fcws_0_warning_3.bmp</alias></file>
+    <file>bmp32bits/icon_fcws_0_warning_4.bmp<alias>icon_fcws_0_warning_4.bmp</alias></file>
+    <file>bmp32bits/icon_fcws_1_warning_0.bmp<alias>icon_fcws_1_warning_0.bmp</alias></file>
+    <file>bmp32bits/icon_fcws_1_warning_1.bmp<alias>icon_fcws_1_warning_1.bmp</alias></file>
+    <file>bmp32bits/icon_fcws_1_warning_2.bmp<alias>icon_fcws_1_warning_2.bmp</alias></file>
+    <file>bmp32bits/icon_fcws_1_warning_3.bmp<alias>icon_fcws_1_warning_3.bmp</alias></file>
+    <file>bmp32bits/icon_fcws_1_warning_4.bmp<alias>icon_fcws_1_warning_4.bmp</alias></file>
+    <file>bmp32bits/icon_fcws_0_warning_0_2x.bmp<alias>icon_fcws_0_warning_0_2x.bmp</alias></file>
+    <file>bmp32bits/icon_fcws_0_warning_1_2x.bmp<alias>icon_fcws_0_warning_1_2x.bmp</alias></file>
+    <file>bmp32bits/icon_fcws_0_warning_2_2x.bmp<alias>icon_fcws_0_warning_2_2x.bmp</alias></file>
+    <file>bmp32bits/icon_fcws_0_warning_3_2x.bmp<alias>icon_fcws_0_warning_3_2x.bmp</alias></file>
+    <file>bmp32bits/icon_fcws_0_warning_4_2x.bmp<alias>icon_fcws_0_warning_4_2x.bmp</alias></file>
+    <file>bmp32bits/icon_fcws_1_warning_0_2x.bmp<alias>icon_fcws_1_warning_0_2x.bmp</alias></file>
+    <file>bmp32bits/icon_fcws_1_warning_1_2x.bmp<alias>icon_fcws_1_warning_1_2x.bmp</alias></file>
+    <file>bmp32bits/icon_fcws_1_warning_2_2x.bmp<alias>icon_fcws_1_warning_2_2x.bmp</alias></file>
+    <file>bmp32bits/icon_fcws_1_warning_3_2x.bmp<alias>icon_fcws_1_warning_3_2x.bmp</alias></file>
+    <file>bmp32bits/icon_fcws_1_warning_4_2x.bmp<alias>icon_fcws_1_warning_4_2x.bmp</alias></file>
+    <file>bmp32bits/icon_ldws_0_warning_right.bmp<alias>icon_ldws_0_warning_right.bmp</alias></file>
+    <file>bmp32bits/icon_ldws_0_warning_left.bmp<alias>icon_ldws_0_warning_left.bmp</alias></file>
+    <file>bmp32bits/icon_ldws_0_warning_right_2.bmp<alias>icon_ldws_0_warning_right_2.bmp</alias></file>
+    <file>bmp32bits/icon_ldws_0_warning_left_2x.bmp<alias>icon_ldws_0_warning_left_2x.bmp</alias></file>
+    <file>bmp32bits/icon_directional_light_left_2x.bmp<alias>icon_directional_light_left.bmp</alias></file>
+    <file>bmp32bits/icon_directional_light_right_2x.bmp<alias>icon_directional_light_right.bmp</alias></file>
+    <file>bmp32bits/icon_gear_r_left_2x.bmp<alias>icon_gear_r_left.bmp</alias></file>
+    <file>bmp32bits/icon_gear_r_right_2x.bmp<alias>icon_gear_r_right.bmp</alias></file>
+    <file>bmp32bits/icon_ows_0_2x.bmp<alias>icon_ows_0.bmp</alias></file>
+    <file>bmp32bits/icon_ows_1_2x.bmp<alias>icon_ows_1.bmp</alias></file>
+    <file>bmp32bits/icon_psd_0_2x.bmp<alias>icon_psd_0.bmp</alias></file>
+    <file>bmp32bits/icon_psd_1_2x.bmp<alias>icon_psd_1.bmp</alias></file>
+    <file>bmp32bits/icon_rcta_0_2x.bmp<alias>icon_rcta_0.bmp</alias></file>
+    <file>bmp32bits/icon_rcta_1_2x.bmp<alias>icon_rcta_1.bmp</alias></file>
+    <!- diagbox ->
+    <file>bmp32bits/icon_fwupdate.bmp<alias>icon_fwupdate.bmp</alias></file>
+    <file>bmp32bits/diagbox.bmp<alias>diagbox.bmp</alias></file>
+
+    <!- blend table ->
+    <file>bmp/Bld_Tbl_Left.bmp<alias>Bld_Tbl_Left.bmp</alias></file>
+    <file>bmp/Bld_Tbl_Right.bmp<alias>Bld_Tbl_Right.bmp</alias></file>
+    <file>bmp/Bld_Tbl_Left_BSD.bmp<alias>Bld_Tbl_Left_BSD.bmp</alias></file>
+    <file>bmp/Bld_Tbl_Right_BSD.bmp<alias>Bld_Tbl_Right_BSD.bmp</alias></file>
+
+    <!- Logo ->
+    <file>bmp32bits/icon_amba_logo_2x.bmp<alias>icon_amba_logo.bmp</alias></file>
+</romfs>

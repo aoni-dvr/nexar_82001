@@ -1,0 +1,2 @@
+UINT32 AmbaImgProc_ASILAWBInit(UINT32 ViewId);
+UINT32 AmbaImgProc_ASILAWBControl(UINT32 ViewId);

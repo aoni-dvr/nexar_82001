@@ -1,0 +1,5 @@
+config BR2_PACKAGE_RTL8192EU
+	bool "RTL8192EU"
+	help
+		Realtek RTL8192EU
+

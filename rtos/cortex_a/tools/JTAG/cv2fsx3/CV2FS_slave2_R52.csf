@@ -1,0 +1,49 @@
+
+
+MULtiCore.PORT 20004
+
+GLOBAL &QC_cpu
+GLOBAL &QC_jtag_cfg
+
+
+&QC_cpu="CORTEXR52"
+&QC_jtag_cfg="chain"
+
+CPUTYPE CORTEXR52
+OPTION.JTAGCLOCK      1.000000Mhz
+
+MULtiCore.DEBUGACCESSPORT 0.
+MULtiCore.IRPOST      16.
+MULtiCore.DRPost      4.
+MULtiCore.IRPRE       4.
+MULtiCore.DRPre       1.
+MULtiCore.DAPIRPOST   0.
+MULtiCore.DAPDRPOST   0.
+MULtiCore.DAPIRPRE    0.
+MULtiCore.DAPDRPRE    0.
+MULtiCore.COUNT       1.
+MULtiCore.COREBASE    0x80010000
+MULtiCore.CTIBASE     0x80020000
+MULtiCore.ETMBASE     0x80040000
+
+
+SYStem.OPTION EnReset       OFF
+SYStem.OPTION TRST          OFF
+SYStem.OPTION ResBreak      OFF
+SYStem.OPTION PCZero        OFF
+SYStem.OPTION RegisterInit  OFF
+SYStem.OPTION BigEndian     OFF
+
+VectorCatch.RESET           OFF
+VectorCatch.PABORT          OFF
+VectorCatch.DABORT          OFF
+VectorCatch.UNDEF           OFF
+
+MapBusWidth32 0x00000000++0xFFFFFFFF
+option.SpeedUp on
+connectAttach
+wait 100.ms
+
+break
+
+print "CPU=&QC_cpu,JTAG=&QC_jtag_cfg"

@@ -1,0 +1,107 @@
+/*
+ * board level device tree source
+ */
+
+/dts-v1/;
+
+/include/ "h32.dtsi"
+
+/ {
+	model = "Ambarella H32MBUB Board";
+	compatible = "ambarella,h32mbub", "ambarella,s6lm";
+
+	chosen {
+		stdout-path = &uart0;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		xen,xen-bootargs = "dom0_mem=256M bootscrub=0 dom0_max_vcpus=1 dom0_vcpus_pin timer_slop=0";
+		module@0 {
+			 compatible = "xen,linux-zimage", "xen,multiboot-module";
+			 reg = <0x0 0x0>;
+			 bootargs = "root=/dev/mtdblock21 rootfstype=squashfs rdinit=/sbin/init console=hvc0 earlycon=xenboot quiet";
+		};
+
+		domu_tx {
+			#address-cells = <1>;
+			#size-cells = <1>;
+			compatible = "xen,domain";
+			memory = <0x0 0x0>;
+			cpus = <1>;
+
+			module@0 {
+				compatible = "multiboot,kernel", "multiboot,module";
+				reg = <0x0 0x0>;
+			};
+		};
+
+	};
+
+	n_apb@e4000000 {
+		i2c0: i2c@e4008000 {
+			status = "ok";
+		};
+
+		i2c2: i2c@e400a000 {
+			status = "ok";
+			pinctrl-0 = <&i2c2_pins_c>;
+		};
+
+		i2cs: i2cs@e4007000 {
+			status = "ok";
+			slave-24c02@62{
+				compatible = "slave-24c02";
+				reg = <0x40000062>;
+			};
+		};
+	};
+
+	n_ahb@e0000000 {
+		uart1: uart@e0017000 {
+			/delete-property/amb,txdma-used;
+			/delete-property/amb,rxdma-used;
+			/delete-property/dmas;
+			/delete-property/dma-names;
+			status = "ok";
+		};
+
+		nand0: nand@e0002000 {
+			status = "ok";
+		};
+
+		sdmmc0: sdmmc0@e0004000 {
+			pwr-gpios = <&gpio 63 0x1>;
+			v18-gpios = <&gpio 85 0x1>;
+		};
+
+		mac0: ethernet@e000e000 {
+			amb,tx-clk-invert;
+			phy@0 {
+				reg = <0>;
+			};
+		};
+
+		spi_slave@e0010000 {
+			status = "ok";
+		};
+
+		spi0: spi@e0011000 {
+			/delete-property/pinctrl-0;
+			status = "ok";
+			cs-gpios = <&gpio 78 0>;
+
+			spidev@0 {
+					compatible = "ambarella,spidev";
+					spi-max-frequency = <20000000>;
+					reg = <0>;
+					/*spi-cpha;*/
+					/*spi-cpol;*/
+			};
+		};
+	};
+
+	rct@ed080000 {
+		usbphy: usbphy@ed080050 {
+			pinctrl-names = "default";
+		};
+	};
+};

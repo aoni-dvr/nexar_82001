@@ -1,0 +1,18 @@
+menuconfig BR2_PACKAGE_CAVALRY_LIB
+	bool "cavalry lib"
+	help
+	  This is cavalry lib.
+
+config BR2_PACKAGE_CAVALRY_MEM
+	bool "cavalry memory lib"
+	default y
+	depends on BR2_PACKAGE_CAVALRY_LIB
+	help
+	  This is the cavalry memory lib.
+
+config BR2_PACKAGE_NNCTRL
+	bool "nn control lib"
+	default y
+	depends on BR2_PACKAGE_CAVALRY_LIB
+	help
+	  This is the nn control lib.

@@ -1,0 +1,89 @@
+# svc sys function
+SYS_O_PREFIX = ../../src/sys
+SYS_INC_PREFIX = $(src)/$(SYS_O_PREFIX)
+
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcBootDev.o            \
+                        $(SYS_O_PREFIX)/SvcTiming.o             \
+                        $(SYS_O_PREFIX)/SvcWdt.o                \
+                        $(SYS_O_PREFIX)/SvcBuffer.o             \
+                        $(SYS_O_PREFIX)/SvcClock.o              \
+                        $(SYS_O_PREFIX)/SvcStgMonitor.o         \
+                        $(SYS_O_PREFIX)/SvcPrint.o              \
+                        $(SYS_O_PREFIX)/SvcShell.o              \
+                        $(SYS_O_PREFIX)/SvcSysStat.o            \
+                        $(SYS_O_PREFIX)/SvcUart.o               \
+                        $(SYS_O_PREFIX)/SvcFlowControl.o        \
+                        $(SYS_O_PREFIX)/SvcButtonCtrl.o         \
+                        $(SYS_O_PREFIX)/SvcFwUpdate.o           \
+                        $(SYS_O_PREFIX)/SvcWinCalc.o            \
+                        $(SYS_O_PREFIX)/SvcPyramid.o            \
+                        $(SYS_O_PREFIX)/SvcGpioButton.o         \
+                        $(SYS_O_PREFIX)/SvcAdcButton.o          \
+                        $(SYS_O_PREFIX)/SvcMem.o                \
+                        $(SYS_O_PREFIX)/SvcPref.o               \
+                        $(SYS_O_PREFIX)/SvcPrefCustom.o         \
+                        $(SYS_O_PREFIX)/SvcSysEvent.o           \
+                        $(SYS_O_PREFIX)/SvcStgMgr.o             \
+                        $(SYS_O_PREFIX)/SvcNvm.o                \
+                        $(SYS_O_PREFIX)/SvcCmd.o                \
+                        $(SYS_O_PREFIX)/SvcTask.o               \
+                        $(SYS_O_PREFIX)/SvcLog.o                \
+                        $(SYS_O_PREFIX)/SvcLoadCtrl.o           \
+                        $(SYS_O_PREFIX)/SvcSafeStateMgr.o       \
+                        $(SYS_O_PREFIX)/SvcWrap.o               \
+                        $(SYS_O_PREFIX)/SvcPlat.o               \
+                        $(SYS_O_PREFIX)/SvcDataCmp.o            \
+                        $(SYS_O_PREFIX)/SvcDramUtil.o
+
+ccflags-y += -I$(srctree)/soc/io/src/common/inc
+ccflags-y += -I$(srctree)/soc/io/src/common/inc/arm
+ccflags-y += -I$(srctree)/soc/io/src/common/inc/rtsl
+
+ccflags-y += -I$(srctree)/bsp/$(AMBA_CHIP_ID)/$(AMBA_BSP_NAME)
+
+# swpll
+ifeq ($(CONFIG_ICAM_SWPLL_CONTROL),y)
+ccflags-y += -I$(srctree)/comsvc/ftcm/inc
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcSwPll.o
+endif
+
+# ip monitor
+ifeq ($(CONFIG_BUILD_IP_MONITOR),y)
+ccflags-y += -I$(srctree)/svc/comsvc/imgproc/imgaaa/inc/aaa
+endif
+
+# canbus
+ifeq ($(CONFIG_ICAM_CANBUS_USED),y)
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcCan.o
+endif
+
+# rawcap
+ifeq ($(CONFIG_ICAM_IMGRAWCAP_USED),y)
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcRawCap.o
+endif
+
+# encryption
+ifeq ($(CONFIG_ICAM_ENCRYPTION),y)
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcEncrypt.o
+endif
+
+ifeq ($(CONFIG_BUILD_COMSVC_DRAMSHMOO),y)
+ccflags-y += -I$(srctree)/svc/comsvc/dramshmoo/inc
+ifneq ($(findstring $(CONFIG_SOC_CV5)$(CONFIG_SOC_CV52), y y),)
+ccflags-y += -I$(srctree)/svc/comsvc/dramshmoo/$(AMBA_CHIP_ID)
+endif
+ccflags-y += -I$(srctree)/svc/comsvc/dramshmoo/common
+ccflags-y += -I$(srctree)/soc/io/src/$(AMBA_CHIP_ID)/inc/csl
+endif
+ccflags-y += -I$(srctree)/soc/io/src/$(AMBA_CHIP_ID)/inc/reg
+
+# Dependency of SvcVer.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcBuild.o
+
+$(obj)/SvcBuild.o: $(call amba_ver_dep,SvcBuild.o,$(libsvc_icamcore-objs))
+
+ICAM_BUILD_DATE = \""$(shell date)"\"
+ICAM_BUILD_MACHINE = \""$(shell echo `whoami`@`hostname`:[gcc `$(CC) -dumpversion`])"\"
+
+CFLAGS_SvcBuild.o = -DAMBA_BUILD_DATE=$(ICAM_BUILD_DATE)        \
+                    -DAMBA_BUILD_MACHINE=$(ICAM_BUILD_MACHINE)

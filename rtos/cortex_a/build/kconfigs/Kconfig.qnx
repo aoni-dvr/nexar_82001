@@ -1,0 +1,68 @@
+#
+# For a description of the syntax of this configuration file,
+# see Documentation/kbuild/kconfig-language.txt.
+#
+
+config QNX
+	def_bool y
+	select BLD_SEQ_ATF
+	select BLD_SEQ_ATF_SRTOS
+	help
+	  QNX's RTOS Solution
+
+config BOOT_CORE_QNX
+	int
+	default 0
+
+config BOOT_CORE_SRTOS
+	int
+	default BOOT_CORE_QNX
+
+menu "QNX Options"
+
+config QNX_DEBUG
+	bool "Enable debug"
+	help
+	  Enable debug
+
+config QNX_JLEVEL
+	int "Job level to make"
+	default 1
+	range 1 65535
+	help
+	  Parallel job level to make.
+
+config BUILD_QNX_IPL
+	bool "Build QNX ipl"
+	default y
+	help
+	  Enable build QNX ipl
+
+config BUILD_QNX_STARTUP
+	bool "Build QNX startup"
+	default y
+	help
+	  Enable build QNX startup
+
+config BUILD_QNX_SYS_IMAGE
+	bool "Build QNX system image"
+	default y
+	help
+	  Enable build QNX system image
+
+config BUILD_QNX_DOT_BUILD
+	string "Name of .build file for building QNX system image"
+	default ""
+	help
+	  Name of .build file for building QNX system image, e.g.
+	  cv2fs_ut.build
+
+config BUILD_QNX_FS_DOT_BUILD
+	string "Name of .build file for building QNX file system image"
+	default ""
+	help
+	  Name of .build file for building QNX file system image, e.g.
+	  cv2fs_ut_os2.build
+
+endmenu # "QNX Options"
+

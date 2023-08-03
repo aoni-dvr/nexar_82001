@@ -1,0 +1,223 @@
+mkfile_this := $(abspath $(lastword $(MAKEFILE_LIST)))
+mkfile_path := $(patsubst $(srctree)/%,%,$(patsubst %/,%,$(dir $(mkfile_this))))
+
+AMBA_CHIP_ID:=$(subst $\",,$(CONFIG_SOC_NAME))
+export AMBA_CHIP_ID
+
+AMBA_BSP_NAME:=$(subst $\",,$(CONFIG_BSP_NAME))
+export AMBA_BSP_NAME
+
+export CONFIG_QNX
+export CONFIG_XEN_SUPPORT
+export CONFIG_XEN_SUPPORT_QNX
+export LINK_SH_secure_tool := $(srctree)/tools/hostutils/security_tool.sh
+ifneq ($(CONFIG_RSA_PRIVATE_KEY_PATH),)
+export SVC_RSA_PRIVATE_KEY_PATH := $(CONFIG_RSA_PRIVATE_KEY_PATH)
+else
+export SVC_RSA_PRIVATE_KEY_PATH := $(srctree)/svc/apps/icam/main/key/id_rsa
+endif
+
+PHONY += qnx
+
+PHONY += svc_security_prepare
+svc_security_prepare:
+ifeq ($(CONFIG_ENABLE_SECURITY),y)
+	$(Q)$(LINK_SH_secure_tool) pubkey_header_gen -k $(CONFIG_RSA_PRIVATE_KEY_PATH) -o $(srctree)/$(O)/.autogen_pubkey
+endif
+
+ifeq ($(CONFIG_SVC_APPS_ICAM),y)
+
+AG_SCR_PATH := $(srctree)/svc/apps/icam/core/scripts/svc_autogen.py
+svc_prepare := $(srctree)/$(O)/.svc_autogen
+
+PHONY += $(svc_prepare)
+$(svc_prepare):
+	$(shell python $(AG_SCR_PATH))
+	$(Q)$(LINK_SH_secure_tool) securebin_gen -k $(SVC_RSA_PRIVATE_KEY_PATH) -i $(srctree)/$(O).64/security/
+
+qnx: prepare build/scripts $(svc_prepare) svc_security_prepare
+	@$(MAKE) -f $(srctree)/$(mkfile_path)/qnx.mk all
+
+else
+
+qnx: prepare build/scripts svc_security_prepare
+	@$(MAKE) -f $(srctree)/$(mkfile_path)/qnx.mk all
+
+endif
+
+# For single QNX project building
+# Usage "make ... PATH-mk"
+# e.g. make KCONFIG=....... vendors/ambarella/wrapper/std/src/qnx-mk
+# NOTE: using implicit rule in qnx.mk,
+#       so PATH need to be added into $(mod_dir) or $(pre_mod_dir)
+PHONY += %-mk
+%-mk: prepare build/scripts
+	@$(MAKE) -f $(srctree)/$(mkfile_path)/qnx.mk $(srctree)/$(subst -mk,,$@)
+
+%-clean: prepare build/scripts
+	$(MAKE) -f $(srctree)/$(mkfile_path)/qnx.mk $(srctree)/$@
+
+%-qmk: prepare build/scripts
+	$(MAKE) -f $(srctree)/$(mkfile_path)/qnx.mk $(srctree)/$@
+
+PHONY += qnx-clean
+qnx-clean: prepare build/scripts
+	@$(MAKE) -f $(srctree)/$(mkfile_path)/qnx.mk clean
+
+PHONY += qnx-draw-dep
+qnx-draw-dep:
+	@$(MAKE) -f $(srctree)/$(mkfile_path)/qnx.mk qnx-draw-dep
+
+PHONY += amba_all
+amba_all: prepare build/scripts qnx
+	@echo "$@ Done"
+
+# ---------------------------------------------------------------------------
+# cv diags
+# ---------------------------------------------------------------------------
+PHONY += diags diags_code cvtask_gen cvtask_clean
+
+CV_DIAGS :=
+CV_CLEAN_TOOL := $(srctree)/tools/ADK/adk/core/tools/clean_gentask/clean_post_proc.py
+
+CORE_RD_PATH := $(srctree)/tools/ADK/remote_diags
+CORE_RD_BACK_PATH := ../../../../output
+
+DIAGS_MK_PARAM="KBUILD_SRC="
+CV_CORE_DIR := soc/vision
+CV_COMSVC_DIR := svc/comsvc/cv
+
+cvtask_gen:
+	@$(foreach dg, $(CV_DIAGS), $(call build_diags,$(patsubst %/,%,$(dg)),$(srctree)))
+
+cvtask_clean:
+	@$(foreach dg, $(CV_DIAGS), $(call clean_diags,$(dg),$(CV_CLEAN_TOOL),$(srctree)/$(CV_COMSVC_DIR)))
+
+diags:
+	$(MAKE) $(DIAGS_MK_PARAM) diags_core
+	$(MAKE) $(DIAGS_MK_PARAM) diags_comsvc
+
+diags_lib:
+	$(MAKE) $(DIAGS_MK_PARAM) diags_install
+
+diags_core:
+ifeq ($(CONFIG_BUILD_CV),y)
+	$(MAKE) $(DIAGS_MK_PARAM) _diags_core
+else
+	@echo "[ERROR] CONFIG_BUILD_CV is not set"
+endif
+
+diags_comsvc:
+ifeq ($(CONFIG_BUILD_CV),y)
+	$(MAKE) $(DIAGS_MK_PARAM) _diags_comsvc
+else
+	@echo "[ERROR] CONFIG_BUILD_CV is not set"
+endif
+
+diags_install:
+ifeq ($(CONFIG_BUILD_CV),y)
+	$(MAKE) $(DIAGS_MK_PARAM) _diags_install
+else
+	@echo "[ERROR] CONFIG_BUILD_CV is not set"
+endif
+
+_diags_core:
+	$(MAKE) -f $(srctree)/$(CV_CORE_DIR)/diags.mk CV_CORE_DIR=$(CV_CORE_DIR)
+	$(MAKE) -f $(srctree)/$(CV_CORE_DIR)/diags.mk diags_install CV_CORE_DIR=$(CV_CORE_DIR)
+
+_diags_comsvc:
+	$(MAKE) -f $(srctree)/$(CV_COMSVC_DIR)/diags.mk CV_CORE_DIR=$(CV_CORE_DIR) CV_COMSVC_DIR=$(CV_COMSVC_DIR)
+	$(MAKE) -f $(srctree)/$(CV_COMSVC_DIR)/diags.mk diags_install CV_CORE_DIR=$(CV_CORE_DIR) CV_COMSVC_DIR=$(CV_COMSVC_DIR)
+
+_diags_install:
+	$(MAKE) -f $(srctree)/$(CV_CORE_DIR)/diags.mk CV_CORE_DIR=$(CV_CORE_DIR)
+	$(MAKE) -f $(srctree)/$(CV_CORE_DIR)/diags.mk diags_install CV_CORE_DIR=$(CV_CORE_DIR)
+	$(MAKE) -f $(srctree)/$(CV_COMSVC_DIR)/diags_mk/diags_lib.mk CV_CORE_DIR=$(CV_CORE_DIR) CV_COMSVC_DIR=$(CV_COMSVC_DIR)
+	$(MAKE) -f $(srctree)/$(CV_COMSVC_DIR)/diags_mk/diags_lib.mk diags_install CV_CORE_DIR=$(CV_CORE_DIR) CV_COMSVC_DIR=$(CV_COMSVC_DIR)
+
+define build_diags
+	echo "Building $(1) diags..."; \
+	rm -rf $(CORE_RD_PATH)/$(notdir $(1)); \
+	mkdir -p $(CORE_RD_PATH)/$(notdir $(1)); \
+	cd $(CORE_RD_PATH)/$(notdir $(1)); \
+	if [ ! -f Makefile ] ; then \
+		remoteconfig $(2)/$(1); \
+	fi; \
+	make diags; \
+	cd $(CORE_RD_BACK_PATH); \
+	if [ -f $(CORE_RD_PATH)/$(notdir $(1))/out/GEN_SUPERDAG_FOR_BUB.log ]; then \
+		grep "Summary of output" $(CORE_RD_PATH)/$(notdir $(1))/out/GEN_SUPERDAG_FOR_BUB.log  > /dev/null ;\
+		if [ $$? -eq 0 ] ; then \
+			echo "Generate $(notdir $(1)) cvtask success"; \
+		else \
+			echo "  [ERROR] superdag_gen fail"; \
+			exit -1; \
+		fi ; \
+	else \
+		echo "  [ERROR] Can't find GEN_SUPERDAG_FOR_BUB.log"; \
+		exit -1; \
+	fi ;
+endef
+
+define clean_diags
+	echo "Cleaning $(1) diags..."; \
+	$(2) -n $(notdir $(1)) -p $(3)/config;
+endef
+# ---------------------------------------------------------------------------
+# FW Programmer, Change to 64-bit building.
+# ---------------------------------------------------------------------------
+PHONY += gcc_64_prep
+gcc_64_prep: $(srctree)/$(O)/.config
+	$(Q)mkdir -p $(srctree)/$(O).64
+	$(Q)cp -f $(srctree)/$(O)/.config $(srctree)/configs/64_defconfig
+	$(Q)sed -i -e "s@CONFIG_ARM32=y@# CONFIG_ARM32 is not set@g" $(srctree)/configs/64_defconfig
+	$(Q)sed -i -e "s@# CONFIG_ARM64 is not set@CONFIG_ARM64=y@g" $(srctree)/configs/64_defconfig
+	$(Q)sed -i -e "s@CONFIG_QNX=y@# CONFIG_QNX is not set@g" $(srctree)/configs/64_defconfig
+	$(Q)make -rR \
+		KBUILD_SRC= \
+		KBUILD_KCONFIG=$(mkfile_path)/Kconfig.Qnx.fwprog \
+		KBUILD_AMBA_MKFILE=svc/Makefile.Amba.64 \
+		O=$(O).64 KBUILD_OUTPUT=$(O).64 \
+		CROSS_COMPILE=$(shell readlink -f `which aarch64-none-elf-gcc` | rev | cut -c 4- | rev) \
+		64_defconfig \
+		silentoldconfig
+	$(Q)rm -f $(srctree)/configs/64_defconfig
+
+PHONY += amba_fwprog
+amba_fwprog: amba_all gcc_64_prep
+	+$(Q)make -rR \
+		KBUILD_SRC= \
+		KBUILD_KCONFIG=$(mkfile_path)/Kconfig.Qnx.fwprog \
+		KBUILD_AMBA_MKFILE=svc/Makefile.Amba.64 \
+		O=$(O).64 KBUILD_OUTPUT=$(O).64 \
+		CROSS_COMPILE=$(shell readlink -f `which aarch64-none-elf-gcc` | rev | cut -c 4- | rev) \
+		amba_fwprog
+
+
+# ---------------------------------------------------------------------------
+# Clean
+# ---------------------------------------------------------------------------
+AMBA_CLEAN += amba_clean
+PHONY += amba_clean
+
+amba_clean: qnx-clean
+	@:
+
+# ---------------------------------------------------------------------------
+# distribute
+# ---------------------------------------------------------------------------
+MANIFEST = manifest_qnx.txt
+MANIFEST_DIR = $(srctree)/build/distribute
+RTOS_DIR = rtos/cortex_a
+
+export MANIFEST MANIFEST_DIR RTOS_DIR
+
+# depends on MANIFEST HAS_APPLIB_SRC RTOS_DIR srctree variable.
+PHONY += distribute
+distribute:
+	@rm -rf $(srctree)/$(O)/lib/libcv_Amba*.a
+	@( \
+		echo MANIFEST=$(MANIFEST_DIR)/$(MANIFEST); \
+		cd $(srctree); cd ../.. ; \
+		./${RTOS_DIR}/build/distribute/distribute \
+	)

@@ -1,0 +1,7 @@
+config BR2_PACKAGE_RTL8188EU
+	bool "RTL8188-EU/ETV/EUS"
+	help
+	  Realtek RTL8188EU, RTL8188ETV, ETL8188EUS
+	  Module name is 8188eu.ko
+	  Driver is the same.
+

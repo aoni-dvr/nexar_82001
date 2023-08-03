@@ -1,0 +1,84 @@
+<!------------------------------------------------------------------------------------------------------------- ->
+<!- @FileName       :: iq_IMX586hdr.list                                                                        ->
+<!-                                                                                                             ->
+<!- @Copyright      :: Copyright (C) 2018 Ambarella Corporation. All rights reserved.                           ->
+<!-                                                                                                             ->
+<!-                    No part of this file may be reproduced, stored in a retrieval system,                    ->
+<!-                    or transmitted, in any form, or by any means, electronic, mechanical, photocopying,      ->
+<!-                    recording, or otherwise, without the prior consent of Ambarella Corporation.             ->
+<!-                                                                                                             ->
+<!- @Description    :: the file list for rom file system                                                        ->
+<!------------------------------------------------------------------------------------------------------------- ->
+
+<romfs>
+    <!- Relative path from the top directory of the build ->
+    <top>vendors/ambarella/image/iqtable/</top>
+    <!- IMX586 ->
+    <file>IMX586/idspbins/Cc_bw_gamma_lin_still.bin<alias>cc3d_cc_bw_gamma_lin_still_IMX586</alias></file>
+    <file>IMX586/idspbins/Cc_bw_gamma_lin_video.bin<alias>cc3d_cc_bw_gamma_lin_video_IMX586</alias></file>
+    <file>IMX586/idspbins/Cc_Video0.bin<alias>VideoCc0_IMX586</alias></file>
+    <file>IMX586/idspbins/Cc_Video1.bin<alias>VideoCc1_IMX586</alias></file>
+    <file>IMX586/idspbins/Cc_Video2.bin<alias>VideoCc2_IMX586</alias></file>
+    <file>IMX586/idspbins/Cc_Video3.bin<alias>VideoCc3_IMX586</alias></file>
+    <file>IMX586/idspbins/Cc_Video4.bin<alias>VideoCc4_IMX586</alias></file>
+    <file>IMX586/idspbins/Cc_Still0.bin<alias>StillCc0_IMX586</alias></file>
+    <file>IMX586/idspbins/Cc_Still1.bin<alias>StillCc1_IMX586</alias></file>
+    <file>IMX586/idspbins/Cc_Still2.bin<alias>StillCc2_IMX586</alias></file>
+    <file>IMX586/idspbins/Cc_Still3.bin<alias>StillCc3_IMX586</alias></file>
+    <file>IMX586/idspbins/Cc_Still4.bin<alias>StillCc4_IMX586</alias></file>
+    <file>IMX586/bins/Adj_PhotoPreview00.bin<alias>adj_photo_default_00_IMX586</alias></file>
+    <file>IMX586/bins/Adj_PhotoPreview01.bin<alias>adj_photo_default_01_IMX586</alias></file>
+    <file>IMX586/bins/Adj_VideoPc00.bin<alias>adj_video_default_00_IMX586</alias></file>
+    <file>IMX586/bins/Adj_VideoPc01.bin<alias>adj_video_default_01_IMX586</alias></file>
+    <file>IMX586/bins/Adj_VideoPc02.bin<alias>adj_video_default_02_IMX586</alias></file>
+    <file>IMX586/bins/Adj_StillLIso00.bin<alias>adj_still_default_00_IMX586</alias></file>
+    <file>IMX586/bins/Adj_StillLIso01.bin<alias>adj_still_default_01_IMX586</alias></file>
+    <file>IMX586/bins/Adj_StillHIso00.bin<alias>adj_hiso_still_default_00_IMX586</alias></file>
+    <file>IMX586/bins/Adj_StillHIso01.bin<alias>adj_hiso_still_default_01_IMX586</alias></file>     
+    <file>IMX586/bins/ScSet01Param.bin<alias>scene_data_s01_IMX586</alias></file>
+    <file>IMX586/bins/ScSet02Param.bin<alias>scene_data_s02_IMX586</alias></file>
+    <file>IMX586/bins/ScSet03Param.bin<alias>scene_data_s03_IMX586</alias></file>
+    <file>IMX586/bins/ScSet04Param.bin<alias>scene_data_s04_IMX586</alias></file>
+    <file>IMX586/bins/ScSet05Param.bin<alias>scene_data_s05_IMX586</alias></file>
+    <file>IMX586/bins/ImageParam.bin<alias>img_default_IMX586</alias></file>
+    <file>IMX586/bins/DefaultParams.bin<alias>aaa_default_00_IMX586</alias></file>
+    <file>IMX586/bins/DefaultParams.bin<alias>aaa_default_01_IMX586</alias></file>
+    <file>IMX586/bins/StillParam.bin<alias>adj_still_idx_IMX586</alias></file>
+    <file>IMX586/bins/DeVideoParam.bin<alias>de_default_video_IMX586</alias></file>
+    <file>IMX586/bins/DeStillParam.bin<alias>de_default_still_IMX586</alias></file>
+    <file>IMX586/bins/AdjTableParam.bin<alias>adj_table_param_default_IMX586</alias></file>
+    <!- IMX586HDR2 ->
+    <!- <file>IMX586HDR2/idspbins/Cc_bw_gamma_lin_still.bin<alias>cc3d_cc_bw_gamma_lin_still_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/idspbins/Cc_bw_gamma_lin_video.bin<alias>cc3d_cc_bw_gamma_lin_video_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/idspbins/Cc_Video0.bin<alias>VideoCc0_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/idspbins/Cc_Video1.bin<alias>VideoCc1_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/idspbins/Cc_Video2.bin<alias>VideoCc2_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/idspbins/Cc_Video3.bin<alias>VideoCc3_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/idspbins/Cc_Video4.bin<alias>VideoCc4_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/idspbins/Cc_Still0.bin<alias>StillCc0_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/idspbins/Cc_Still1.bin<alias>StillCc1_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/idspbins/Cc_Still2.bin<alias>StillCc2_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/idspbins/Cc_Still3.bin<alias>StillCc3_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/idspbins/Cc_Still4.bin<alias>StillCc4_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/bins/Adj_PhotoPreview00.bin<alias>adj_photo_default_00_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/bins/Adj_PhotoPreview01.bin<alias>adj_photo_default_01_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/bins/Adj_VideoPc00.bin<alias>adj_video_default_00_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/bins/Adj_VideoPc01.bin<alias>adj_video_default_01_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/bins/Adj_VideoPc02.bin<alias>adj_video_default_02_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/bins/Adj_StillLIso00.bin<alias>adj_still_default_00_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/bins/Adj_StillLIso01.bin<alias>adj_still_default_01_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/bins/Adj_StillHIso00.bin<alias>adj_hiso_still_default_00_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/bins/Adj_StillHIso01.bin<alias>adj_hiso_still_default_01_IMX586HDR2</alias></file> ->     
+    <!- <file>IMX586HDR2/bins/ScSet01Param.bin<alias>scene_data_s01_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/bins/ScSet02Param.bin<alias>scene_data_s02_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/bins/ScSet03Param.bin<alias>scene_data_s03_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/bins/ScSet04Param.bin<alias>scene_data_s04_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/bins/ScSet05Param.bin<alias>scene_data_s05_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/bins/ImageParam.bin<alias>img_default_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/bins/DefaultParams.bin<alias>aaa_default_00_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/bins/DefaultParams.bin<alias>aaa_default_01_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/bins/StillParam.bin<alias>adj_still_idx_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/bins/DeVideoParam.bin<alias>de_default_video_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/bins/DeStillParam.bin<alias>de_default_still_IMX586HDR2</alias></file> ->
+    <!- <file>IMX586HDR2/bins/AdjTableParam.bin<alias>adj_table_param_default_IMX586HDR2</alias></file> ->
+</romfs>

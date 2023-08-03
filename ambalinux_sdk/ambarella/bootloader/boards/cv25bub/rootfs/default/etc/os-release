@@ -1,0 +1,5 @@
+NAME=Flexible
+ID=CV22
+VERSION=0.5.0
+PRETTY_NAME="Ambarella Flexible Linux CV22 (0.5.0)"
+ANSI_COLOR="1;32"

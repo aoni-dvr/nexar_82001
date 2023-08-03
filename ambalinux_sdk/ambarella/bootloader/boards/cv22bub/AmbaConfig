@@ -1,0 +1,53 @@
+##
+## History:
+##	Author: Cao Rongrong <rrcao@ambarella.com>
+##
+## Copyright (c) 2016 Ambarella, Inc.
+##
+## This file and its contents ( "Software" ) are protected by intellectual
+## property rights including, without limitation, U.S. and/or foreign
+## copyrights. This Software is also the confidential and proprietary
+## information of Ambarella, Inc. and its licensors. You may not use, reproduce,
+## disclose, distribute, modify, or otherwise prepare derivative works of this
+## Software or any portion thereof except pursuant to a signed license agreement
+## or nondisclosure agreement with Ambarella, Inc. or its authorized affiliates.
+## In the absence of such an agreement, you agree to promptly notify and return
+## this Software to Ambarella, Inc.
+##
+## THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+## INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT,
+## MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+## IN NO EVENT SHALL AMBARELLA, INC. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT,
+## INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+## (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+## LOSS OF USE, DATA, OR PROFITS; COMPUTER FAILURE OR MALFUNCTION; OR BUSINESS
+## INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+## CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+## ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+## POSSIBILITY OF SUCH DAMAGE.
+
+config CONFIG_BSP_BOARD_CV22BUB
+	bool "CV22BUB"
+	depends on CONFIG_ARCH_CV22
+
+choice
+	prompt "Board Revision"
+	default CONFIG_BOARD_VERSION_CV22BUB_1200_LPDDR4
+	depends on CONFIG_BSP_BOARD_CV22BUB
+	help
+		Select the BSP of the CV22.
+
+config CONFIG_BOARD_VERSION_CV22BUB_420_LPDDR4
+	bool "CV22BUB (16Gbit LPDDR4 @ 420MHz)"
+	select DRAM_TYPE_LPDDR4
+
+config CONFIG_BOARD_VERSION_CV22BUB_840_LPDDR4
+	bool "CV22BUB (16Gbit LPDDR4 @ 840MHz)"
+	select DRAM_TYPE_LPDDR4
+
+config CONFIG_BOARD_VERSION_CV22BUB_1200_LPDDR4
+	bool "CV22BUB (16Gbit LPDDR4 @ 1200MHz)"
+	select DRAM_TYPE_LPDDR4
+
+endchoice
+

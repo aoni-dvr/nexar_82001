@@ -1,0 +1,221 @@
+/*
+ * Copyright (C) 2013 Ambarella,Inc. - http://www.ambarella.com/
+ * Author: Cao Rongrong <rrcao@ambarella.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+/dts-v1/;
+
+/include/ "ambarella-cv22-amba-camera.dtsi"
+
+/ {
+	model = "Ambarella CV22BUB Board";
+	compatible = "ambarella,cv22bub", "ambarella,cv22";
+
+	aliases {
+		flexidag_sys = &cv_sys_mem;
+		flexidag_rtos = &cv_rtos_mem;
+		scheduler = &sub_scheduler;
+		dsp_prot_buf = &dsp_prot_buf;
+		dsp_prot_cache_buf = &dsp_prot_cache_buf;
+		dsp_bin_buf = &dsp_bin_buf;
+		dsp_data_buf = &dsp_data_buf;
+		dsp = &dsp;
+	};
+
+	chosen {
+	};
+
+	sub_scheduler: sub_scheduler0 {
+		compatible = "ambarella,sub-scheduler";
+		interrupts = <0 153 0x4>;
+		memory-region = <&cv_sys_mem>;
+		memory-region1 = <&cv_rtos_mem>;
+	};
+
+	dsp: dspdrv {
+		compatible = "ambarella,dspdrv";
+		memory-region = <&dsp_prot_buf>;
+		memory-region1 = <&dsp_prot_cache_buf>;
+		memory-region2 = <&dsp_bin_buf>;
+		memory-region3 = <&dsp_data_buf>;
+		interrupts = <0 141 0x1 0 142 0x1 0 143 0x1 0 144 0x1>;
+        interrupt-names = "vdsp0", "vdsp1", "vdsp2", "vdsp3";
+
+		/* node for vin0 controller */
+		dspvin0 {
+			compatible = "ambarella,dspvin";
+			interrupts = <0 111 0x1 0 112 0x1>;
+			interrupt-names = "arm_sof", "arm_last_pixel";
+		};
+
+		/* node for vin1 controller */
+		dspvin1 {
+			compatible = "ambarella,dspvin";
+			interrupts = <0 136 0x1 0 137 0x1>;
+			interrupt-names = "arm_sof", "arm_last_pixel";
+		};
+
+		/* node for vout0 controller */
+		dspvout0 {
+			compatible = "ambarella,dspvout";
+			interrupts = <0 89 0x1>;
+			interrupt-names = "arm_vout_a";
+		};
+
+		/* node for vout1 controller */
+		dspvout1 {
+			compatible = "ambarella,dspvout";
+			interrupts = <0 88 0x1>;
+			interrupt-names = "arm_vout_b";
+		};
+	};
+
+	reserved-memory {
+		device_type = "reserved-memory";
+		cv_sys_mem: flexidag_sys {
+		};
+		cv_rtos_mem: flexidag_rtos {
+		};
+		dsp_prot_buf: dsp_prot_buf {
+		};
+		dsp_prot_cache_buf: dsp_prot_cache_buf {
+		};
+		dsp_bin_buf: dsp_bin_buf {
+		};
+		dsp_data_buf: dsp_data_buf {
+		};
+	};
+
+	n_apb@e4000000 {
+		i2c0: i2c@e4008000 {
+			status = "ok";
+
+			ambvin0@01 {
+				compatible = "ambarella,ambvin";
+				reg = <0x01>;	/* fake address, will be overwritten in runtime */
+			};
+
+			ambvin1@02 {
+				compatible = "ambarella,ambvin";
+				reg = <0x02>;	/* fake address, will be overwritten in runtime */
+			};
+		};
+
+		i2c1: i2c@e4009000 {
+			status = "ok";
+			  };
+
+		i2c2: i2c@e400a000 {
+			status = "ok";
+		};
+
+		i2c3: i2c@e400b000 {
+			status = "ok";
+		};
+	};
+
+	n_ahb@e0000000 {
+		uart1: uart@e0017000 {
+			/delete-property/amb,txdma-used;
+			/delete-property/amb,rxdma-used;
+			/delete-property/dmas;
+			/delete-property/dma-names;
+			status = "ok";
+		};
+
+		sdmmc0: sdmmc0@e0004000 {
+			pwr-gpios = <&gpio 109 0x1>;
+			v18-gpios = <&gpio 156 0x1>;
+		};
+
+		sdmmc2: sdmmc2@e0005000 {
+			pwr-gpios = <&gpio 110 0x1>;
+			v18-gpios = <&gpio 157 0x1>;
+		};
+
+		mac0: ethernet@e000e000 {
+			amb,tx-clk-invert;
+
+#if 0		/* case: AHB mdcmdio */
+			pinctrl-0 = <&rgmii_pins &ahb_mdio_pins>;
+			amb,ahb_mdio_bus;
+			amb,ahb-12mhz-div = <1>;
+#endif
+			phy@0 {
+				reg = <0>;
+			};
+		};
+
+		spi0: spi@e0011000 {
+			status = "ok";
+			cs-gpios = <&gpio 25 0>;
+
+			spidev@0 {
+					compatible = "spidev";
+					spi-max-frequency = <20000000>;
+					reg = <0>;
+			};
+			
+			ambvin0@0 {
+				compatible = "ambarella,ambvin";
+				reg = <0>;
+				spi-max-frequency = <1000000>;
+				spi-cpha;
+				spi-cpol;
+			};
+		};
+
+		spi1: spi@e0012000 {
+				status = "ok";
+				cs-gpios = <&gpio 38 0>;
+
+				spidev@0 {
+						compatible = "spidev";
+						spi-max-frequency = <20000000>;
+						reg = <0>;
+				};
+		};
+
+		spi2: spi@e0013000 {
+				status = "ok";
+				cs-gpios = <&gpio 30 0>;
+
+				spidev@0 {
+						compatible = "spidev";
+						spi-max-frequency = <20000000>;
+						reg = <0>;
+				};
+		};
+
+		spi3: spi@e0014000 {
+				status = "ok";
+				cs-gpios = <&gpio 34 0>;
+
+				spidev@0 {
+						compatible = "spidev";
+						spi-max-frequency = <20000000>;
+						reg = <0>;
+				};
+		};
+		
+		hdmi@e000b000 {
+			amb,i2c-adapter = <2>;
+		};
+	};
+
+	rct@ed080000 {
+		usbphy: usbphy@ed080050 {
+			/* high will trigger the ocp interrupt */
+			amb,ocp-polarity = <0>;
+			pinctrl-names = "default";
+			pinctrl-0 = <&usb_host0_pins_a>;
+		};
+	};
+
+	/delete-node/ iav;
+	/delete-node/ bogus_bus;
+};
+

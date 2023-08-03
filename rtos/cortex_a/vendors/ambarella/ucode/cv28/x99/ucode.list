@@ -1,0 +1,21 @@
+<!------------------------------------------------------------------------------------------------------------- ->
+<!- @FileName       :: ucode.list                                                                               ->
+<!-                                                                                                             ->
+<!- @Copyright      :: Copyright (C) 2019 Ambarella Corporation. All rights reserved.                           ->
+<!-                                                                                                             ->
+<!-                    No part of this file may be reproduced, stored in a retrieval system,                    ->
+<!-                    or transmitted, in any form, or by any means, electronic, mechanical, photocopying,      ->
+<!-                    recording, or otherwise, without the prior consent of Ambarella Corporation.             ->
+<!-                                                                                                             ->
+<!- @Description    :: the file list for Ambarella DSP uCodes                                                   ->
+<!------------------------------------------------------------------------------------------------------------- ->
+
+<romfs>
+    <!- Relative path from the top directory of the build ->
+    <top>vendors/ambarella/ucode/cv28/x99</top>
+    <!- DSP uCodes ->
+    <file>orccode.bin<alias>orccode.bin</alias></file>
+    <file>orcme.bin<alias>orcme.bin</alias></file>
+	<file>orcmdxf.bin<alias>orcmdxf.bin</alias></file>
+    <file>default_binary.bin<alias>default_binary.bin</alias></file>
+</romfs>

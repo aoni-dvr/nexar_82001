@@ -1,0 +1,12 @@
+diff -urw linuxptp-2.0.ori/configs/gPTP.cfg linuxptp-2.0/configs/gPTP.cfg
+--- linuxptp-2.0.ori/configs/gPTP.cfg	2018-08-13 05:08:43.000000000 +0800
++++ linuxptp-2.0/configs/gPTP.cfg	2019-09-11 15:53:10.166373592 +0800
+@@ -10,7 +10,7 @@
+ logAnnounceInterval	0
+ logSyncInterval		-3
+ syncReceiptTimeout	3
+-neighborPropDelayThresh	800
++#neighborPropDelayThresh	800
+ min_neighbor_prop_delay	-20000000
+ assume_two_step		1
+ path_trace_enabled	1

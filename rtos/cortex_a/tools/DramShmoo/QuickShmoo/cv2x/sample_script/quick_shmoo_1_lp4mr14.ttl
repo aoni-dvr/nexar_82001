@@ -1,0 +1,2 @@
+CMD_shmoo='lp4mr14'
+include 'quick_shmoo_main.ttl'

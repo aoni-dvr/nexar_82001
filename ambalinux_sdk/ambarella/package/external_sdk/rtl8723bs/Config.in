@@ -1,0 +1,24 @@
+config BR2_PACKAGE_RTL8723BS
+	bool "RTL8723BS"
+	help
+		Realtek RTL8723BS with WoW support.
+
+if BR2_PACKAGE_RTL8723BS
+
+config BR2_PACKAGE_RTL8723BS_WOWLAN_EN
+	bool "Enable WoWLAN with GPIO"
+	help
+	  Enable WoWLAN by GPIO.
+
+config BR2_PACKAGE_RTL8723BS_REDUCE_TX_CPU_LOADING
+	bool "Reduce cpu loading when Tx"
+	default n
+	help
+	  Enable function of reducing CPU loading when Tx.
+	  For slower clock or worse performance CPU,
+	  this function would help.
+	  For higher clock or better performance CPU,
+	  this function would not help and even make throughput worse.
+
+endif # BR2_PACKAGE_RTL8723BS
+

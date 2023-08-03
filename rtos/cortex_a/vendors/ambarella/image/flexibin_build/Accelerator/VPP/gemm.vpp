@@ -1,0 +1,852 @@
+/******************************************************************************/
+/* Copyright (c) 2019 Ambarella, Inc.
+/*
+/* This file and its contents ("Software") are protected by intellectual property rights including,
+/* without limitation, U.S. and/or foreign copyrights.  This Software is also the confidential and
+/* proprietary information of Ambarella, Inc. and its licensors.  You may not use, reproduce, disclose,
+/* distribute, modify, or otherwise prepare derivative works of this Software or any portion thereof
+/* except pursuant to a signed license agreement or nondisclosure agreement with Ambarella, Inc. or
+/* its authorized affiliates.  In the absence of such an agreement, you agree to promptly notify and
+/* return this Software to Ambarella, Inc.
+/*
+/* THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+/* TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE
+/* ARE DISCLAIMED. IN NO EVENT SHALL AMBARELLA, INC. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT,
+/* INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+/* OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; COMPUTER FAILURE OR MALFUNCTION; OR
+/* BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+/* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+/* SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/******************************************************************************/
+
+/*********************************************************************/
+/*                                                                   */
+/*  VPP:                                                             */
+/*      Implements GEMM using vpp.           */
+/*      dst = alpha*src1.t()*src2 + beta*src3.t();                   */
+/*                                                                   */
+/*********************************************************************/
+
+#include "vp_vas.h"
+
+#define SIZE_W     32
+#define SIZE_H     8
+#define SIZE_K     32
+
+DAG gemm_prim = {
+    /* primary input data (src1) */
+    VP_input(
+        src1,
+        float32_t,
+        vector(1, 1, SIZE_H, SIZE_K)
+    );
+
+    /* primary input data (src2) */
+    VP_input(
+        src2,
+        float32_t,
+        vector(1, 1, SIZE_K, SIZE_W),
+    );
+
+	/* primary input data (alpha) */
+    /*VP_input(
+        alpha,
+        float32_t,
+        vector(1, 1, 1, 1),
+    );*/
+	VP_scalar(alpha, float32_t, 2);
+
+	/* primary input data (src3) */
+    VP_input(
+        src3,
+        float32_t,
+        vector(1, 1, SIZE_H, SIZE_W),
+    );
+
+	/* primary input data (beta) */
+    /*VP_input(
+        beta,
+        float32_t,
+        vector(1, 1, 1, 1),
+    );*/
+	VP_scalar(beta, float32_t, 3);
+
+//===========================================================================
+	VP_typeconv(
+		src1,
+		VP_tensor(src1_c, float16_t),
+	);
+
+	VP_typeconv(
+		src2,
+		VP_tensor(src2_c, float16_t),
+	);
+
+	VP_typeconv(
+		src3,
+		VP_tensor(src3_c, float16_t),
+	);
+//===========================================================================
+	/*src2 for 5(SIZE_W)*/
+	VP_transposewh(
+		src2_c,
+		VP_tensor(src2_transpose, float16_t),
+	);
+
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col1, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 0,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col2, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 1,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col3, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 2,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col4, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 3,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col5, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 4,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col6, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 5,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col7, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 6,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col8, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 7,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col9, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 8,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col10, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 9,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col11, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 10,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col12, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 11,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col13, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 12,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col14, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 13,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col15, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 14,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col16, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 15,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col17, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 16,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col18, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 17,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col19, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 18,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col20, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 19,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col21, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 20,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col22, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 21,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col23, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 22,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col24, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 23,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);VP_crop(
+		src2_transpose,
+		VP_tensor(col25, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 24,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col26, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 25,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col27, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 26,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col28, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 27,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col29, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 28,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col30, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 29,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col31, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 30,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+	VP_crop(
+		src2_transpose,
+		VP_tensor(col32, float16_t),
+		w = SIZE_K,
+		h = 1,
+		d = 1,
+		p = 1,
+		start_w = 0,
+		start_h = 31,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);
+//===========================================================================
+	/*Do MM*/
+	VP_dot(
+		src1_c, col1,
+		VP_tensor(mm_col1, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col2,
+		VP_tensor(mm_col2, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col3,
+		VP_tensor(mm_col3, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col4,
+		VP_tensor(mm_col4, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col5,
+		VP_tensor(mm_col5, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col6,
+		VP_tensor(mm_col6, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col7,
+		VP_tensor(mm_col7, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col8,
+		VP_tensor(mm_col8, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col9,
+		VP_tensor(mm_col9, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col10,
+		VP_tensor(mm_col10, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col11,
+		VP_tensor(mm_col11, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col12,
+		VP_tensor(mm_col12, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col13,
+		VP_tensor(mm_col13, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col14,
+		VP_tensor(mm_col14, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col15,
+		VP_tensor(mm_col15, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col16,
+		VP_tensor(mm_col16, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col17,
+		VP_tensor(mm_col17, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col18,
+		VP_tensor(mm_col18, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col19,
+		VP_tensor(mm_col19, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col20,
+		VP_tensor(mm_col20, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col21,
+		VP_tensor(mm_col21, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col22,
+		VP_tensor(mm_col22, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col23,
+		VP_tensor(mm_col23, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col24,
+		VP_tensor(mm_col24, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col25,
+		VP_tensor(mm_col25, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col26,
+		VP_tensor(mm_col26, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col27,
+		VP_tensor(mm_col27, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col28,
+		VP_tensor(mm_col28, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col29,
+		VP_tensor(mm_col29, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col30,
+		VP_tensor(mm_col30, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col31,
+		VP_tensor(mm_col31, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+
+	VP_dot(
+		src1_c, col32,
+		VP_tensor(mm_col32, float16_t),
+		strong_zero = 1,
+		disable_reserved = 1,
+		dot_dim = 1
+	);
+//===========================================================================
+	VP_mergeh(
+		mm_col1, mm_col2,
+		VP_tensor(mm_merge, float16_t),
+		v2_descriptor = mm_col3,
+		v3_descriptor = mm_col4,
+		v4_descriptor = mm_col5,
+		v5_descriptor = mm_col6,
+		v6_descriptor = mm_col7,
+		v7_descriptor = mm_col8,
+		v8_descriptor = mm_col9,
+		v9_descriptor = mm_col10,
+		v10_descriptor = mm_col11,
+		v11_descriptor = mm_col12,
+		v12_descriptor = mm_col13,
+		v13_descriptor = mm_col14,
+		v14_descriptor = mm_col15,
+		v15_descriptor = mm_col16,
+		v16_descriptor = mm_col17,
+		v17_descriptor = mm_col18,
+		v18_descriptor = mm_col19,
+		v19_descriptor = mm_col20,
+		v20_descriptor = mm_col21,
+		v21_descriptor = mm_col22,
+		v22_descriptor = mm_col23,
+		v23_descriptor = mm_col24,
+		v24_descriptor = mm_col25,
+		v25_descriptor = mm_col26,
+		v26_descriptor = mm_col27,
+		v27_descriptor = mm_col28,
+		v28_descriptor = mm_col29,
+		v29_descriptor = mm_col30,
+		v30_descriptor = mm_col31,
+		v31_descriptor = mm_col32,
+	);
+
+	VP_transposewh(
+		mm_merge,
+		VP_tensor(MM, float16_t),
+	);
+//===========================================================================
+	VP_mul(
+        MM, alpha,
+		VP_tensor(MM_alpha, float16_t),
+		disable_reserved = 1
+    );
+
+	VP_mul(
+        src3_c, beta,
+		VP_tensor(src3_beta, float16_t),
+		disable_reserved = 1
+    );
+
+	VP_add(
+        MM_alpha, src3_beta,
+		VP_tensor(gemm, float16_t),
+    );
+//===========================================================================
+	VP_typeconv(
+		gemm,
+		VP_tensor(gemm_c, float32_t),
+	);
+
+	    /* primary output data (output_gemm) */
+    VP_output(
+        output_gemm,
+        gemm_c,
+    );
+  }

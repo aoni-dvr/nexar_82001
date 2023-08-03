@@ -1,0 +1,12 @@
+__aeabi_uldivmod
+__udivmoddi4
+__aeabi_ldivmod
+
+__aeabi_d2lz
+__aeabi_d2ulz
+__aeabi_f2lz
+__aeabi_f2ulz
+__aeabi_l2d
+__aeabi_l2f
+__aeabi_ul2d
+

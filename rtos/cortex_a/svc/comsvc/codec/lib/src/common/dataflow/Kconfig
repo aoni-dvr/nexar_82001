@@ -1,0 +1,14 @@
+
+config BUILD_COMSVC_FIFO
+    depends on BUILD_COMSVC_DATAFLOW
+    bool "Build FIFO"
+    default y
+
+config BUILD_COMSVC_CONTAINER
+    bool "Build Container Service"
+	depends on BUILD_COMSVC_DATAFLOW
+    default y
+
+if BUILD_COMSVC_CONTAINER
+source svc/comsvc/codec/lib/src/common/dataflow/Kconfig.container
+endif

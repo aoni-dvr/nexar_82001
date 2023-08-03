@@ -1,0 +1,22 @@
+#
+# For a description of the syntax of this configuration file,
+# see Documentation/kbuild/kconfig-language.txt.
+#
+
+#comment "Example to support CPP"
+menu "CPP Support Example"
+
+config BUILD_SYSCALL_LIB
+	bool "Build libsyscall.a"
+	default n
+	select CC_CXX_SUPPORT
+	help
+	  The default system calls from libnosys.a are stub APIs only.
+	  Customers can build their own library named libsyscall.a to replace libnosys.a
+	  Please check https://sourceware.org/newlib/ for detail.
+
+config BUILD_FOSS_OPENCV
+	bool "Build OpenCV libraries"
+	default n
+
+endmenu

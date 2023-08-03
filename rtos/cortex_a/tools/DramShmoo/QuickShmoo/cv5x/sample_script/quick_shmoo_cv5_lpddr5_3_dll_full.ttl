@@ -1,0 +1,2 @@
+reboot_on_failure=0
+include 'quick_shmoo_cv5_lpddr5_3_dll.ttl'

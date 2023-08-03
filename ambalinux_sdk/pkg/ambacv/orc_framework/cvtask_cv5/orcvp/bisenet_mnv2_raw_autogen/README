@@ -1,0 +1,7 @@
+1. ADK to generate cvtask
+	make cvtask_gen CV_DIAGS=tools/ADK/sample_nn_diag/diags/mem_io/flexidag_openseg
+2. Manually modify cvtask name and dag path.
+  - cvtask name
+	include.mk.in
+  - Using relative dag path in mnft
+	flexidag_openseg_ag_cvtask.mnft

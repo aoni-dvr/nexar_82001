@@ -1,0 +1,417 @@
+Get Quick Started
+-------------------------
+- Install AmbaUSB tool to program firmware to BUB/DevKit.
+    The installation file is put at rtos/cortex_a/tools/AmbaUSB.
+
+- Install podman/docker environment. There is another document to describe how to install it.
+  "Please refer Ambarella_CVXX_UG_SDK_Build_Environment_Setup.”
+
+- Extract SDK packages to user preferred path.
+    release.sdk8.XXXXXXXX.tar.gz
+    release_r52.sdk8.XXXXXXXX.tar.gz    (cv2fs/cv22fs/cv20 only)
+    ambalink_sdk_X_XX.XXXXXXXX.tar.gz   (ambalink config only)
+
+    The tree of source code will be as following after extracting all tarballs.
+        - rtos
+          - cortex_a                (release.sdk8.XXXXXXXX.tar.gz)
+          - cortex_r                (release_r52.sdk8.XXXXXXXX.tar.gz)
+        - ambalink_sdk_X_XX         (ambalink_sdk_X_XX.XXXXXXXX.tar.gz)
+
+- Source building environment
+    $ source /opt/amba/env/env_set.sh [chip]
+      Ex:
+        source /opt/amba/env/env_set.sh cv2fs
+
+How to Build FlexiDAG and firmware
+------------------------
+'bub'                   => BUB board
+'dk'                    => Device Kit board
+'TX64' or 'tx64'        => ThreadX64
+'TX32' or 'tx32'        => ThreadX32
+'tmake' (THREADX64 OS)  => make CROSS_COMPILE=aarch64-none-elf-
+'qmake' (QNX OS)        => make KBUILD_KCONFIG=svc/build/qnx/Kconfig.Qnx KBUILD_AMBA_MKFILE=svc/build/qnx/Makefile.Amba
+
+- Build firmware with TX32/TX64 OS
+    - Enter source tree
+        $ cd rtos/cortex_a
+
+    - Configuration
+        [CV5x]
+            [TX64]
+                - IMX577 sensor input
+                    $ tmake cv5/icam/tx64/cv5_tx64_dk_icam_cv_spinand_imx577_defconfig
+                    $ tmake cv52/icam/tx64/cv52_tx64_dk_icam_cv_spinand_imx577_defconfig
+                - IMX586 sensor input
+                    $ tmake cv5/icam/tx64/cv5_tx64_dk_icam_cv_spinand_imx586_defconfig
+                - LT6911 HDMI input
+                    $ tmake cv5/icam/tx64/cv5_tx64_dk_icam_cv_spinand_lt6911_defconfig
+                    $ tmake cv52/icam/tx64/cv52_tx64_dk_icam_cv_spinand_lt6911_defconfig
+        [CV2xFS]
+        [CV20]
+            For CV2FS/CV22FS/CV20, we must build corresponding cortex_r config first.
+            You can grep 'CONFIG_FWPROG_R52SYS_PATH' in following configs to get corresponding cortex_r config.
+        
+            Ex:
+                For cv2fs/icam/tx32_cv2fs_tx32_dk_b_icam_cv_spinor_imx577_defconfig, the corresponding cortex_r
+                config is 'cv2fs/isafety/tx32/cv2fs_tx32_dk_b_isafety_spinor_g2_mntr_defconfig'.
+        
+                $ cd ../cortex_r
+                $ make cv2fs/isafety/tx32/cv2fs_tx32_dk_b_isafety_spinor_g2_mntr_defconfig
+                $ make -j
+                $ cd ../cortex_a
+        
+            [TX32]
+                - IMX577 sensor input
+                    $ make cv2fs/icam/tx32/cv2fs_tx32_linux_dk_b_icam_cv_spinor_imx577_defconfig
+                    $ make cv2fs/icam/tx32/cv2fs_tx32_dk_b_icam_cv_spinor_imx577_defconfig
+                    $ make cv2fs/icam/tx32/cv2fs_tx32_dk_b_icam_cv_spinor_imx577_lwip_defconfig
+                    $ make cv2fs/icam/tx32/cv2fs_tx32_dk_b_icam_cv_spinor_imx577_netx_defconfig
+                    $ make cv22fs/icam/tx32/cv22fs_tx32_dk_c_icam_cv_spinor_imx577_defconfig
+                    $ make cv20/icam/tx32/cv20_tx32_dk_b_icam_cv_spinor_imx577_defconfig
+                - LT6911 HDMI input
+                    $ make cv2fs/icam/tx32/cv2fs_tx32_dk_b_icam_cv_spinor_lt6911_defconfig
+                    $ make cv22fs/icam/tx32/cv22fs_tx32_dk_c_icam_cv_spinor_lt6911_defconfig
+                - IMX390 sensor input with MAXIM serdes
+                    $ make cv2fs/icam/tx32/cv2fs_tx32_dk_b_icam_cv_spinor_ar0233max9295max96712_defconfig
+                    $ make cv2fs/icam/tx32/cv2fs_tx32_dk_b_icam_cv_spinor_imx390max9295max96712_defconfig
+        [CV2x]
+            [TX32]
+                - IMX577 sensor input
+                    $ make cv2/icam/tx32/cv2_tx32_linux_icam_bub_cv_nand_imx577_defconfig
+                    $ make cv2/icam/tx32/cv2_tx32_icam_bub_cv_nand_imx577_defconfig
+                    $ make cv2/icam/tx32/cv2_tx32_icam_bub_cv_nand_imx577_lwip_defconfig
+                    $ make cv2/icam/tx32/cv2_tx32_icam_bub_cv_nand_imx577_netx_defconfig
+                    $ make cv22/icam/tx32/cv22_tx32_linux_bub_icam_cv_nand_imx577_defconfig
+                    $ make cv22/icam/tx32/cv22_tx32_bub_icam_cv_nand_imx577_defconfig
+                    $ make cv22/icam/tx32/cv22_tx32_bub_icam_cv_nand_imx577_lwip_defconfig
+                    $ make cv22/icam/tx32/cv22_tx32_bub_icam_cv_nand_imx577_netx_defconfig
+                    $ make cv22/icam/tx32/cv22_tx32_bub_icam_cv_emmc_imx577_defconfig
+                    $ make cv22/icam/tx32/cv22_tx32_bub_icam_cv_spinand_imx577_defconfig
+                    $ make cv22/icam/tx32/cv22_tx32_bub_icam_cv_spinor_imx577_defconfig
+                    $ make cv22/icam/tx32/cv22_tx32_dk_icam_cv_nand_imx577_ambanet_defconfig
+                    $ make cv22/icam/tx32/cv22_tx32_dk_icam_cv_nand_imx577_secure_boot_defconfig
+                    $ make cv25/icam/tx32/cv25_tx32_linux_bub_icam_cv_nand_imx577_defconfig
+                    $ make cv25/icam/tx32/cv25_tx32_bub_icam_cv_nand_imx577_defconfig
+                    $ make cv25/icam/tx32/cv25_tx32_bub_icam_cv_nand_imx577_lwip_defconfig
+                    $ make cv25/icam/tx32/cv25_tx32_bub_icam_cv_nand_imx577_netx_defconfig
+                    $ make cv28/icam/tx32/cv28_tx32_linux_dk_b_icam_cv_spinand_imx577_defconfig
+                    $ make cv28/icam/tx32/cv28_tx32_dk_b_icam_cv_spinand_imx577_defconfig
+                    $ make cv28/icam/tx32/cv28_tx32_dk_b_icam_cv_spinand_imx577_lwip_defconfig
+                    $ make cv28/icam/tx32/cv28_tx32_dk_b_icam_cv_spinand_imx577_netx_defconfig
+                - LT6911 HDMI input
+                    $ make cv2/icam/tx32/cv2_tx32_bub_icam_cv_nand_lt6911_defconfig
+                    $ make cv22/icam/tx32/cv22_tx32_bub_icam_cv_nand_lt6911_defconfig
+                    $ make cv25/icam/tx32/cv25_tx32_bub_icam_cv_nand_lt6911_defconfig
+                    $ make cv28/icam/tx32/cv28_tx32_dk_b_icam_cv_spinand_lt6911_defconfig
+                - IMX390 sensor input with MAXIM serdes
+                    $ make cv2/icam/tx32/cv2_tx32_dk_icam_cv_nand_imx390max9295max9296_defconfig
+                    $ make cv2/icam/tx32/cv2_tx32_dk_icam_cv_nand_imx390max9295max96712_defconfig
+                    $ make cv22/icam/tx32/cv22_tx32_bub_dk_icam_cv_nand_imx390max9295max9296_defconfig
+                    $ make cv22/icam/tx32/cv22_tx32_bub_dk_icam_cv_nand_imx390max9295max96712_defconfig
+                    $ make cv25/icam/tx32/cv25_tx32_dk_icam_cv_nand_imx390max9295max9296_defconfig
+                    $ make cv25/icam/tx32/cv25_tx32_dk_icam_cv_nand_imx390max9295max96712_defconfig
+                    $ make cv28/icam/tx32/cv28_tx32_dk_b_icam_cv_spinand_imx390max9295max9296_defconfig
+                - LT6911 HDMI input and IMX390
+                    $ make cv22/icam/tx32/cv22_tx32_dk_icam_cv_nand_lt6911_imx390max9295max9296_defconfig
+                    $ make cv25/icam/tx32/cv25_tx32_dk_icam_cv_nand_lt6911_imx390max9295max9296_defconfig
+        [H32]
+            [TX32]
+                - IMX577 sensor input
+                    $ make h32/icam/tx32/h32_tx32_bub_icam_spinor_imx577_defconfig
+                    $ make h32/icam/tx32/h32_tx32_bub_icam_spinor_imx577_lwip_defconfig
+                    $ make h32/icam/tx32/h32_tx32_bub_icam_spinor_imx577_netx_defconfig
+                - LT6911 HDMI input
+                    $ make h32/icam/tx32/h32_tx32_bub_icam_spinor_lt6911_defconfig
+                - AR0239 sensor input with MAXIM serdes
+                    $ make h32/icam/tx32/h32_tx32_dk_icam_spinor_ar0239max9295max9296_defconfig
+                - AR0144 and IMX390 sensor input with MAXIM serdes
+                    $ make h32/icam/tx32/h32_tx32_dk_icam_spinor_imx390max9295max9296ar0144max96707max9286_defconfig
+                - IMX490 and IMX390 sensor input with MAXIM serdes
+                    $ make h32/icam/tx32/h32_tx32_dk_icam_spinor_imx490max9295max9296_defconfig
+
+    - Build FlexiDAG
+        $ make diags
+            FlexiDAG files will be generated at rtos/cortex_a/output/out/cv/xxx
+
+    - Build firmware
+        $ make
+            Firmware will be generated at rtos/cortex_a/output.64/out/fwprog/bst_bld_atf_sys_xtb_sec_rom.elf
+    
+        Ex : LT6911 HDMI input/IMX577 sensor input
+        -------------------------
+        - Build with cvXX/icam/bub_cv_nand_lt6911_defconfig or cvXX/icam/bub_cv_nand_imx577_defconfig
+        - Download RTOS firmware with AmbaUSB
+        - Put cvexec.ash and FlexiDAG folder at SD card. (If loading FlexiDAG file from SD card, please skip it when loading from NAND)
+        - Power on
+            User can use “svc_app format_id 1” to switch to the mode of CV features. The setting will be saved in user preference.
+            System will reboot automatically.
+        - For the first booting after downloading RTOS firmware
+            svc_flow liveview
+        - During booting, system will execute cvexec.ash, start FlexiDAG, and enable liveview, if user configures cvexec.ash
+        correctly and sets proper format_id.
+        - User can use “svc_app format_id 0” to switch back to the mode of no CV feature.
+
+- Build firmware with QNX OS
+    - Enter source tree
+        $ cd rtos/cortex_a
+
+    - Configuration
+        [CV2xFS]
+            [QNX]
+                - IMX577 sensor input
+                    $ qmake cv2fs/icam/qnx/cv2fs_qnx_dk_b_icam_cv_spinor_imx577_defconfig
+                    $ qmake cv22fs/icam/qnx/cv22fs_qnx_dk_c_icam_cv_spinor_imx577_defconfig
+                - LT6911 HDMI input
+                    $ qmake cv2fs/icam/qnx/cv2fs_qnx_dk_b_icam_cv_spinor_lt6911_defconfig
+                    $ qmake cv22fs/icam/qnx/cv22fs_qnx_dk_c_icam_cv_spinor_lt6911_defconfig
+        [CV2x]
+            [QNX]
+                - IMX577 sensor input
+                    $ qmake cv2/icam/qnx/cv2_qnx_bub_icam_cv_nand_imx577_defconfig
+                - LT6911 HDMI input
+                    $ qmake cv2/icam/qnx/cv2_qnx_bub_icam_cv_nand_lt6911_defconfig
+
+    - Build FlexiDAG
+        $ qmake diags
+            FlexiDAG files will be generated at rtos/cortex_a/output/out/cv/xxx
+
+    - Build firmware
+        $ qmake qnx-clean; qmake
+            Firmware will be generated at rtos/cortex_a/output.64/out/fwprog/bst_bld_atf_ipl_sys_xtb_sec_rom.elf
+
+- Build firmware with Linux OS
+    - Enter source tree
+
+        $ cd ambalink_sdk_X_XX/ambarella
+
+    - Configuration
+        - Select linux config and create output folder
+
+        Ex:
+            [CV5]
+                $ make O=../output/icam cv5_linux_dk_icam_spinand_defconfig
+            [CV52]
+                $ make O=../output/icam cv52_linux_dk_icam_spinand_defconfig
+            [CV22]
+                $ make O=../output/icam cv22_linux_dk_icam_nand_defconfig
+
+    - Build firmware
+        - Enter output folder and select config of amba_camera
+        - Build firmware
+
+        Ex:
+            $ cd ../output/icam
+
+            [CV5]
+                - IMX577 sensor input (amba_camera config is cv5_linux_dk_icam_cv_nand_imx577_defconfig)
+                    $ make BR2_PACKAGE_AMBA_CAMERA_DEFCONFIG=../../rtos/cortex_a/configs/cv5/icam/lnx/cv5_linux_dk_icam_cv_nand_imx577_defconfig
+                - LT6911 HDMI input (amba_camera config is cv5_linux_dk_icam_cv_nand_lt6911_defconfig)
+                    $ make BR2_PACKAGE_AMBA_CAMERA_DEFCONFIG=../../rtos/cortex_a/configs/cv5/icam/lnx/cv5_linux_dk_icam_cv_nand_lt6911_defconfig
+            [CV52]
+                - IMX577 sensor input (amba_camera config is cv52_linux_dk_icam_cv_nand_imx577_defconfig)
+                    $ make BR2_PACKAGE_AMBA_CAMERA_DEFCONFIG=../../rtos/cortex_a/configs/cv52/icam/lnx/cv52_linux_dk_icam_cv_nand_imx577_defconfig
+                - LT6911 HDMI input (amba_camera config is cv52_linux_dk_icam_cv_nand_lt6911_defconfig)
+                    $ make BR2_PACKAGE_AMBA_CAMERA_DEFCONFIG=../../rtos/cortex_a/configs/cv52/icam/lnx/cv52_linux_dk_icam_cv_nand_lt6911_defconfig
+            [CV22]
+                - IMX577 sensor input (amba_camera config is cv22_linux_dk_icam_cv_nand_imx577_defconfig)
+                    $ make BR2_PACKAGE_AMBA_CAMERA_DEFCONFIG=../../rtos/cortex_a/configs/cv22/icam/lnx/cv22_linux_dk_icam_cv_nand_imx577_defconfig
+
+        Firmware will be generated at 'ambalink_sdk_X_XX/output/icam/images/out/fwprog/bst_bld_atf_xtb_sec_rom_lnx_rfs.elf'.
+
+    - Execute iCAM
+        Power on system and we will enter linux shell. Execute following command to run iCAM application.
+        iCAM will use uart1 to output console data.
+
+        $ amba_svc &
+
+- Build linux firmware for dual-OS case (ThreadX + Linux)
+    - Enter source tree
+        $ cd ambalink_sdk_XXX/ambarella/
+
+    - Configuration
+        $ make AMBA_OUT_TARGET=ambalink TARGET=ambalink prepare_oem
+        $ make O=../output.oem/ambalink cvXX_ambalink_ambacv_defconfig
+
+    - Build firmware
+        $ cd ../output.oem/ambalink/
+        $ make BR2_WGET="wget --passive-ftp -nd -t 3 --no-check-certificate" or make
+
+How to select format id
+-------------------------
+- Please check resolution config file in the svc/apps/icam/main/src/config/[chip] folder for each format
+    LT6911 : Res_ADAS_IMX577.c
+    IMX577 : Res_ADAS_LT6911.c
+    IMX390(MAX9295/MAX9296)  : Res_ADAS_MX_9295_9296_IMX390.c
+    IMX390(MAX9295/MAX96712) : Res_EMR_MX_9295_96712_IMX390.c
+    AR0144(MAX96707/MAX9286) : Res_EMR_MX_9286_96707_AR0144.c
+
+How to run FlexiDAG in rtos
+-------------------------
+- Power on the board.
+    After booting
+        By default, system doesn’t enable CV features.
+        User can use “svc_app format_id [format_id]” to switch to the mode of CV features. The format_id will be
+        saved in user preference.
+        User can use “svc_app format_id 0” to switch back to the mode of no CV feature.
+        System will reboot automatically.
+
+    For the first booting, system will be in cmdmode.
+        Use “svc_flow liveview” to start liveview.
+
+    If user want to change the cv boot modes
+        Use "svc_app cv bootflag sd" (Load FlexiDAG according to the description of  SD script)
+        Use "svc_app cv bootflag romfs" (Default mode: Load predefined FlexiDAG from ROMFS)
+        Use "svc_app cv bootflag cmdmode" (Allow user to specify path of FlexiDAG during booting via console commands)
+
+How to Load FlexiDAG in rtos
+------------------------
+  - Load FlexiDAG : There are three methods to load FlexiDAG.
+
+    Case 1: Copy FlexiDAG to SD card and load from SD card after system is running.
+
+            User might see following FlexiDAG folders at rtos/cortex_a/output/out/cv/
+                flexidag_openod, flexidag_openseg and etc.
+                Each one is a standalone FlexiDAG.
+            Copy one or several FlexiDAG folders to SD card.
+            Also copy scheduler bin to SD card.
+            Example : Scheduler binary: rtos/cortex_a/output/out/cv/orc_scheduler
+                      OpenOD flexidag binary :  rtos/cortex_a/output/out/cv/flexidag_openod
+
+            - Put a cvexec.ash at sd_card
+
+            Example of the cvexec.ash
+                cv flexidag schdr start c:\orc_scheduler\visorc\orcvp.bin
+                svc_app cv load flexibin 0 c:\flexidag_openod\flexibin\flexibin0.bin
+                cd c:\flexidag_openod\flexibin
+
+            User should change the “flexidag_path” to specify which FlexiDAG folder to be executed.
+                Example: “svc_app cv load flexibin 0 c:\flexidag_openod\flexibin" for running RefineDet.
+
+    Case 2: Load from NAND (ROMFS partition)(Default).
+            User need to add FlexiDAG in the ROM list file(xxx.list) and change configuration of cv Mode ID when make RTOS firmware.
+            Please check rtos/cortex_a/svc/apps/icam/main/rom/cv_fdag_***.list file.
+                         rtos/cortex_a/svc/apps/icam/core/cv/cvflow/SvcCVFlow_***ODTable_FlexiDAG.c
+
+            When system boot up, app will search FlexiDAG from ROMFS first.
+            please refer to SVC application note for more detail
+
+
+    Case 3: CV Cmdmode
+            User can specify path of FlexiDAG binary during booting via console commands
+            Example:
+            Type following commands after the message "Enter Cmd mode. Use 'svc_app cv continue' to resume." is shown on console.
+            cv flexidag schdr start c:\orc_scheduler\visorc\orcvp.bin
+            svc_app cv load flexibin 0 c:\flexidag_openod\flexibin\flexibin0.bin
+            cd c:\flexidag_openod\flexibin
+            After that, use “svc_app cv continue” to resume CV booting process.
+
+How to build Linux CV applications (4 examples)
+-------------------------
+- Compile mnetssd diags (Use flexidag_mnetssd_sensor for example)
+    $ cd diags   (path: ..\..\ambalink_sdk_4_14/output.oem/ambalink/diags\)
+    $ make flexidag_mnetssd_sensor-init
+    $ make flexidag_mnetssd_sensor-build
+
+- Compile openod diags (Use app_openod for example)
+    $ cd diags   (path: ..\..\ambalink_sdk_4_14/output.oem/ambalink/diags\)
+    $ rm -rf flexidag_openod
+    $ make flexidag_openod-init
+    $ make flexidag_openod-build
+
+- Compile app_openseg diags (Use app_openseg for example)
+    $ cd diags   (path: ..\..\ambalink_sdk_4_14/output.oem/ambalink/diags\)
+    $ rm -rf flexidag_openseg
+    $ make flexidag_openseg-init
+    $ make flexidag_openseg-build
+
+- Compile app_openodseg diags (Use app_openodseg for example)
+    $ cd diags   (path: ..\..\ambalink_sdk_4_14/output.oem/ambalink/diags\)
+    $ rm -rf flexidag_openodseg
+    $ make flexidag_openodseg-init
+    $ make flexidag_openodseg-build
+
+
+
+How to run CV FDAG applications from Linux / RTOS side(By using RTOS CV22v300 + LT6911 config + HDMI input for example)
+-------------------------
+- Copy and replace Linux output image (cvXXbub_ambalink.dtb, Image and rootfs.squashfs) from linux sourec code to rtos foler
+    Linux folder: ..\ambalink_sdk_4_14\output\ambalink\images\
+    RTOS folder: ..\rtos\cortex_a\ambalink\linux_image\
+
+- Compile RTOS source code (By using cv22bubv300_svc_icam_cv_nand_lt6911_ambalinkcv_defconfig for example)
+    $ rm -rf output*
+    $ source /opt/amba/env/env_set.sh cv22
+    $ make cv22/icam/bub_svc_icam_cv_nand_lt6911_ambalinkcv_defconfig
+    $ make diags
+    $ make -j
+
+    Case 1: flexidag_mnetssd_sensor flexidag (OD only)
+        - Copy flexidag folder to SD card which are build from Linux source code
+            Copy ..\ambalink_sdk_4_14\output.oem\ambalink\diags\flexidag_mnetssd_sensor to SD card
+        - Update FW (bst_bld_atf_sys_xtb_sec_rom.elf) to CV22bubv300 with SD card.
+        - Boot up with format_id 12
+            $ svc_app format_id 12
+            $ svc_flow liveview
+
+        - When system boot up successfully, please follow this flow to run CV FDAG from Linux.
+            a. RTOS console: $ svc_app cv bootflag cmdmode
+            b. Linux console:
+                $ /usr/bin/flexidag_schdr -s
+                $ cd /tmp/SD0/flexidag_mnetssd_sensor/bin/flexidag_memio_picinfo/
+                $ ./flexidag_memio_picinfo -r 1 -i 0
+            c. RTOS console: $ svc_app cv continue
+
+    Case 2: app_openod flexidag (OD only)
+        - Copy flexidag folder to SD card which are build from Linux source code
+            Copy ..\ambalink_sdk_4_14\output.oem\ambalink\diags\flexidag_openod to SD card
+        - Update FW (bst_bld_atf_sys_xtb_sec_rom.elf) to CV22bubv300 with SD card.
+        - Boot up with format_id 12
+            $ svc_app format_id 12
+            $ svc_flow liveview
+
+        - When system boot up successfully, please follow this flow to run CV FDAG from Linux.
+            a. RTOS console: $ svc_app cv bootflag cmdmode
+            b. Linux console:
+                $ cd /tmp/SD0/flexidag_openod/bin/app_openod/
+                $ flexidag_schdr -s
+                $ ./app_openod
+            c. RTOS console: $ svc_app cv continue
+
+    Case 3: app_openseg flexidag (SEG only)
+        - Copy flexidag folder to SD card which are build from Linux source code
+            Copy ..\ambalink_sdk_4_14\output.oem\ambalink\diags\flexidag_openseg to SD card
+        - Update FW (bst_bld_atf_sys_xtb_sec_rom.elf) to CV22bubv300 with SD card.
+        - Boot up with format_id 13
+            $ svc_app format_id 13
+            $ svc_flow liveview
+
+        - When system boot up successfully, please follow this flow to run CV FDAG from Linux.
+            a. RTOS console: $ svc_app cv bootflag cmdmode
+            b. Linux console:
+                $ cd /tmp/SD0/flexidag_openseg/bin/app_openseg/
+                $ flexidag_schdr -s
+                $ ./app_openseg
+            c. RTOS console: $ svc_app cv continue
+
+
+
+    Case 4: app_openodseg flexidag (OD + SEG)
+        - Copy flexidag folder to SD card which are build from Linux source code
+            Copy ..\ambalink_sdk_4_14\output.oem\ambalink\diags\flexidag_openodseg to SD card
+        - Update FW (bst_bld_atf_sys_xtb_sec_rom.elf) to CV22bubv300 with SD card.
+        - Boot up with format_id 14
+            $ svc_app format_id 14
+            $ svc_flow liveview
+
+        - When system boot up successfully, please follow this flow to run CV FDAG from Linux.
+            a. RTOS console: $ svc_app cv bootflag cmdmode
+            b. Linux console:
+                $ cd /tmp/SD0/flexidag_openodseg/bin/app_openodseg/
+                $ flexidag_schdr -s
+                $ ./app_openodseg
+            c. RTOS console: $ svc_app cv continue
+
+Function list
+-------------------------
+- Please refer SDK8_iCamFunctionList_XXXXXXXX.xls file for more detail.
+

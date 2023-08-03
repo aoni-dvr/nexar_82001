@@ -1,0 +1,56 @@
+menu "FPD Driver"
+
+config FPD_WDF9648W
+    bool "Wintek WDF9648W"
+    default n
+config FPD_WDF9648W_VOUT0
+    bool "Vout0"
+    depends on FPD_WDF9648W
+    default n
+config FPD_WDF9648W_VOUT1
+    bool "Vout1"
+    depends on FPD_WDF9648W
+    default n
+
+config FPD_T30P61
+    bool "Shenzhen RZW T30P61"
+    default n
+config FPD_T30P61_VOUT0
+    bool "Vout0"
+    depends on FPD_T30P61
+    default n
+config FPD_T30P61_VOUT1
+    bool "Vout1"
+    depends on FPD_T30P61
+    default n
+
+config FPD_MAXIM_DUAL_TFT1280768
+    bool "Dual Truly 1280x768 via Maxim 96751/96752 HDMI Serializer"
+    default n
+config FPD_MAXIM_DUAL_TRULY_VOUT0
+    bool "Vout0"
+    depends on FPD_MAXIM_DUAL_TFT1280768
+    default n
+config FPD_MAXIM_DUAL_TRULY_VOUT1
+    bool "Vout1"
+    depends on FPD_MAXIM_DUAL_TFT1280768
+    default n
+
+config FPD_MAXIM_DUAL_ZS095BH
+    bool "MAXIM DUAL ZS095BH"
+    default n
+
+menuconfig VOUT0_DEVICE_NAME
+    string "VOUT0_DEVICE_NAME"
+    depends on FPD_WDF9648W_VOUT0 || FPD_T30P61_VOUT0
+    default "WdF9648w"          if FPD_WDF9648W_VOUT0
+    default "T30P61"            if FPD_T30P61_VOUT0
+
+menuconfig VOUT1_DEVICE_NAME
+    string "VOUT1_DEVICE_NAME"
+    depends on FPD_WDF9648W_VOUT1 || FPD_T30P61_VOUT1 || FPD_MAXIM_DUAL_TRULY_VOUT1
+    default "WdF9648w"          if FPD_WDF9648W_VOUT1
+    default "T30P61"            if FPD_T30P61_VOUT1
+    default "MAXIM_Dual_TFT128" if FPD_MAXIM_DUAL_TRULY_VOUT1
+
+endmenu

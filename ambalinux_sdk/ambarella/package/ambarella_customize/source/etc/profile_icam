@@ -1,0 +1,71 @@
+#!/bin/sh
+
+export PATH=\
+/bin:\
+/sbin:\
+/usr/bin:\
+/usr/sbin:\
+/usr/local/bin:\
+/usr/local/share/script
+
+umask 022
+
+CUR_TTY=$(tty | grep pts)
+
+if [ "`xxd -p /sys/firmware/devicetree/base/cpus/cpu@0/reg`" == "00000000" ]; then
+    alias t_icam='t_icam.sh'
+
+    alias ambash_help='t_icam.sh help'
+    alias ambash_readl='t_icam.sh readl'
+    alias ambash_writel='t_icam.sh writel'
+    alias ambash_eject='t_icam.sh eject'
+    alias ambash_dmesg='t_icam.sh dmesg'
+    alias ambash_format='t_icam.sh format'
+    alias ambash_savebin='t_icam.sh savebin'
+    alias ambash_thruput='t_icam.sh thruput'
+    alias ambash_sysinfo='t_icam.sh sysinfo'
+    alias ambash_cv='t_icam.sh cv'
+    alias ambash_reboot='t_icam.sh reboot'
+    alias ambash_imgfrw='t_icam.sh imgfrw'
+    alias ambash_monfrw='t_icam.sh monfrw'
+    alias ambash_imgproc='t_icam.sh imgproc'
+    alias ambash_vol='t_icam.sh vol'
+
+    alias svc_app='t_icam.sh svc_app'
+    alias svc_flow='t_icam.sh svc_flow'
+    alias svc_dsp='t_icam.sh svc_dsp'
+    alias svc_sys='t_icam.sh svc_sys'
+    alias svc_cv='t_icam.sh svc_cv'
+    alias svc_rec='t_icam.sh svc_rec'
+    alias svc_pbk='t_icam.sh svc_pbk'
+    alias svc_audio='t_icam.sh svc_audio'
+    alias svc_gui='t_icam.sh svc_gui'
+    alias svc_button='t_icam.sh svc_button'
+    alias svc_pymdcap='t_icam.sh svc_pymdcap'
+    alias svc_fwupdate='t_icam.sh svc_fwupdate'
+    alias svc_rec_task='t_icam.sh svc_rec_task'
+    alias svc_display_task='t_icam.sh svc_display_task'
+    alias svc_cal='t_icam.sh svc_cal'
+    alias svc_rawcap='t_icam.sh svc_rawcap'
+    alias svc_ik='t_icam.sh svc_ik'
+    alias svc_vinerr='t_icam.sh svc_vinerr'
+
+    alias diag_ddr='t_icam.sh diag_ddr'
+
+    if [ "$CUR_TTY" = "" ]; then
+        # eth
+        modprobe dwmac-ambarella
+        ifconfig eth0 192.168.1.100
+    else
+        # if telnet/ssh usr, switch tty output of application
+        t_icam.sh svc_tty $CUR_TTY
+    fi
+
+#elif [ "`xxd -p /sys/firmware/devicetree/base/cpus/cpu@0/reg`" == "00010000" ]; then
+    # do nothing
+#elif [ "`xxd -p /sys/firmware/devicetree/base/cpus/cpu@0/reg`" == "00020000" ]; then
+    # do nothing
+#else [ "`xxd -p /sys/firmware/devicetree/base/cpus/cpu@0/reg`" == "00030000" ]; then
+    # do nothing
+fi
+

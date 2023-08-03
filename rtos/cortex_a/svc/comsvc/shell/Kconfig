@@ -1,0 +1,28 @@
+choice A53_CONSOLE_UART
+	prompt "A53 Console UART"
+	default A53_CONSOLE_APB_0
+
+config A53_CONSOLE_APB_0
+	bool "AMBA_UART_APB_CHANNEL0"
+
+config A53_CONSOLE_AHB_0
+	bool "AMBA_UART_AHB_CHANNEL0"
+
+config A53_CONSOLE_AHB_1
+	bool "AMBA_UART_AHB_CHANNEL1"
+
+config A53_CONSOLE_AHB_2
+	bool "AMBA_UART_AHB_CHANNEL2"
+
+endchoice # A53_CONSOLE_UART
+
+choice R52_CONSOLE_UART
+	prompt "R52 Console UART"
+
+config R52_CONSOLE_AHB_0
+	bool "AMBA_UART_AHB_CHANNEL0"
+
+config R52_CONSOLE_AHB_1
+	bool "AMBA_UART_AHB_CHANNEL1"
+
+endchoice

@@ -1,0 +1,50 @@
+DAG CDF_U32 =
+{
+	arg=
+	{		
+		$in=0,	
+		
+		$out=0,
+	};
+
+	VP_bwandi(
+		$in,
+		VP_const_tensor("00 FF", uint16_t, vector(1)), 
+		VP_auto(in_msb_tmp0, uint16_t)
+	);
+
+	VP_rshi(
+		in_msb_tmp0,
+		VP_const_tensor("08", uint8_t, vector(1)), 
+		VP_auto(in_msb, uint16_t)
+	);
+
+	VP_bwandi(
+		$in,
+		VP_const_tensor("FF 00", uint16_t, vector(1)), 
+		VP_auto(in_lsb, uint16_t)
+	);
+
+	VP_cdf(
+		in_msb,
+		VP_auto(msb_sum, uint16_t)
+	);
+
+	VP_cdf(
+		in_lsb,
+		VP_auto(lsb_sum, uint16_t)
+	);
+	
+	// left shift 8 bits
+	VP_muli(
+		msb_sum,
+		VP_const_tensor("00 01", uint16_t, vector(1)), 
+		VP_auto(msb_sum_lsh, uint32_t)
+	);
+
+	VP_add(
+		msb_sum_lsh,
+		lsb_sum,
+		VP_auto($out, uint32_t)
+	);
+}

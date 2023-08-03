@@ -1,0 +1,4 @@
+.section .cvtasklist_entry
+.align 4
+    .long _mnet_ssd_adas_flex_pic_ag_cvtask_register
+

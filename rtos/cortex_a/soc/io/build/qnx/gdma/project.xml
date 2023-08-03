@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<module name="gdma-ambarella">
+  <classification>Driver</classification>
+  <description>
+    <short>ambarella gdma Driver</short>
+    <abstract><![CDATA[
+	                The gdma driver for the Ambarella BSP.
+	        ]]></abstract>
+  </description>
+  <supports>
+    <availability>
+      <cpu isa="aarch64">
+        <byteOrder>le</byteOrder>
+      </cpu>
+    </availability>
+  </supports>
+  <contents>
+    <component id="ambarella" generated="true">
+      <location basedir="aarch64/le">gdma-ambarella</location>
+    </component>
+  </contents>
+  <requires>
+    <part build="false" location="lib/gdma"/>
+  </requires>
+</module>

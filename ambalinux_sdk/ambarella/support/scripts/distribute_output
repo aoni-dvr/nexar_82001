@@ -1,0 +1,59 @@
+#!/bin/bash
+#
+
+if [ $# != 1 ]; then
+    echo Usage: $0 [target]
+    exit -1
+fi
+
+CWD=$PWD
+AMBALINK_TARGET=$1
+
+PATHS="
+build/*/.stamp_*
+build/packages-file-list-host.txt
+host
+images
+target
+"
+
+EXCLUDE="
+build/ambacv*
+"
+
+OUTPUT="ambalink_${PROJECT}_output_4_14.`date +%Y%m%d`.tar.gz"
+OUTPUT=${CWD}/distribute/$OUTPUT
+OUTPUT_DIR=${CWD}/distribute
+OUTPUT_TAR=${OUTPUT%.*}
+
+EXPANDED_EXCLUDE="
+--exclude .git					\
+--exclude .gitignore				\
+--exclude MANIFEST.txt				\
+--exclude configs.orig				\
+"
+
+mkdir -p $OUTPUT_DIR
+rm -f ${OUTPUT}
+
+cd $CWD/$AMBALINK_TARGET/
+
+for i in ${EXCLUDE}; do
+    EXPANDED_EXCLUDE=${EXPANDED_EXCLUDE}"--exclude ${i} "
+done
+
+echo Generating distribution package \'${OUTPUT}\' ...
+for i in ${PATHS};do
+    tar --append --file=${OUTPUT_TAR} ${i} ${EXPANDED_EXCLUDE}
+done
+
+gzip ${OUTPUT_TAR}
+
+md5sum ${OUTPUT} > ${OUTPUT}.md5sum
+
+echo Done
+echo "Your files are ready:"
+echo "   ${OUTPUT}"
+echo "   ${OUTPUT}.md5sum"
+echo "Please double check its contents before actual distribution!"
+echo "Good-day!"

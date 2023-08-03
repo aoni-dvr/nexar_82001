@@ -1,0 +1,31 @@
+config BUILD_COMMON_SERVICE_NET
+	bool "Build amba network stacks (used only for enet)"
+	default y
+
+if BUILD_COMMON_SERVICE_NET
+config AMBA_UDPIP
+	bool "Amba tiny UDP/IP example stack"
+	depends on THREADX
+	default y
+config AMBA_AVB
+	bool "Amba AVB stack including gPTP, AVTP, VLAN support"
+	depends on THREADX
+	default y
+config AMBA_AVDECC
+	bool "Amba AVDECC support"
+	depends on THREADX
+	default n
+menuconfig AMBA_RTSP
+	bool "Amba RTSP"
+	default n
+if AMBA_RTSP
+config RTSP_LINUX
+    bool "RTSP run in Linux"
+    depends on AMBALINK_BOOT_OS || LINUX
+    default y
+config AMBA_RTSP_HEVC
+	bool "Amba RTSP HEVC"
+	depends on AMBA_RTSP
+	default n
+endif
+endif

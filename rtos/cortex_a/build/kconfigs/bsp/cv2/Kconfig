@@ -1,0 +1,37 @@
+if SOC_CV2
+
+source build/kconfigs/bsp/cv2/peripherals/Kconfig
+
+comment "Board Configuration"
+choice CV2_BSP_SELECTION
+	prompt "BSP"
+	default BSP_CV2BUB_OPTION_A_V300
+
+config BSP_CV2BUB_OPTION_A_V300
+	bool "CV2 Bringup Board Option-A V300"
+	select NAND_S34ML04G2
+config BSP_CV2DK
+	bool "CV2 Development Kit (aka RDB)"
+	select NAND_S34ML04G2
+config BSP_CV2DK_D_REWORK
+	bool "CV2 Development Kit version D"
+	select NAND_S34ML04G2
+endchoice
+
+choice CV2_DRAM_SELECTION
+        prompt "Dram"
+        default CV2_LPDDR4_MT53D512M32D2DS_1392MHZ
+
+config CV2_LPDDR4_MT53D512M32D2DS_1392MHZ
+        bool "MT53D512M32D2DS 1392MHz"
+config CV2_LPDDR4_MT53D512M32D2DS_1800MHZ
+        bool "MT53D512M32D2DS 1800MHz"
+endchoice
+
+config ATT_MAP
+	string "Att Map File Name"
+	default "AmbaUserMemProt"
+	help
+		File name of the Att Map file (remove '.c')
+
+endif

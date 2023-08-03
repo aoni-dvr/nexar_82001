@@ -1,0 +1,36 @@
+# svc record function
+REC_O_PREFIX = ../../src/record
+CFG_O_PREFIX = ../../src/config
+SYS_O_PREFIX = ../../src/sys
+
+ifeq ($(CONFIG_ICAM_RECORD_USED), y)
+
+ifeq ($(CONFIG_LWIP_ENET),y)
+ccflags-y += -I$(srctree)/vendors/foss/lwip/ambarella/inc
+endif
+
+libsvc_icamcore-objs += $(CFG_O_PREFIX)/SvcBRateCalc.o         \
+                        $(REC_O_PREFIX)/SvcEnc.o               \
+                        $(REC_O_PREFIX)/SvcRecMain.o           \
+                        $(REC_O_PREFIX)/SvcRecQpCtrl.o         \
+                        $(REC_O_PREFIX)/SvcRecBlend.o          \
+#libsvc_icamcore-objs += $(REC_O_PREFIX)/SvcDrawStopwatch.o
+libsvc_icamcore-objs += $(REC_O_PREFIX)/SvcDrawLogo.o
+libsvc_icamcore-objs += $(REC_O_PREFIX)/SvcDrawDateTime.o
+
+# svc raw encode
+ifeq ($(CONFIG_ICAM_RAWENC_USED), y)
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcRawEnc.o
+endif
+
+# svc timelapse
+ifeq ($(CONFIG_ICAM_TIMELAPSE_USED), y)
+libsvc_icamcore-objs += $(REC_O_PREFIX)/SvcTimeLapse.o
+endif
+
+endif
+
+# svc data gather
+ifeq ($(CONFIG_ICAM_DATA_GATHER_USED), y)
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcDataGather.o
+endif

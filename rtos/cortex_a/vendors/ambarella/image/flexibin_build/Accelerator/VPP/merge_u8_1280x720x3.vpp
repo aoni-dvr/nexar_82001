@@ -1,0 +1,51 @@
+#include "vp_vas.h"
+
+#define IN_WIDTH            1280
+#define IN_HEIGHT           720
+// R/G/B -> BGR
+#define OUT_CHANNEL         3
+
+DAG merge_u8_1280x720x3 = {
+	VP_input(input_R, uint8_t, vector(1, 1, 1, IN_HEIGHT*IN_WIDTH));
+	VP_input(input_G, uint8_t, vector(1, 1, 1, IN_HEIGHT*IN_WIDTH));
+	VP_input(input_B, uint8_t, vector(1, 1, 1, IN_HEIGHT*IN_WIDTH));
+
+	VP_reshape(
+		input_R,
+		VP_tensor(input_R_reshape, uint8_t),
+		w = 1,
+		h = IN_WIDTH,
+		d = IN_HEIGHT,
+		p = 1
+		);
+	VP_reshape(
+		input_G,
+		VP_tensor(input_G_reshape, uint8_t),
+		w = 1,
+		h = IN_WIDTH,
+		d = IN_HEIGHT,
+		p = 1
+		);
+	VP_reshape(
+		input_B,
+		VP_tensor(input_B_reshape, uint8_t),
+		w = 1,
+		h = IN_WIDTH,
+		d = IN_HEIGHT,
+		p = 1
+		);
+	VP_mergew(
+		input_B_reshape,input_G_reshape,
+		VP_tensor(merge_output, uint8_t),
+		v2_descriptor = input_R_reshape
+		);
+	VP_reshape(
+		merge_output,
+		VP_tensor(merge_output_reshape, uint8_t),
+		w = IN_HEIGHT*IN_WIDTH*OUT_CHANNEL,
+		h = 1,
+		d = 1,
+		p = 1
+		);
+	VP_output(output, merge_output_reshape);
+}

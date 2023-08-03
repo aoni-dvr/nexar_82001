@@ -1,0 +1,28 @@
+menu "Imu Driver"
+
+config ENABLE_IMU
+        bool "enable imu"
+        default n
+
+if ENABLE_IMU
+config IMU_ICM20948
+	bool "AKM IMU_ICM20948"
+	default n
+
+config IMU_BMI160
+	bool "IMU_BMI160"
+	default n
+
+config IMU_SH3001
+	bool "IMU_SH3001"
+	default n
+
+config IMU_ICM42670
+	bool "IMU_ICM42670"
+	default n
+
+config IMU_ICM42631
+	bool "IMU_ICM42631"
+	default n
+endif
+endmenu

@@ -1,0 +1,5 @@
+config BR2_PACKAGE_AR6003_3_4_PATCH4
+	bool "ar6003_3_4_patch4"
+	help
+		Atheros SDK 3.4 Patch 4
+

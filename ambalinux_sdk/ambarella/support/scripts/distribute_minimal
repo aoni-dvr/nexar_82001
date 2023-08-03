@@ -1,0 +1,66 @@
+#!/bin/bash
+#
+
+
+if [ $# == 0 ]; then
+    echo Usage: $0 [manifests]
+    exit -1
+fi
+
+. $1
+
+if [ "$PATHS" = "" ]; then
+    echo "\$PATHS must be specified!"
+    exit -1
+fi
+
+if [ "$OUTPUT" = "" ]; then
+    echo "\$OUTPUT must be specified!"
+    exit -1
+fi
+
+CWD=$PWD
+OUTPUT_DIR=${CWD}/${AMBALINK_DIR}/distribute
+OUTPUT=${CWD}/${AMBALINK_DIR}/distribute/$OUTPUT
+mkdir -p $OUTPUT_DIR
+rm -f ${OUTPUT}
+
+
+EXPANDED_EXCLUDE="
+--exclude .git					\
+--exclude .gitignore				\
+--exclude MANIFEST.txt				\
+--exclude configs.orig				\
+--exclude $AMBALINK_DIR/ambarella/Makefile.orig	\
+--exclude $AMBALINK_DIR/ambarella/.config		\
+--exclude $AMBALINK_DIR/ambarella/.config.old	\
+--exclude $AMBALINK_DIR/ambarella/..config.tmp	\
+--exclude $AMBALINK_DIR/ambarella/.auto.deps	\
+"
+
+for i in ${EXCLUDE}; do
+    EXPANDED_EXCLUDE=${EXPANDED_EXCLUDE}"--exclude ${i} "
+done
+
+
+echo Generating distribution package \'${OUTPUT}\' ...
+OUTPUT_TAR=${OUTPUT%.*}
+
+for i in ${PATHS};do
+    tar --append --file=${OUTPUT_TAR} ${i} ${EXPANDED_EXCLUDE}
+done
+
+gzip ${OUTPUT_TAR}
+
+md5sum ${OUTPUT} > ${OUTPUT}.md5sum
+echo Unarchiving distribution package \'${OUTPUT}\' ...
+cd $OUTPUT_DIR
+tar xfz ${OUTPUT}
+
+
+echo Done
+echo "Your files are ready:"
+echo "   ${OUTPUT}"
+echo "   ${OUTPUT}.md5sum"
+echo "Please double check its contents before actual distribution!"
+echo "Good-day!"

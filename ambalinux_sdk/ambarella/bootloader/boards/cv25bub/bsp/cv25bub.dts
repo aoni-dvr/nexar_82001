@@ -1,0 +1,176 @@
+/*
+ * Copyright (C) 2013 Ambarella,Inc. - http://www.ambarella.com/
+ * Author: Cao Rongrong <rrcao@ambarella.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+/dts-v1/;
+
+/include/ "ambarella-cv25.dtsi"
+#include "config.h"
+#include "bsp.h"
+
+/ {
+	model = "Ambarella CV25BUB Board";
+	compatible = "ambarella,cv25bub", "ambarella,cv25";
+
+	chosen {
+#if defined(CONFIG_AMBARELLA_ROOTFS_CPIO)
+		bootargs = "console=ttyS0";
+#else
+		bootargs = "console=ttyS0 ubi.mtd=lnx root=ubi0:rootfs rw rootfstype=ubifs init=/linuxrc";
+#endif
+	};
+
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		/* global autoconfigured region for contiguous allocations */
+		/* size can be larged for big vout OSD framebuffer */
+		linux,cma {
+			compatible = "shared-dma-pool";
+			reusable;
+#ifdef CONFIG_AMBARELLA_IAV_DSP_MEM_RESERVED
+			/* need larger size as more IAV/DSP buffers like ucode, img are put to it */
+			size = <0x04800000>;
+#else
+			size = <0x03000000>;
+#endif
+			linux,cma-default;
+		};
+
+#ifdef CONFIG_AMBARELLA_IAV_DSP_MEM_CMA
+		iav_reserved: iav@IDSP_RAM_START {
+			compatible = "shared-dma-pool";
+			reusable;
+			reg = <IDSP_RAM_START (CV_RAM_START - IDSP_RAM_START - 0x400000)>;
+		};
+
+#ifndef CONFIG_AMBARELLA_CV_EVALUATE_SUPERDAG
+		cavalry_reserved: cavalry@CV_RAM_START {
+			compatible = "shared-dma-pool";
+			reusable;
+			reg = <(CV_RAM_START) (DRAM_SIZE - CV_RAM_START - 0x400000)>;
+		};
+#endif
+#endif
+	};
+
+	n_apb@e4000000 {
+		i2c0: i2c@e4008000 {
+			status = "ok";
+
+			ambvin0@01 {
+				compatible = "ambarella,ambvin";
+				reg = <0x01>;	/* fake address, will be overwritten in runtime */
+			};
+		};
+
+		i2c3: i2c@e400b000 {
+			status = "ok";
+
+			ambvin1@01 {
+				compatible = "ambarella,ambvin";
+				reg = <0x01>;	/* fake address, will be overwritten in runtime */
+			};
+		};
+	};
+
+	n_ahb@e0000000 {
+		sdmmc0: sdmmc0@e0004000 {
+			pwr-gpios = <&gpio 81 0x1>;
+			v18-gpios = <&gpio 105 0x1>;
+#if defined(CONFIG_BOOT_MEDIA_EMMC)
+			amb,fixed-cd = <1>;
+#endif
+		};
+
+		sdmmc2: sdmmc2@e0016000 {
+			status = "disabled";
+		};
+
+		mac0: ethernet@e000e000 {
+			amb,tx-clk-invert;
+			phy@0 {
+				reg = <0>;
+			};
+		};
+
+		spi0: spi@e0011000 {
+			status = "ok";
+			cs-gpios = <&gpio 7 0>;
+
+			ambvin0@0 {
+				compatible = "ambarella,ambvin";
+				reg = <0>;
+				spi-max-frequency = <1000000>;
+				spi-cpha;
+				spi-cpol;
+			};
+		};
+
+		uart1: uart@e0017000 {
+			status = "ok";
+			/delete-property/ amb,msr-used;	/* use Modem Status Register */
+			/delete-property/ amb,txdma-used;
+			/delete-property/ amb,rxdma-used;
+		};
+
+		hdmi@e000b000 {
+			amb,i2c-adapter = <2>;
+		};
+	};
+
+	rct@ed080000 {
+		usbphy: usbphy@ed080050 {
+			/* high will trigger the ocp interrupt */
+			amb,ocp-polarity = <0>;
+			pinctrl-names = "default";
+			pinctrl-0 = <&usb_host0_pins_d>;
+		};
+	};
+
+	bogus_bus {
+		pwm_bl@0 {
+			compatible = "pwm-backlight";
+			reg = <0>;
+			pwms = <&pwm0 0 40000 0>;
+			pinctrl-names = "default";
+			pinctrl-0 = <&pwm0_pins_c>;
+			brightness-levels = <0 4 8 16 32 64 128 255>;
+			default-brightness-level = <7>;
+		};
+
+		dummycodec: codec@0 {
+ 			compatible = "ambarella,dummycodec";
+ 			reg = <0>;
+			#sound-dai-cells = <0>;
+		};
+	};
+
+	iav {
+		/* node for vin controller */
+		vinc0 {
+			vinrst-gpios = <&gpio 84 0>;
+			/* vinpwr-gpios = <>; */
+		};
+
+		/* node for hwtimer controller */
+		hwtimer {
+			compatible = "ambarella,hwtimer";
+			interrupts = <0 25 0x1>;
+			interrupt-names = "hwtimer";
+		};
+
+#ifdef CONFIG_AMBARELLA_IAV_DSP_MEM_CMA
+		ambcma {
+			compatible = "ambarella,cma";
+			memory-region = <&iav_reserved>;
+		};
+#endif
+	};
+};

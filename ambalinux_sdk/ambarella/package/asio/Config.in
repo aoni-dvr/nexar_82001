@@ -1,0 +1,11 @@
+config BR2_PACKAGE_ASIO
+	bool "Asio C++ Library"
+	default n
+#	select BR2_PACKAGE_BOOST
+#	select BR2_PACKAGE_BOOST_REGEX
+#	select BR2_PACKAGE_BOOST_THREAD
+	help
+	  Asio is a cross-platform C++ library for network and low-level I/O
+	  programming that provides developers with a consistent asynchronous
+	  model using a modern C++ approach.
+

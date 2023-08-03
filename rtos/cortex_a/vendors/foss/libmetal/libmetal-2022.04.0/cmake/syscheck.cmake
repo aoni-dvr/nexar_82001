@@ -1,0 +1,20 @@
+# use "Generic" as CMAKE_SYSTEM_NAME
+
+if (WITH_ZEPHYR)
+  set (CMAKE_SYSTEM_NAME "Generic"             CACHE STRING "")
+  string (TOLOWER "Zephyr"                PROJECT_SYSTEM)
+  string (TOUPPER "Zephyr"                PROJECT_SYSTEM_UPPER)
+  if (NOT WITH_ZEPHYR_LIB)
+    include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
+  endif()
+  if (CONFIG_ARM)
+    set (MACHINE "arm" CACHE STRING "")
+  endif(CONFIG_ARM)
+  if (CONFIG_RISCV)
+    set (MACHINE "riscv" CACHE STRING "")
+  endif (CONFIG_RISCV)
+ if (CONFIG_XTENSA)
+    set (MACHINE "xtensa" CACHE STRING "")
+  endif (CONFIG_XTENSA)
+
+endif (WITH_ZEPHYR)

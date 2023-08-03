@@ -1,0 +1,34 @@
+
+# driver
+EXTRA_SRCVPATH += $(ICAM_CORE_SRC)/driver/demo
+
+# wrapper hdmi/cvbs driver
+ifeq ($(CONFIG_ICAM_HDMI_EXIST),y)
+SRCS += AmbaFPD_HDMI.c
+endif
+ifeq ($(CONFIG_ICAM_CVBS_EXIST),y)
+SRCS += AmbaFPD_CVBS.c
+endif
+# eeprom driver
+ifeq ($(CONFIG_ICAM_EEPROM_USED),y)
+SRCS += AmbaEEPROM.c
+SRCS += AmbaEEPROM_UnitTest.c
+SRCS += AmbaEEPROM_MAX9295_96712_MICRO_24AA256.c
+SRCS += AmbaEEPROM_MAX9295_9296_MICRO_24AA256.c
+endif
+# canbus (cv2/cv22/cv25 only)
+ifeq ($(CONFIG_ICAM_CANBUS_DEMO),y)
+SRCS += AmbaCAN.c
+SRCS += AmbaCANPeer.c
+SRCS += AmbaCSL_CAN.c
+SRCS += AmbaRTSL_CAN.c
+endif
+
+ifeq ($(CONFIG_ICAM_EEPROM_USED),y)
+EXTRA_INCVPATH += $(srctree)/bsp/$(AMBA_CHIP_ID)/peripherals/bridge/inc
+EXTRA_INCVPATH += $(srctree)/bsp/$(AMBA_CHIP_ID)/$(AMBA_BSP_NAME)
+endif
+ifeq ($(CONFIG_ICAM_CANBUS_DEMO),y)
+EXTRA_INCVPATH += $(srctree)/soc/io/src/common/inc/arm
+EXTRA_INCVPATH += $(srctree)/svc/apps/icam/core/driver/demo
+endif

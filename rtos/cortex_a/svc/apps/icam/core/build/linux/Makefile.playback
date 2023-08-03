@@ -1,0 +1,10 @@
+# svc playback function
+PBK_O_PREFIX = ../../src/playback
+
+ifeq ($(CONFIG_ICAM_PLAYBACK_USED), y)
+libsvc_icamcore-objs += $(PBK_O_PREFIX)/SvcPbkCtrl.o
+libsvc_icamcore-objs += $(PBK_O_PREFIX)/SvcPbkPictDisp.o
+libsvc_icamcore-objs += $(PBK_O_PREFIX)/SvcPbkStillDec.o
+libsvc_icamcore-objs += $(PBK_O_PREFIX)/SvcPbkStillDisp.o
+libsvc_icamcore-objs += $(PBK_O_PREFIX)/SvcPbkThmDisp.o
+endif

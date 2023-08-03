@@ -1,0 +1,61 @@
+/**
+ *  @file AmbaVer_LibPerif.c
+ *
+ *  @copyright Copyright (c) 2019 Ambarella, Inc.
+ *
+ *  This file and its contents ("Software") are protected by intellectual property rights including, without limitation,
+ *  U.S. and/or foreign copyrights.  This Software is also the confidential and proprietary information of Ambarella, Inc.
+ *  and its licensors.  You may not use, reproduce, disclose, distribute, modify, or otherwise prepare derivative works
+ *  of this Software or any portion thereof except pursuant to a signed license agreement or nondisclosure agreement with
+ *  Ambarella, Inc. or its authorized affiliates.  In the absence of such an agreement, you agree to promptly notify and
+ *  return this Software to Ambarella, Inc.
+ *
+ *  THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ *  WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+ *  AMBARELLA, INC. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ *  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ *  COMPUTER FAILURE OR MALFUNCTION; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ *  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *  @details Module version
+ *
+ */
+
+#include "AmbaVer.h"
+
+#ifndef AMBA_BUILD_MACHINE
+#define AMBA_BUILD_MACHINE  ""
+#endif
+#ifndef AMBA_BUILD_DATE
+#define AMBA_BUILD_DATE     ""
+#endif
+#ifndef AMBA_BUILD_DATE_NUM
+#define AMBA_BUILD_DATE_NUM 0U
+#endif
+#ifndef AMBA_BUILD_SEC_NUM
+#define AMBA_BUILD_SEC_NUM  0U
+#endif
+#ifndef AMBA_CI_COUNT
+#define AMBA_CI_COUNT       0U
+#endif
+#ifndef AMBA_CI_ID
+#define AMBA_CI_ID          ""
+#endif
+
+void AmbaLibPerif_GetVerInfo(AMBA_VerInfo_s *pVerInfo);
+
+void AmbaLibPerif_GetVerInfo(AMBA_VerInfo_s *pVerInfo)
+{
+    pVerInfo->Key       = "libperif_cv25.a";
+
+    pVerInfo->MachStr   = AMBA_BUILD_MACHINE;
+    pVerInfo->DateStr   = AMBA_BUILD_DATE;
+    pVerInfo->DateNum   = AMBA_BUILD_DATE_NUM;
+    pVerInfo->SecNum    = AMBA_BUILD_SEC_NUM;
+    pVerInfo->CiCount   = AMBA_CI_COUNT;
+
+    pVerInfo->CiIdStr   = AMBA_CI_ID;
+    /* Using git SHA */
+    pVerInfo->Ver       = AMBA_CI_ID;
+}

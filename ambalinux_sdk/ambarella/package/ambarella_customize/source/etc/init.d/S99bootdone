@@ -1,0 +1,32 @@
+#!/bin/sh
+
+echo 'S99bootdone is running...'
+
+#send boot_done to RTOS
+if [ -x /usr/bin/SendToRTOS ]; then
+	/usr/bin/SendToRTOS boot_done
+fi
+
+#if [ -e /sys/module/rpmsg_echo/parameters/example_printk ]; then
+#	echo 'S99bootdone' > /sys/module/rpmsg_echo/parameters/example_printk
+#fi
+
+#setup for each individual board
+#if [ -x /tmp/SD0/bootup.sh ]; then
+#	/tmp/SD0/bootup.sh
+#else
+#	if [ -x /tmp/SD1/bootup.sh ]; then
+#		/tmp/SD1/bootup.sh
+#	fi
+#fi
+
+#auto-run if file exists
+if [ -x /mnt/SCAM/cv1_auto_run.sh ]; then
+       echo 'Auto-run user script...'
+       /mnt/SCAM/cv1_auto_run.sh
+fi
+
+# enable usb host
+/usr/local/share/script/usb_host.sh
+
+exit $?

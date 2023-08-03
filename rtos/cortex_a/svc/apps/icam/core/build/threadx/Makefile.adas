@@ -1,0 +1,4 @@
+ifeq ($(CONFIG_BUILD_AMBA_ADAS),y)
+ADAS_O_PREFIX = ../../src/adas
+libsvc_icamcore-objs += $(ADAS_O_PREFIX)/SvcCalibAdas.o
+endif

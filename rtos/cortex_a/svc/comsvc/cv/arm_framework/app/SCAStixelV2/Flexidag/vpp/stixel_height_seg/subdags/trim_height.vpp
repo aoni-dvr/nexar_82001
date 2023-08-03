@@ -1,0 +1,87 @@
+
+DAG Trim_Height =
+{
+	arg=
+	{
+		$column_index=0,
+		$ft_disp=0,
+		$ft_esti_road_disp=0,
+
+		$disp_height=0,
+		$disp_width=0,
+
+		$disp_diff_thr_val=0,
+		
+		$top_obj_pos=0,
+		$bottom_pos_m1=0,
+
+		$new_top_obj_pos=0,
+	};
+
+	VP_transpose($top_obj_pos, 
+		VP_tensor(transposed_top_obj_pos, uint16_t, vector(1, 1, $disp_height, 1)),
+		to_w = 1,
+		to_h = 0,
+		to_d = 2,
+		to_p = 3
+  	);
+
+	VP_ltb(
+		$column_index,
+		transposed_top_obj_pos,
+		VP_tensor(pos_lt_bottom_mask, uint8_t, vector(1, 1, $disp_height, $disp_width), bitvector = 1)
+	);
+
+	VP_sub(
+		$ft_disp,
+		$ft_esti_road_disp,
+    	VP_tensor(disp_sub_esti_road, float16_t, vector(1, 1, $disp_height, $disp_width))
+    );
+
+    VP_abs(
+		disp_sub_esti_road,
+    	VP_tensor(abs_disp_sub_esti_road, float16_t, vector(1, 1, $disp_height, $disp_width))
+    );
+
+    VP_ltb(
+		abs_disp_sub_esti_road,
+		VP_const_tensor($disp_diff_thr_val, uint16_t, vector(1)), 
+		VP_tensor(diff_lt_thr_mask, uint8_t, vector(1, 1, $disp_height, $disp_width), bitvector = 1)
+	);
+
+	VP_bwor(
+		pos_lt_bottom_mask,
+		diff_lt_thr_mask, 
+		VP_auto(diff_gt_thr_mask)
+	);
+
+	// At this point, for each row, 
+	// elements are 1 where x position is less than object top pos, or the diff between esti-ground and disp is less than threshold
+	VP_findfirstzero(
+		diff_gt_thr_mask,
+		VP_tensor(new_top_obj_pos_tmp, uint16_t, vector(1, 1, $disp_height, 1))
+	);
+
+	VP_transpose(new_top_obj_pos_tmp, 
+		VP_tensor(transposed_new_top_obj_pos_tmp, uint16_t, vector(1, 1, 1, $disp_height)),
+		to_w = 1,
+		to_h = 0,
+		to_d = 2,
+		to_p = 3
+  	);
+
+	// object height at least = 1
+	VP_gtb(
+		transposed_new_top_obj_pos_tmp,
+		$bottom_pos_m1,
+		VP_tensor(new_pos_gt_bottom_mask, uint8_t, vector(1, 1, 1, $disp_height), bitvector = 1)
+	);
+
+	VP_muxb(
+		$bottom_pos_m1, 
+		transposed_new_top_obj_pos_tmp,
+		new_pos_gt_bottom_mask,
+		VP_tensor($new_top_obj_pos, uint16_t, vector(1, 1, 1, $disp_height))
+	);
+	// ---
+}

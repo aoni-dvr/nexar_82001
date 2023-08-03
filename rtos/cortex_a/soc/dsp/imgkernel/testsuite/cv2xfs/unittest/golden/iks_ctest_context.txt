@@ -1,0 +1,291 @@
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_set_static_bpc(), ID = 0, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_set_static_bpc_internal(), ID = 1, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_set_static_bpc_enable_info(), ID = 2, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_static_bpc_enable_info(), ID = 3, description : test if (p_enable != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_static_bpc_enable_info(), ID = 4, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_static_bpc(), ID = 5, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_static_bpc(), ID = 6, description : test if (p_static_bpc != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_static_bpc_internal(), ID = 7, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_static_bpc_internal(), ID = 8, description : test if (p_static_bpc_internal != NULL) true case
+Rval = 0x01100008, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_set_static_bpc_enable_info(), ID = 9, description : test if (enable > 1UL) fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_set_vignette(), ID = 10, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_set_vignette_enable_info(), ID = 11, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_vignette_enable_info(), ID = 12, description : test if (p_enable != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_vignette_enable_info(), ID = 13, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_vignette(), ID = 14, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_vignette(), ID = 15, description : test if (p_vignette != NULL) true case
+Rval = 0x01100008, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_set_vignette_enable_info(), ID = 16, description : test if (enable > 1UL) fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_set_calib_warp_info(), ID = 17, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_set_warp_enable_info(), ID = 18, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_calib_warp_info(), ID = 19, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_calib_warp_info(), ID = 20, description : test (p_calib_warp_info != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_warp_enable_info(), ID = 21, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_warp_enable_info(), ID = 22, description : test (p_enable != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_set_warp_internal(), ID = 23, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_warp_internal(), ID = 24, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_warp_internal(), ID = 25, description : test (p_warp_internal != NULL) true case
+Rval = 0x01100008, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_set_warp_enable_info(), ID = 26, description : test if (enable > 1UL) fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_set_calib_ca_warp_info(), ID = 27, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_set_cawarp_enable_info(), ID = 28, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_calib_ca_warp_info(), ID = 29, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_calib_ca_warp_info(), ID = 30, description : test (p_calib_ca_warp_info != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_cawarp_enable_info(), ID = 31, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_cawarp_enable_info(), ID = 32, description : test (p_enable != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_set_cawarp_internal(), ID = 33, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_cawarp_internal(), ID = 34, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_cawarp_internal(), ID = 35, description : test (p_cawarp_internal != NULL) true case
+Rval = 0x01100008, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_set_cawarp_enable_info(), ID = 36, description : test if (enable > 1UL) fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_set_dzoom_info(), ID = 37, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_dzoom_info(), ID = 38, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_dzoom_info(), ID = 39, description : test (p_dzoom_info != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_set_dummy_win_margin_range_info(), ID = 40, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_dummy_win_margin_range_info(), ID = 41, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_dummy_win_margin_range_info(), ID = 42, description : test (dmy_range != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_set_flip_mode(), ID = 43, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_flip_mode(), ID = 44, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_flip_mode(), ID = 45, description : test (mode != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_set_warp_buffer_info(), ID = 46, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_warp_buffer_info(), ID = 47, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_warp_buffer_info(), ID = 48, description : test (p_warp_buf_info != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_set_stitching_info(), ID = 49, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_stitching_info(), ID = 50, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_stitching_info(), ID = 51, description : test (p_stitch_info != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_set_vin_active_window(), ID = 52, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_vin_active_window(), ID = 53, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_vin_active_window(), ID = 54, description : test (p_active_win != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_set_burst_tile(), ID = 55, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_burst_tile(), ID = 56, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_burst_tile(), ID = 57, description : test (p_burst_tile != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentHDR.c, iks_ctx_ivd_set_exp0_fe_static_blc(), ID = 58, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentHDR.c, iks_ctx_ivd_set_exp1_fe_static_blc(), ID = 59, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentHDR.c, iks_ctx_ivd_set_exp2_fe_static_blc(), ID = 60, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentHDR.c, iks_ctx_ivd_get_exp0_fe_static_blc(), ID = 61, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentHDR.c, iks_ctx_ivd_get_exp1_fe_static_blc(), ID = 62, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentHDR.c, iks_ctx_ivd_get_exp2_fe_static_blc(), ID = 63, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_exp0_fe_static_blc(), ID = 64, description : test (p_exp0_frontend_static_blc != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_exp1_fe_static_blc(), ID = 65, description : test (p_exp1_frontend_static_blc != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_exp2_fe_static_blc(), ID = 66, description : test (p_exp2_frontend_static_blc != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentHDR.c, iks_ctx_ivd_set_exp0_fe_wb_gain(), ID = 67, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentHDR.c, iks_ctx_ivd_set_exp1_fe_wb_gain(), ID = 68, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentHDR.c, iks_ctx_ivd_set_exp2_fe_wb_gain(), ID = 69, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentHDR.c, iks_ctx_ivd_get_exp0_fe_wb_gain(), ID = 70, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentHDR.c, iks_ctx_ivd_get_exp1_fe_wb_gain(), ID = 71, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentHDR.c, iks_ctx_ivd_get_exp2_fe_wb_gain(), ID = 72, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_exp0_fe_wb_gain(), ID = 73, description : test (p_exp0_frontend_wb_gain != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_exp1_fe_wb_gain(), ID = 74, description : test (p_exp1_frontend_wb_gain != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_exp2_fe_wb_gain(), ID = 75, description : test (p_exp2_frontend_wb_gain != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentHDR.c, iks_ctx_ivd_set_hdr_raw_offset(), ID = 76, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentHDR.c, iks_ctx_ivd_get_hdr_raw_offset(), ID = 77, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_hdr_raw_offset(), ID = 78, description : test (p_raw_info != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentHDR.c, iks_ctx_ivd_set_ce(), ID = 79, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentHDR.c, iks_ctx_ivd_set_ce_input_table(), ID = 80, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentHDR.c, iks_ctx_ivd_set_ce_out_table(), ID = 81, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentHDR.c, iks_ctx_ivd_get_ce(), ID = 82, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentHDR.c, iks_ctx_ivd_get_ce_input_table(), ID = 83, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentHDR.c, iks_ctx_ivd_get_ce_out_table(), ID = 84, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_ce(), ID = 85, description : test (p_ce != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_ce_input_table(), ID = 86, description : test (p_ce_input_table != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_ce_out_table(), ID = 87, description : test (p_ce_out_table != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentHDR.c, iks_ctx_ivd_set_hdr_blend(), ID = 88, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentHDR.c, iks_ctx_ivd_get_hdr_blend(), ID = 89, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_ivd_get_hdr_blend(), ID = 90, description : test (p_hdr_blend != NULL) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_safety_info(), ID = 91, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_safety_info(), ID = 92, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_safety_info(), ID = 93, description : test if (p_safety_info==NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_vin_sensor_info(), ID = 94, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_vin_sensor_info(), ID = 95, description : test invalid API fail case
+Rval = 0x01100008, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_set_vin_sensor_info(), ID = 96, description : test if(p_ctx->filters.update_flags.iso.is_1st_frame == 0U) true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_vin_sensor_info(), ID = 97, description : test if (p_sensor_info==NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_yuv_mode(), ID = 98, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_yuv_mode(), ID = 99, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_yuv_mode(), ID = 100, description : test if (p_yuv_mode != NULL) true case
+Rval = 0x01100008, AmbaDSP_ImgContextComponentCalib.c, iks_ctx_set_yuv_mode(), ID = 101, description : test if (yuv_mode > 1UL) fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_before_ce_wb_gain(), ID = 102, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_before_ce_wb_gain(), ID = 103, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_before_ce_wb_gain(), ID = 104, description : test if (p_before_ce_wb_gain == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_after_ce_wb_gain(), ID = 105, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_after_ce_wb_gain(), ID = 106, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_after_ce_wb_gain(), ID = 107, description : test if (p_after_ce_wb_gain == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_cfa_leakage_filter(), ID = 108, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_cfa_leakage_filter(), ID = 109, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_cfa_leakage_filter(), ID = 110, description : test if (p_cfa_leakage_filter==NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_anti_aliasing(), ID = 111, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_anti_aliasing(), ID = 112, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_anti_aliasing(), ID = 113, description : test if (p_anti_aliasing == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_dynamic_bpc(), ID = 114, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_dynamic_bpc(), ID = 115, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_dynamic_bpc(), ID = 116, description : test if (p_dynamic_bpc == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_cfa_noise_filter(), ID = 117, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_cfa_noise_filter(), ID = 118, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_cfa_noise_filter(), ID = 119, description : test if (p_cfa_noise_filter == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_demosaic(), ID = 120, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_demosaic(), ID = 121, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_demosaic(), ID = 122, description : test if (p_demosaic == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_rgb_to_12y(), ID = 123, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_rgb_to_12y(), ID = 124, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_rgb_to_12y(), ID = 125, description : test if (p_rgb_to_12y == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_luma_noise_reduction(), ID = 126, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_luma_noise_reduction(), ID = 127, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_luma_noise_reduction(), ID = 128, description : test if (p_luma_noise_reduce == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_pre_cc_gain(), ID = 129, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_pre_cc_gain(), ID = 130, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_pre_cc_gain(), ID = 131, description : test if (p_pre_cc_gain == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_color_correction(), ID = 132, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_color_correction(), ID = 133, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_color_correction(), ID = 134, description : test if (p_color_correction == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_tone_curve(), ID = 135, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_tone_curve(), ID = 136, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_tone_curve(), ID = 137, description : test if (p_tone_curve == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_rgb_to_yuv_matrix(), ID = 138, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_rgb_to_yuv_matrix(), ID = 139, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_rgb_to_yuv_matrix(), ID = 140, description : test if (p_rgb_to_yuv_matrix == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_rgb_ir(), ID = 141, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_rgb_ir(), ID = 142, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_rgb_ir(), ID = 143, description : test if (p_rgb_ir == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_chroma_scale(), ID = 144, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_chroma_scale(), ID = 145, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_chroma_scale(), ID = 146, description : test if (p_chroma_scale == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_chroma_median_filter(), ID = 147, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_chroma_median_filter(), ID = 148, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_chroma_median_filter(), ID = 149, description : test if (p_chroma_median_filter == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_first_luma_processing_mode(), ID = 150, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_first_luma_processing_mode(), ID = 151, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_first_luma_processing_mode(), ID = 152, description : test if (p_first_luma_process_mode == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_advance_spatial_filter(), ID = 153, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_advance_spatial_filter(), ID = 154, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_advance_spatial_filter(), ID = 155, description : test if (p_advance_spatial_filter == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_fstshpns_both(), ID = 156, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_fstshpns_noise(), ID = 157, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_fstshpns_fir(), ID = 158, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_fstshpns_coring(), ID = 159, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_fstshpns_cor_idx_scl(), ID = 160, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_fstshpns_min_coring_result(), ID = 161, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_fstshpns_max_coring_result(), ID = 162, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_fstshpns_scale_coring(), ID = 163, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fstshpns_both(), ID = 164, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fstshpns_noise(), ID = 165, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fstshpns_fir(), ID = 166, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fstshpns_coring(), ID = 167, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fstshpns_cor_idx_scl(), ID = 168, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fstshpns_min_coring_result(), ID = 169, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fstshpns_max_coring_result(), ID = 170, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fstshpns_scale_coring(), ID = 171, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fstshpns_both(), ID = 172, description : test if (p_first_sharpen_both == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fstshpns_noise(), ID = 173, description : test if (p_first_sharpen_noise == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fstshpns_fir(), ID = 174, description : test if (p_first_sharpen_fir == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fstshpns_coring(), ID = 175, description : test if (p_first_sharpen_coring == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fstshpns_cor_idx_scl(), ID = 176, description : test if (p_fstshpns_coring_index_scale == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fstshpns_min_coring_result(), ID = 177, description : test if (p_fstshpns_min_coring_result == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fstshpns_max_coring_result(), ID = 178, description : test if (p_fstshpns_max_coring_result == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fstshpns_scale_coring(), ID = 179, description : test if (p_fstshpns_scale_coring == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_fnlshpns_both(), ID = 180, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_fnlshpns_noise(), ID = 181, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_fnlshpns_fir(), ID = 182, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_fnlshpns_coring(), ID = 183, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_fnlshpns_cor_idx_scl(), ID = 184, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_fnlshpns_min_coring_result(), ID = 185, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_fnlshpns_max_coring_result(), ID = 186, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_fnlshpns_scale_coring(), ID = 187, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_fnlshpns_both_tdt(), ID = 188, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fnlshpns_both(), ID = 189, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fnlshpns_noise(), ID = 190, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fnlshpns_fir(), ID = 191, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fnlshpns_coring(), ID = 192, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fnlshpns_cor_idx_scl(), ID = 193, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fnlshpns_min_coring_result(), ID = 194, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fnlshpns_max_coring_result(), ID = 195, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fnlshpns_scale_coring(), ID = 196, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fnlshpns_both_tdt(), ID = 197, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fnlshpns_both(), ID = 198, description : test if (p_final_sharpen_both == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fnlshpns_noise(), ID = 199, description : test if (p_final_sharpen_noise == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fnlshpns_fir(), ID = 200, description : test if (p_final_sharpen_fir == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fnlshpns_coring(), ID = 201, description : test if (p_final_sharpen_coring == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fnlshpns_cor_idx_scl(), ID = 202, description : test if (p_fnlshpns_coring_index_scale == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fnlshpns_min_coring_result(), ID = 203, description : test if (p_fnlshpns_min_coring_result == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fnlshpns_max_coring_result(), ID = 204, description : test if (p_fnlshpns_max_coring_result == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fnlshpns_scale_coring(), ID = 205, description : test if (p_fnlshpns_scale_coring == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fnlshpns_both_tdt(), ID = 206, description : test if (p_final_sharpen_both_three_d_table == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_chroma_filter(), ID = 207, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_chroma_filter(), ID = 208, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_chroma_filter(), ID = 209, description : test if (p_chroma_filter == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_wide_chroma_ft(), ID = 210, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_wide_chroma_ft(), ID = 211, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_wide_chroma_ft(), ID = 212, description : test if (p_wide_chroma_filter == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_wide_chroma_ft_combine(), ID = 213, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_wide_chroma_ft_combine(), ID = 214, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_wide_chroma_ft_combine(), ID = 215, description : test if (p_chroma_filter_combine == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_grgb_mismatch(), ID = 216, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_grgb_mismatch(), ID = 217, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_grgb_mismatch(), ID = 218, description : test if (p_grgb_mismatch == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_video_mctf(), ID = 219, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_mctf_ta(), ID = 220, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_mctf_and_final_sharpen(), ID = 221, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_video_mctf(), ID = 222, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_mctf_ta(), ID = 223, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_mctf_and_final_sharpen(), ID = 224, description : test invalid API fail case
+Rval = 0x00000000, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_set_video_mctf(), ID = 225, description : test p_ctx->filters.update_flags.iso.is_1st_frame == 0U false case
+Rval = 0x01100008, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_set_video_mctf(), ID = 226, description : test p_ctx->filters.input_param.video_mctf.compression_enable != p_video_mctf->compression_enable true case
+Rval = 0x00000000, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_set_video_mctf(), ID = 227, description : test p_ctx->filters.input_param.video_mctf.compression_enable != p_video_mctf->compression_enable false case
+Rval = 0x01100008, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_set_video_mctf(), ID = 228, description : test p_ctx->filters.input_param.video_mctf.compression_bit_rate_luma != p_video_mctf->compression_bit_rate_luma true case
+Rval = 0x00000000, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_set_video_mctf(), ID = 229, description : test p_ctx->filters.input_param.video_mctf.compression_bit_rate_luma != p_video_mctf->compression_bit_rate_luma false case
+Rval = 0x01100008, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_set_video_mctf(), ID = 230, description : test p_ctx->filters.input_param.video_mctf.compression_bit_rate_chroma != p_video_mctf->compression_bit_rate_chroma true case
+Rval = 0x00000000, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_set_video_mctf(), ID = 231, description : test p_ctx->filters.input_param.video_mctf.compression_bit_rate_chroma != p_video_mctf->compression_bit_rate_chroma false case
+Rval = 0x01100008, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_set_video_mctf(), ID = 232, description : test p_ctx->filters.input_param.video_mctf.compression_dither_disable != p_video_mctf->compression_dither_disable true case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_video_mctf(), ID = 233, description : test if (p_video_mctf == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_mctf_ta(), ID = 234, description : test if (p_video_mctf_ta == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_mctf_and_final_sharpen(), ID = 235, description : test if (p_video_mctf_and_final_sharpen == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_aaa_stat_info(), ID = 236, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_aaa_pg_af_info(), ID = 237, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_af_stat_ex_info(), ID = 238, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_pg_af_stat_ex_info(), ID = 239, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_histogram_info(), ID = 240, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_pg_histogram_info(), ID = 241, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_aaa_stat_info(), ID = 242, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_aaa_pg_af_info(), ID = 243, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_af_stat_ex_info(), ID = 244, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_pg_af_stat_ex_info(), ID = 245, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_histogram_info(), ID = 246, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_pg_histogram_info(), ID = 247, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_aaa_stat_info(), ID = 248, description : test if (p_stat_info == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_aaa_pg_af_info(), ID = 249, description : test if (p_pg_af_stat_info == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_af_stat_ex_info(), ID = 250, description : test if (p_af_stat_ex_info == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_pg_af_stat_ex_info(), ID = 251, description : test if (p_pg_af_stat_ex_info == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_histogram_info(), ID = 252, description : test if (p_hist_info == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_pg_histogram_info(), ID = 253, description : test if (p_hist_info == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_window_size_info(), ID = 254, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_window_size_info(), ID = 255, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_window_size_info(), ID = 256, description : test if (p_window_size_info == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_fe_tone_curve(), ID = 257, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fe_tone_curve(), ID = 258, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_fe_tone_curve(), ID = 259, description : test if (p_fe_tc == NULL) false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_set_resampler_str(), ID = 260, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_resampler_str(), ID = 261, description : test invalid API fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentNormalFilter.c, iks_ctx_ivd_get_resampler_str(), ID = 262, description : test if (p_resample_str == NULL) false case
+Rval = 0x00000000, AmbaDSP_ImgContextUnitUtility.c, iks_ctx_raise_update_flag(), ID = 263, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgContextComponentIF.c, iks_ctx_query_context_memory_size(), ID = 264, description : test NULL ptr fail case
+Rval = 0x01100003, AmbaDSP_ImgContextComponentIF.c, iks_ctx_reset_update_flags(), ID = 265, description : test (context_id > iks_arch_get_context_number()) fail case
+Rval = 0x01100005, AmbaDSP_ImgContextComponentIF.c, iks_ctx_init_context(), ID = 266, description : test NULL ptr fail case
+Rval = 0x01100001, AmbaDSP_ImgContextComponentIF.c, iks_ctx_init_context(), ID = 267, description : test NULL ptr fail case
+Rval = 0x01100003, AmbaDSP_ImgContextComponentIF.c, iks_ctx_init_context(), ID = 268, description : test get ctx fail case
+Rval = 0x01100008, AmbaDSP_ImgContextComponentIF.c, iks_ctx_init_context(), ID = 269, description : test (p_ability->pipe == AMBA_IK_PIPE_STILL) fail case
+Rval = 0x01100008, AmbaDSP_ImgContextComponentIF.c, iks_ctx_init_context(), ID = 270, description : test (p_ability->video_pipe < AMBA_IK_VIDEO_MAX) fail case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentIF.c, iks_ctx_init_context(), ID = 271, description : test (p_ability->pipe != VIDEO and STILL) fail case
+Rval = 0x00000000, AmbaDSP_ImgContextComponentIF.c, iks_ctx_init_context(), ID = 272, description : test p_ik_buffer_info->init_mode == AMBA_IK_ARCH_HARD_INIT false case
+Rval = 0x01100004, AmbaDSP_ImgContextComponentIF.c, iks_ctx_init_context(), ID = 273, description : test amba_ik_system_create_mutex() fail case
+Rval = 0x01100005, AmbaDSP_ImgContextComponentIF.c, iks_ctx_get_context_ability(), ID = 274, description : test null ptr fail case
+Rval = 0x01100003, AmbaDSP_ImgContextComponentIF.c, iks_ctx_get_context_ability(), ID = 275, description : test get ctx fail case
+Rval = 0x01100002, AmbaDSP_ImgContextComponentIF.c, iks_ctx_get_context_ability(), ID = 276, description : test (p_ctx->organization.initial_flag != 0U) fail case
+Rval = 0x00000000, AmbaDSP_ImgContextComponentIF.c, iks_ctx_get_context_ability(), ID = 277, description : test (p_ctx->organization.initial_flag != 0U) OK case
+Rval = 0x01100005, AmbaDSP_ImgContextComponentIF.c, iks_ctx_get_flow_control(), ID = 278, description : test null ptr fail case
+Rval = 0x01100003, AmbaDSP_ImgContextComponentIF.c, iks_ctx_get_flow_control(), ID = 279, description : test get ctx fail case
+Rval = 0x01100000, AmbaDSP_ImgContextComponentIF.c, iks_ctx_get_flow_control(), ID = 280, description : test (p_ctx->organization.attribute.cr_ring_number > flow_idx) fail case
+Rval = 0x01100005, AmbaDSP_ImgContextComponentIF.c, iks_ctx_get_flow_tbl(), ID = 281, description : test null ptr fail case
+Rval = 0x01100003, AmbaDSP_ImgContextComponentIF.c, iks_ctx_get_flow_tbl(), ID = 282, description : test get ctx fail case
+Rval = 0x01100000, AmbaDSP_ImgContextComponentIF.c, iks_ctx_get_flow_tbl(), ID = 283, description : test (p_ctx->organization.attribute.cr_ring_number > flow_idx) fail case
+Rval = 0x01100005, AmbaDSP_ImgContextComponentIF.c, iks_ctx_get_crc_data(), ID = 284, description : test null ptr fail case
+Rval = 0x01100003, AmbaDSP_ImgContextComponentIF.c, iks_ctx_get_crc_data(), ID = 285, description : test get ctx fail case
+Rval = 0x01100000, AmbaDSP_ImgContextComponentIF.c, iks_ctx_get_crc_data(), ID = 286, description : test (p_ctx->organization.attribute.cr_ring_number > flow_idx) fail case
+Rval = 0x01100005, AmbaDSP_ImgContextComponentIF.c, iks_ctx_prepare_context_memory(), ID = 287, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgContextComponentIF.c, iks_ctx_prepare_context_memory(), ID = 288, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgContextComponentIF.c, iks_ctx_prepare_context_memory(), ID = 289, description : test (context_id > context_number) fail case
+Rval = 0x01100005, AmbaDSP_ImgContextComponentIF.c, iks_ctx_prepare_context_memory(), ID = 290, description : test (rval == IK_OK) false case

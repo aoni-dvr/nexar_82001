@@ -1,0 +1,102 @@
+# For a description of the syntax of this configuration file,
+# see build/scripts/Documentation/kbuild/kconfig-language.txt.
+#
+
+# For SVC
+comment "SVC Applications"
+menu "Applications"
+
+choice
+	prompt "Application"
+	default SVC_APPS_ICAM
+	help
+		Select application in SVC
+config SVC_APPS_ICAM
+	bool "SVC_ICAM"
+	help
+		SVC_ICAM.
+config SVC_APPS_UT
+	bool "SVC_UT"
+	help
+		SVC_UT.
+config SVC_APPS_IOUT
+	bool "SVC_IOUT"
+	help
+		SVC_IOUT.
+config SVC_APPS_CVUT
+	bool "SVC_CVUT"
+	help
+		SVC_CVUT.
+config SVC_APPS_DIAGNOSIS
+	bool "SVC_DIAGNOSIS"
+	help
+		SVC_DIAGNOSIS.
+config SVC_APPS_EX
+	bool "SVC_Example_Code"
+	help
+		Simplest Example Codes.
+endchoice
+
+config SVC_IOUT_QNX_IMG
+	bool "QNX IOUT"
+	depends on SVC_APPS_UT
+	depends on QNX
+	help
+		QNX IOUT
+
+choice
+	prompt "Example Code"
+	default SVC_APPS_EX_DSP001
+    depends on SVC_APPS_EX
+	help
+		Select example code
+config SVC_APPS_EX_DSP001
+   bool "DSP Driver Example #001"
+   help
+        DSP Driver Example APP #001
+config SVC_APPS_EX_DSP002
+   bool "DSP Driver Example #002"
+   help
+        DSP Driver Example APP #002
+config SVC_APPS_EX_DSP003
+   bool "DSP Driver Example #003"
+   help
+        DSP Driver Example APP #003
+config SVC_APPS_EX_CV001
+   bool "CV Example #001"
+   help
+        CV Example APP #001
+endchoice
+
+config SVC_APP_NAME
+    string "SVC APP FOLDER NAME"
+    default "icam" if SVC_APPS_ICAM
+    default "ut" if SVC_APPS_UT
+    default "iout" if SVC_APPS_IOUT
+    default "diagnosis" if SVC_APPS_DIAGNOSIS
+    default "ex" if SVC_APPS_EX
+endmenu
+
+source svc/apps/Kconfig.icam
+source svc/apps/Kconfig.ut
+source svc/apps/Kconfig.diagnosis
+source svc/apps/Kconfig.iout
+source svc/apps/Kconfig.cvut
+
+comment "Heap Memory"
+config SVC_CACHE_HEAP_SIZE
+    hex "cache heap size"
+    default 0x05000000 if SVC_APPS_ICAM && SOC_CV28
+    default 0x08000000 if SVC_APPS_ICAM
+    default 0
+
+config SVC_IO_HEAP_SIZE
+    depends on SVC_APPS_ICAM
+    hex "io heap size"
+    default 0x04000000
+
+config BUILD_QNX_CVFLOW_COMM
+    bool "APP CVFLOW_COMM"
+    default n
+    help
+        CV Algorithm Evaluation APP

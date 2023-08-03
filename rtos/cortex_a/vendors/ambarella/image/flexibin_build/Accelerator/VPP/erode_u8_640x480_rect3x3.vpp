@@ -1,0 +1,21 @@
+#include "vp_vas.h"
+
+DAG erode = {
+	
+	VP_input(input, uint8_t, vector(1, 1, 480, 640));
+	
+	VP_mmwnd(
+		input,
+		VP_tensor(output, uint8_t, vector(1,1,480,640)),
+		op = 0,
+		window_w = 3,
+		window_h = 3,
+		stride_w = 1,
+		stride_h = 1,
+		out_w = 640,
+		out_h = 480
+	);
+
+	VP_output(erode_output, output, dram_format = 0);
+
+}

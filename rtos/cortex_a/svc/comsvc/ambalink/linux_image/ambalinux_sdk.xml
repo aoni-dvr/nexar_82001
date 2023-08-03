@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <remote fetch="ssh://amcode.ambarella.com:29418/" name="ambalink_sdk" review="amcode.ambarella.com.cn"/>
+  <remote fetch="ssh://ambsh-git.ambarella.com:29418/" name="ambsh" review="ambsh-git.ambarella.com"/>
+  <remote fetch="ssh://ambtw-git.ambarella.net:29418/" name="ambtw-git" review="ambtw-git.ambarella.net:8080"/>
+  <remote fetch="ssh://ambus-git.ambarella.com:29418/" name="ambus-git" review="ambus-git.ambarella.net:8080"/>
+
+  <default remote="ambalink_sdk" revision="ambalink_sdk"/>
+
+  <project name="AmbaMAL/header" path="pkg/ambamal/inc" remote="ambtw-git" revision="46fcee71ca9421e0a9dbeee575656ad66c27f872" upstream="master"/>
+  <project name="AmbaMAL/kdriver" path="linux-5.15/drivers/ambamal" remote="ambtw-git" revision="1b9f0fecd12be8e2beb980c3800fa19a11f2ec78" upstream="master"/>
+  <project name="AmbaMAL/user_lib" path="pkg/ambamal" remote="ambtw-git" revision="60c1bda85803481536ab7ef0264954e53ed4e59c" upstream="master"/>
+  <project name="OP-TEE/optee_os" path="pkg/optee_os" remote="ambsh" revision="8fd0ca21f023ce18197fc1a217c5e2e2c624d481" upstream="ambalink_3.16.0"/>
+  <project name="OP-TEE/optee_test" path="pkg/optee_test" remote="ambsh" revision="457478ed003fda7d787983fbeeb56f2818251ccc" upstream="ambalink_3.16.0"/>
+  <project name="ambarella/boards/cv22bub" path="ambarella/bootloader/boards/cv22bub" revision="892ba4c27d9592fc6f2a58d37475315de459f696" upstream="cv22_ambalink"/>
+  <project name="ambarella/boards/cv25bub" path="ambarella/bootloader/boards/cv25bub" revision="26249ac36fa54c214bd149d73af1fdef3935adb3" upstream="cv25_ambalink"/>
+  <project name="ambarella/boards/cv2bub" path="ambarella/bootloader/boards/cv2bub" revision="a8e137ed6f8398088b42fd9a1456ad00e5cafe3a" upstream="cv2_ambalink"/>
+  <project name="ambarella/boards/cv2fsbub" path="ambarella/bootloader/boards/cv2fsbub" revision="834cd7be00cbe96318160c4dbe2c6e74ca74c80b" upstream="ambalink"/>
+  <project name="ambarella/boards/h32mbub" path="ambarella/bootloader/boards/h32bub" revision="906d6c8602c9b729f67aaed70655043b7542c40c" upstream="h32_ambalink"/>
+  <project name="ambarella/include/cavalry_include" path="pkg/ambacv/cv_common/inc/cavalry" revision="371f546042fa95371f46339828a7a58b96e71f48" upstream="TW_ambalink"/>
+  <project name="ambarella/packages/tvm" path="pkg/amba_tvm" remote="ambsh" revision="1e457c0983f734acc5636a37802d2bf75859a2c0" upstream="ambalink"/>
+  <project name="boss_sdk/ambarella_overlay" path="ambarella" revision="sdk82001"/>
+  <project name="boss_sdk/external_sdk" path="external_sdk" revision="6d5fc88be76b650a765c43e25f5f3676dac0ef7f" upstream="ambalink_4_14"/>
+  <project name="boss_sdk/ipcdef" path="pkg/ipcdef" revision="f09f1151bb9fae70b359d488c1b3f3c525436336" upstream="ambalink_sdk_4_9_cv_bringup"/>
+  <project name="boss_sdk/pkg/amba_util" path="pkg/amba_util" revision="caca7852ad9d4e8a6fb6848bca15ce3dd2f8e13b" upstream="ambalink_sdk_4_14"/>
+  <project name="boss_sdk/pkg/ambaipc" path="pkg/ambaipc" revision="5228d88a4885064c1f2f2b72572ae6d884455d20" upstream="ambalink_sdk_4_x"/>
+  <project name="boss_sdk/pkg/ambaipc_test" path="pkg/ambaipc_test" revision="6ea1bdee7c5f211bc655c4d8392847a5f26b0f40" upstream="ambalink_sdk_4_x"/>
+  <project name="boss_sdk/pkg/ambaipc_util" path="pkg/ambaipc_util" revision="26966a313f299839c9f83149225a6ce1d34bb9b6" upstream="ambalink_sdk_4_9_cv_bringup"/>
+  <project name="boss_sdk/pkg/network_turnkey" path="pkg/network_turnkey" revision="83108b4a02fa67bc01b9186376776b68b5114b8b" upstream="boss_sdk"/>
+  <project name="boss_sdk/pkg/ombra" path="pkg/amba_examples" revision="81a178ac14654c537be3801994c7a5964b1ec82d" upstream="ambalink_sdk_4_x"/>
+  <project name="buildroot" revision="b7257d61e855f2408dde2305bf53aad94da27328" upstream="ambalink_sdk_2022.02.1"/>
+  <project name="cv/HostAPI" path="pkg/hostapi" remote="ambus-git" revision="5cfeec2b34c284aa594a53be81653a31f6f61459" upstream="cvmaster"/>
+  <project name="cv/LinuxKernelModule" path="linux-5.15/drivers/ambacv" remote="ambtw-git" revision="sdk82001"/>
+  <project name="cv/arm_app/adas_box" path="pkg/ambacv/arm_framework/app/adas_box" remote="ambus-git" revision="a607765b29dbbd2789360793cc20aec991fe2611" upstream="cv22"/>
+  <project name="cv/arm_app/amba_vision_flexi" path="pkg/ambacv/arm_framework/app/amba_vision_flexi" remote="ambtw-git" revision="824e910f8dab90bd97d32f0f5a55d2a58267d809" upstream="master"/>
+  <project name="cv/arm_app/baseline" path="pkg/ambacv/arm_framework/app/baseline" remote="ambus-git" revision="be8b7eb72b9e78ddba8fefff259ba78b89d70c63" upstream="cvmaster"/>
+  <project name="cv/arm_app/camctrl" path="pkg/ambacv/arm_framework/app/camctrl" remote="ambus-git" revision="2e34a95db74abf55401312b4666ce8ae1470accd" upstream="cv1"/>
+  <project name="cv/arm_app/cv1_dev" path="pkg/ambacv/arm_framework/app/amba_vision" remote="ambus-git" revision="9d8fe19895dfa73f8aefeeb3e4e24f73ee0bd851" upstream="cvmaster"/>
+  <project name="cv/arm_app/cvflow_comm" path="pkg/ambacv/arm_framework/app/cvflow_comm" remote="ambtw-git" revision="97ccef61f2277a6cb17ea3178dc1950669c02160" upstream="sdk8_dev"/>
+  <project name="cv/arm_app/example" path="pkg/ambacv/arm_framework/app/app_openod" remote="ambtw-git" revision="cc9539baaf5fc9940fbdb515d2161d085b318cf4" upstream="OpenOD"/>
+  <project name="cv/arm_app/example" path="pkg/ambacv/arm_framework/app/app_openseg" remote="ambtw-git" revision="ccaa9c252847c39d0a55d695a22c2aac21e9ddba" upstream="OpenSeg"/>
+  <project name="cv/arm_app/example" path="pkg/ambacv/arm_framework/app/app_openodseg" remote="ambtw-git" revision="664659fbac2e8e7c80488086eb7861a907cfeedb" upstream="OpenODSeg"/>
+  <project name="cv/arm_app/example" path="pkg/ambacv/arm_framework/app/app_appexample" remote="ambtw-git" revision="eed0569f006b73ecb2de100687e267bc2c33eae1" upstream="FlexiAppExample"/>
+  <project name="cv/arm_app/example" path="pkg/ambacv/arm_framework/app/app_appexample_linux" remote="ambtw-git" revision="46212e5a4345d984c3d5826491bc22444961986b" upstream="PureLinux_FlexiAppExample_SDK8"/>
+  <project name="cv/arm_app/flexibin_build" path="pkg/ambacv/arm_framework/app/flexidag_app/flexibin_build" remote="ambtw-git" revision="b61a9b2a3915bdde044cdd440ed1b30663f1a971" upstream="master"/>
+  <project name="cv/arm_app/flexidag_app" path="pkg/ambacv/arm_framework/app/flexidag_app" remote="ambtw-git" revision="c2f8bc7f3427ce57ec6449a715556906c386eef6" upstream="master"/>
+  <project name="cv/arm_app/flexidag_app" path="pkg/ambacv/arm_framework/app/flexidag_app/flexidag_cvcehu" remote="ambtw-git" revision="140c8c6d7d7df4bdb17cb2050fdea86fc6b564e3" upstream="flexidag_cvcehu"/>
+  <project name="cv/arm_app/flexidag_app" path="pkg/ambacv/arm_framework/app/flexidag_app/perf_daemon" remote="ambtw-git" revision="3b6be8707dfdcccbe297c089cf0e781bc360c9a9" upstream="perf_daemon"/>
+  <project name="cv/arm_app/flexidag_app" path="pkg/ambacv/arm_framework/app/flexidag_app/flexidag_net_test" remote="ambtw-git" revision="6e214730159118b1629abb72a654293d97333fba" upstream="flexidag_net_test"/>
+  <project name="cv/arm_app/flexidag_app" path="pkg/ambacv/arm_framework/app/flexidag_app/flexidag_stress_test" remote="ambtw-git" revision="d4234d2000eb48a113593bc5240a49dacf186b27" upstream="flexidag_stress_test"/>
+  <project name="cv/arm_app/flexidag_app" path="pkg/ambacv/arm_framework/app/flexidag_app/flexidag_simulation" remote="ambtw-git" revision="2ade7c2e23b626bf41f3cf5f82bc8532e8d0de89" upstream="flexidag_simulation"/>
+  <project name="cv/arm_app/flexidag_app" path="pkg/ambacv/arm_framework/app/flexidag_app/flexidag_ut" remote="ambtw-git" revision="43f02e28dac04d5525896f9479cf6da0489876f1" upstream="flexidag_ut"/>
+  <project name="cv/arm_app/flexidag_app" path="pkg/ambacv/arm_framework/app/flexidag_app/flexidag_schdr" remote="ambus-git" revision="d023213e0855dafefa6bb2b6173c40c4735b5b59" upstream="cvmaster"/>
+  <project name="cv/arm_app/flexidag_memio_picinfo" path="pkg/ambacv/arm_framework/app/flexidag_memio_picinfo" remote="ambtw-git" revision="f2e9b192076bf64ee5af5e01948a617be061b1bf" upstream="master"/>
+  <project name="cv/arm_app/flexidag_memio_raw" path="pkg/ambacv/arm_framework/app/flexidag_memio_raw" remote="ambtw-git" revision="52864ca5acbfa7357344a529d3a1d26b306e6346" upstream="master"/>
+  <project name="cv/arm_app/flexidag_protection" path="pkg/ambacv/arm_framework/app/flexidag_app/flexidag_protection" remote="ambtw-git" revision="b385ff50ed9b68f7b570d3801b9b3704bcd26d07" upstream="master"/>
+  <project name="cv/arm_app/flexidag_protection" path="pkg/ambacv/arm_framework/app/flexidag_FetchChipInfo" remote="ambtw-git" revision="1bc7813cc976fefda6adaaf6153df2d38c72344d" upstream="FetchChipInfo"/>
+  <project name="cv/arm_app/flexidag_protection" path="pkg/ambacv/arm_framework/app/flexidag_test" remote="ambtw-git" revision="894a1659840ccd7754893406416b12c7d6a3674b" upstream="flexidag_test"/>
+  <project name="cv/arm_app/memio" path="pkg/ambacv/arm_framework/app/memio" remote="ambtw-git" revision="014656efc9528983f5d2c600155d63c2d26e62ec" upstream="master"/>
+  <project name="cv/arm_app/memio" path="pkg/ambacv/arm_framework/app/regression" remote="ambtw-git" revision="34e5b2f84778520660c5886a7f8e2c3a0eb9aea2" upstream="cv_regression_sdk8"/>
+  <project name="cv/arm_app/test_amba_dlr" path="pkg/ambacv/arm_framework/app/test_amba_dlr" remote="ambtw-git" revision="2dcad343704e508b680b55771ad9a51ea32f1a27" upstream="master"/>
+  <project name="cv/arm_app/test_amba_tvm" path="pkg/ambacv/arm_framework/app/test_amba_tvm" remote="ambtw-git" revision="728c17e18e907d5b42a4e89bd5b1651df7f6e234" upstream="master"/>
+  <project name="cv/arm_app/visloader" path="pkg/ambacv/arm_framework/app/visutil" remote="ambus-git" revision="53c4a65ed5287c59bbc9cf1a26f975fe57b08de9" upstream="cvmaster"/>
+  <project name="cv/arm_app/vputils" path="pkg/ambacv/arm_framework/app/vputils_cv2" remote="ambus-git" revision="2b35a59c3a1b2cb9f7448d2b823477736404e1ed" upstream="cv2"/>
+  <project name="cv/arm_app/vputils" path="pkg/ambacv/arm_framework/app/vputils_cv22" remote="ambus-git" revision="6a0e64c640b982f7df06e6194009e42d44d0a13a" upstream="cv22"/>
+  <project name="cv/arm_app/vputils" path="pkg/ambacv/arm_framework/app/vputils_cv25" remote="ambus-git" revision="6a0e64c640b982f7df06e6194009e42d44d0a13a" upstream="cv22"/>
+  <project name="cv/arm_app/vputils" path="pkg/ambacv/arm_framework/app/vputils_cv28" remote="ambus-git" revision="837a9e73456f71fe6e6b8ea8f1230c3a5a84d3cf" upstream="cv28"/>
+  <project name="cv/arm_app/vputils" path="pkg/ambacv/arm_framework/app/vputils_cv2a" remote="ambus-git" revision="10d755593ee546b7f598d300d2e6a10aa8b57fdc" upstream="cv2a"/>
+  <project name="cv/arm_app/vputils" path="pkg/ambacv/arm_framework/app/vputils_cv2fs" remote="ambus-git" revision="10d755593ee546b7f598d300d2e6a10aa8b57fdc" upstream="cv2a"/>
+  <project name="cv/arm_app/vputils" path="pkg/ambacv/arm_framework/app/vputils_cv22fs" remote="ambus-git" revision="10d755593ee546b7f598d300d2e6a10aa8b57fdc" upstream="cv2a"/>
+  <project name="cv/arm_app/vputils" path="pkg/ambacv/arm_framework/app/vputils_cv5" remote="ambus-git" revision="6a1672d02f0060424b9798de7a2e1d4000017878" upstream="cv5"/>
+  <project name="cv/arm_app/vputils" path="pkg/ambacv/arm_framework/app/vputils_cv52" remote="ambus-git" revision="6a1672d02f0060424b9798de7a2e1d4000017878" upstream="cv5"/>
+  <project name="cv/arm_cvlib/flexidag" path="pkg/ambacv/arm_framework/cvlib/AmbaCV_Flexidag" remote="ambtw-git" revision="3011035c456a67fec891488a56b20b7cafb99bb6" upstream="master"/>
+  <project name="cv/arm_cvlib/flexidag" path="pkg/ambacv/arm_framework/cvlib/Extern_NMS" remote="ambtw-git" revision="c357d44beecd73a526c16dc2f1d9c36c038c4502" upstream="extern_nms"/>
+  <project name="cv/arm_cvlib/flexidag" path="pkg/ambacv/arm_framework/cvlib/ArmCVT_Common" remote="ambtw-git" revision="d52aff84c7ec2661315dae62ffcbe4cf0fab66ac" upstream="ArmCVT_Common"/>
+  <project name="cv/arm_cvtask" path="pkg/ambacv/arm_framework/cvtask/OpenOD_NMS" remote="ambtw-git" revision="2f46e8d6c3e476171169b666bb3ba0ff8fde9fa1" upstream="OpenOD_NMS"/>
+  <project name="cv/arm_cvtask/ADASBoxARM" path="pkg/ambacv/arm_framework/cvtask/ADASBoxARM" remote="ambus-git" revision="86fb937762f7cf81b5fc5669a58a004a19e9b5c9" upstream="cv22"/>
+  <project name="cv/arm_cvtask/Adder" path="pkg/ambacv/arm_framework/cvtask/Adder" remote="ambus-git" revision="1b8823526ff23201f3c6f5ff037319354d9bcdef" upstream="cvmaster"/>
+  <project name="cv/arm_cvtask/Camctrl" path="pkg/ambacv/arm_framework/cvtask/Camctrl" remote="ambus-git" revision="13c1c43bda30655f738bfb6dcc9fd24e35d40aa7" upstream="cvmaster"/>
+  <project name="cv/arm_cvtask/DataSink" path="pkg/ambacv/arm_framework/cvtask/DataSink" remote="ambtw-git" revision="b972094e2cf9d84e0033b34c253d200530ebeec3" upstream="master"/>
+  <project name="cv/arm_cvtask/DataSource" path="pkg/ambacv/arm_framework/cvtask/DataSource" remote="ambtw-git" revision="8afe42e143b291a1ed3c91a04507cbd206190eee" upstream="master"/>
+  <project name="cv/arm_cvtask/DataTrigger" path="pkg/ambacv/arm_framework/cvtask/DataTrigger" remote="ambtw-git" revision="6b8dfc0d3d45787b8828b11870c15dc4886b8547" upstream="master"/>
+  <project name="cv/arm_cvtask/FEX_SP_UTIL_ARM" path="pkg/ambacv/arm_framework/cvtask/FexSpUtil_cv2" remote="ambtw-git" revision="6ab4b0d863a81f1b2d005d020db580e4ec5655ee" upstream="cv2"/>
+  <project name="cv/arm_cvtask/FileFeeder" path="pkg/ambacv/arm_framework/cvtask/FileFeeder" remote="ambus-git" revision="6566969f12fa559b173f8bb675eafcd581d607cc" upstream="cvmaster"/>
+  <project name="cv/arm_cvtask/HLMobileNetSSD" path="pkg/ambacv/arm_framework/cvtask/HLMobilenetSSD_MemIO" remote="ambtw-git" revision="24c8b9ea5095d437e556c350d43a12faf379207a" upstream="master"/>
+  <project name="cv/arm_cvtask/HighLevelTask" path="pkg/ambacv/arm_framework/cvtask/HighLevelTask" remote="ambus-git" revision="81d263aa90a04db39698b3cd539be1f1b5221463" upstream="cvmaster"/>
+  <project name="cv/arm_cvtask/Logger" path="pkg/ambacv/arm_framework/cvtask/LogWriter" remote="ambus-git" revision="8cfc23f13a64f1b8a99ace0fcdcbf84babfaf2cc" upstream="cvmaster"/>
+  <project name="cv/arm_cvtask/MesgPump" path="pkg/ambacv/arm_framework/cvtask/MesgPump" remote="ambus-git" revision="4d9d65e07ae4e939fa7fdd48bef2705463d5c859" upstream="cvmaster"/>
+  <project name="cv/arm_cvtask/NewVpProfDump" path="pkg/ambacv/arm_framework/cvtask/NewVpProfDump_cv2" remote="ambus-git" revision="d82f393ce09cb4f7fe090e49829a6aa32615172f" upstream="cv2"/>
+  <project name="cv/arm_cvtask/NewVpProfDump" path="pkg/ambacv/arm_framework/cvtask/NewVpProfDump_cv22" remote="ambus-git" revision="0d8ca7c82f8d94c57f777641f6be0e76e9b1a4f5" upstream="cv22"/>
+  <project name="cv/arm_cvtask/NewVpProfDump" path="pkg/ambacv/arm_framework/cvtask/NewVpProfDump_cv25" remote="ambus-git" revision="0d8ca7c82f8d94c57f777641f6be0e76e9b1a4f5" upstream="cv22"/>
+  <project name="cv/arm_cvtask/NewVpProfDump" path="pkg/ambacv/arm_framework/cvtask/NewVpProfDump_cv28" remote="ambus-git" revision="1efa2f832b983589afddf0ddf0a3acadb4980323" upstream="cv28"/>
+  <project name="cv/arm_cvtask/NewVpProfDump" path="pkg/ambacv/arm_framework/cvtask/NewVpProfDump_cv2a" remote="ambus-git" revision="488e5eaba01935221314f8708528d2d5340e76b0" upstream="cv2a"/>
+  <project name="cv/arm_cvtask/NewVpProfDump" path="pkg/ambacv/arm_framework/cvtask/NewVpProfDump_cv2fs" remote="ambus-git" revision="488e5eaba01935221314f8708528d2d5340e76b0" upstream="cv2a"/>
+  <project name="cv/arm_cvtask/NewVpProfDump" path="pkg/ambacv/arm_framework/cvtask/NewVpProfDump_cv22fs" remote="ambus-git" revision="488e5eaba01935221314f8708528d2d5340e76b0" upstream="cv2a"/>
+  <project name="cv/arm_cvtask/NewVpProfDump" path="pkg/ambacv/arm_framework/cvtask/NewVpProfDump_cv5" remote="ambus-git" revision="5ae8a7ce1b47d88124d88cfb446413b3efeaf57a" upstream="cv5"/>
+  <project name="cv/arm_cvtask/NewVpProfDump" path="pkg/ambacv/arm_framework/cvtask/NewVpProfDump_cv52" remote="ambus-git" revision="5ae8a7ce1b47d88124d88cfb446413b3efeaf57a" upstream="cv5"/>
+  <project name="cv/arm_cvtask/Profiler" path="pkg/ambacv/arm_framework/cvtask/Profiler" remote="ambus-git" revision="887ad2e8345491928708ebc0c6761c1332cc0950" upstream="cvmaster"/>
+  <project name="cv/arm_cvtask/ProxyProxy" path="pkg/ambacv/arm_framework/cvtask/IdspFeeder" remote="ambus-git" revision="0be4edb0390a324c2d116d444493e82c12faffbd" upstream="cvmaster"/>
+  <project name="cv/arm_cvtask/Sink" path="pkg/ambacv/arm_framework/cvtask/Sink" remote="ambus-git" revision="6c455a0c98d807e543ea91661805218d61e85ae2" upstream="cvmaster"/>
+  <project name="cv/arm_cvtask/SuperTask" path="pkg/ambacv/arm_framework/cvtask/SuperTask" remote="ambus-git" revision="d4f61ee515a300bf0ef4063b9db33aad5b7d0088" upstream="cvmaster"/>
+  <project name="cv/arm_cvtask/V2appArmTask" path="pkg/ambacv/arm_framework/cvtask/V2appArmTask" remote="ambus-git" revision="0aa65e2132d4fe6884bdfd2056a36c17bc2f304a" upstream="cvmaster"/>
+  <project name="cv/arm_cvtask/VpProfDump" path="pkg/ambacv/arm_framework/cvtask/VpProfDump_cv2" remote="ambus-git" revision="c5a361270403e38899eb5f0389152d6d2736be17" upstream="cv2"/>
+  <project name="cv/arm_cvtask/VpProfDump" path="pkg/ambacv/arm_framework/cvtask/VpProfDump_cv22" remote="ambus-git" revision="37b27c65016bf3c0943070428e6528913a9b6513" upstream="cv22"/>
+  <project name="cv/arm_cvtask/VpProfDump" path="pkg/ambacv/arm_framework/cvtask/VpProfDump_cv25" remote="ambus-git" revision="37b27c65016bf3c0943070428e6528913a9b6513" upstream="cv22"/>
+  <project name="cv/arm_cvtask/VpProfDump" path="pkg/ambacv/arm_framework/cvtask/VpProfDump_cv28" remote="ambus-git" revision="4074afe80c6d2ab611c5ffbc47fc6a3cce3b23e8" upstream="cv28"/>
+  <project name="cv/arm_cvtask/VpProfDump" path="pkg/ambacv/arm_framework/cvtask/VpProfDump_cv2a" remote="ambus-git" revision="3c75ef9b8188655c11242f73fd89c9569963b4eb" upstream="cv2a"/>
+  <project name="cv/arm_cvtask/VpProfDump" path="pkg/ambacv/arm_framework/cvtask/VpProfDump_cv2fs" remote="ambus-git" revision="3c75ef9b8188655c11242f73fd89c9569963b4eb" upstream="cv2a"/>
+  <project name="cv/arm_cvtask/VpProfDump" path="pkg/ambacv/arm_framework/cvtask/VpProfDump_cv22fs" remote="ambus-git" revision="3c75ef9b8188655c11242f73fd89c9569963b4eb" upstream="cv2a"/>
+  <project name="cv/arm_cvtask/VpProfDump" path="pkg/ambacv/arm_framework/cvtask/VpProfDump_cv5" remote="ambus-git" revision="865fc024ac5b128fc1f90a721ed19c6357371df2" upstream="cv5"/>
+  <project name="cv/arm_cvtask/VpProfDump" path="pkg/ambacv/arm_framework/cvtask/VpProfDump_cv52" remote="ambus-git" revision="865fc024ac5b128fc1f90a721ed19c6357371df2" upstream="cv5"/>
+  <project name="cv/arm_cvtask/VpProfSink" path="pkg/ambacv/arm_framework/cvtask/VpProfSink" remote="ambus-git" revision="972b262d50a2426c607a0857ff3694f45026b31e" upstream="cvmaster"/>
+  <project name="cv/arm_framework" path="pkg/ambacv/arm_framework" remote="ambus-git" revision="89e4531c6478bd7daa471f611169cc3ac199c929" upstream="cvmaster"/>
+  <project name="cv/arm_scheduler" path="pkg/ambacv/arm_framework/scheduler" remote="ambus-git" revision="8a458cc04525faf12b532b78fe2099668de05b3d" upstream="cvmaster"/>
+  <project name="cv/cv_libraries" path="pkg/ambacv/cv_common" remote="ambus-git" revision="e87489ef92d5512f7d724dbcddbe0869b9166cb9" upstream="cvmaster"/>
+  <project name="cv/cv_tests" path="pkg/ambacv/tests" remote="ambtw-git" revision="b53c67a510957cd37ea18300f9733180d7bca7d9" upstream="sdk8_linux"/>
+  <project name="cv/cvapi" path="pkg/ambacv/cv_common/inc/cvapi" remote="ambus-git" revision="f1952b1e7c49effb308fb7160c878d715248a8f6" upstream="cvmaster"/>
+  <project name="cv/cvsched_common" path="pkg/ambacv/cv_common/inc/cvsched_common" remote="ambus-git" revision="dd5a88c180cab5f102a2029d76c2d4d57152c4d5" upstream="cvmaster"/>
+  <project name="cv/lib_prebuilt" path="pkg/ambacv" remote="ambtw-git" revision="sdk82001"/>
+  <project name="cv/orc_cvtask/Cavalry" path="pkg/ambacv/orc_framework/cvtask_common/orcvp/Cavalry" remote="ambus-git" revision="e5a78f78f2d6d487363ca6f94a02e77aea675d90" upstream="cvmaster"/>
+  <project name="cv/orc_cvtask/IDspProxy" path="pkg/ambacv/orc_framework/cvtask_common/orcvp/IDspProxy" remote="ambus-git" revision="7e94de583ade2e52f86ad6001559fe9536924631" upstream="cvmaster"/>
+  <project name="cv/orc_cvtask/IDspRX" path="pkg/ambacv/orc_framework/cvtask_common/orcvp/IDspRX" remote="ambus-git" revision="2842c6f34ee86bdfd168782228bdf9e57e29052d" upstream="cvmaster"/>
+  <project name="cv/orc_cvtask/Loggers" path="pkg/ambacv/orc_framework/cvtask_common/orcvp/Loggers" remote="ambus-git" revision="c32ce289be38ee07eff041aa765dba310211d33b" upstream="cvmaster"/>
+  <project name="cv/orc_cvtask/MobileNetSSD" path="pkg/ambacv/orc_framework/cvtask_common/orcvp/MobileNetSSD" remote="ambtw-git" revision="f25d906191bd5684bfacc9616f89795b43ecf97a" upstream="cv22"/>
+  <project name="cv/orc_cvtask/MobileNetSSD" path="pkg/ambacv/orc_framework/cvtask_cv28/orcvp/MobileNetSSD" remote="ambtw-git" revision="92280116288eae2cc2db2de7c0d2ae522774ac92" upstream="cv28"/>
+  <project name="cv/orc_cvtask/MobileNetSSD" path="pkg/ambacv/orc_framework/cvtask_cv2a/orcvp/MobileNetSSD" remote="ambtw-git" revision="d1437fffb3f85b56dcf8c5ba7e949301c5da8985" upstream="cv2a"/>
+  <project name="cv/orc_cvtask/MobileNetSSD" path="pkg/ambacv/orc_framework/cvtask_cv2fs/orcvp/MobileNetSSD" remote="ambtw-git" revision="d1437fffb3f85b56dcf8c5ba7e949301c5da8985" upstream="cv2a"/>
+  <project name="cv/orc_cvtask/MobileNetSSD" path="pkg/ambacv/orc_framework/cvtask_cv22fs/orcvp/MobileNetSSD" remote="ambtw-git" revision="d1437fffb3f85b56dcf8c5ba7e949301c5da8985" upstream="cv2a"/>
+  <project name="cv/orc_cvtask/MobileNetSSD" path="pkg/ambacv/orc_framework/cvtask_cv5/orcvp/MobileNetSSD" remote="ambtw-git" revision="38cea2d93bdee96ff75ff404e78e1eaf8ffa3c81" upstream="cv5"/>
+  <project name="cv/orc_cvtask/MobileNetSSD" path="pkg/ambacv/orc_framework/cvtask_cv52/orcvp/MobileNetSSD" remote="ambtw-git" revision="38cea2d93bdee96ff75ff404e78e1eaf8ffa3c81" upstream="cv5"/>
+  <project name="cv/orc_cvtask/OpenOD" path="pkg/ambacv/orc_framework/cvtask_common/orcvp/OpenOD" remote="ambtw-git" revision="7975248c567ad6796870bd5e2c7b1010afdd82c4" upstream="master"/>
+  <project name="cv/orc_cvtask/OrcThrottler" path="pkg/ambacv/orc_framework/cvtask_common/orcany/OrcThrottler" remote="ambus-git" revision="e4a5aff8f1ede436831f55a9cb47f2818339f407" upstream="cvmaster"/>
+  <project name="cv/orc_cvtask/SimulationSupport" path="pkg/ambacv/orc_framework/cvtask_common/orcvp/SimulationSupport" remote="ambus-git" revision="712f961a9137358435a3f1df4010110a5a934950" upstream="cvmaster"/>
+  <project name="cv/orc_cvtask/V2appVpTask" path="pkg/ambacv/orc_framework/cvtask_common/orcvp/V2appVpTask" remote="ambus-git" revision="4266006d6b0675581b27c37a0d62ac80af0d8176" upstream="cvmaster"/>
+  <project name="cv/orc_cvtask/VpThrottler" path="pkg/ambacv/orc_framework/cvtask_common/orcvp/VpThrottler" remote="ambus-git" revision="a3d64a076b915954704ea466658f81b26f81303a" upstream="cvmaster"/>
+  <project name="cv/orc_cvtask/bisenet" path="pkg/ambacv/orc_framework/cvtask_common/orcvp/bisenet_mnv2_raw_autogen" remote="ambtw-git" revision="713b6a529cc205e8aad369d2d258a1bac5b212b8" upstream="cv22"/>
+  <project name="cv/orc_cvtask/bisenet" path="pkg/ambacv/orc_framework/cvtask_cv28/orcvp/bisenet_mnv2_raw_autogen" remote="ambtw-git" revision="fb541a55b3caef8812b689c1a0a05994367da1b5" upstream="cv28"/>
+  <project name="cv/orc_cvtask/bisenet" path="pkg/ambacv/orc_framework/cvtask_cv2a/orcvp/bisenet_mnv2_raw_autogen" remote="ambtw-git" revision="a3bcc4034e9bc1a442aa2bfa3cf7ce36442d6743" upstream="cv2a"/>
+  <project name="cv/orc_cvtask/bisenet" path="pkg/ambacv/orc_framework/cvtask_cv2fs/orcvp/bisenet_mnv2_raw_autogen" remote="ambtw-git" revision="a3bcc4034e9bc1a442aa2bfa3cf7ce36442d6743" upstream="cv2a"/>
+  <project name="cv/orc_cvtask/bisenet" path="pkg/ambacv/orc_framework/cvtask_cv22fs/orcvp/bisenet_mnv2_raw_autogen" remote="ambtw-git" revision="a3bcc4034e9bc1a442aa2bfa3cf7ce36442d6743" upstream="cv2a"/>
+  <project name="cv/orc_cvtask/bisenet" path="pkg/ambacv/orc_framework/cvtask_cv5/orcvp/bisenet_mnv2_raw_autogen" remote="ambtw-git" revision="ae52f86dbaba8bfa62941c18d82a39a6de892b35" upstream="cv5"/>
+  <project name="cv/orc_cvtask/bisenet" path="pkg/ambacv/orc_framework/cvtask_cv52/orcvp/bisenet_mnv2_raw_autogen" remote="ambtw-git" revision="ae52f86dbaba8bfa62941c18d82a39a6de892b35" upstream="cv5"/>
+  <project name="cv/orc_cvtask/cvtask_any" path="pkg/ambacv/orc_framework/cvtask_common/orcvp/FetchChipInfo" remote="ambtw-git" revision="c09cd95d8605d700fd129161946187040b1994e5" upstream="FetchChipInfo"/>
+  <project name="cv/orc_cvtask/cvtask_any" path="pkg/ambacv/orc_framework/cvtask_common/orcvp/OpenOD_RecvRaw" remote="ambtw-git" revision="8964290704ab865c2fa17e5db2bddd2d1a865f5f" upstream="OpenOD_RecvRaw"/>
+  <project name="cv/orc_cvtask/cvtask_any" path="pkg/ambacv/orc_framework/cvtask_cv22/orcvp/OpenOD_RecvRaw" remote="ambtw-git" revision="8964290704ab865c2fa17e5db2bddd2d1a865f5f" upstream="OpenOD_RecvRaw"/>
+  <project name="cv/orc_framework" path="pkg/ambacv/orc_framework" remote="ambus-git" revision="23fb7b1325bcf930252d151e46a1b53ccb70a7bb" upstream="cvmaster"/>
+  <project name="cv/orc_scheduler" path="pkg/ambacv/orc_framework/scheduler" remote="ambtw-git" revision="sdk_v8.2.001"/>
+  <project name="kernel/git/stable/linux-stable" path="linux-5.15" remote="ambsh" revision="7b84eb1e08b2e2c4daed121fec66f84e50e6c3c1" upstream="linux-5.15-ambarella-main-ambalink"/>
+</manifest>

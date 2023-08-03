@@ -1,0 +1,277 @@
+diff -ur memtester-4.5.0_ori/memtester.c memtester-4.5.0/memtester.c
+--- memtester-4.5.0_ori/memtester.c	2020-09-21 03:43:55.000000000 +0800
++++ memtester-4.5.0/memtester.c	2022-06-09 09:03:05.538967900 +0800
+@@ -43,6 +43,7 @@
+     { "Compare AND", test_and_comparison },
+     { "Sequential Increment", test_seqinc_comparison },
+     { "Solid Bits", test_solidbits_comparison },
++    { "Effing ZeroOnes", test_zeros_ones_comparison },
+     { "Block Sequential", test_blockseq_comparison },
+     { "Checkerboard", test_checkerboard_comparison },
+     { "Bit Spread", test_bitspread_comparison },
+@@ -99,10 +100,13 @@
+ int use_phys = 0;
+ off_t physaddrbase = 0;
+ 
++int print_loop = 0;
++int exit_directly = 0;
++
+ /* Function definitions */
+ void usage(char *me) {
+     fprintf(stderr, "\n"
+-            "Usage: %s [-p physaddrbase [-d device]] <mem>[B|K|M|G] [loops]\n",
++            "Usage: %s [-p physaddrbase [-d device]] <mem>[B|K|M|G] [loops] [-q] [-l] [-e]\n",
+             me);
+     exit(EXIT_FAIL_NONSTARTER);
+ }
+@@ -117,7 +121,7 @@
+     ulv *bufa, *bufb;
+     int do_mlock = 1, done_mem = 0;
+     int exit_code = 0;
+-    int memfd, opt, memshift;
++    int memfd, opt, memshift=0;
+     size_t maxbytes = -1; /* addressable memory, in bytes */
+     size_t maxmb = (maxbytes >> 20) + 1; /* addressable memory, in MB */
+     /* Device to mmap memory from with -p, default is normal core */
+@@ -139,7 +143,8 @@
+     /* If MEMTESTER_TEST_MASK is set, we use its value as a mask of which
+        tests we run.
+      */
+-    if (env_testmask = getenv("MEMTESTER_TEST_MASK")) {
++     env_testmask = getenv("MEMTESTER_TEST_MASK");
++    if (env_testmask) {
+         errno = 0;
+         testmask = strtoul(env_testmask, 0, 0);
+         if (errno) {
+@@ -150,7 +155,7 @@
+         printf("using testmask 0x%lx\n", testmask);
+     }
+ 
+-    while ((opt = getopt(argc, argv, "p:d:")) != -1) {
++    while ((opt = getopt(argc, argv, "p:d:qle")) != -1) {
+         switch (opt) {
+             case 'p':
+                 errno = 0;
+@@ -193,6 +198,15 @@
+                     }
+                 }
+                 break;              
++            case 'q':
++                testmask = 0xffffffff & ~0x7e; /* ignore arithmetic test like XOR/SUB/... */
++                break;
++	    case 'l':
++	        print_loop = 1;
++	        break;
++	    case 'e':
++	        exit_directly = 1;
++	        break;
+             default: /* '?' */
+                 usage(argv[0]); /* doesn't return */
+         }
+@@ -248,7 +262,7 @@
+     }
+     if (wantbytes < pagesize) {
+         fprintf(stderr, "bytes %ld < pagesize %ld -- memory argument too large?\n",
+-                wantbytes, pagesize);
++                (long int)wantbytes, (long int)pagesize);
+         exit(EXIT_FAIL_NONSTARTER);
+     }
+ 
+@@ -378,18 +392,30 @@
+     bufb = (ulv *) ((size_t) aligned + halflen);
+ 
+     for(loop=1; ((!loops) || loop <= loops); loop++) {
+-        printf("Loop %lu", loop);
+-        if (loops) {
+-            printf("/%lu", loops);
+-        }
+-        printf(":\n");
+-        printf("  %-20s: ", "Stuck Address");
+-        fflush(stdout);
+-        if (!test_stuck_address(aligned, bufsize / sizeof(ul))) {
+-             printf("ok\n");
++        if (print_loop) {
++            fprintf(stderr, "Loop %lu", loop);
++            if (loops) {
++                fprintf(stderr, "/%lu", loops);
++            }
++            fprintf(stderr, ":\n");
+         } else {
+-            exit_code |= EXIT_FAIL_ADDRESSLINES;
++            printf("Loop %lu", loop);
++            if (loops) {
++                printf("/%lu", loops);
++            }
++            printf(":\n");
+         }
++	if (!testmask) {
++	        printf("  %-20s: ", "Stuck Address");
++	        fflush(stdout);
++	        if (!test_stuck_address(aligned, bufsize / sizeof(ul))) {
++	             printf("ok\n");
++	        } else {
++	            exit_code |= EXIT_FAIL_ADDRESSLINES;
++	        }
++		if (exit_directly && exit_code)
++			goto done;
++	}
+         for (i=0;;i++) {
+             if (!tests[i].name) break;
+             /* If using a custom testmask, only run this test if the
+@@ -402,8 +428,11 @@
+             if (!tests[i].fp(bufa, bufb, count)) {
+                 printf("ok\n");
+             } else {
++                fprintf(stderr, "failed: loop %lu in %-20s\n",loop,tests[i].name);
+                 exit_code |= EXIT_FAIL_OTHERTEST;
+             }
++		if (exit_directly && exit_code)
++			goto done;
+             fflush(stdout);
+             /* clear buffer */
+             memset((void *) buf, 255, wantbytes);
+@@ -413,6 +442,7 @@
+     }
+     if (do_mlock) munlock((void *) aligned, bufsize);
+     printf("Done.\n");
++done:
+     fflush(stdout);
+     exit(exit_code);
+ }
+diff -ur memtester-4.5.0_ori/tests.c memtester-4.5.0/tests.c
+--- memtester-4.5.0_ori/tests.c	2020-09-21 03:43:55.000000000 +0800
++++ memtester-4.5.0/tests.c	2022-06-09 09:28:51.438008600 +0800
+@@ -17,6 +17,8 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <limits.h>
++#include <unistd.h>
++#include <string.h>
+ 
+ #include "types.h"
+ #include "sizes.h"
+@@ -39,25 +41,61 @@
+ 
+ /* Function definitions. */
+ 
++static void __clear_cache__(ulv *bufa, ulv *bufb, size_t count)
++{
++    char *buf0, *buf1;
++
++    buf0 = malloc(0x200000);
++    buf1 = malloc(0x200000);
++    if (buf0 == NULL || buf1 == NULL)
++        goto exit;
++
++    memcpy(buf0, buf1, 0x200000);
++    __clear_cache((ul *)bufa, (ul *)bufa + count); /* builtin function, only affect mmap'd memory */
++    __clear_cache((ul *)bufb, (ul *)bufb + count); /* builtin function, only affect mmap'd memory */
++
++    sleep(0.5);
++
++exit:
++    if (buf0)
++        free(buf0);
++    if (buf1)
++        free(buf1);
++}
++
+ int compare_regions(ulv *bufa, ulv *bufb, size_t count) {
+     int r = 0;
+     size_t i;
+-    ulv *p1 = bufa;
+-    ulv *p2 = bufb;
++    ulv *p1 = bufa, d1;
++    ulv *p2 = bufb, d2;
+     off_t physaddr;
+ 
+     for (i = 0; i < count; i++, p1++, p2++) {
+         if (*p1 != *p2) {
++            d1 = *p1;
++            d2 = *p2;
++            __clear_cache__(bufa, bufb, count);
+             if (use_phys) {
+                 physaddr = physaddrbase + (i * sizeof(ul));
+                 fprintf(stderr, 
+-                        "FAILURE: 0x%08lx != 0x%08lx at physical address "
+-                        "0x%08lx.\n", 
+-                        (ul) *p1, (ul) *p2, physaddr);
++#if (UL_LEN == 64)
++                        "FAILURE: 0x%016lx != 0x%016lx [0x%016lx, 0x%016lx] at physical address "
++                        "0x%016lx. %s error?\n",
++#else
++                        "FAILURE: 0x%08lx != 0x%08lx [0x%08lx, 0x%08lx] at physical address "
++                        "0x%08lx. %s error?\n",
++#endif
++                        d1, d2, (ulv) *p1, (ulv) *p2, physaddr,
++                        (*p1 == *p2) ? "Read" : "Write");
+             } else {
+                 fprintf(stderr, 
+-                        "FAILURE: 0x%08lx != 0x%08lx at offset 0x%08lx.\n", 
+-                        (ul) *p1, (ul) *p2, (ul) (i * sizeof(ul)));
++#if (UL_LEN == 64)
++                        "FAILURE: 0x%016lx != 0x%016lx [0x%016lx, 0x%016lx] at offset 0x%016lx. %s error?\n",
++#else
++                        "FAILURE: 0x%08lx != 0x%08lx [0x%08lx, 0x%08lx] at offset 0x%08lx. %s error?\n",
++#endif
++                        d1, d2, (ulv) *p1, (ulv) *p2, (ul) (i * sizeof(ul)),
++                        (*p1 == *p2) ? "Read" : "Write");
+             }
+             /* printf("Skipping to next test..."); */
+             r = -1;
+@@ -250,6 +288,44 @@
+         fflush(stdout);
+         if (compare_regions(bufa, bufb, count)) {
+             return -1;
++        }
++    }
++    printf("\b\b\b\b\b\b\b\b\b\b\b           \b\b\b\b\b\b\b\b\b\b\b");
++    fflush(stdout);
++    return 0;
++}
++
++int test_zeros_ones_comparison(ulv *bufa, ulv *bufb, size_t count) {
++    ulv *p1 = bufa;
++    ulv *p2 = bufb;
++    unsigned int j;
++    size_t i;
++
++    printf("           ");
++    fflush(stdout);
++    for (j = 0; j < 256; j++) {
++        printf("\b\b\b\b\b\b\b\b\b\b\b");
++        p1 = (ulv *) bufa;
++        p2 = (ulv *) bufb;
++	printf("setting %3u", j);
++        fflush(stdout);
++        for (i = 0; i + 4 < count; i+=4) {
++            // This pattern is 16 0x00 bytes by 16 0xFF (effing bytes)
++            *p1++ = *p2++ = (ul) UL_BYTE(0x00);
++            *p1++ = *p2++ = (ul) UL_BYTE(0x00);
++            *p1++ = *p2++ = (ul) UL_BYTE(0xFF);
++            *p1++ = *p2++ = (ul) UL_BYTE(0xFF);
++        }
++        // Set remaining elements to 0... in case not evenly divisble by 4
++        // This avoids having p1 overwrite p2
++        for (; i < count; i++) {
++            *p1++ = *p2++ = (ul) UL_BYTE(0x00);
++        }
++        printf("\b\b\b\b\b\b\b\b\b\b\b");
++	printf("testing %3u", j);
++        fflush(stdout);
++        if (compare_regions(bufa, bufb, count)) {
++            return -1;
+         }
+     }
+     printf("\b\b\b\b\b\b\b\b\b\b\b           \b\b\b\b\b\b\b\b\b\b\b");
+diff -ur memtester-4.5.0_ori/tests.h memtester-4.5.0/tests.h
+--- memtester-4.5.0_ori/tests.h	2020-09-21 03:43:55.000000000 +0800
++++ memtester-4.5.0/tests.h	2022-06-08 21:38:39.756347200 +0800
+@@ -32,6 +32,7 @@
+ int test_walkbits1_comparison(unsigned long volatile *bufa, unsigned long volatile *bufb, size_t count);
+ int test_bitspread_comparison(unsigned long volatile *bufa, unsigned long volatile *bufb, size_t count);
+ int test_bitflip_comparison(unsigned long volatile *bufa, unsigned long volatile *bufb, size_t count);
++int test_zeros_ones_comparison(unsigned long volatile *bufa, unsigned long volatile *bufb, size_t count);
+ #ifdef TEST_NARROW_WRITES    
+ int test_8bit_wide_random(unsigned long volatile *bufa, unsigned long volatile *bufb, size_t count);
+ int test_16bit_wide_random(unsigned long volatile *bufa, unsigned long volatile *bufb, size_t count);

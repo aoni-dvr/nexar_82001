@@ -1,0 +1,12 @@
+config APP_FLOW_AONI_DQA_TEST_SCRIPT_MODULE
+    bool "Enable dqa test script module"
+    default y
+config APP_FLOW_AONI_DQA_TEST_UART_MODULE
+    bool "Enable dqa test uart module"
+    default y
+config APP_FLOW_AONI_PRODUCT_LINE_MODULE
+    bool "Enable product line module"
+    default y
+config APP_FLOW_AONI_GNSS_MODULE
+    bool "Enable gnss module"
+    default y

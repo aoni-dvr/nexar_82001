@@ -1,0 +1,26 @@
+ccflags-y += -I$(srctree)/vendors/ambarella/inc/perif
+ccflags-y += -I$(srctree)/svc/apps/iout/$(TARGET_APP_SRC_PATH)/peripherals/$(AMBA_CHIP_ID)/sensor/inc
+ccflags-y += -I$(srctree)/svc/apps/iout/$(TARGET_APP_SRC_PATH)/peripherals/$(AMBA_CHIP_ID)/bridge/inc
+
+SENSORPATH=$(TARGET_APP_SRC_PATH)/peripherals/$(AMBA_CHIP_ID)/sensor
+
+libeng_perif_${AMBA_CHIP_ID}-objs += $(SENSORPATH)/AmbaSensor_IMX317.o \
+                                  $(SENSORPATH)/AmbaSensor_IMX317Table.o
+
+libeng_perif_${AMBA_CHIP_ID}-objs += $(SENSORPATH)/AmbaSensor_IMX383.o \
+                                  $(SENSORPATH)/AmbaSensor_IMX383Table.o
+
+libeng_perif_${AMBA_CHIP_ID}-objs += $(SENSORPATH)/AmbaSensor_IMX272.o \
+                                  $(SENSORPATH)/AmbaSensor_IMX272Table.o
+
+libeng_perif_${AMBA_CHIP_ID}-objs += $(SENSORPATH)/AmbaSensor_IMX490.o \
+                                  $(SENSORPATH)/AmbaSensor_IMX490Table.o
+
+libeng_perif_${AMBA_CHIP_ID}-objs += $(SENSORPATH)/AmbaSensor_MAX9295_9296_IMX390_REMAP.o
+
+libeng_perif_${AMBA_CHIP_ID}-objs += $(SENSORPATH)/AmbaSensor_MAX9295_96712_IMX390_VCX.o
+
+libeng_perif_${AMBA_CHIP_ID}-objs += $(SENSORPATH)/AmbaSensor_MAX9295_96712_IMX390_VCC.o \
+                                  $(SENSORPATH)/AmbaSensor_MAX9295_96712_IMX390_VCCTable.o
+
+libeng_perif_${AMBA_CHIP_ID}-objs += $(SENSORPATH)/AmbaSensor_MAX9295_96712_IMX390_VCXC.o

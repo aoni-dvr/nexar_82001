@@ -1,0 +1,12 @@
+
+menuconfig BR2_PACKAGE_AMBA_TVM
+	bool "Build Ambarella TVM library"
+	default n
+	help
+		Build Ambarella TVM library
+
+config BR2_PACKAGE_AMBA_DLR_ROOT_DIR
+	string "Ambarella DLR root directory"
+	default ""
+	depends on BR2_PACKAGE_AMBA_TVM
+

@@ -1,0 +1,238 @@
+
+#include <vp_vas.h>
+
+// subdags
+#include "subdags/subsample_width.vpp"
+#include "subdags/object_top_index.vpp"
+#include "subdags/object_score.vpp"
+#include "subdags/ground_score.vpp"
+#include "subdags/confidence.vpp"
+
+#define TRANS_INPUT_DISP_WIDTH					(768)
+#define SUBSAMPLE_STRIDE						(4)
+#define SUBSAMPLE_STRIDE_EXP					(2)	// log2(SUBSAMPLE_STRIDE)
+#define TRANS_INPUT_DISP_SUBSAMPLE_WIDTH		(768/SUBSAMPLE_STRIDE) //192
+#define TRANS_INPUT_DISP_HEIGHT					(320)
+
+// 4095
+#define INVALID_DISPARITY		"FF 0F"
+#define IN_DISPARITY_SHIFT		(4)
+#define INVALID_DISPARITY_RSH	(255) // INVALID_DISPARITY >> IN_DISPARITY_SHIFT
+
+#define SUBSAMPLE_STRIDE 		(4)
+
+//#define OBJECT_INVALID_PENALTY	"01 00"
+#define GROUND_INVALID_PENALTY	"01 00"
+
+#define OBJECT_SCORE_WEIGHT		"01"
+#define GROUND_SCORE_WEIGHT		"01"
+
+DAG STIXEL_FREE_SPACE = {	
+
+	// ------------------------- Load input ---------------------------- // 
+	// seen as u16
+	VP_input(
+		in_disparity, uint16_t, 
+		vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_WIDTH)
+	);
+
+	VP_input(
+		in_esti_ground_disparity, uint16_t, 
+		vector(1, 1, 1, TRANS_INPUT_DISP_WIDTH)
+	);
+
+	VP_input(
+		in_obj_top_x_index, uint16_t, 
+		vector(1, 1, 1, TRANS_INPUT_DISP_WIDTH)
+	);
+
+	VP_input(
+		in_ground_disp_coef, uint16_t, 
+		vector(1, 1, 1, TRANS_INPUT_DISP_WIDTH)
+	);
+
+	
+	// Sub-sample disparity along with width direction
+	// ----------------------------------------------------------------------	
+	VP_reshape(
+		in_disparity,
+		VP_tensor(tmp1, uint16_t, vector(1, 1, 1, TRANS_INPUT_DISP_WIDTH*TRANS_INPUT_DISP_HEIGHT)),
+		w = TRANS_INPUT_DISP_WIDTH*TRANS_INPUT_DISP_HEIGHT, h = 1, d = 1, p = 1
+	);
+
+	call =
+	{
+		callee=Subsample_Width,
+		$in=tmp1,
+		$in_width=TRANS_INPUT_DISP_WIDTH*TRANS_INPUT_DISP_HEIGHT,
+		$in_stride=SUBSAMPLE_STRIDE,
+		$out=tmp2,
+	};
+
+	VP_reshape(
+		tmp2,
+		VP_tensor(disparity, uint16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_SUBSAMPLE_WIDTH)),
+		w = TRANS_INPUT_DISP_SUBSAMPLE_WIDTH, h = TRANS_INPUT_DISP_HEIGHT, d = 1, p = 1
+	);
+
+	// Sub-sample esti_ground_disparity along with width direction
+	// ----------------------------------------------------------------------	
+	call =
+	{
+		callee=Subsample_Width,
+		$in=in_esti_ground_disparity,
+		$in_width=TRANS_INPUT_DISP_WIDTH,
+		$in_stride=SUBSAMPLE_STRIDE,
+		$out=esti_ground_disparity,
+	};	
+
+	VP_scalar(scale_rsh_bits, uint8_t, SUBSAMPLE_STRIDE_EXP);
+
+	call =
+	{
+		callee=Subsample_Width,
+		$in=in_obj_top_x_index,
+		$in_width=TRANS_INPUT_DISP_WIDTH,
+		$in_stride=SUBSAMPLE_STRIDE,
+		$out=obj_top_x_index_tmp,
+	};
+
+	VP_rsh(
+		obj_top_x_index_tmp,
+		scale_rsh_bits,
+		VP_tensor(obj_top_x_index, uint16_t, vector(1, 1, 1, TRANS_INPUT_DISP_SUBSAMPLE_WIDTH))
+	);
+
+	// Sub-sample ground_disp_coef along with width direction
+	// ----------------------------------------------------------------------	
+	call =
+	{
+		callee=Subsample_Width,
+		$in=in_ground_disp_coef,
+		$in_width=TRANS_INPUT_DISP_WIDTH,
+		$in_stride=SUBSAMPLE_STRIDE,
+		$out=ground_disp_coef_tmp,
+	};
+
+	VP_rsh(
+		ground_disp_coef_tmp,
+		scale_rsh_bits,
+		VP_tensor(ground_disp_coef, uint16_t, vector(1, 1, 1, TRANS_INPUT_DISP_SUBSAMPLE_WIDTH))
+	);
+
+	// Do rsh to reduce precision because VP_cdf's input need to be
+	// 1. 16 bits
+	// 2. integer (with no shift bits)
+	// ----------------------------------------------------------------------	
+	VP_scalar(disp_rsh_bits, uint8_t, IN_DISPARITY_SHIFT);
+	VP_rsh(
+		disparity,
+		disp_rsh_bits,
+		VP_tensor(rsh_disparity, uint16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_SUBSAMPLE_WIDTH))
+	);
+	
+	VP_scalar(rsh_invalid_disp, uint16_t, INVALID_DISPARITY_RSH);
+	
+	// transfer input format: [x0, x1 .... x_w] to 
+	// [ [x00, x01 .... x0w, x10, x11 .... x1w, xh0, xh1 .... xhw], 
+	// 	[y00, y01 .... y0w, y10, y11 .... y1w, yh0, yh1 .... yhw] ]
+	// ----------------------------------------------------------------------	
+	call =
+	{
+		callee=Object_Top_Index,
+		$obj_top_x_index=obj_top_x_index,
+		$disparity_in_width=TRANS_INPUT_DISP_SUBSAMPLE_WIDTH,
+		$disparity_in_height=TRANS_INPUT_DISP_HEIGHT,
+		$obj_top_index_map_out=obj_top_index_map,
+	};
+
+	// fill estimation ground disparity to invalid region
+	// ----------------------------------------------------------------------	
+	VP_eqb(
+		rsh_disparity, 
+		rsh_invalid_disp,
+		VP_tensor(invalid_disp_mask, uint8_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_SUBSAMPLE_WIDTH), bitvector = 1)
+	);	
+
+	VP_muxb(		
+		esti_ground_disparity, 
+		rsh_disparity, 
+		invalid_disp_mask,
+		VP_tensor(hack_rsh_disparity, uint16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_SUBSAMPLE_WIDTH))
+	);
+
+  	call =
+	{
+		callee=Object_Score,
+		$disparity_in=hack_rsh_disparity,
+		$disparity_in_width=TRANS_INPUT_DISP_SUBSAMPLE_WIDTH,
+		$disparity_in_height=TRANS_INPUT_DISP_HEIGHT,
+		$obj_top_index=obj_top_index_map,
+		$ground_disp_coef=ground_disp_coef,
+		$esti_ground_disparity=esti_ground_disparity,
+		$obj_score_out=obj_score,
+	};
+
+	call =
+	{
+		callee=Ground_Score,
+		$disparity_in=hack_rsh_disparity,
+		$disparity_in_width=TRANS_INPUT_DISP_SUBSAMPLE_WIDTH,
+		$disparity_in_height=TRANS_INPUT_DISP_HEIGHT,
+		$default_invalid_penalty=GROUND_INVALID_PENALTY,
+		$invalid_disp_mask=invalid_disp_mask,
+		$esti_ground_disparity=esti_ground_disparity,
+		$ground_score_out=ground_score,
+	};
+
+	call =
+	{
+		callee=Confidence,
+		$esti_ground_disparity=esti_ground_disparity,
+		$disparity_width=TRANS_INPUT_DISP_SUBSAMPLE_WIDTH,
+		$disparity_height=TRANS_INPUT_DISP_HEIGHT,
+		$invalid_disp_mask=invalid_disp_mask,
+		$confidence_out=confidence_map,
+	};
+
+    // Get node score: (object_socre + ground_socre)*weight
+    //========================================================
+	VP_muli(
+		obj_score, 
+		VP_const_tensor(OBJECT_SCORE_WEIGHT, uint8_t, vector(1)),
+		VP_tensor(weighted_obj_score, uint16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_SUBSAMPLE_WIDTH)),
+		disable_reserved = 1 // disable NaN and inf symbols
+	);
+
+	VP_muli(
+		ground_score, 
+		VP_const_tensor(GROUND_SCORE_WEIGHT, uint8_t, vector(1)),
+		VP_tensor(weighted_ground_score, uint16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_SUBSAMPLE_WIDTH)),
+		disable_reserved = 1 // disable NaN and inf symbols
+	);
+
+	VP_add(
+		weighted_obj_score, weighted_ground_score,
+		VP_tensor(node_score, uint16_t, vector(1, 1, TRANS_INPUT_DISP_HEIGHT, TRANS_INPUT_DISP_SUBSAMPLE_WIDTH))
+	);
+
+	// For each row, search minimum score
+	VP_mmrw(		
+		node_score,
+		VP_tensor(min_node_score, uint16_t, vector(1, 1, 1, TRANS_INPUT_DISP_HEIGHT)),
+		VP_tensor(min_node_score_pos_tmp, uint16_t, vector(1, 1, 1, TRANS_INPUT_DISP_HEIGHT)),
+		op = 0 // min
+	);    
+
+	// Recover to original dimension
+	VP_scalar(subsample_stride, uint8_t, SUBSAMPLE_STRIDE);
+    VP_mul(
+		min_node_score_pos_tmp, 
+		subsample_stride,
+		VP_tensor(min_node_score_pos, uint16_t, vector(1, 1, 1, TRANS_INPUT_DISP_HEIGHT)),
+		disable_reserved = 1 // disable NaN and inf symbols
+	);
+    
+    VP_output(min_node_score_pos_out, min_node_score_pos);    
+    VP_output(confidence_map_out, confidence_map);    
+}

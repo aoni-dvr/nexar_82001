@@ -1,0 +1,120 @@
+/*
+ * Copyright (C) 2013 Ambarella,Inc. - http://www.ambarella.com/
+ * Author: Cao Rongrong <rrcao@ambarella.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+/dts-v1/;
+
+/include/ "ambarella-cv22.dtsi"
+
+/ {
+	model = "Ambarella CV22BUB Board";
+	compatible = "ambarella,cv22bub", "ambarella,cv22";
+
+	chosen {
+		bootargs = "console=ttyS0 ubi.mtd=lnx root=ubi0:rootfs rw rootfstype=ubifs init=/linuxrc";
+	};
+
+	n_apb@e4000000 {
+		i2c0: i2c@e4008000 {
+			status = "ok";
+
+			ambvin0@01 {
+				compatible = "ambarella,ambvin";
+				reg = <0x01>;	/* fake address, will be overwritten in runtime */
+			};
+
+			ambvin1@02 {
+				compatible = "ambarella,ambvin";
+				reg = <0x02>;	/* fake address, will be overwritten in runtime */
+			};
+		};
+
+		i2c1: i2c@e4009000 {
+			status = "ok";
+			  };
+
+		i2c2: i2c@e400a000 {
+			status = "ok";
+		};
+
+		i2c3: i2c@e400b000 {
+			status = "ok";
+		};
+	};
+
+	n_ahb@e0000000 {
+		sdmmc0: sdmmc0@e0004000 {
+			pwr-gpios = <&gpio 109 0x1>;
+			v18-gpios = <&gpio 156 0x1>;
+		};
+
+		sdmmc2: sdmmc2@e0005000 {
+			pwr-gpios = <&gpio 110 0x1>;
+			v18-gpios = <&gpio 157 0x1>;
+		};
+
+		mac0: ethernet@e000e000 {
+			amb,tx-clk-invert;
+
+#if 0		/* case: AHB mdcmdio */
+			pinctrl-0 = <&rgmii_pins &ahb_mdio_pins>;
+			amb,ahb_mdio_bus;
+			amb,ahb-12mhz-div = <1>;
+#endif
+			phy@0 {
+				reg = <0>;
+			};
+		};
+
+		spi0: spi@e0011000 {
+			status = "ok";
+			cs-gpios = <&gpio 25 0>;
+
+			ambvin0@0 {
+				compatible = "ambarella,ambvin";
+				reg = <0>;
+				spi-max-frequency = <1000000>;
+				spi-cpha;
+				spi-cpol;
+			};
+		};
+
+		hdmi@e000b000 {
+			amb,i2c-adapter = <2>;
+		};
+	};
+
+	rct@ed080000 {
+		usbphy: usbphy@ed080050 {
+			/* high will trigger the ocp interrupt */
+			amb,ocp-polarity = <0>;
+			pinctrl-names = "default";
+			pinctrl-0 = <&usb_host0_pins_a>;
+		};
+	};
+
+	bogus_bus {
+		pwm_bl@0 {
+			compatible = "pwm-backlight";
+			reg = <0>;
+			pwms = <&pwm0 0 40000 0>;
+			pinctrl-names = "default";
+			pinctrl-0 = <&pwm0_pins_b>;
+			brightness-levels = <0 4 8 16 32 64 128 255>;
+			default-brightness-level = <7>;
+		};
+	};
+
+	iav {
+		/* node for vin controller */
+		vinc0 {
+			vinrst-gpios = <&gpio 113 0>;
+			/* vinpwr-gpios = <>; */
+		};
+	};
+};
+

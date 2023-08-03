@@ -1,0 +1,103 @@
+; -----------------------------------------------------
+;                  TERA TERM GLOBAL SETTING
+; -----------------------------------------------------
+timeout = 30
+
+; -----------------------------------------------------
+;
+;                   iCam Calibration Module
+;                        (2019.12.03)
+;
+; -----------------------------------------------------
+
+; -----------------------------------------------------
+;                      SCRIPT PARAMETER
+; -----------------------------------------------------
+; └─ calibration channel setting ( It is necessary )
+     VinID = 0
+     SensorID = 1
+     VinSelectBits = 3
+     SensorSelectBits = 15
+
+    waitstr = ''
+     
+; └─ VIG calibration setting
+     iCamCalib_Vig_On = 1
+     iCamCalib_Vig_table_id = 0
+     iCamCalib_Vig_dbg_msg = 2
+     iCamCalib_Vig_ctuner = 'd:\calib_sd_card\vig_tuner_slot_d.txt'
+               
+; -----------------------------------------------------
+;                      SCRIPT BEGIN
+; -----------------------------------------------------
+
+    ; Reboot to standby mode before calibration    
+    sprintf 'svc_app standby'
+    sprintf2 waitstr 'This is Command mode'
+    call _SUB_FUNC_CMD_PROC
+    pause 1
+
+if iCamCalib_Vig_On=1 then
+
+    ; Enable vig debug message    
+    sprintf 'svc_cal vig cfg_dbg_msg %d' iCamCalib_Vig_dbg_msg
+    sprintf2 waitstr 'Calibration VIG Debug Msg On/Off'
+    call _SUB_FUNC_CMD_PROC
+    pause 1    
+    
+    ; Initial vig calib item
+    sprintf 'svc_cal mgr item init 1'
+    sprintf2 waitstr 'Initial calib item done 1'
+    call _SUB_FUNC_CMD_PROC
+    pause 1
+
+    ; Configure the calib channel to calib vignette module and reset the setting as default
+    sprintf 'svc_cal vig cfg_calib_chan %d %d %d %d' VinID SensorID VinSelectBits SensorSelectBits 
+    sprintf2 waitstr 'Calibration VIG Channel'
+    call _SUB_FUNC_CMD_PROC
+    pause 1
+    
+    ; Configure the calib vignette nand table index
+    sprintf 'svc_cal vig cfg_table_id %d' iCamCalib_Vig_table_id
+    sprintf2 waitstr 'Calibration VIG Table Index'
+    call _SUB_FUNC_CMD_PROC
+    pause 1
+    
+    ; Generate calib vignette table by Ctuner and save to nand
+    sprintf 'svc_cal vig gen_table %s' iCamCalib_Vig_ctuner
+    sprintf2 waitstr 'Successful to save data. calib(1)'
+    call _SUB_FUNC_CMD_PROC
+    pause 1
+
+endif
+    
+; -----------------------------------------------------
+;                       SCRIPT END
+; -----------------------------------------------------
+
+exit
+
+:_SUB_FUNC_CMD_PROC
+    strlen inputstr
+    
+    if result>0 then
+        sendln ''
+        sendln ''
+        sendln inputstr
+        
+        strlen waitstr
+        if result>0 then
+            wait waitstr
+            if result=0 goto _ERROR_process_cmd_fail
+            waitstr = ''
+        endif
+    endif
+    
+return
+
+:_ERROR_process_cmd_fail
+    sprintf 'Failure to process command - %s' inputstr
+    
+    dispstr inputstr
+exit
+

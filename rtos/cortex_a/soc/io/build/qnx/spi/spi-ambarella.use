@@ -1,0 +1,17 @@
+%C Driver for Ambarella SPI controllers
+
+Syntax:
+    spi-ambarella -C [channel number]
+    spi-ambarella -S
+
+Options (to override autodetected defaults):
+
+    C,              Indicates SPI master device, followed by the channel number
+    S,              Indicates SPI slave device
+
+Examples:
+    # Start SPI master channel 2 device ....
+    spi-ambarella -C 2
+    # Start SPI slave device ....
+    spi-ambarella -S
+

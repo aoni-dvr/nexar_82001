@@ -1,0 +1,13 @@
+Source of BSD-License files
+=============================
+
+- newlib
+	- acle-compat.h, newlib/libc/machine/arm/acle-compat.h
+	- aeabi_memcpy-armv7a.S, newlib/libc/machine/arm/aeabi_memcpy-armv7a.S
+	- memcpy_aarch64.S, newlib/libc/machine/aarch64/memcpy.S
+	- memcpy.asm, newlib/libc/machine/arm/memcpy-armv7a.S
+
+- Android
+	- memcpy_a53_armv7.S, platform/bionic/libc/arch-arm/cortex-a53/bionic
+	  - https://android.googlesource.com/platform/bionic/+/master/libc/arch-arm/cortex-a53/bionic
+

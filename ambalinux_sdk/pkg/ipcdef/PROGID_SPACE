@@ -1,0 +1,73 @@
+/*******************************************************************************************************************************************************************\
+Please follow the rule listed below for defining the program id.
+Program id should be within 0x10000001~0x1FFFFFFF, if the server is in RTOS; Program id should be within 0x20000001~0x2FFFFFFF, if the server is in Linux user space.
+Note: The host can be specified by assigning host in ambaipc_clnt_create function. However, this is just for testing purpose.
+\*******************************************************************************************************************************************************************/
+========================================
+Enumeration of program ID space for IPC:
+========================================
+
+PROGRAM                     FILE                                ID
+---------------------------------------------------------------------------------------------
+AmbaIPC_RpcProg_Test        AmbaIPC_RpcProg_R_Test.h            0x10000001
+R_MSGFW                     AmbaIPC_RpcProg_R_Msg.h             0x10000002
+
+RT_NetFifo                  AmbaIPC_RpcProg_RT_NetFifo.h        0x10000004
+RT_NETCTRL                  AmbaIPC_RpcProg_RT_NetCtrl.h        0x10000005
+RT_DATA_NOTIFY              AmbaIPC_RpcProg_RT_DataNotify.h     0x10000006
+R_PT                        AmbaIPC_RpcProg_R_PT.h              0x10000007
+
+RT_EVENTNOTIFIER            AmbaIPC_RpcProg_RT_EventNotifier    0x10000009
+RT_AMBAFS_NOTIFY            AmbaIPC_RpcProg_RT_AmbaFSNotify     0x1000000A
+
+RT_LNXCMDHNDLR              AmbaIPC_RpcProg_RT_CmdHndlr.h       0x1000000B
+RT_SHAREPREVIEW             AmbaIPC_RpcProg_RT_SharePreview.h   0x1000000C
+RT_CAMCTRL                  AmbaIPC_RpcProg_RT_CamCtrl.h        0x10000100
+RT_STATUSUPDATE             AmbaIPC_RpcProg_RT_StatusUpdate.h   0x10000101
+RT_BBX                      AmbaIPC_RpcProg_RT_Bbx.h            0x10000201
+RT_CAMSVC                   AmbaIPC_RpcProg_RT_CamSvc.h         0x10000301
+RT_MEMIO                    AmbaIPC_RpcProg_RT_Memio.h          0x10000401
+RT_STREAM                   AmbaIPC_RpcProg_RT_Stream.h         0x10000402
+RT_STREAM                   AmbaIPC_RpcProg_RT_Fexidag.h        0x10000403
+RT_CVProtection             AmbaIPC_RpcProg_RT_CVProtection.h   0x10000404
+RT_FlexidagIO               AmbaIPC_RpcProg_RT_FlexidagIO.h     0x10000410
+RT_FlexidagIO1              AmbaIPC_RpcProg_RT_FlexidagIO1.h    0x10000411
+RT_FlexidagIO2              AmbaIPC_RpcProg_RT_FlexidagIO2.h    0x10000412
+RT_FlexidagIO3              AmbaIPC_RpcProg_RT_FlexidagIO3.h    0x10000413
+RT_FlexidagIO4              AmbaIPC_RpcProg_RT_FlexidagIO4.h    0x10000414
+RT_FlexidagIO5              AmbaIPC_RpcProg_RT_FlexidagIO5.h    0x10000415
+RT_FlexidagIO6              AmbaIPC_RpcProg_RT_FlexidagIO6.h    0x10000416
+RT_FlexidagIO7              AmbaIPC_RpcProg_RT_FlexidagIO7.h    0x10000417
+
+AmbaIPC_Util                AmbaIPC_RpcProg_LU_Util.h           0x20000001
+LU_MSGFW                    AmbaIPC_RpcProg_LU_Msg.h            0x20000002
+AmbaIPC_RpcProg_Test        AmbaIPC_RpcProg_LU_Test.h           0x20000003
+LU_NetFifo                  AmbaIPC_RpcProg_LU_NetFifo.h        0x20000004
+LU_NETCTRL                  AmbaIPC_RpcProg_LU_NetCtrl.h        0x20000005
+LU_CMD_HNDLR                AmbaIPC_RpcProg_LU_CmdHndlr.h       0x20000006
+LU_DataReq                  AmbaIPC_RpcProg_LU_DataReq.h        0x20000007
+LU_PT                       AmbaIPC_RpcProg_LU_PT.h             0x20000008
+LU_EVENTNOTIFIER			AmbaIPC_RpcProg_LU_EventNotifier.h  0x20000009
+
+LU_EXAMFRAMESHARE			AmbaIPC_RpcProg_LU_ExamFrameShare.h 0x2000000B
+LU_SCSTATUSUPDATE    AmbaIPC_RpcProg_LU_Supercam_StatusUpdate.h 0x2000000E
+LU_GETFWIMAGE        AmbaIPC_RpcProg_LU_Supercam_GetFWImage.h   0x2000000F
+LU_EXAMLOGTHREADX		    AmbaIPC_RpcProg_LU_ExamLogThreadX.h 0x20000011
+LU_STATUSUPDATE             AmbaIPC_RpcProg_LU_StatusUpdate.h   0x20000100
+LU_EXAMMETADATA             AmbaIPC_RpcProg_LU_ExamMetaData.h   0x20000101
+LU_PREVMETADATA      AmbaIPC_RpcProg_LU_Supercam_PrevMetaData.h 0x20000102
+LU_YUVSHARE                 AmbaIPC_RpcProg_LU_ExamYuv.h        0x20000103
+LU_LOADDATA       AmbaIPC_RpcProg_LU_Supercam_LoadData.h        0x20000104
+LU_SPDSTATUSUPDATE AmbaIPC_RpcProg_LU_Superdrone_StatusUpdate.h 0x20000200
+LU_MEMIO                    AmbaIPC_RpcProg_LU_Memio.h          0x20000401
+LU_STREAM                   AmbaIPC_RpcProg_LU_Stream.h         0x20000402
+LU_FLXIDAG                   AmbaIPC_RpcProg_LU_Flexidag.h      0x20000403
+LU_FlexidagIO               AmbaIPC_RpcProg_LU_FlexidagIO.h     0x20000410
+LU_FlexidagIO1              AmbaIPC_RpcProg_LU_FlexidagIO1.h    0x20000411
+LU_FlexidagIO2              AmbaIPC_RpcProg_LU_FlexidagIO2.h    0x20000412
+LU_FlexidagIO3              AmbaIPC_RpcProg_LU_FlexidagIO3.h    0x20000413
+LU_FlexidagIO4              AmbaIPC_RpcProg_LU_FlexidagIO4.h    0x20000414
+LU_FlexidagIO5              AmbaIPC_RpcProg_LU_FlexidagIO5.h    0x20000415
+LU_FlexidagIO6              AmbaIPC_RpcProg_LU_FlexidagIO6.h    0x20000416
+LU_FlexidagIO7              AmbaIPC_RpcProg_LU_FlexidagIO7.h    0x20000417
+LU_Regression               AmbaIPC_RpcProg_LU_Regression.h     0x20000500

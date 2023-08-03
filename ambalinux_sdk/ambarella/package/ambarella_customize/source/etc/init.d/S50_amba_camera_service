@@ -1,0 +1,54 @@
+#!/bin/sh
+
+mkdir -p /tmp/lib /tmp/run /tmp/disk /tmp/log
+mkdir -p /tmp/fuse /tmp/FL0 /tmp/SD0 /tmp/SD1 /tmp/share /tmp/nvme
+
+#make /etc/ writable for read only file system
+touch /etc/exports 2>/dev/null
+if [ $? -ne 0 ] && [ "`grep \"tmpfs /etc\" /proc/mounts`" == "" ]; then
+	cp -a /etc /tmp
+	mount --bind /tmp/etc /etc
+fi
+
+if [ ! -e "/dev/random" ]; then
+	ln -sf /dev/urandom /dev/random
+fi
+
+mount -t debugfs none /sys/kernel/debug/
+
+#syslog
+if [ "`grep \"console=ttyS0\" /proc/cmdline`" != "" ]; then
+	if [ "`grep quiet /proc/cmdline`" != "" ]; then
+		klogd
+	fi
+	syslogd -S -l 5 -O /dev/ttyS0
+fi
+
+#run amba_svc
+if [ "`xxd -p /sys/firmware/devicetree/base/cpus/cpu@0/reg`" == "00000000" ]; then
+mkdir -p /var/lib/misc
+
+#AmbaPrint
+if [ -x /usr/bin/amba_print ]; then
+	#[port number/path][request queue number][ring buffer size in bytes][request queue timeout in nanoseconds]
+	#NOTE: overrided by BR2_PACKAGE_AMBA_EXAMPLE_AMBAPRINT_TTY
+	/usr/bin/amba_print /dev/ttyS1 400 2097152 100 &
+fi
+
+#when CONFIG_MMC_SDHCI_AMBARELLA=y, mount it manually
+if [ -e /dev/mmcblk0p1 ] && [ "`grep /dev/mmcblk0p1 /proc/mounts`" == "" ]; then
+	mount /dev/mmcblk0p1 /tmp/SD0
+fi
+if [ -e /dev/mmcblk1p1 ] && [ "`grep /dev/mmcblk1p1 /proc/mounts`" == "" ]; then
+	mount /dev/mmcblk1p1 /tmp/SD1
+fi
+
+#touch /tmp/mmcblk0p1.mdev for mdev to handle hotplug mount/umount
+touch /tmp/mmcblk0p1.mdev
+touch /tmp/mmcblk1p1.mdev
+
+#do not add TAB here, for BR2_PACKAGE_AMBA_CAMERA_AUTOSTART to work
+amba_svc &
+else
+modprobe ambamal
+fi

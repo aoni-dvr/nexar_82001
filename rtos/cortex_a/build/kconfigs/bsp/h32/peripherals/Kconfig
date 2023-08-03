@@ -1,0 +1,11 @@
+menu "Peripheral Drivers"
+
+source build/kconfigs/bsp/h32/peripherals/display/Kconfig
+source build/kconfigs/bsp/h32/peripherals/bridge/Kconfig
+source build/kconfigs/bsp/h32/peripherals/sensor/Kconfig
+source build/kconfigs/bsp/h32/peripherals/yuvinput/Kconfig
+source build/kconfigs/bsp/h32/peripherals/audio/Kconfig
+source build/kconfigs/bsp/h32/peripherals/pmic/Kconfig
+source build/kconfigs/bsp/h32/peripherals/imu/Kconfig
+
+endmenu

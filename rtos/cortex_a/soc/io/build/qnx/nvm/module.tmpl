@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<module name="nvm-ambarella">
+	<type>Element</type>
+	<classification>SDK</classification>
+
+	<description>
+	        <short>NVM Ambarella library</short>
+	        <abstract>
+	                <![CDATA[The nvm-ambarella library operates the NVM, and is needed by certain device drivers to perform NVM changement.]]>
+	        </abstract>
+	</description>
+
+	<supports>
+       		 <availability>
+	          <cpu isa="arm">
+                       <byteOrder>le</byteOrder>
+	           </cpu>
+	        </availability>
+	</supports>
+
+	<source available="false">
+		<location type="">.</location>
+	</source>
+
+	<contents>
+		<component id="SharedObj" generated="true">
+		        <location basedir="{cpu}/so{.:endian}" runtime="true">
+		                libnvm-ambarella.so
+		        </location>
+		</component>
+		<component id="SharedArchive" generated="true">
+		<kind type="library"/>
+		        <location basedir="{cpu}/so{.:endian}" runtime="false">
+		                libnvm-ambarellaS.a
+		        </location>
+		</component>
+	</contents>
+</module>

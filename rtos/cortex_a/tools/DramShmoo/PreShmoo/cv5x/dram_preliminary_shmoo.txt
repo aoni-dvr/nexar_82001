@@ -1,0 +1,596 @@
+                DRAM SHMOO
+===========================================
+
+Copyright (C) 2018-2048, Ambarella, Inc.
+Author: Cao Rongrong <rrcao@ambarella.com>
+
+===========================================
+
+
+
+I - Introduction
+----------------
+
+There are many DRAM parameters related to DRAM stability, in order to make system
+to boot up successfully and to work stably, we have to configure those parameters
+correctly in the .ini file which is introduced in "bstiniparser.txt".
+
+IT'S SUGGESTED TO READ BSTINIPARSER.TXT FIRST BEFORE READING THIS DOC.
+
+Due to the definition of some registers in DDRC are changed, the SoCs are divided
+into these groups:
+DDRC_V1: CV2, CV22, CV25, S6LM, CV28
+DDRC_V2: CV5
+
+The DRAM parameters consist of:
+
+pad-dds:        pull-down drive strength in DDRC side, for WRITE
+pad-pdds:       pull-up drive strength in DDRC side, for WRITE
+pad-ca-dds:     pull-down drive strength for CA in DDRC side, for WRITE
+pad-ca-pdds:    pull-up drive strength for CA in DDRC side, for WRITE
+pad-term:       termination/ODT in DDRC side, for READ
+pad-vref:       VREF in DDRC side, for READ
+rddly:          coarse read timing delay for DQ bus, for READ
+wrdly:          coarse write timing delay for DQ bus, for WRITE
+dll0:           fine read timing delay for DQ bus, for READ
+dll1:           fine sync timing delay for DQ bus, for SYNC. PS: no need to tune.
+dll2:           fine write timing delay for DQ bus, for WRITE
+ddr4-dds:       output driver impedance in DRAM side, for DDR4 only, for READ
+ddr4-vref:      VREF for DQ bus in DRAM side, for DDR4 only, for WRITE
+ddr4-odt:       termination/ODT in DRAM side, for DDR4 only, for WRITE
+lpddr4-pdds:    pull-down drive strength in DRAM side, for LPDDR4 only, for READ
+lpddr4-ca-vref: VREF for CA bus in DRAM side, for LPDDR4 only, for WRITE
+lpddr4-dq-vref: VREF for DQ bus in DRAM side, for LPDDR4 only, for WRITE
+lpddr4-ca-odt:  ODT for CA bus in DRAM side, for LPDDR4 only, for WRITE
+lpddr4-dq-odt:  ODT for DQ bus in DRAM side, for LPDDR4 only, for WRITE
+lpddr5-pdds:    pull-down drive strength in DRAM side, for LPDDR5 only, for READ
+lpddr5-ca-vref: VREF for CA bus in DRAM side, for LPDDR5 only, for WRITE
+lpddr5-dq-vref: VREF for DQ bus in DRAM side, for LPDDR5 only, for WRITE
+lpddr5-ca-odt:  ODT for CA bus in DRAM side, for LPDDR5 only, for WRITE
+lpddr5-dq-odt:  ODT for DQ bus in DRAM side, for LPDDR5 only, for WRITE
+
+PS: 1) pad-dds and pad-pdds can be further divided for CA and DQ bus seperately.
+    2) rddly, wrdly, dll0, dll1 and dll2 can be further divided for each bytes,
+       i.e., Byte0, Byte1, Byte2 and Byte3 seperately, but normally we can set
+       them as the same value to the .ini file.
+
+As mentioned above, there are too many DRAM parameters to try them manually one
+by one. So that we implemented "LPDDR4/LPDDR5 training" in BST.
+
+PS: Our DDRC doesn't support standard DDR4 training described in DDR4 spec, so
+    this doc will not involve "DDR4 training".
+
+However, there are 3 limitations to use "LPDDR4/LPDDR5 training":
+
+- The initial DRAM parameters specified in .ini file can be not the best one, but
+  they have to make DRAM to be basically working.
+
+- Not all of DRAM parameters are trained in "LPDDR4/LPDDR5 training".
+  Please see "4) Tips" below for details.
+
+- The DRAM parameters trained by "LPDDR4/LPDDR5 training" may be still not the best
+  one, so that we need to fine tune them after training manually.
+
+In brief, the number of DRAM parameter combinations is huge and it's NOT enough to
+only rely on "LPDDR4/LPDDR5 training", therefore a tool named "dram_preliminary_shmoo"
+is provided to find proper DRAM parameters for booting successfully, and another tool
+named "dram_advanced_shmoo" to find the best DRAM parameters in case that the parameters
+found by "dram_preliminary_shmoo" can not have system to pass the long-time test.
+
+PS: "dram_preliminary_shmoo" is located in amboot/src/bst/tools.
+
+
+
+II - DRAM Preliminary Shmoo
+---------------------------
+
+In overall, when you start to bringup a new board, you can follow below steps to
+do preliminary shmoo to find proper DRAM parameters for booting:
+
+- Prepare a draft .ini file, then use "bstconfig" or "bstiniparser" to generate
+  the .ads file used by "dram_preliminary_shmoo".
+  Please see below "1) Generate .ads file" for details.
+
+- Switch POC to have the board in "USB boot" mode, connect the board to PC by
+  USB cable, and then power up.
+
+- Run "dram_preliminary_shmoo" in PC host to do preliminary shmoo.
+  Please see below "2) Usage of dram_preliminary_shmoo" for details.
+  PS: "dram_preliminary_shmoo" for Linux PC,
+      "dram_preliminary_shmoo.exe" for Windows PC.
+
+- Choose the proper DRAM parameters according to the shmoo result, and
+  then write them into the .ini file.
+  Please see below "3) Choose DRAM parameters" for details.
+
+
+1) Generate .ads file
+
+The .ads file is necessary for "dram_preliminary_shmoo" to run, and there are two
+cases to generate the .ads file:
+
+- For the case that BST is provided in binary format:
+  bstconfig -f out/BOARD/amboot/bst_release.bin -o BOARD.ads
+  PS: bstconfig is located in amboot/sv/CHIP_NAME/bin
+
+- For the case that BST is provided in source code:
+  bstiniparser --for usb BOARD.ini > BOARD.ads
+  PS: bstiniparser is located in amboot/src/bst/tools
+
+A draft .ini file is required to provide first for either of above two cases, but
+it's not necessary to provide a working .ini file. However, you have to know, if
+the draft .ini file is not working, you will spend more time to get proper DRAM
+parameters. So, it's suggested to use a copy of .ini file under our EVK board dir
+as a starting point.
+
+PS: The .ads file is identical to the "Board's Config" file used by AmbaUSB
+
+
+2) Usage of dram_preliminary_shmoo
+
+"dram_preliminary_shmoo" can shmoo all of the DRAM parameters listed above, and
+it works in such way:
+- Initialize DDRC and DRAM according to the .ads file
+- Iterate over all of possible values you want to shmoo, and then save the passed
+  values into result file.
+- Parse the result file and give the hints for proper DRAM parameters.
+
+You can type "dram_preliminary_shmoo -h" or "dram_preliminary_shmoo -hh" to get
+help information.
+
+Here I just pick up some useful options to explain:
+
+-a, --ads BOARD.ini:
+    Specify the .ads file which is described in "1) Generate .ads file".
+
+-n, --chipname SOC:
+    Specify the SOC name, default is cv22.
+
+-m, --mode ITEM:
+    Specify the mode/item you want to shmoo, i.e., the DRAM parameters which are
+    listed above. It supports multiple use of "-m/--mode" option.
+    e.g.:
+        "dram_preliminary_shmoo -a BOARD.ads -m pad-vref -m rddly", then both
+        "pad-vref" and "rddly" will be shmooed.
+
+--ITEM-start/--ITEM-step/--ITEM-end VALUE:
+    Here ITEM is the DRAM parameters listed above. And these options are used to
+    specify each ITEM's start/step/end value when iterating over in shmoo.
+    NOTE: these options are useful in sometime, they can be used to reduce shmoo
+          time, or filter out obvious invalid values for each parameters to get
+          more accurate result.
+    e.g.:
+        "dram_preliminary_shmoo -a BOARD.ads -m pad-vref
+                        --pad-vref-start 3 --pad-vref-step 1 --pad-vref-end 6",
+        then "pad-vref" will be shmooed only from 3 to 6.
+    PS:
+       The start/step/end can be specified with "-m" option together for convenience.
+       e.g.:
+           "dram_preliminary_shmoo -a BOARD.ads -m pad-vref=3,1,6"
+           this command is the same as above.
+
+--result FILE:
+    Specify file to save shmoo result.
+
+--parse-shmoo FILE
+    Specify file to parse. Here FILE is the shmoo result gotten by previous shmoo.
+
+Other options are for development purpose, normaly you don't need to use them.
+
+
+3) Choose DRAM parameters
+
+When "dram_preliminary_shmoo" is finished running, something will be printed out
+like below:
+
+pad-term
+  2: 1
+  3: 7
+  4: 11
+  5: 9
+  6: 7
+  7: 2
+
+[Example]
+
+The first column is the value of pad-term, while the second column means how many
+times the shmoo is succesful with that value of pad-term.
+
+In principle, the number in second column is the bigger the better, so you should
+choose pad-term as 4 in this case since "11" is the largest number. However, there
+is possibility that the DRAM parameter value with biggest number in second column
+may be NOT the best one. Please see "III - Tips" below for details.
+
+Once you find the working value for each DRAM parameters, you need to fill it into
+the .ini file, below are the relationship between .ini file and DRAM parameters:
+
+pad-dds:        <DDRC0_DDS value="RZQ/7"/>, suppose working value is 7
+pad-pdds:       <DDRC0_PDDS value="RZQ/2"/>, suppose working value is 2
+pad-ca-dds:     <DDRC0_DDS value="RZQ/7"/>, suppose working value is 7
+pad-ca-pdds:    <DDRC0_PDDS value="RZQ/2"/>, suppose working value is 2
+pad-term:       <DDRC0_TERM value="RZQ/5"/>, suppose working value is 5
+pad-vref:       <DDRC0_DQ_VREF value="0x20"/>, suppose working value is 0x20
+rddly:          <DDRC0_DQ_READ_DELAY value="0x3"/>, suppose working value is 0x1
+wrdly:          <DDRC0_DQ_WRITE_DELAY value="0x29"/>, suppose working value is 0x29
+dll0:           <DDRC0_READ_DLL value="0x0c"/>, suppose working value is 0x0c
+dll1:           <DDRC0_SYNC_DLL value="0x08"/>, suppose working value is 0x08
+dll2:           <DDRC0_WRITE_DLL value="0x0c"/>, suppose working value is 0x0c
+ddr4-dds:       <DRAM_DS value="RZQ/6" />, suppose working value is 6
+ddr4-vref:      <DRAM_VREF value="0x10" />, suppose working value is 0x10
+ddr4-odt:       <DRAM_ODT value="RZQ/2" />, suppose working value is 2
+lpddr4-pdds:    <DRAM_DS value="RZQ/6" />, suppose working value is 6
+lpddr4-ca-vref: <DRAM_VREF value="0x10" />, suppose working value is 0x10
+lpddr4-dq-vref: <DRAM_VREF value="0x10" />, suppose working value is 0x10
+lpddr4-ca-odt:  <DRAM_ODT value="RZQ/2" />, suppose working value is 2
+lpddr4-dq-odt:  <DRAM_ODT value="RZQ/2" />, suppose working value is 2
+lpddr5-pdds:    <DRAM_DS value="RZQ/6" />, suppose working value is 6
+lpddr5-ca-vref: <DRAM_VREF value="0x10" />, suppose working value is 0x10
+lpddr5-dq-vref: <DRAM_VREF value="0x10" />, suppose working value is 0x10
+lpddr5-ca-odt:  <DRAM_ODT value="RZQ/2" />, suppose working value is 2
+lpddr5-dq-odt:  <DRAM_ODT value="RZQ/2" />, suppose working value is 2
+
+PS: a) DDRC_V1: the value for rddly written into .ini file should be
+                "(VALUE << 1) | 0x1", because Bit0 of rddly is "enable" bit.
+       DDRC_V2: the value for rddly written into .ini file should be "VALUE"
+                as is, because there is no "enable" bit.
+    b) pad-dds and pad-ca-dds usually use the same ITEM(DDRC_DDS) in .ini file,
+       because they normally can be the same value, however, you can also use
+       DDRC0_CA_DDS to set them seperately in .ini file if really necessary.
+       PS: we do meet some cases that CA DDS must be different than DQ DDS.
+    c) pad-pdds and pad-ca-pdds usually use the same ITEM(DDRC_PDDS) in .ini file,
+       because they normally can be the same value, however, you can also use
+       DDRC0_CA_PDDS to set them seperately in .ini file if really necessary.
+       PS: we do meet some cases that CA PDDS must be different than DQ PDDS.
+    d) lpddr4-ca-vref and lpddr4-dq-vref usually use the same ITEM(DRAM_VREF) in
+       .ini file, because they normally can be the same value, however, you can
+       also use DRAM_CA_VREF and DRAM_DQ_VREF to set them seperately in .ini file
+       if really necessary.
+       lpddr5-ca-vref/lpddr5-dq-vref is similar to lpddr4-ca-vref/lpddr4-dq-vref
+    e) lpddr4-ca-odt and lpddr4-dq-odt usually use the same ITEM(DRAM_ODT) in
+       .ini file, because they normally can be the same value, however, you can
+       also use DRAM_CA_ODT and DRAM_DQ_ODT to set them seperately in .ini file
+       if really necessary.
+       lpddr5-ca-odt/lpddr5-dq-odt is similar to lpddr4-ca-odt/lpddr4-dq-odt
+
+
+
+III - Tips
+----------
+
+
+1) Tips for "dram_preliminary_shmoo"
+
+
+a) It's possible that "dram_preliminary_shmoo -a BOARD.ads -m ITEM" show nothing
+   except this sentence: "None of parameter combination is ok". Here ITEM can be
+   any DRAM parameter listed above.
+
+   This means the .ads file, i.e., BOARD.ads, used by "dram_preliminary_shmoo" is
+   not working, there must be some other DRAM parameters specified in .ini file are
+   completely invalid. In such case, you should find out those invalid parameters
+   first. The way is: run "dram_preliminary_shmoo" again with another
+   ITEM.
+
+   Once all of the invalid parameters are found out, you have to update the .ini
+   file with the good value and generate the .ads file soon for further use.
+
+   PS: You may still get "None of parameter combination is ok" even though each
+       DRAM parameters are tried, this means there are more than one parameters
+       are completely invalid, so that you have to run "dram_preliminary_shmoo"
+       again with more ITEMs, i.e.:
+           "dram_preliminary_shmoo -a BOARD.ini -m ITEM0 -m ITEM1 -m ITEM2 ..."
+
+
+b) When "dram_preliminary_shmoo" is finished running, you may see some values of
+   each DRAM parameters are obviously invalid, although they can pass the shmoo.
+
+   In such a situation, you'd better use "--ITEM-start/--ITEM-end" to filter out
+   those obvious invalid values. It can help to get more accurate shmoo result.
+
+
+c) Basically all the parameters can be divided into two groups: READ and WRITE.
+   And the parameters that belong to the same group will interact with each other.
+   For this reason, we can take one or one more parameters as a measure to judge
+   a specific parameter.
+
+   For example, pad-term and rddly will interact with each other, so you can run
+   this command to judge pad-term:
+       "dram_preliminary_shmoo -a BOARD.ads -m pad-term -m rddly".
+
+   Actually, the [Example] in "3) Choose DRAM parameters" for pad-term is gotten
+   by this command.
+
+   PS: You can get the information about which group(READ or WRITE) the paramter
+       belong to from "I - Introduction".
+
+
+2) Tips for LPDDR5
+
+
+a) "LPDDR5 training" will only train below parameters:
+   rddly, wrdly, pad-vref and lpddr5-dq-vref, dcm and wck2ck
+
+   NOTE:
+      a.1) Dcm and wck2ck for LPDDR5 are not supported by "dram_preliminary_shmoo",
+           but they can be trained in BST. Please note that dcm training is must
+           have as it will affect READ much. But wck2ck training is optional, it's
+           disabled by default because we think wck2ck is not sensitive to LPDDR5
+           stability. If you want to do wck2ck training, please "make menuconfig"
+           and enable CONFIG_AMBST_DRAM_TRAINING_WCK2CK.
+           Please see LPDDR5 spec for more details about dcm and wck2ck.
+      a.2) The values for parameters trained by "LPDDR5 training" can be not the
+           best one, but they have to make DRAM to be basically working.
+      a.3) Other parameters except for above ones must be set as the best value
+           before system is booting.
+
+b) According to our experience, the parameters which are sensitive to LPDDR5 are
+   listed below:
+     pad-dds, pad-pdds, pad-term, pad-vref, rddly, wrdly, dll0, dll2, lpddr5-pdds,
+     lpddr5-dq-vref, lpddr5-dq-odt and duty cycle of WCK(dcm)
+
+c) It's strongly suggested to enable Read/Write Link ECC, this can improve LPDDR5
+   stability much.
+   And Read/Write Link ECC is also useful to judge the memory failure types. Normally
+   all the memory failure can be divided into 3 types: write error, read error and
+   address error.
+   Once any memory failure happened, you can check LPDDR5 mode register MR43, bit[7]
+   of MR43 represents DBE(Double Bit Error) happened, while bit[5:0] represents how
+   many SBE(Single Bit Error) happened, if both bit[7] and bit[5:0] are zeros, it
+   means it's not write error. If so, it's probably read error because CA related
+   timings have much margin. Unless memtester-arm reports such error that the 64bits
+   data compared are totally different, then it MAY BE address error.
+   Please refer to LPDDR5 spec for more details about MR43.
+   NOTE:
+     For read, our DDRC_V2 cannot report DBE counter, but it does have registers to
+     report SBE counter, however, the SBE counter is not trustable because some LPDDR5
+     devices have bugs, at least we found Micon LPDDR5 devices cannot provide ECC data
+     correctly.
+
+d) In order to check timing related registers in DDRC_V2 conveniently, we provide a
+   utility named "ddrc_v2" located in ambarella/app/utility/dram_shmoo/ddrc_v2
+   You can see help of ddrc_v2 for more details.
+   NOTE:
+     1) On CV5, DDRC registers are non-accessible in Linux OS, so you have to enable
+     CONFIG_TRUSTZONE_DTB_SIGNED to use ddrc_v2.
+     2) When using ddrc_v2, secure boot and secure OS can't be enabled.
+
+3) Tips for LPDDR4
+
+
+a) "LPDDR4 training" will only train below parameters:
+   DDRC_V1: pad-vref, rddly, wrdly, dll0, dll2, lpddr4-dq-vref
+   DDRC_V2: rddly, wrdly, pad-vref and lpddr4-dq-vref
+
+   NOTE:
+      a.1) Dll2 is trained on DDRC_V1, but it just set dll2 to the center of its
+           working range, but not really train it.
+      a.2) The values for parameters trained by "LPDDR4 training" can be not the
+           best one, but they have to make DRAM to be basically working.
+      a.3) Other parameters except for above ones must be set as the best value
+           before system is booting.
+
+b) According to our experience, the parameters which are sensitive to LPDDR4 are
+   listed below:
+     pad-dds, pad-pdds, pad-term, pad-vref, rddly, wrdly, dll0, dll2, lpddr4-pdds,
+     lpddr4-dq-vref and lpddr4-dq-odt.
+
+
+4) Tips for DDR4
+
+
+a) According to our experience, the parameters which are sensitive to DDR4 are
+   listed below:
+     pad-dds, pad-pdds, pad-term, dll0, dll2, ddr4-dds, ddr4-odt.
+
+
+5) Tips for misc
+
+
+a) The delay of each step of dll0/dll2 can be affected by the DLL working mode, and
+   DDRC_V1 SoCs have 2 DLL modes named "Normal" and "Boost", while DDRC_V2 SoCs have
+   3 DLL modes named "Normal", "Boost"and "Manual". Please see "DDRC_DLL_MODE" in
+   bstiniparser.txt for details.
+   The DLL is working in "Boost" mode by default if the DRAM frequency belong to the
+   range of [1200MHz, 2112MHz].
+   If you found the working range of dll0/dll2 is wide with "dram_preliminary_shmoo",
+   or you cannot find a set of DRAM parameters to have the system working stably in
+   long-term test, it worths to have a try to change the DLL working mode to "Normal".
+
+
+b) When encoding and/or VP is running, the system loading is much higher than when
+   in preliminary shmoo, so "dram_preliminary_shmoo" is not omnipotent, it may be
+   NOT able to give you the best value for each DRAM parameters directly, but it
+   must be able to give you some clues to find the best values.
+
+   Still take the [Example] in "3) Choose DRAM parameters" as example:
+   "4" may be not the best value for pad-term when encoding and/or VP is running
+   in real system, although "pad-term = 4" can pass "11" times in shmoo. However,
+   there is a very large probability that the value of pad-term is either "3" or
+   "5".
+
+
+
+5) Typical commands
+
+   LPDDR5:
+      dram_preliminary_shmoo -a BOARD.ads -m pad-term=3,1,5 -m pad-vref=16,3,36
+           -m pad-dds=6,1,7 -m pad-pdds=6,1,7 -m rddly=10,3,60 -m wrdly=80,4,200
+
+      dram_preliminary_shmoo -a BOARD.ads -m pad-dds=5,1,7 -m pad-pdds=5,1,7
+           -m wrdly=80,4,200 -m lpddr5-dq-vref=20,2,60
+
+      dram_preliminary_shmoo -a BOARD.ads -m pad-term=3,1,6 -m pad-vref=16,1,36
+            -m rddly=10,1,60
+
+   LPDDR4:
+      dram_preliminary_shmoo -a BOARD.ads -m pad-term -m pad-vref -m pad-dds
+           -m pad-pdds -m rddly -m wrdly --pad-term-start 3 --pad-term-end 5
+           --pad-vref-start 0x10 --pad-vref-step 3 --pad-vref-end 0x24
+           --pad-dds-start 6 --pad-pdds-end 2 --rddly-end 9 --wrdly-start 0x20
+
+      dram_preliminary_shmoo -a BOARD.ads -m pad-dds -m pad-pdds -m wrdly
+           -m lpddr4-dq-vref --pad-dds-start 5 --pad-pdds-end 2 --wrdly-start 0x20
+           --lpddr4-dq-vref-end 0x30 --lpddr4-dq-vref-step 2
+
+      dram_preliminary_shmoo -a BOARD.ads -m pad-term -m pad-vref -m rddly
+           --pad-term-start 3 --pad-term-end 6 --pad-vref-start 10
+
+   DDR4:
+      dram_preliminary_shmoo -a BOARD.ads -m pad-term -m pad-dds -m pad-pdds
+            -m dll0 -m dll2 --pad-term-start 3 --pad-term-end 6 --pad-pdds-start 5
+            --dll0-step 2 --dll2-step 2
+
+      dram_preliminary_shmoo -a BOARD.ads -m pad-dds -m pad-pdds -m dll2
+            --pad-term-start 3 --pad-term-end 6 --pad-pdds-start 5
+
+      dram_preliminary_shmoo -a BOARD.ads -m pad-term -m dll0
+            --pad-term-start 3 --pad-term-end 6
+
+
+Hopefully, with the help of "dram_preliminary_shmoo" and training in BST, the system
+can work stably for long time. But if not, there must be 3 reasons:
+
+- The hardware of board may have something failed to come up to specifications.
+  E.g., the PCB layout, the power ripple, the voltage provided to chip and etc.
+  This may need hardware guys help to check these aspects.
+
+- It may be that any of these parameters is inappropriately set:
+      LPDDR5: pad-dds, pad-pdds, pad-term, lpddr5-pdds and lpddr5-dq-odt, dll0, dll2
+      LPDDR4: pad-dds, pad-pdds, pad-term, lpddr4-pdds and lpddr4-dq-odt
+      DDR4:   pad-dds, pad-pdds, pad-term, ddr4-dds and ddr4-odt
+  This may require a new round of searching the best values for these parameters
+  based on the clues given by "dram_preliminary_shmoo".
+
+- It may be that the result of any of below parameters trained in BST is not the
+  best value:
+      LPDDR5: pad-vref, rddly, wrdly, lpddr5-dq-vref
+      LPDDR4: pad-vref, rddly, wrdly, dll0, dll2, lpddr4-dq-vref
+      DDR4:   dll0, dll2
+  This case needs "dram_advanced_shmoo" help to further fine tune these parameters.
+  "dram_advanced_shmoo" is described below.
+
+
+
+IV - DRAM Advanced Shmoo for DDRC_V1
+------------------------------------
+
+
+The tool for advanced shmoo is located in ambarella\unit_test\private\shmoo_test,
+it can be used to get the range of the following parameters in high load running
+environment to check if the trainning result is in the shmoo range, if the result
+is not in the range, we can fine tune the termination and dds, or add offset on the
+training tool to see if we can get the right result value.
+   LPDDR4: pad-vref, rddly, wrdly, dll0, dll2, lpddr4-dq-vref
+   DDR4: dll0, dll2
+
+This tool is in folder ambarella\unit_test\private\shmoo_test, name is test_shmoo.
+To use this tool, please see the following steps and notes.
+
+1)  This tool support lpddr4 or ddr4 parameters shmoo on CV serial chips.
+
+2)  Please use CPIO root file system in case the bad DRAM parameter corrupt the file
+    system on storage.
+
+3)  Please make sure watch dog is enable when system boot up.
+
+4)  You can add your encode commands and CV command in to cmd.sh in
+    ambarella\unit_test\private\shmoo_test to increase the system loading.
+
+5)  Please ensure ambarella\unit_test\private\shmoo_test\auto_shmoo.sh will autorun
+    when system boot up. Please use linuxrc as your system init method, then you can
+    select CONFIG_AMBARELLA_RUN_SHMOO_TEST.
+
+    For example on CV22, if we want to shmoo rddly, we can use this commands:
+        //encode command and CV command is added in cmd.sh
+        #test_shmoo --clear --soc cv22 --shmoo_dq_rddly
+    or
+        //only use memtester-arm to run shmoo test
+        #test_shmoo --clear --soc cv22 --shmoo_dq_rddly --withoutVP --withoutENC
+
+    when rddly value is not right, system will reboot, shmoo process will keep on going
+    after system reboot, and in the end, there will be a test report printed on console
+    like below:
+        shmoo RDDLY report
+        DDRC0  DLL0  min:0  max:6  train:4  min_left:0:pass  max_right:7:dsp fail
+        DDRC0  DLL1  min:0  max:7  train:3  min_left:0:pass  max_right:8:memtest fail
+        DDRC0  DLL2  min:0  max:7  train:3  min_left:0:pass  max_right:8:system fail
+        DDRC0  DLL3  min:0  max:8  train:4  min_left:0:pass  max_right:9:system fail
+        shmoo test end
+
+6)  If you want to use R/W system to run this shmoo test, please use below commands:
+	#test_shmoo --clear --soc cv22 --shmoo_dq_rddly --report_file your_file
+    It will save the shmoo log into your file.
+
+7)  Based on R/W system, if you continue shmoo test after power shut down, you can
+    use following commands:
+       #test_shmoo --clear --soc cv22 --shmoo_dq_rddly --progress_file your_file
+    and change "test_shmoo --default" in auto_shmoo.sh to "test_shmoo --progress_file
+    your_file --default". It will save the progress data into your file in case the
+    scratchpad space data lost after power down.
+
+8)  For CV28m shmoo, please cv28m_ipcam_trustzone_config to enable DDRC access in
+    kernel and user space.
+
+9)  During shmoo test, we can run dsp stream diff test and vp stream diff test at
+    the same time.
+        // enalbe vp stream diff test, number "1" means doing vp stream diff test
+        // one time when training each value.
+        #test_shmoo --clear --soc cv22 --shmoo_dq_rddly --shmoo_vp_diff 1
+
+10) If RO file system like CPIO is used, we cannot save the log into storage, so we
+    need UART support when using test_shmoo.
+
+
+
+V - DRAM Advanced Shmoo for DDRC_V2
+-----------------------------------
+
+
+1) LPDDR4
+   We have more margin for LPDDR4 on DDRC_V2 SoCs, so it's probably no need
+   to do shmoo any more.
+
+
+2) LPDDR5
+
+a) For Read:
+   No need to do shmoo any more in most cases. But in case it's really necessary,
+   you can use ambarella/app/utility/dram_shmoo/ddrc_v2 to measure the rddly offset
+   boundary:
+       "ddrc_v2 --offset rdq -d -1"
+       "ddrc_v2 --offset rdq -d +1"
+   Above two commands will measure the negative and positive offset boundary for
+   rddly separately. You need to wait for some time after you run the command until
+   any error is happened.
+
+b) For Write:
+   No need to do shmoo any more in most cases. But in case it's really necessary,
+   you can enable Write Link ECC and use ambarella/app/utility/dram_shmoo/ddrc_v2
+   to measure the wrdly offset boundary:
+       "ddrc_v2 --offset wdq"
+
+c) For high and low temperature test:
+   For temperature change, we should change wrdly dynamically according to temperature.
+   We can achieve it through "echo n > /proc/ambarella/lp5adj" which n > 0 means adjust
+   every n seconds, n = 0 means disable adjust and n = -1 means switch on/off print result
+   through uart.
+   If the default value can't work stable, we also should fine tune the positive and
+   negative adjust value. Next, using the negative value as an example, the positive value
+   is similar.
+   c.1 get wrdly offset of some borads at high tmeperature, use DRAM_TRAINING_WRDLY_OFFSET
+       to make sure the current wrdly is at the center position
+   c.2 "echo -1 > /proc/ambarella/lp5adj" to switch on the log
+   c.3 "echo 5 > /proc/ambarella/lp5adj", assuming that we want to adjust it every 5 seconds
+   c.4 lower the temperature, if we don't want to always print log, echo -1 to switch off the log
+   c.5 when reaching to the target low temperature, echo -1 to switch on the log if it is off, then
+       "echo 0 > /proc/ambarella/lp5adj" to stop adjust
+   c.6 "rm /tmp/ddrcv2params", run "ddrc_v2 --offset wdq" again to get the offset boudary, if the
+       current working wrdly is not at the center, firstly, calculate how much value should be
+       adjusted which is A, then the current wrdly can be at the center; secondly, try to record
+       how much wck2dqi changed which is B, we can get it form the uart log; and lastly, divide
+       B and A which can be used as negative value
+   How to set positive and negative adjust value?
+   For positive adjust value:
+	"echo pval > /proc/ambarella/lp5pval"
+   For negative adjust value:
+        "echo nval > /proc/ambarella/lp5nval"

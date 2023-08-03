@@ -1,0 +1,50 @@
+system.calib_mode ADAS
+system.type SV
+system.chip_rev CV22
+system.output_prefix ADAS
+lens[0].disto_type 0
+lens[0].real_table 0.0000 0.0936 0.1871 0.2806 0.3741 0.4676 0.5609 0.6542 0.7474 0.8405 0.9335 1.0263 1.1190 1.2115 1.3038 1.3959 1.4877 1.5793 1.6706 1.7617 1.8524 1.9428 2.0329 2.1226 2.2120 2.3009 2.3895 2.4776 2.5653 2.6525 2.7392 2.8254 2.9111 2.9963 3.0808 3.1647 3.2480 3.3306 3.4125 3.4936 3.5740 3.6535 3.7322 3.8100 3.8868 3.9626 4.0375 4.1112 4.1838 4.2552 4.3253 4.3941 4.4616 4.5275 4.5918 4.6544 4.7152 4.7741 4.8309 4.8856 4.9379 4.9878 4.9919 4.9959
+lens[0].expect_table 0.0000 0.0936 0.1872 0.2810 0.3751 0.4695 0.5643 0.6597 0.7556 0.8522 0.9495 1.0478 1.1470 1.2473 1.3487 1.4515 1.5556 1.6613 1.7687 1.8778 1.9889 2.1021 2.2175 2.3354 2.4558 2.5791 2.7054 2.8349 2.9680 3.1048 3.2456 3.3908 3.5406 3.6956 3.8559 4.0222 4.1949 4.3746 4.5617 4.7570 4.9613 5.1753 5.3999 5.6362 5.8853 6.1485 6.4274 6.7236 7.0391 7.3762 7.7373 8.1257 8.5449 8.9990 9.4932 10.0334 10.6270 11.2828 12.0118 12.8279 13.7485 14.7959 14.8898 14.9848
+lens[0].table_length 64
+sensor[0].cell_size 0.00225
+sensor[0].start_x 0
+sensor[0].start_y 0
+sensor[0].width 3840
+sensor[0].height 1920
+optical_center[0].x 1920
+optical_center[0].y 960
+camera[0].pos_x 0
+camera[0].pos_y 0
+camera[0].pos_z 1402
+camera[0].rotate_type 0
+vin[0].start_x 0
+vin[0].start_y 0
+vin[0].width 3840
+vin[0].height 1920
+vin[0].h_subsample_factor_num 1
+vin[0].h_subsample_factor_den 1
+vin[0].v_subsample_factor_num 1
+vin[0].v_subsample_factor_den 1
+view_single.type 0
+vout[0].start_x 0
+vout[0].start_y 0
+vout[0].width 3840
+vout[0].height 1920
+calib_points[0].world_pos_x 0.0 0.0 0.0 0.0
+calib_points[0].world_pos_y 0.0 0.0 0.0 0.0
+calib_points[0].world_pos_z 0.0 0.0 0.0 0.0
+calib_points[0].raw_pos_x 0.0 0.0 0.0 0.0
+calib_points[0].raw_pos_y 0.0 0.0 0.0 0.0
+tile_size[0].width 32
+tile_size[0].height 32
+roi[0].start_x 0
+roi[0].start_y 0
+roi[0].width 3840
+roi[0].height 1920
+optimize[0].level 0
+internal[0].debug_id 0
+internal[0].wait_line_th 0
+internal[0].dma_th 0
+internal[0].raw_pos_horflip_enable 0
+internal[0].out_of_roi_refine_enable 1
+internal[0].auto_roi_refine_enable 0

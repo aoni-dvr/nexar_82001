@@ -1,0 +1,17 @@
+ccflags-y += -I$(srctree)/vendors/ambarella/inc/perif
+ccflags-y += -I$(srctree)/svc/apps/iout/$(TARGET_APP_SRC_PATH)/peripherals/$(AMBA_CHIP_ID)/sensor/inc
+ccflags-y += -I$(srctree)/svc/apps/iout/$(TARGET_APP_SRC_PATH)/peripherals/$(AMBA_CHIP_ID)/bridge/inc
+
+SENSORPATH=$(TARGET_APP_SRC_PATH)/peripherals/$(AMBA_CHIP_ID)/sensor
+libeng_perif_${AMBA_CHIP_ID}-objs += $(SENSORPATH)/AmbaSensor_AR0238_PARALLEL.o \
+                                  $(SENSORPATH)/AmbaSensor_AR0238_PARALLELTable.o
+
+libeng_perif_${AMBA_CHIP_ID}-objs += $(SENSORPATH)/AmbaSensor_IMX317.o \
+                                  $(SENSORPATH)/AmbaSensor_IMX317Table.o
+
+libeng_perif_${AMBA_CHIP_ID}-objs += $(SENSORPATH)/AmbaSensor_IMX334.o \
+                                  $(SENSORPATH)/AmbaSensor_IMX334Table.o
+								  
+libeng_perif_${AMBA_CHIP_ID}-objs += $(SENSORPATH)/AmbaSensor_MAX9295_96712_IMX390_2VC.o
+
+libeng_perif_${AMBA_CHIP_ID}-objs += $(SENSORPATH)/AmbaSensor_MAX9295_96712_IMX390_VC_DR.o

@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<module name="spinor-ambarella">
+	<type>Element</type>
+	<classification>SDK</classification>
+
+	<description>
+	        <short>SPINOR Ambarella library</short>
+	        <abstract>
+	                <![CDATA[The spinor-ambarella library operates the SPINOR Controller, and is needed by certain device drivers to perform SPINOR changement.]]>
+	        </abstract>
+	</description>
+
+	<supports>
+       		 <availability>
+	          <cpu isa="arm">
+                       <byteOrder>le</byteOrder>
+	           </cpu>
+	        </availability>
+	</supports>
+
+	<source available="false">
+		<location type="">.</location>
+	</source>
+
+	<contents>
+		<component id="SharedObj" generated="true">
+		        <location basedir="{cpu}/so{.:endian}" runtime="true">
+		                libspinor-ambarella.so
+		        </location>
+		</component>
+		<component id="SharedArchive" generated="true">
+		<kind type="library"/>
+		        <location basedir="{cpu}/so{.:endian}" runtime="false">
+		                libspinor-ambarellaS.a
+		        </location>
+		</component>
+	</contents>
+</module>

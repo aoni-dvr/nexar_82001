@@ -1,0 +1,237 @@
+
+menu "Ambalink Configuration"
+
+config ENABLE_AMBALINK
+	bool "Enable AmbaLink"
+	default y if CPU_CORTEX_R52
+	default n
+	help
+	  Enable AmbaLink module.
+
+if ENABLE_AMBALINK
+
+config AMBALINK_BOOT_OS
+	bool
+	select BUILD_FOSS_LIBFDT
+	select OPENAMP if AMBALINK_RPMSG_G2
+	default y if THREADX && (CPU_CORTEX_A53 || CPU_CORTEX_A76) && AMBALINK_RPMSG_G1
+	default y if THREADX && CPU_CORTEX_R52 && BLD_SEQ_ATF_LINUX
+	default n
+	help
+	  Booting Linux/OS up from RTOS.
+
+if AMBALINK_BOOT_OS
+
+config LNX_CFG_PATH
+	string "Linux config to build. Dailybuild only"
+	default "cv2_tx32_linux_bub_nand_defconfig" if SOC_CV2
+	default "cv2fs_tx32_linux_bub_spinand_defconfig" if SOC_CV2FS
+	default "cv5_tx64_linux_bub_spinand_defconfig" if SOC_CV5
+	default "cv22_tx32_linux_bub_nand_defconfig" if SOC_CV22
+	default "cv22fs_tx32_linux_bub_spinand_defconfig" if SOC_CV22FS
+	default "cv25_tx32_linux_bub_nand_defconfig" if SOC_CV25
+	default "cv28_tx32_linux_bub_spinand_defconfig" if SOC_CV28
+	default "cv52_tx64_linux_bub_spinand_defconfig" if SOC_CV52
+	default "h32_tx32_linux_bub_spinand_defconfig" if SOC_H32
+	help
+	  Linux config to use.
+
+config BOOT_CORE_LINUX
+	int
+	default 0 if ATF_SPD_OPTEE || BLD_SEQ_LINUX
+	default 1 if !ATF_SPD_OPTEE && (SOC_CV28||SOC_CV5||SOC_CV52)
+	default 3 if !ATF_SPD_OPTEE && !SOC_CV28
+
+config AMBALINK_CMDLINE
+	string "Command line of AmbaLink"
+	default "root=/dev/mtdblock5 rootfstype=squashfs quiet console=ttyS1 nr_cpus=4 maxcpus=1" if !ENABLE_EMMC_BOOT
+	default "root=/dev/mmcblk0p5 rootfstype=ext2 rootwait ro quiet console=ttyS1 nr_cpus=4 maxcpus=1" if ENABLE_EMMC_BOOT
+	help
+	  Comand line parameters for AmbaLink
+
+config AMBALINK_DISABLE_CV
+	bool "Disable AmbaLink CV Kernel Driver"
+	default y if !(BUILD_CV)
+	default n
+	help
+	  If RTOS app run cv thread and launch linux parallelly,
+	  cv scheduler region will be memset when linux kdriver alloc cv scheduler
+	  which cause RTOS cv thread corrupted.
+	  This config set linux cv driver device node to disabled.
+
+config AMBALINK_BOOT_OS_LEGACY_5_7
+	bool
+	default n if (SOC_CV5 || SOC_CV52)
+	default y if !(SOC_CV5 || SOC_CV52)
+	help
+	  Boot Linux v5.7.x and before.
+	  After v5.8, the image should be placed at 2MB alignment.
+	  For v5.7.x and before, the image should be placed at 0xXXX8_0000.
+
+endif # AMBALINK_BOOT_OS
+
+if AMBALINK_RPMSG_G2
+config AMBALINK_LOCK_ADDR_AUTO
+	bool "Auto Select Mutex and Spinlock Address"
+	default y
+endif
+
+if !AMBALINK_RPMSG_G2
+config AMBALINK_LOCK_ADDR_AUTO
+	bool
+	default y
+	help
+	  Legacy ambalink do not allow to set AMBALINK_LOCK_ADDR
+endif
+
+if !AMBALINK_LOCK_ADDR_AUTO
+config AMBALINK_LOCK_ADDR
+	hex "Address of Mutex/Spinlock"
+	help
+	  Address of Mutex and spinlock
+	  It's shared by mutltiple OS/core,
+	  so it would be non-cached.
+
+config AMBALINK_LOCK_SIZE
+	hex
+	default 0x2000
+	help
+	  Memory size of locks.
+	  default is 0x1000 for mutex, 0x1000 for spinlock.
+endif
+
+if SOC_CV2FS || SOC_CV22FS
+config AMBALINK_RPMSG_G1
+	bool "Group-1 RPMSG"
+	depends on !BLD_SEQ_ATF_LINUX
+	default y
+	help
+	  1st RPMSG (Group-1)
+endif
+
+if !SOC_CV2FS && !SOC_CV22FS
+config AMBALINK_RPMSG_G1
+	bool
+	default y
+	help
+	  Legacy ambalink always have AMBALINK_RPMSG_G1
+endif
+
+if AMBALINK_BOOT_OS || AMBALINK_RPMSG_G1
+config AMBALINK_MEM_SIZE
+	hex "AmbaLink memory size"
+	default 0x08000000
+	help
+	  The memory size for AmbaLink (including shared memory and linux).
+endif
+
+if AMBALINK_RPMSG_G1
+
+config AMBALINK_SHARED_MEM_ADDR
+	hex "AmbaLink group-1 shared memory address"
+	default 0x68000000 if AMBALINK_RPMSG_G2
+	default 0x78000000 if !AMBALINK_RPMSG_G2 && !ATF_SPD_OPTEE
+	default 0x77c00000 if ATF_SPD_OPTEE
+	help
+	  The address of ambalink shared memory for A53 RTOS & Linux.
+	  This equals to __linux_start or CONFIG_FWPROG_LNX_LOADADDR - CONFIG_AMBALINK_SHARED_MEM_SIZE - 0x80000
+
+config AMBALINK_SHARED_MEM_SIZE
+	hex "AmbaLink group-1 shared memory size"
+	default 0x00600000
+	help
+	  The size of shared memory for AmbaLink service.
+	  The size is calculated from the size and number of rpmsg and some AmbaLink service,
+	  such as global lock and suspend/resume service.
+	  This size MUST be 2MB aligned!
+
+config AMBALINK_RPMSG_SIZE
+	int "Size of the group-1 RPSMG"
+	default 2048
+	help
+	  The memory size of an RPMSG.
+
+config AMBALINK_RPMSG_NUM
+	int "Number of the group-1 RPSMG"
+	default 2048
+	help
+	  The maximum number of RPMSG at the same time.
+	  NOTE: Should be consistent with remote site.
+
+endif # AMBALINK_RPMSG_G1
+
+if SOC_CV2FS || SOC_CV22FS
+config AMBALINK_RPMSG_G2
+	bool "Group-2 RPMSG"
+	default y if CPU_CORTEX_R52
+	default n
+	help
+	  2nd RPMSG (Group-2)
+endif
+
+if AMBALINK_RPMSG_G2
+config AMBALINK_RPMSG_ROLE_CLNT
+	bool
+	default y if ! CPU_CORTEX_R52
+	default n
+
+config AMBALINK_RPMSG_ROLE_MAST
+	bool
+	default y if CPU_CORTEX_R52
+	default n
+
+config AMBALINK_G2_SHARED_MEM_ADDR
+	hex "AmbaLink group-2 shared memory address"
+	default 0x7c000000
+	help
+	  The address of ambalink shared memory for A53 & R52.
+	  This equals to CONFIG_DDR_SIZE - AMBALINK_G2_SHARED_MEM_SIZE
+
+config AMBALINK_G2_SHARED_MEM_SIZE
+	hex "AmbaLink group-2 shared memory size"
+	default 0x04000000
+	help
+	  The size of shared memory for AmbaLink service.
+	  The size is calculated from the size and number of rpmsg and some AmbaLink service,
+	  such as global lock and suspend/resume service.
+	  This size MUST be 2MB aligned!
+
+config AMBALINK_G2_RPMSG_SIZE
+	int "Size of the group-2 RPSMG"
+	default 2048
+	help
+	  The memory size of the group-2 RPMSG.
+
+config AMBALINK_G2_RPMSG_NUM
+	int "Number of the group-2 RPSMG"
+	default 2048
+	help
+	  The maximum number of the group-2 RPMSG at the same time.
+
+config AMBALINK_RPMSG_ASIL
+	bool "Enable ASIL level rpmsg"
+	default y if FWPROG_R52SYS_ENABLE
+	default y if CPU_CORTEX_R52
+	default n if !FWPROG_R52SYS_ENABLE && !CPU_CORTEX_R52
+	depends on THREADX
+	help
+	  Append CRC32 stamp at the end of package and timeout checking.
+	  Only support local RPMSG implementation.
+	  OpenAMP does not support.
+
+endif # AMBALINK_RPMSG_G2
+
+
+config AMBALINK_RPMSG_HIBER
+	bool
+	default n
+	depends on CPU_CORTEX_A53 && !OPENAMP
+	help
+	  Support hibernation control by RPMSG.
+	  Only support local RPMSG implementation.
+	  OpenAMP does not support.
+
+endif # ENABLE_AMBALINK
+
+endmenu
+

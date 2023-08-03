@@ -1,0 +1,38 @@
+# For bootstrap
+ifdef CONFIG_ENABLE_NAND_BOOT
+BSP_BOOT_DEVICE_DRIVER = AmbaBST_NAND_Generic.o
+endif
+ifdef CONFIG_ENABLE_SPINOR_BOOT
+BSP_BOOT_DEVICE_DRIVER = AmbaBST_NOR_MT25L256ABA.o
+endif
+ifdef CONFIG_ENABLE_SPINAND_BOOT
+BSP_BOOT_DEVICE_DRIVER = AmbaBST_SPINAND_Generic.o
+endif
+ifdef CONFIG_ENABLE_EMMC_BOOT
+BSP_BOOT_DEVICE_DRIVER = AmbaBST_EMMC_Generic.o
+endif
+
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaBST_UserConfig.o \
+                           $(BSP_PATH)/$(BSP_BOOT_DEVICE_DRIVER)
+
+ifdef CONFIG_CV22_LPDDR4_MT53D512M32D2DS_1596MHZ
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaLPDDR4_MT53D512M32D2DS_1596Mhz.o
+else
+ifdef CONFIG_CV22_LPDDR4_MT53D512M32D2DS_1800MHZ
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaLPDDR4_MT53D512M32D2DS_1800Mhz.o
+else
+#All others apply Auto-Grade setting
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaLPDDR4_MT53D512M32D2DS_1392MHz_CPU_756MHz_normal.o
+endif
+endif
+
+# For bootloader
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaUserGpioConfig.o             \
+                                $(BSP_PATH)/AmbaUserDefinedPreBoot.o         \
+                                $(BSP_PATH)/AmbaNAND_S34ML04G2.o             \
+                                $(BSP_PATH)/AmbaSpiNOR_MT25QL256ABA.o        \
+                                $(BSP_PATH)/AmbaSPINAND_MT29F2G01ABAGDWB.o
+
+ifeq ($(CONFIG_SVC_APPS_ICAM),)
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaUserNandPartition.o
+endif

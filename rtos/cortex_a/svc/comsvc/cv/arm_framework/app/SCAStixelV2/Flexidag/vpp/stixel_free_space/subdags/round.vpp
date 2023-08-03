@@ -1,0 +1,34 @@
+DAG Round =
+{	
+	arg=
+	{
+		$in=0,
+		$rsh_bits=0,	
+
+		$out=0,
+	};
+	
+	VP_sub(
+		$rsh_bits, 
+		VP_const_tensor("01", uint8_t, vector(1)),
+		VP_tensor(rsh_bit_m1, uint8_t, vector(1))
+	);
+
+	VP_lsh(
+		VP_const_tensor("01 00", uint16_t, vector(1)),
+		rsh_bit_m1,
+		VP_tensor(add_num, uint16_t, vector(1))
+	);
+
+	VP_add(
+		$in,
+		add_num,
+		VP_auto(in_add_num, uint16_t)
+	);
+
+	VP_rsh(
+		in_add_num,
+		$rsh_bits,
+		VP_auto($out, uint16_t)
+	);
+}

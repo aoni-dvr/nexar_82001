@@ -1,0 +1,33 @@
+comment "Ambarella Overlay Configurations"
+
+choice
+	prompt "Linux tree"
+	default BR2_AMBARELLA_LINUX_5_15
+	help
+	  Choose Linux tree
+
+config BR2_AMBARELLA_LINUX_5_4
+	bool "Linux 5.4.x"
+	help
+	  Linux v5.4.x
+
+config BR2_AMBARELLA_LINUX_5_10
+	bool "Linux 5.10.x"
+	help
+	  Linux v5.10.x
+
+config BR2_AMBARELLA_LINUX_5_15
+	bool "Linux 5.15.x"
+	help
+	  Linux v5.15.x
+
+endchoice # BR2_AMBARELLA_LINUX
+
+config BR2_AMBARELLA_LINUX_VERSION
+	string
+	default "5.4"  if BR2_AMBARELLA_LINUX_5_4
+	default "5.10" if BR2_AMBARELLA_LINUX_5_10
+	default "5.15" if BR2_AMBARELLA_LINUX_5_15
+
+source "ambarella/package/Config.in"
+

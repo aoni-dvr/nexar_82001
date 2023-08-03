@@ -1,0 +1,40 @@
+#include <vp_vas.h>
+
+#define IN_WIDTH            640
+#define IN_HEIGHT           480
+
+DAG transform_u8_640x480 = {
+    VP_input(data, uint8_t, vector(1, 3, IN_HEIGHT, IN_WIDTH));
+	VP_input(kernel, float16_t, vector(1, 1, 1, 32));
+	
+//=============================================
+	VP_crop(kernel, VP_tensor(croped_kernel),
+			w = 9,
+			h = 1,
+			d = 1,
+			p = 1,
+			start_w = 0,
+			start_h = 0,
+			start_d = 0,
+			start_p = 0,
+			zr = 1
+			);
+	VP_reshape(croped_kernel, VP_tensor(kerenl3x3),
+			w = 1,
+			h = 1,
+			d = 3,
+			p = 3
+			);
+	
+    VP_conv2(data, 
+            kerenl3x3,
+            VP_tensor(output, uint8_t),
+            start_w = 0,
+            start_h = 0,
+            stride_w = 1,
+            stride_h = 1,
+            out_w = IN_WIDTH,
+            out_h = IN_HEIGHT);
+	
+    VP_output(transform_out, output);
+}

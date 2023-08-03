@@ -1,0 +1,461 @@
+# ---------------------------------------------------------------------------
+# Install path
+#      Here export default AMBA_LIB_FOLDER and AMBA_O_LIB,
+#      but then override if module declare install-path
+#      AMBA_LIB_FOLDER:
+#              default folder to put released libraries (or new compiled libraries)
+#      AMBA_O_LIB:
+#              With O=<somepath>, new compiled libraries will be put at <somepath>/lib
+#              Release libraries will also be copied to this folder.
+# ---------------------------------------------------------------------------
+
+AMBA_LIB_FOLDER := $(srctree)/vendors/ambarella/lib
+AMBA_LIB64_FOLDER=${srctree}/vendors/ambarella/lib64
+export AMBA_LIB_FOLDER AMBA_LIB64_FOLDER
+
+AMBA_CHIP_ID:=$(subst $\",,$(CONFIG_SOC_NAME))
+export AMBA_CHIP_ID
+
+AMBA_BSP_NAME := $(subst ",,$(CONFIG_BSP_NAME))
+export AMBA_BSP_NAME
+
+ifneq ($(O),)
+ifeq ($(CONFIG_THREADX64),y)
+AMBA_O_LIB := $(objtree)/lib64
+else
+AMBA_O_LIB := $(objtree)/lib
+endif
+AMBA_O_LIB64 := $(objtree)/lib64
+export AMBA_O_LIB AMBA_O_LIB64
+endif
+
+# ---------------------------------------------------------------------------
+# Link flags for targets
+# ---------------------------------------------------------------------------
+
+# Amba Target out dir
+ifeq ("$(origin T)", "command line")
+  KBUILD_AMBA_OUT_DIR := $(T)
+endif
+ifndef KBUILD_AMBA_OUT_DIR
+# KBUILD_AMBA_OUT_DIR is a relative path to $(objtree).
+  KBUILD_AMBA_OUT_DIR := out
+endif
+export KBUILD_AMBA_OUT_DIR
+
+ifneq ($(KBUILD_AMBA_OUT_DIR),)
+# KBUILD_AMBA_FWPROG_OUT_DIR is a relative path to $(objtree).
+export KBUILD_AMBA_FWPROG_OUT_DIR := $(KBUILD_AMBA_OUT_DIR)/fwprog
+endif
+
+export BSP_DIR := $(shell cat $(srctree)/$(if $(O),$(O)/,).config | grep "^CONFIG_BSP" | awk -F "=" '{print $$1}' | sed -e 's/CONFIG_BSP_//' | tr [:upper:] [:lower:])
+
+# ---------------------------------------------------------------------------
+# Externally visible symbols (used by link-amba.sh)
+# ---------------------------------------------------------------------------
+APP := $(subst ",,$(CONFIG_SVC_APP_NAME))
+export LINK_AMBA_SH	:= $(srctree)/svc/apps/link-amba.sh
+ifeq ($(CONFIG_SVC_APPS_ICAM),y)
+export AMBA_LDS		:= svc/apps/$(APP)/main/build/threadx/amba_svc.lds
+else ifeq ($(CONFIG_SVC_APPS_UT),y)
+ifeq ($(CONFIG_DEVICE_TREE_SUPPORT),y)
+export AMBA_LDS		:= svc/apps/$(APP)/build/threadx/amba_svc_dts.lds
+else
+export AMBA_LDS		:= svc/apps/$(APP)/amba_svc.lds
+endif
+else ifeq ($(CONFIG_XEN_SUPPORT),y)
+export AMBA_LDS		:= svc/apps/$(APP)/amba_svc_xen.lds
+else
+export AMBA_LDS		:= svc/apps/$(APP)/amba_svc.lds
+endif
+export LINK_SH_secure_tool := $(srctree)/tools/hostutils/security_tool.sh
+ifneq ($(CONFIG_RSA_PRIVATE_KEY_PATH),)
+export SVC_RSA_PRIVATE_KEY_PATH := $(CONFIG_RSA_PRIVATE_KEY_PATH)
+else
+export SVC_RSA_PRIVATE_KEY_PATH := $(srctree)/svc/apps/icam/main/key/id_rsa
+endif
+export LINK_AMBA_PBA_SH := $(srctree)/fwupdater/link-amba_pba.sh
+export AMBA_PBA_LDS := fwupdater/amba_pba.lds
+
+# ---------------------------------------------------------------------------
+# Dirs for targets
+# ---------------------------------------------------------------------------
+if_exist = $(if $(wildcard $(srctree)/$(1)), $(1))
+if_mk_exist = $(if $(wildcard $(srctree)/$(1)/Makefile), $(1))
+
+
+# ---- Common ---------------------------------------------------------------
+rtos_common_dirs	:=
+rtos_common_dirs	+= $(call if_mk_exist,bsp/$(AMBA_CHIP_ID))
+rtos_common_dirs	+= $(call if_mk_exist,bsp/$(AMBA_CHIP_ID)/peripherals)
+rtos_common_dirs	+= $(call if_mk_exist,vendors/ambarella/wrapper/kal/threadx)
+rtos_common_dirs	+= $(call if_mk_exist,vendors/ambarella/wrapper/fs/threadx)
+rtos_common_dirs	+= $(call if_mk_exist,vendors/ambarella/wrapper/std)
+rtos_common_dirs	+= $(call if_mk_exist,vendors/ambarella/wrapper/usb)
+#rtos_common_dirs	+= $(call if_exist,vendors/microsoft/netx)
+rtos_common_dirs	+= $(call if_exist,vendors/express_logic/netx)
+ifeq ($(CONFIG_ARM64),y)
+#rtos_common_dirs	+= $(call if_mk_exist,vendors/express_logic/threadx64)
+rtos_common_dirs	+= $(call if_mk_exist,vendors/microsoft/azure64)
+else
+rtos_common_dirs	+= $(call if_mk_exist,vendors/express_logic/threadx)
+endif
+rtos_common_dirs	+= $(call if_mk_exist,soc/io/build/threadx)
+rtos_common_dirs	+= $(call if_mk_exist,soc/dsp)
+#rtos_common_dirs	+= $(call if_mk_exist,soc/dsp/visual/build/threadx)
+rtos_common_dirs	+= $(call if_mk_exist,soc/vision)
+rtos_common_dirs	+= $(call if_exist,vendors/foss)
+
+pba_common_dirs		:= $(call if_exist,fwupdater)
+
+# ---- Dependent ------------------------------------------------------------
+svc_dirs    := $(rtos_common_dirs)
+svc_dirs	+= $(call if_exist,svc/apps)
+svc_dirs	+= $(call if_exist,svc/comsvc)
+ifeq ($(CONFIG_BUILD_CV),y)
+svc_dirs	+= $(call if_exist,svc/comsvc/cv)
+endif
+ifeq ($(CONFIG_ENABLE_AMBALINK),y)
+svc_dirs	+= $(call if_exist,svc/comsvc/ambalink)
+endif
+ifeq ($(CONFIG_XEN_SUPPORT),y)
+svc_dirs	+= $(call if_exist,vendors/foss/xen)
+endif
+ifeq ($(CONFIG_BUILD_ENGINEERING_DIAG),y)
+svc_dirs        += $(call if_exist,engineering/diag/chip_io/$(AMBA_CHIP_ID))
+endif
+
+amba_pba_dirs	:= $(call if_exist,fwupdater)
+
+# ---------------------------------------------------------------------------
+amba-alldirs    := $(sort $(svc_dirs))
+amba_pba-alldirs	:= $(sort $(amba_pba_dirs))
+
+# Handle descending into subdirectories listed in $(amba-dirs)
+# Preset locale variables to speed up the build process. Limit locale
+# tweaks to this spot to avoid wrong language settings when running
+# make menuconfig etc.
+# Error messages still appears in the original language
+
+KBUILD_CPPFLAGS := -I$(srctree)/svc
+
+PHONY += $(amba-alldirs)
+
+PHONY += security_prepare
+
+security_prepare:
+ifeq ($(CONFIG_ENABLE_SECURITY),y)
+	$(Q)$(LINK_SH_secure_tool) pubkey_header_gen -k $(CONFIG_RSA_PRIVATE_KEY_PATH) -o $(srctree)/$(O)/.autogen_pubkey
+endif
+
+ifeq ($(CONFIG_SVC_APPS_ICAM),y)
+
+# .svc_autogen
+AG_SCR_PATH := $(srctree)/svc/apps/icam/core/scripts/svc_autogen.py
+svc_prepare := $(srctree)/$(O)/.svc_autogen
+
+
+PHONY += $(svc_prepare)
+$(svc_prepare):
+	$(shell python $(AG_SCR_PATH))
+	$(Q)$(LINK_SH_secure_tool) securebin_gen -k $(SVC_RSA_PRIVATE_KEY_PATH) -i $(srctree)/$(O).64/security/
+
+$(amba-alldirs): prepare build/scripts $(svc_prepare) security_prepare
+	$(Q)$(MAKE) $(build)=$@
+
+else ifeq ($(CONFIG_SVC_APPS_DIAGNOSIS)_$(CONFIG_ENABLE_UCODE_BIST),y_y)
+AG_SCR_PATH := $(srctree)/svc/apps/diagnosis/scripts/dx_autogen.py
+svc_prepare := $(srctree)/$(O)/.dx_autogen
+
+PHONY += $(svc_prepare)
+$(svc_prepare):
+	$(shell python $(AG_SCR_PATH))
+
+$(amba-alldirs): prepare build/scripts $(svc_prepare) security_prepare
+	$(Q)$(MAKE) $(build)=$@
+else
+
+$(amba-alldirs): prepare build/scripts security_prepare
+	$(Q)$(MAKE) $(build)=$@
+
+endif
+
+$(objtree)/$(KBUILD_AMBA_OUT_DIR)/amba_svc.elf: $(LINK_SH) $(amba-alldirs) FORCE
+	$(Q)$(LINK_AMBA_SH) $@
+
+PHONY += amba_all
+amba_all: amba_svc amba_pba
+	@echo "Done !"
+
+PHONY += amba_svc
+amba_svc: $(objtree)/$(KBUILD_AMBA_OUT_DIR)/amba_svc.elf
+	@echo "Built: amba_svc.elf"
+
+# PBA #################################################
+PHONY += $(amba_pba-alldirs)
+$(amba_pba-alldirs): prepare build/scripts
+	$(MAKE) $(build)=$@
+
+$(objtree)/$(KBUILD_AMBA_OUT_DIR)/amba_pba.elf: amba_svc $(pba_common_dirs) $(LINK_SH) $(amba_pba-alldirs) FORCE
+	chmod 711 $(LINK_AMBA_PBA_SH)
+	$(LINK_AMBA_PBA_SH) $@
+
+PHONY += amba_pba
+amba_pba: $(objtree)/$(KBUILD_AMBA_OUT_DIR)/amba_pba.elf
+	@echo "Built: amba_pba.elf"
+
+ifneq ($(CONFIG_XEN_DTS),)
+
+############################
+# Set up device tree for Xen
+############################
+
+XEN_DTS =	$(shell echo $(CONFIG_XEN_DTS))
+ifeq ($(CONFIG_XEN_DOM0_TX),y)
+DOM0_ADDR =	$(CONFIG_FWPROG_SYS_LOADADDR)
+DOM0_SIZE =	$(shell printf "0x%.8x" $(shell stat -c %s $(CONFIG_FWPROG_SYS)))
+else
+DOM0_ADDR =	$(CONFIG_FWPROG_LNX_LOADADDR)
+DOM0_SIZE =	$(shell printf "0x%.8x" $(shell stat -c %s $(CONFIG_FWPROG_LNX)))
+endif # Dom-0
+
+ifeq ($(CONFIG_XEN_HAVE_DOMU),y)
+ifeq ($(CONFIG_XEN_DOMU_TX),y)
+DOMU_ADDR =	$(CONFIG_FWPROG_SYS_LOADADDR)
+DOMU_SIZE =	$(shell printf "0x%.8x" $(shell stat -c %s $(CONFIG_FWPROG_SYS)))
+else
+DOMU_ADDR =	$(CONFIG_FWPROG_LNX_LOADADDR)
+DOMU_SIZE =	$(shell printf "0x%.8x" $(shell stat -c %s $(CONFIG_FWPROG_LNX)))
+endif
+endif # have Dom-U
+
+# TODO: if size > 32bits
+# TODO: dom0_mem = $(DOM0_MEM_SIZE)K
+DOM0_MEM_SIZE := $(CONFIG_XEN_DOM0_MEM_SIZE)
+DOMU_MEM_SIZE := $(CONFIG_XEN_DOMU_MEM_SIZE)
+
+$(objtree)/$(KBUILD_AMBA_OUT_DIR)/xen.dtb: $(XEN_DTS) amba_all FORCE
+	@mkdir -p $(objtree)/$(KBUILD_AMBA_OUT_DIR)
+	dtc -I dts -O dtb -o $@ $(XEN_DTS)
+	fdtput -t x $@ /chosen/module@0 reg $(DOM0_ADDR) $(DOM0_SIZE)
+ifeq ($(CONFIG_XEN_HAVE_DOMU),y)
+ifeq ($(CONFIG_XEN_DOMU_TX),y)
+	fdtput -r $@ /chosen/domu_lx
+	fdtput -t x $@ /chosen/domu_tx memory 0 $(DOMU_MEM_SIZE)
+	fdtput -t x $@ /chosen/domu_tx/module@0 reg $(DOMU_ADDR) $(DOMU_SIZE)
+else
+	fdtput -r $@ /chosen/domu_tx
+	fdtput -t x $@ /chosen/domu_lx memory 0 $(DOMU_MEM_SIZE)
+	fdtput -t x $@ /chosen/domu_lx/module@0 reg $(DOMU_ADDR) $(DOMU_SIZE)
+endif # CONFIG_XEN_DOMU_TX
+else # HAVE no domU
+	fdtput -r $@ /chosen/domu_tx
+	fdtput -r $@ /chosen/domu_lx
+endif
+
+
+PHONY += amba_xtb
+amba_xtb:  $(objtree)/$(KBUILD_AMBA_OUT_DIR)/xen.dtb
+
+amba_fwprog: amba_xtb
+
+endif
+
+PHONY += gcc_64_prep
+gcc_64_prep: $(srctree)/$(O)/.config
+	$(Q)if [ ! -e $(srctree)/$(O).64/include/generated/autoconf.h ] || [ $(srctree)/$(O)/.config -nt $(srctree)/$(O).64/.config ]; then \
+		mkdir -p $(srctree)/$(O).64; \
+		cp -f $(srctree)/$(O)/.config $(srctree)/configs/64_defconfig; \
+		sed -i -e "s@CONFIG_ARM32=y@# CONFIG_ARM32 is not set@g" $(srctree)/configs/64_defconfig; \
+		sed -i -e "s@# CONFIG_ARM64 is not set@CONFIG_ARM64=y@g" $(srctree)/configs/64_defconfig; \
+		make -rR \
+			KBUILD_SRC= \
+			KBUILD_AMBA_MKFILE=svc/Makefile.Amba.64 \
+			O=$(O).64 KBUILD_OUTPUT=$(O).64 \
+			CROSS_COMPILE=$(shell readlink -f `which aarch64-none-elf-gcc` | rev | cut -c 4- | rev) \
+			64_defconfig \
+			silentoldconfig; \
+		rm -f $(srctree)/configs/64_defconfig; \
+	fi
+
+PHONY += amba_fwprog
+amba_fwprog: amba_all gcc_64_prep
+	+$(Q)make -rR \
+		KBUILD_SRC= \
+		KBUILD_AMBA_MKFILE=svc/Makefile.Amba.64 \
+		O=$(O).64 KBUILD_OUTPUT=$(O).64 \
+		CROSS_COMPILE=$(shell readlink -f `which aarch64-none-elf-gcc` | rev | cut -c 4- | rev) \
+		amba_fwprog
+
+fwprog64:
+	+$(Q)make -rR \
+		KBUILD_SRC= \
+		KBUILD_AMBA_MKFILE=svc/Makefile.Amba.64 \
+		O=$(O).64 KBUILD_OUTPUT=$(O).64 \
+		CROSS_COMPILE=$(shell readlink -f `which aarch64-none-elf-gcc` | rev | cut -c 4- | rev) \
+		amba_fwprog
+
+atf64:
+	$(Q)make -rR \
+		KBUILD_SRC= \
+		KBUILD_AMBA_MKFILE=svc/Makefile.Amba.64 \
+		O=$(O).64 KBUILD_OUTPUT=$(O).64 \
+		CROSS_COMPILE=$(shell readlink -f `which aarch64-none-elf-gcc` | rev | cut -c 4- | rev) \
+		amba_atf
+
+# Build BST, BLD, ATF
+PHONY += amba_boot
+amba_boot: gcc_64_prep
+	$(Q)make -rR \
+		KBUILD_SRC= \
+		KBUILD_AMBA_MKFILE=svc/Makefile.Amba.64 \
+		O=$(O).64 KBUILD_OUTPUT=$(O).64 \
+		CROSS_COMPILE=$(shell readlink -f `which aarch64-none-elf-gcc` | rev | cut -c 4- | rev) \
+		amba_boot
+
+
+# cv diags
+PHONY += diags diags_code cvtask_gen cvtask_clean
+
+CV_DIAGS :=
+CV_CLEAN_TOOL := $(srctree)/tools/ADK/adk/core/tools/clean_gentask/clean_post_proc.py
+
+CORE_RD_PATH := $(srctree)/tools/ADK/remote_diags
+CORE_RD_BACK_PATH := ../../../../output
+
+DIAGS_MK_PARAM="KBUILD_SRC="
+CV_CORE_DIR := soc/vision
+CV_COMSVC_DIR := svc/comsvc/cv
+
+cvtask_gen:
+	@$(foreach dg, $(CV_DIAGS), $(call build_diags,$(patsubst %/,%,$(dg)),$(srctree)))
+
+cvtask_clean:
+	@$(foreach dg, $(CV_DIAGS), $(call clean_diags,$(dg),$(CV_CLEAN_TOOL),$(srctree)/$(CV_COMSVC_DIR)))
+
+diags:
+	$(MAKE) $(DIAGS_MK_PARAM) diags_core
+	$(MAKE) $(DIAGS_MK_PARAM) diags_comsvc
+
+diags_lib:
+	$(MAKE) $(DIAGS_MK_PARAM) diags_install
+
+diags_core:
+ifeq ($(CONFIG_BUILD_CV),y)
+	$(MAKE) $(DIAGS_MK_PARAM) _diags_core
+else
+	@echo "[ERROR] CONFIG_BUILD_CV is not set"
+endif
+
+diags_comsvc:
+ifeq ($(CONFIG_BUILD_CV),y)
+	$(MAKE) $(DIAGS_MK_PARAM) _diags_comsvc
+else
+	@echo "[ERROR] CONFIG_BUILD_CV is not set"
+endif
+
+diags_install:
+ifeq ($(CONFIG_BUILD_CV),y)
+	$(MAKE) $(DIAGS_MK_PARAM) _diags_install
+else
+	@echo "[ERROR] CONFIG_BUILD_CV is not set"
+endif
+
+_diags_core:
+	$(MAKE) $(DIAGS_MK_PARAM) $(CV_CORE_DIR)/
+	$(MAKE) $(DIAGS_MK_PARAM) $(CV_CORE_DIR)/config/ CV_CORE_DIR=$(CV_CORE_DIR)
+	$(MAKE) -f $(srctree)/$(CV_CORE_DIR)/diags.mk CV_CORE_DIR=$(CV_CORE_DIR)
+	$(MAKE) -f $(srctree)/$(CV_CORE_DIR)/diags.mk diags_install CV_CORE_DIR=$(CV_CORE_DIR)
+
+_diags_comsvc:
+	$(MAKE) $(DIAGS_MK_PARAM) $(CV_COMSVC_DIR)/
+	$(MAKE) $(DIAGS_MK_PARAM) $(CV_COMSVC_DIR)/config/ CV_CORE_DIR=$(CV_CORE_DIR) CV_COMSVC_DIR=$(CV_COMSVC_DIR)
+	$(MAKE) -f $(srctree)/$(CV_COMSVC_DIR)/diags.mk CV_CORE_DIR=$(CV_CORE_DIR) CV_COMSVC_DIR=$(CV_COMSVC_DIR)
+	$(MAKE) -f $(srctree)/$(CV_COMSVC_DIR)/diags.mk diags_install CV_CORE_DIR=$(CV_CORE_DIR) CV_COMSVC_DIR=$(CV_COMSVC_DIR)
+
+_diags_install:
+	$(MAKE) $(DIAGS_MK_PARAM) $(CV_CORE_DIR)/
+	$(MAKE) $(DIAGS_MK_PARAM) $(CV_CORE_DIR)/config/ CV_CORE_DIR=$(CV_CORE_DIR)
+	$(MAKE) $(DIAGS_MK_PARAM) $(CV_COMSVC_DIR)/
+	$(MAKE) $(DIAGS_MK_PARAM) $(CV_COMSVC_DIR)/config/ CV_CORE_DIR=$(CV_CORE_DIR) CV_COMSVC_DIR=$(CV_COMSVC_DIR)
+	$(MAKE) -f $(srctree)/$(CV_CORE_DIR)/diags.mk CV_CORE_DIR=$(CV_CORE_DIR)
+	$(MAKE) -f $(srctree)/$(CV_CORE_DIR)/diags.mk diags_install CV_CORE_DIR=$(CV_CORE_DIR)
+	$(MAKE) -f $(srctree)/$(CV_COMSVC_DIR)/diags_mk/diags_lib.mk CV_CORE_DIR=$(CV_CORE_DIR) CV_COMSVC_DIR=$(CV_COMSVC_DIR)
+	$(MAKE) -f $(srctree)/$(CV_COMSVC_DIR)/diags_mk/diags_lib.mk diags_install CV_CORE_DIR=$(CV_CORE_DIR) CV_COMSVC_DIR=$(CV_COMSVC_DIR)
+
+define build_diags
+	echo "Building $(1) diags..."; \
+	rm -rf $(CORE_RD_PATH)/$(notdir $(1)); \
+	mkdir -p $(CORE_RD_PATH)/$(notdir $(1)); \
+	cd $(CORE_RD_PATH)/$(notdir $(1)); \
+	if [ ! -f Makefile ] ; then \
+		remoteconfig $(2)/$(1); \
+	fi; \
+	make diags; \
+	cd $(CORE_RD_BACK_PATH); \
+	if [ -f $(CORE_RD_PATH)/$(notdir $(1))/out/GEN_SUPERDAG_FOR_BUB.log ]; then \
+		grep "Summary of output" $(CORE_RD_PATH)/$(notdir $(1))/out/GEN_SUPERDAG_FOR_BUB.log  > /dev/null ;\
+		if [ $$? -eq 0 ] ; then \
+			echo "Generate $(notdir $(1)) cvtask success"; \
+		else \
+			echo "  [ERROR] superdag_gen fail"; \
+			exit -1; \
+		fi ; \
+	else \
+		echo "  [ERROR] Can't find GEN_SUPERDAG_FOR_BUB.log"; \
+		exit -1; \
+	fi ;
+endef
+
+define clean_diags
+	echo "Cleaning $(1) diags..."; \
+	$(2) -n $(notdir $(1)) -p $(3)/config;
+endef
+
+# ---------------------------------------------------------------------------
+# Show text and data size of lib
+PHONY += size
+size:
+	@$(srctree)/build/maintenance/dump_size.sh $(if $(SN),$(SN))
+ifeq ($(CONFIG_SVC_APPS_ICAM),y)
+	$(shell python $(srctree)/svc/apps/icam/core/scripts/svc_bss.py $(srctree)/$(O))
+endif
+
+O_DIR := $(if (O),$(subst $(srctree)/,,$(O)))
+MAP_FINALSIZE := $(srctree)/$(if $(O_DIR),$(O_DIR),.)/out/$(MAP_FILE)
+PHONY += finalsize
+finalize:
+	$(Q)$(srctree)/build/maintenance/cnt_finalsize.sh $(MAP_FINALSIZE)
+
+
+# ---------------------------------------------------------------------------
+MANIFEST = manifest_sdk.txt
+MANIFEST_DIR = $(srctree)/build/distribute
+RTOS_DIR = rtos/cortex_a
+
+export MANIFEST MANIFEST_DIR RTOS_DIR
+
+# depends on MANIFEST HAS_APPLIB_SRC RTOS_DIR srctree variable.
+PHONY += distribute
+distribute:
+	@rm -rf $(srctree)/$(O)/lib/libcv_Amba*.a
+	@( \
+		echo MANIFEST=$(MANIFEST_DIR)/$(MANIFEST); \
+		cd $(srctree); cd ../.. ; \
+		./${RTOS_DIR}/build/distribute/distribute \
+	)
+
+#
+# Customized clean-rule here.
+#
+# Hook to clean
+AMBA_CLEAN += amba_clean
+PHONY += amba_clean
+amba_clean:
+	@echo "clean output"
+	+$(Q)$(MAKE) -rR \
+		KBUILD_SRC= \
+		KBUILD_AMBA_MKFILE=svc/Makefile.Amba.64 \
+		O=$(O).64 KBUILD_OUTPUT=$(O).64 \
+		clean
+

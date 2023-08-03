@@ -1,0 +1,44 @@
+_PPP: -pq ':' -sq '.' -dq ''
+:use lib '@top_builddir@/build';
+:use UcodeConfig;
+
+#logfile on amalgam.log
+
+:$use_ace_platform = @use_ace_platform@;
+
+setmode dram
+setenable on
+setmemsize @dram_size@
+trace 2
+
+setmode smem
+setenable on
+trace 0
+
+setmode orcvp
+setenable on
+obj VectorProcessor0 setattr emulator @emulator@
+obj VectorProcessor0 setattr dump_emu_operand_data 0
+obj VectorProcessor0 setattr dump_dag_operand_data 0
+trace 0
+
+obj l2 setenable on
+
+:if ($use_ace_platform == 1) {
+setmode arm
+setenable on
+setattr connected 1
+setattr port 0
+use_port_server @pairing_server@ 8699 @pairing_key@
+trace 0
+:}
+
+sim_init
+
+setmode orcvp
+loadfile ../build/vp.exe
+
+setmode dram
+:$Dalloc->emitcmd_loadfile();
+
+setmode orcvp

@@ -1,0 +1,52 @@
+if SOC_H32
+
+source build/kconfigs/bsp/h32/peripherals/Kconfig
+
+comment "Board Configuration"
+choice H32_BSP_SELECTION
+	prompt "BSP"
+	default BSP_H32BUB_OPTION_A_V200
+
+config BSP_H32BUB_OPTION_A_V200
+	bool "H32 Bringup Board Option-A V200"
+
+config BSP_H32BUB_OPTION_A_V300
+	bool "H32 Bringup Board Option-A V300"
+
+config BSP_H32AQBUB_OPTION_A_V100
+	bool "H32AQ Bringup Board Option-A V100"
+
+config BSP_H32DK_V100
+	bool "H32 Development Kit V100"
+
+config BSP_H32AQDK_OPTION_B_V100
+	bool "H32AQ Development Kit Option-B V100"
+
+config BSP_H32BUB_OPTION_B_V200
+	bool "H32 Bringup Board Option-B V200"
+
+config BSP_H32_NEXAR_D081
+	bool "H32 Nexar D081"
+endchoice
+
+choice H32_DRAM_SELECTION
+	prompt "Dram"
+	default H32_LPDDR4_MT53D512M16D1DS_1596MHZ
+
+config H32_LPDDR4_MT53D512M16D1DS_1200MHZ
+	bool "LPDDR4 MT53D512M16D1DS 1200MHz"
+config H32_LPDDR4_MT53D512M16D1DS_1596MHZ
+	bool "LPDDR4 MT53D512M16D1DS 1596MHz"
+config H32_LPDDR4_IS43LQ16256A062BLI_1596MHZ
+	bool "LPDDR4 IS43LQ16256A062BLI 1596MHz"
+config H32_DDR4_MT40A512M16LY_1596MHZ
+	bool "DDR4 MT40A512M16LY 1596MHz"
+endchoice
+
+config ATT_MAP
+	string "Att Map File Name"
+	default "AmbaUserMemProt"
+	help
+		File name of the Att Map file (remove '.c')
+
+endif

@@ -1,0 +1,13 @@
+menuconfig BUILD_AMBA_ADAS
+    bool "Build Ambarella ADAS functions"
+    default y
+
+if BUILD_AMBA_ADAS
+config BUILD_AMBA_ADAS_UTILS
+    bool "Build ADAS utilities functions"
+    default n
+config BUILD_AMBA_ADAS_UNITTEST
+    bool "Build ADAS unittest functions"
+    default n
+endif
+

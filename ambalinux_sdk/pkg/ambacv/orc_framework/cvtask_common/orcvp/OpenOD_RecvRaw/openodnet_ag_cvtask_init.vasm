@@ -1,0 +1,4 @@
+.section .cvtasklist_entry
+.align 4
+    .long _openodnet_ag_cvtask_register
+

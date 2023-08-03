@@ -1,0 +1,26 @@
+menuconfig BR2_PACKAGE_AMBACV
+	bool "Ambarella CV scheduler framework"
+	default n
+
+config BR2_PACKAGE_CAMCTRL_IPC
+	bool "Ambarella Camera Control CVTask through IPC"
+	default n
+	depends on BR2_PACKAGE_AMBACV
+
+config BR2_PACKAGE_BUILD_AMBACV_SHARED_LIB
+	bool "Build shared libs"
+	default n
+	depends on BR2_PACKAGE_AMBACV
+
+config BR2_PACKAGE_BUILD_AMBACV_DIAGS_SHARED_LIB
+	bool "Build shared Libs for build diags"
+	default n
+	depends on BR2_PACKAGE_AMBACV
+
+config BR2_PACKAGE_BUILD_AMBACV_DIAGS_OOSB
+	bool "Out-of-Source Building for build diags"
+	default n
+	depends on BR2_PACKAGE_AMBACV
+	help
+	  Copy source code to output, which is used to build binary
+

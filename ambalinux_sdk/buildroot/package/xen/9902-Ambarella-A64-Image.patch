@@ -1,0 +1,18 @@
+diff --git a/xen/arch/arm/kernel.c b/xen/arch/arm/kernel.c
+index 8eff074836..30b3d1ed29 100644
+--- a/xen/arch/arm/kernel.c
++++ b/xen/arch/arm/kernel.c
+@@ -340,8 +340,13 @@ static int __init kernel_zimage64_probe(struct kernel_info *info,
+ 
+     copy_from_paddr(&zimage, addr, sizeof(zimage));
+ 
++#if 0
+     if ( zimage.magic0 != ZIMAGE64_MAGIC_V0 &&
+          zimage.magic1 != ZIMAGE64_MAGIC_V1 )
++#else
++    /* cf. https://xenbits.xen.org/gitweb/?p=xen.git;a=commitdiff;h=3572f2fa7b0f6f20eb145bdccaf5888c76be8960 */
++    if ( zimage.magic1 != ZIMAGE64_MAGIC_V1 )
++#endif
+         return -EINVAL;
+ 
+     /* Currently there is no length in the header, so just use the size */

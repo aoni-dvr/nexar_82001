@@ -1,0 +1,5 @@
+config BR2_PACKAGE_QFIREHOSE
+	bool "qfirehose"
+	default n
+	help
+	  This is the qfirehose for quectel lte.

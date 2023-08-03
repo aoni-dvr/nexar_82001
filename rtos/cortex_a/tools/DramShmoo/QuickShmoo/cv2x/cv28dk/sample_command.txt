@@ -1,0 +1,30 @@
+=== Firmware/Platform configuration ===
+OS      : ThreadX
+App     : IOUT
+DRAM    : LPDDR4
+Platform: CV28DK V100
+
+=== Command explanation ===
+diag dram 0x20000000 0x200000 task 999  => Execute memory test via task for 999 loops
+diag ddr wdt 1                          => Enable WatchDog during Shmoo process for reboot on failure
+diag ddr task ...                       => Execute Shmoo process via task
+
+=== Full command on App console ===
+diag dram 0x20000000 0x200000 task 999; diag ddr wdt 1; diag ddr task lp4vref 0 - 50000
+diag dram 0x20000000 0x200000 task 999; diag ddr wdt 1; diag ddr task lp4vref 0 + 50000
+diag dram 0x20000000 0x200000 task 999; diag ddr wdt 1; diag ddr task lp4mr14 0 - 50000
+diag dram 0x20000000 0x200000 task 999; diag ddr wdt 1; diag ddr task lp4mr14 0 + 50000
+diag dram 0x20000000 0x200000 task 999; diag ddr wdt 1; diag ddr task lp4mr12 0 - 50000
+diag dram 0x20000000 0x200000 task 999; diag ddr wdt 1; diag ddr task lp4mr12 0 + 50000
+
+diag dram 0x20000000 0x200000 task 999; diag ddr wdt 1; diag ddr task lp4rdly 0 - 50000
+diag dram 0x20000000 0x200000 task 999; diag ddr wdt 1; diag ddr task lp4rdly 0 + 50000
+diag dram 0x20000000 0x200000 task 999; diag ddr wdt 1; diag ddr task lp4wdly 0 - 50000
+diag dram 0x20000000 0x200000 task 999; diag ddr wdt 1; diag ddr task lp4wdly 0 + 50000
+
+diag dram 0x20000000 0x200000 task 999; diag ddr wdt 1; diag ddr task shmoo 0 read  - 50000
+diag dram 0x20000000 0x200000 task 999; diag ddr wdt 1; diag ddr task shmoo 0 read  + 50000
+diag dram 0x20000000 0x200000 task 999; diag ddr wdt 1; diag ddr task shmoo 0 write - 50000
+diag dram 0x20000000 0x200000 task 999; diag ddr wdt 1; diag ddr task shmoo 0 write + 50000
+diag dram 0x20000000 0x200000 task 999; diag ddr wdt 1; diag ddr task shmoo 0 sync  - 50000
+diag dram 0x20000000 0x200000 task 999; diag ddr wdt 1; diag ddr task shmoo 0 sync  + 50000

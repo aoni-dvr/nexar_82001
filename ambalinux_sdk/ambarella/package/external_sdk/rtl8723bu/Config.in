@@ -1,0 +1,4 @@
+config BR2_PACKAGE_RTL8723BU
+	bool "RTL8723BU"
+	help
+	  Realtek RTL8723BU 11n 1x1 USB WiFi + Bluetooth COMBO

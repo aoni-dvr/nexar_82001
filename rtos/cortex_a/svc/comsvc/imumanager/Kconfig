@@ -1,0 +1,8 @@
+
+if BUILD_COMMON_SERVICE_IMUMGR
+
+config IMUMGR_USED
+    bool "Use ImuManager"
+    default n
+
+endif

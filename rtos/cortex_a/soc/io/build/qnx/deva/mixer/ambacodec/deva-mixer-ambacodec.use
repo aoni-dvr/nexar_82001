@@ -1,0 +1,31 @@
+
+%C - Mixer DLL for the AMBACODEC codec
+
+This is a DLL of the io-audio system.
+
+Configuration file options:
+    ambacodec_i2c_dev=<value>                                   I2C device number corresponding to the AMBACODEC codec
+    ambacodec_i2c_addr=<value>                                  I2C slave address corresponding to the AMBACODEC codec
+    ambacodec_debug=<enable|disable>                            Enable register dumps (default:disable)
+    ambacodec_out1=<enable|disable[:differential|single_ended]> Enable DAC output 1 (default: disable) and specify
+                                                             whether DAC output 1 is differential or single_ended
+    ...
+    ambacodec_out6=<enable|disable[:differential|single_ended]> Enable DAC output 6 (default: disable) and specify
+                                                             whether DAC output 6 is differential or single_ended
+    ambacodec_in1=<enable|disable[:differential|single-ended]>  Enable ADC input 1 (default: disable) and specify
+                                                             whether ADC input 1 is differential or single_ended
+    ambacodec_in2=<enable|disable[:differential|single-ended]>  Enable ADC input 2 (default: disable) and specify
+                                                             whether ADC input 2 is differential or single_ended
+
+All codec options are to be included under the [ctrl] section for the audio card the
+mixer DLL is to be mounted under.
+
+Example:
+[ctrl]
+name=amba-ambacodec
+options=scu=1
+mixer_dll=ak4951                       # Load deva-mixer-ambacodec.so
+ambacodec_i2c_dev=2                       # /dev/i2c2
+ambacodec_i2c_addr=16                     # 0x10
+ambacodec_out1=enable:differential
+ambacodec_in1=enable:differential

@@ -1,0 +1,222 @@
+
+#include <vp_vas.h>
+
+// subdags
+#include "subdags/calc_world_y.vpp"
+#include "subdags/calc_world_z.vpp"
+#include "subdags/calc_image_v.vpp"
+#include "subdags/calc_esti_road_disp.vpp"
+#include "subdags/calc_delata_d_tbl.vpp"
+
+#define INPUT_DISP_HEIGHT				(768)
+#define MAX_DISPARITY					(256)
+#define DELTA_D_DISTANCE				(5)
+
+DAG STIXEL_GEN_ESTI_ROAD = {
+
+	// ------------------------- Load input ---------------------------- // 	
+	VP_input(
+		cfg_f32, float32_t, vector(14)
+	);
+
+	VP_typeconv(
+		cfg_f32,
+		VP_tensor(cfg_f16, float16_t, vector(14))
+	);
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(image_v0, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 0, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(base_line, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 1, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(focal_length, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 2, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(det_obj_height, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 3, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(gc_line_m, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 5, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(gc_line_c, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 6, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(cam_sin_pitch, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 7, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+
+	VP_crop(
+		cfg_f16,
+		VP_tensor(cam_cos_pitch, float16_t, vector(1)),
+		w = 1, h = 1, d = 1, p = 1,
+		start_w = 8, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+
+	// ---------------------------- Start ------------------------------- // 		
+	call =
+	{
+		callee=Calc_Esti_Road_Disp,
+		$line_m=gc_line_m,
+		$line_c=gc_line_c,
+		$esti_road_disparity_width=INPUT_DISP_HEIGHT,
+		$esti_road_disparity_out=esti_road_disparity,
+	};
+
+	// Generate column index (u16 and float16)
+	VP_index(
+    	VP_tensor(column_index_u, uint16_t, vector(1, 1, 1, INPUT_DISP_HEIGHT)),
+    	w = INPUT_DISP_HEIGHT,
+    	h = 1,
+    	d = 1,
+    	p = 1,
+    	dim_coordinate = 0
+    );
+
+    VP_typeconv(
+		column_index_u,
+		VP_auto(column_index_ft, float16_t)
+	);
+	// ---
+
+	call =
+	{
+		callee=Calc_World_Y,
+		$disparity=esti_road_disparity,		
+		$col_index=column_index_ft,
+		$sin_pitch=cam_sin_pitch,
+		$cos_pitch=cam_cos_pitch,
+		$focal_length=focal_length,
+		$camera_v0=image_v0,
+		$base_line=base_line,
+		$world_y_out=ground_world_y,	
+	};	
+
+	call =
+	{
+		callee=Calc_World_Z,
+		$disparity=esti_road_disparity,		
+		$col_index=column_index_ft,
+		$sin_pitch=cam_sin_pitch,
+		$cos_pitch=cam_cos_pitch,
+		$focal_length=focal_length,
+		$camera_v0=image_v0,
+		$base_line=base_line,
+		$world_z_out=ground_world_z,	
+	};	
+	
+	// get world Y position of top of object 
+	VP_sub(
+		ground_world_y,
+		det_obj_height,
+		VP_auto(top_world_y, float16_t)
+	);
+
+	call =
+	{
+		callee=Calc_Image_V,
+		$in_world_y=top_world_y,
+		$in_world_z=ground_world_z,
+		$sin_pitch=cam_sin_pitch,
+		$cos_pitch=cam_cos_pitch,
+		$focal_length=focal_length,
+		$camera_v0=image_v0,
+		
+		$image_v_out=tmp0_virtual_obj_top_v,	
+	};	
+
+	// Truncate to interger
+	VP_trunc(		
+		tmp0_virtual_obj_top_v,		
+		VP_auto(tmp1_virtual_obj_top_v, uint16_t)
+	);
+	// ---
+
+	// Force top position <= base position
+	VP_gtb(
+		tmp1_virtual_obj_top_v,
+		column_index_u,
+		VP_auto(greater_than_base, uint8_t)
+	);
+
+	VP_muxb(		
+		column_index_u,
+		tmp1_virtual_obj_top_v,
+		greater_than_base,
+		VP_auto(virtual_obj_top_v, uint16_t)
+	);
+
+	VP_sub(
+		column_index_u,
+		virtual_obj_top_v,
+		VP_auto(road_disp_coef, uint16_t)
+	);
+	// ---
+
+	// For later computation(CDF), minus 1 from each element
+	VP_eqib(
+		virtual_obj_top_v,
+		VP_const_tensor("00 00", uint16_t, vector(1)),
+		VP_auto(equal_zero_mask, uint8_t)
+	);
+
+	VP_sub(
+		virtual_obj_top_v,
+		VP_const_tensor("01", uint8_t, vector(1)),
+		VP_auto(virtual_obj_top_v_m1_tmp, uint16_t)
+	);
+
+	VP_muxb(		
+		VP_const_tensor("00 00", uint16_t, vector(1)),
+		virtual_obj_top_v_m1_tmp,
+		equal_zero_mask,
+		VP_auto(virtual_obj_top_v_m1, uint16_t)
+	);
+	// ---
+
+	call =
+	{
+		callee=Calc_Delta_D_Tbl,	
+		$max_disparity_val=MAX_DISPARITY,
+		$delata_distance_val=DELTA_D_DISTANCE,
+		$sin_pitch=cam_sin_pitch,
+		$cos_pitch=cam_cos_pitch,
+		$focal_length=focal_length,
+		$camera_v0=image_v0,
+		$base_line=base_line,	
+							
+		$deleta_d_out=deleta_disparity_table,
+	};
+
+	VP_output(esti_road_disparity_out, esti_road_disparity);	
+	VP_output(virtual_obj_top_v_out, virtual_obj_top_v_m1);
+	VP_output(road_disp_coef_out, road_disp_coef);
+	VP_output(deleta_disparity_table_out, deleta_disparity_table);
+}

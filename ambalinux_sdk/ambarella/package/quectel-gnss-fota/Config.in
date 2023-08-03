@@ -1,0 +1,5 @@
+config BR2_PACKAGE_QUECTEL_GNSS_FOTA
+	bool "quectel-gnss-fota"
+	default n
+	help
+	  This is the fota for quectel gnss.

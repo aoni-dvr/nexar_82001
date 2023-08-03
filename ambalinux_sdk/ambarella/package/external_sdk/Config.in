@@ -1,0 +1,33 @@
+#menu "Atheros SDK"
+#source "ambarella/package/external_sdk/ar6003_3_1_568/Config.in"
+#source "ambarella/package/external_sdk/ar6003_3_4_patch4/Config.in"
+#source "ambarella/package/external_sdk/ar6004/Config.in"
+#endmenu
+
+menu "Broadcom SDK"
+source "ambarella/package/external_sdk/bcmdhd/Config.in"
+endmenu
+
+menu "Cypress SDK"
+source "ambarella/package/external_sdk/cypress/Config.in"
+endmenu
+
+#menu "Marvell SDK"
+#source "ambarella/package/external_sdk/mrvl/Config.in"
+#endmenu
+
+#menu "Realtek SDK"
+#source "ambarella/package/external_sdk/rtl8188eu/Config.in"
+#source "ambarella/package/external_sdk/rtl8188fu/Config.in"
+#source "ambarella/package/external_sdk/rtl8189es/Config.in"
+#source "ambarella/package/external_sdk/rtl8192eu/Config.in"
+#source "ambarella/package/external_sdk/rtl8723bs/Config.in"
+#source "ambarella/package/external_sdk/rtl8723bu/Config.in"
+#source "ambarella/package/external_sdk/rtl8812au/Config.in"
+#source "ambarella/package/external_sdk/rtl8821as/Config.in"
+#source "ambarella/package/external_sdk/rtl8821au/Config.in"
+#endmenu
+
+menu "Imagination Technologies"
+source "ambarella/package/external_sdk/ambagpu/Config.in"
+endmenu

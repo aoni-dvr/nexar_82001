@@ -1,0 +1,120 @@
+
+DAG Confidence =
+{	
+	arg=
+	{		
+		$esti_ground_disparity=0,
+		$disparity_width=0,
+		$disparity_height=0,
+		$invalid_disp_mask=0,
+		
+		$confidence_out=0,
+	};
+
+	// $esti_ground_disparity : 		[0, 0, 0, ......, 1, 2, ..... ]
+	//									[0, 0, 0, ......, 0, 1, ..... ]	
+	//									...
+	//
+	// esti_ground_equal_zero : 		[1, 1, 1, ......, 0, 0, ..... ]
+	//									[1, 1, 1, ......, 1, 0, ..... ]	
+	VP_eqib(
+		$esti_ground_disparity,		
+		VP_const_tensor("00 00", uint16_t, vector(1)), 
+		VP_auto(esti_ground_equal_zero, uint16_t)
+	);
+
+	VP_findfirstzero(
+		esti_ground_equal_zero,		
+		VP_tensor(sky_length, uint16_t, vector(1, 1, $disparity_height, 1))
+	);	
+
+	VP_transpose(sky_length, 
+		VP_tensor(transposed_sky_length, uint16_t, vector(1, 1, 1, $disparity_height)),
+		to_w = 1,
+		to_h = 0,
+		to_d = 2,
+		to_p = 3
+  	);
+
+	VP_sub(
+		$disparity_width, 
+		transposed_sky_length, 
+		VP_tensor(ground_length_u16, float16_t, vector(1, 1, 1, $disparity_height))
+	);
+
+	VP_typeconv(
+		ground_length_u16,
+		VP_tensor(ground_length_ft, uint16_t, vector(1, 1, 1, $disparity_height))
+	);
+
+	// filter out area for calculating confidence
+	VP_neib(
+		$esti_ground_disparity,
+		VP_const_tensor("00 00", uint16_t, vector(1)), 
+		VP_tensor(esti_ground_mask, uint8_t, vector(1, 1, $disparity_height, $disparity_width), bitvector = 1)
+	);	
+
+	// filter out valid disparity
+	VP_bwnot(
+		$invalid_disp_mask,
+		VP_tensor(valid_disp_mask, uint8_t, vector(1, 1, $disparity_height, $disparity_width), bitvector = 1)
+	);
+
+	VP_bwand(
+		esti_ground_mask,
+		valid_disp_mask,
+		VP_tensor(count_mask, uint8_t, vector(1, 1, $disparity_height, $disparity_width), bitvector = 1)
+	);
+
+	// each row has category index (ith row) in its valid region, otherwise it's 0xFFFF
+	VP_index(
+    	VP_tensor(row_index, uint16_t, vector(1, 1, $disparity_height, $disparity_width)),
+    	w = $disparity_width,
+    	h = $disparity_height,
+    	d = 1,
+    	p = 1,
+    	dim_coordinate = 1
+    );
+
+	VP_muxb(
+		row_index, 
+		VP_const_tensor("FF FF", uint16_t, vector(1)), 
+		count_mask,
+		VP_tensor(count_category, uint16_t, vector(1, 1, $disparity_height, $disparity_width))
+	);
+
+	// for each row, count number of valid disparity
+	VP_stats(
+		count_category,
+		undef,
+		VP_tensor(valid_count_tmp, uint16_t, vector($disparity_height, 1, 1, 1)),
+		count = 1,
+		out_h = 1,
+		out_d = 1,
+		out_p = $disparity_height
+	);
+
+	VP_reshape(
+		valid_count_tmp,
+		VP_tensor(valid_count, uint16_t, vector(1, 1, 1, $disparity_height)),
+		w = $disparity_height, h = 1, d = 1, p = 1
+	);
+
+	// confidence = (valid_count/ground_length_ft)*65535
+	VP_recip(
+		ground_length_ft,		
+		VP_tensor(inv_ground_length_ft, float16_t, vector(1, 1, 1, $disparity_height))
+	);
+
+	VP_mul(
+		valid_count, 
+		inv_ground_length_ft, 
+		VP_tensor(tmp, float16_t, vector(1, 1, 1, $disparity_height))
+	);
+
+	VP_muli(
+		tmp, 
+		VP_const_tensor("FF FF", uint16_t, vector(1)), 
+		VP_tensor($confidence_out, uint16_t, vector(1, 1, 1, $disparity_height))
+	);
+}

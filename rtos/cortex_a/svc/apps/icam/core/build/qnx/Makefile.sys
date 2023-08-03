@@ -1,0 +1,90 @@
+# sys
+ifeq ($(CONFIG_ICAM_CVBS_EXIST),y)
+#EXTRA_SRCVPATH += $(ICAM_CORE_SRC)/sys/io
+endif
+
+SRCS += SvcBootDev.c
+SRCS += SvcBuffer.c
+SRCS += SvcClock.c
+SRCS += SvcStgMonitor.c
+#SRCS += SvcPrint.c
+SRCS += SvcShell.c
+SRCS += SvcSysStat.c
+#SRCS += SvcUart.c
+SRCS += SvcFlowControl.c
+SRCS += SvcFwUpdate.c
+SRCS += SvcWinCalc.c
+SRCS += SvcMem.c
+SRCS += SvcPref.c
+SRCS += SvcSysEvent.c
+SRCS += SvcStgMgr.c
+SRCS += SvcNvm.c
+SRCS += SvcCmd.c
+SRCS += SvcTask.c
+SRCS += SvcLog.c
+SRCS += SvcLoadCtrl.c
+SRCS += SvcWrap.c
+SRCS += SvcSafeStateMgr.c
+SRCS += SvcPlat.c
+SRCS += SvcDataCmp.c
+SRCS += SvcDramUtil.c
+SRCS += SvcWdt.c
+
+ifeq ($(CONFIG_BUILD_CV),y)
+SRCS += SvcPyramid.c
+endif
+# button
+SRCS += SvcButtonCtrl.c
+SRCS += SvcGpioButton.c
+ifeq ($(CONFIG_ICAM_ADC_BUTTON_USED),y)
+SRCS += SvcAdcButton.c
+endif
+# timing log
+ifeq ($(CONFIG_ICAM_TIMING_LOG),y)
+SRCS += SvcTiming.c
+endif
+# swpll
+ifeq ($(CONFIG_ICAM_SWPLL_CONTROL),y)
+SRCS += SvcSwPll.c
+endif
+# canbus
+ifeq ($(CONFIG_ICAM_CANBUS_USED),y)
+SRCS += SvcCan.c
+endif
+# rawcap
+ifeq ($(CONFIG_ICAM_IMGRAWCAP_USED),y)
+SRCS += SvcRawCap.c
+endif
+# chip_io
+ifeq ($(CONFIG_ICAM_CVBS_EXIST),y)
+#SRCS += SvcDiagCVBS.c
+endif
+
+# Dependency of SvcVer.c
+SRCS += SvcBuild.c
+$(obj)/SvcBuild.c: $(call amba_ver_dep,SvcBuild.c,$(SRCS))
+
+ICAM_BUILD_DATE = \""$(shell date)"\"
+ICAM_BUILD_MACHINE = \""$(shell echo `whoami`@`hostname`:[gcc `$(CC) -dumpversion`])"\"
+
+CFLAGS_SvcBuild.c = -DAMBA_BUILD_DATE=$(ICAM_BUILD_DATE)        \
+                    -DAMBA_BUILD_MACHINE=$(ICAM_BUILD_MACHINE)
+
+EXTRA_INCVPATH += $(srctree)/soc/io/src/common/inc
+EXTRA_INCVPATH += $(srctree)/soc/io/src/common/inc/arm
+EXTRA_INCVPATH += $(srctree)/soc/io/src/common/inc/rtsl
+
+# swpll
+ifeq ($(CONFIG_ICAM_SWPLL_CONTROL),y)
+EXTRA_INCVPATH += $(srctree)/comsvc/ftcm/inc
+endif
+# chip_io
+ifeq ($(CONFIG_ICAM_CVBS_EXIST),y)
+#EXTRA_INCVPATH += $(srctree)/soc/io/src/$(AMBA_CHIP_ID)/inc/csl
+#EXTRA_INCVPATH += $(srctree)/soc/io/src/$(AMBA_CHIP_ID)/inc/reg
+endif
+# cv
+ifeq ($(CONFIG_BUILD_CV),y)
+EXTRA_INCVPATH += $(srctree)/soc/vision/cv_common/inc/cvapi
+EXTRA_INCVPATH += $(srctree)/svc/comsvc/cv/cv_common/inc/svccvalgo/qnx
+endif

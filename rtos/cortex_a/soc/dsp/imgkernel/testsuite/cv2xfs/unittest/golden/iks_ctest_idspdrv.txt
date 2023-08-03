@@ -1,0 +1,145 @@
+Rval = 0x00000000, idspdrv_aaa.c, uint_min(), ID = 0, description : test if (x > y) false OK case
+Rval = 0x00000000, idspdrv_aaa.c, idspdrv_setup_aaa_cfa_awb_tile_info(), ID = 1, description : test while((awb_tile_num_col * p_aaa_setup->total_slices_x * 4u) > p_aaa_setup->slice_width) true OK case
+Rval = 0x00000000, idspdrv_aaa.c, idspdrv_setup_aaa_cfa_ae_tile_info(), ID = 2, description : test (p_aaa_setup->slice_width == 1920UL) false OK case
+Rval = 0x00000000, idspdrv_aaa.c, idspdrv_setup_aaa_cfa_ae_tile_info(), ID = 3, description : test (p_aaa_setup->ae_tile_col_start == 0UL) false OK case
+Rval = 0x00000000, idspdrv_aaa.c, idspdrv_setup_aaa_cfa_af_tile_info(), ID = 4, description : test (p_aaa_setup->slice_width == 1920UL) false OK case
+Rval = 0x00000000, idspdrv_aaa.c, idspdrv_setup_aaa_cfa_af_tile_info(), ID = 5, description : test (p_aaa_setup->af_tile_col_start == 0UL) false OK case
+Rval = 0x00000000, idspdrv_aaa.c, idspdrv_setup_aaa_cfa_af_tile_info(), ID = 6, description : test (p_aaa_data[stitch_idx].cfa_af.af_tile_width == (80U - 1U)) false OK case
+Rval = 0x00000000, idspdrv_aaa.c, idspdrv_setup_aaa_cfa_af_tile_info(), ID = 7, description : test (p_aaa_setup->slice_width == 1920UL) false OK case
+Rval = 0x00000000, idspdrv_aaa.c, idspdrv_setup_aaa_ae_tile_info(), ID = 8, description : test (p_aaa_setup->ae_tile_col_start == 0UL) false OK case
+Rval = 0x00000000, idspdrv_aaa.c, idspdrv_setup_aaa_af_tile_info(), ID = 9, description : test if(p_aaa_setup->pg_af_tile_num_col == AF_TILE_COL_COUNT) false OK case
+Rval = 0x00000000, idspdrv_aaa.c, idspdrv_setup_aaa_af_tile_info(), ID = 10, description : test if(p_aaa_setup->pg_af_tile_width == 170UL) true OK case
+Rval = 0x00000000, idspdrv_aaa.c, idspdrv_setup_aaa_af_tile_info(), ID = 11, description : test (p_aaa_setup->slice_width == 1920UL) false OK case
+Rval = 0x00000000, idspdrv_aaa.c, idspdrv_setup_aaa_af_tile_info(), ID = 12, description : test (p_aaa_setup->pg_af_tile_col_start == 0UL) false OK case
+Rval = 0x00000000, idspdrv_aaa.c, idspdrv_setup_aaa_af_tile_info(), ID = 13, description : test (p_aaa_data[stitch_idx].pg_af.af_tile_width == (80U - 1U)) false OK case
+Rval = 0x00000000, idspdrv_aaa.c, idspdrv_setup_aaa_af_tile_info(), ID = 14, description : test (p_aaa_setup->slice_width == 1920UL) false OK case
+Rval = 0x00000000, idspdrv_aaa.c, idspdrv_setup_aaa_af_tile_info(), ID = 15, description : test (p_aaa_setup->slice_width == 1920UL) true OK case
+Rval = 0x00000000, idspdrv_aaa.c, idspdrv_aaa_cfa_setup(), ID = 16, description : test (sensor_mode == 2u) if(bayer_pattern == 0U) true OK case
+Rval = 0x00000000, idspdrv_aaa.c, idspdrv_aaa_cfa_setup(), ID = 17, description : test (sensor_mode == 2u) if(bayer_pattern == 1U) true OK case
+Rval = 0x00000000, idspdrv_aaa.c, idspdrv_aaa_cfa_setup(), ID = 18, description : test (sensor_mode == 2u) if(bayer_pattern == 2U) true OK case
+Rval = 0x00000000, idspdrv_aaa.c, idspdrv_aaa_cfa_setup(), ID = 19, description : test (sensor_mode == 1u) if(bayer_pattern == 0U) true OK case
+Rval = 0x00000000, idspdrv_aaa.c, idspdrv_aaa_cfa_setup(), ID = 20, description : test (sensor_mode == 1u) if(bayer_pattern == 1U) true OK case
+Rval = 0x00000000, idspdrv_aaa.c, idspdrv_aaa_cfa_setup(), ID = 21, description : test (sensor_mode == 1u) if(bayer_pattern == 3U) true OK case
+Rval = 0x00000000, idspdrv_aaa.c, idspdrv_aaa_cfa_setup(), ID = 22, description : test (p_aaa_setup->total_slices_y > 1u) true OK case
+Rval = 0x00000000, idspdrv_aaa.c, idspdrv_aaa_setup(), ID = 23, description : test (p_aaa_setup->total_slices_y > 1u) true OK case
+Rval = 0x00000000, idspdrv_black_level.c, idspdrv_config_vin_stat_black_level(), ID = 24, description : test default OK case
+Rval = 0x00000000, idspdrv_black_level.c, idspdrv_set_hdr_dgain_black_level_offset(), ID = 25, description : test index != 0, 1, or 2 OK case
+Rval = 0x00000000, idspdrv_cfa_prescaler.c, idspdrv_adjust_binning_phase_shift(), ID = 26, description : test different readoutMode OK case
+Rval = 0x00000000, idspdrv_cfa_prescaler.c, idspdrv_adjust_binning_phase_shift(), ID = 27, description : test different readoutMode OK case
+Rval = 0x00000000, idspdrv_cfa_prescaler.c, idspdrv_adjust_binning_phase_shift(), ID = 28, description : test different readoutMode OK case
+Rval = 0x00000000, idspdrv_cfa_prescaler.c, idspdrv_adjust_binning_phase_shift(), ID = 29, description : test different readoutMode OK case
+Rval = 0x00000000, idspdrv_cfa_prescaler.c, idspdrv_adjust_binning_phase_shift(), ID = 30, description : test different readoutMode OK case
+Rval = 0x00000000, idspdrv_cfa_prescaler.c, idspdrv_adjust_binning_phase_shift(), ID = 31, description : test different readoutMode OK case
+Rval = 0x00000000, idspdrv_cfa_prescaler.c, idspdrv_config_cfa_prescale_h_coef(), ID = 32, description : test ((resamp_control & RESAMP_COEFF_RECTWIN) != 0u) true OK case
+Rval = 0x00000000, idspdrv_cfa_prescaler.c, idspdrv_config_cfa_prescale_h_coef(), ID = 33, description : test (bool_result == 2U) 1:1 true OK case
+Rval = 0x00000000, idspdrv_cfa_prescaler.c, idspdrv_config_cfa_prescale_v_coef(), ID = 34, description : test if ((resamp_select & RESAMP_SELECT_CFA_V) != 0u) true OK case
+Rval = 0x00000000, idspdrv_cfa_prescaler.c, idspdrv_config_cfa_prescale_v_coef(), ID = 35, description : test ((resamp_control & RESAMP_COEFF_RECTWIN) != 0u) false OK case
+Rval = 0x00000000, idspdrv_cfa_prescaler.c, idspdrv_config_cfa_prescale_v_coef(), ID = 36, description : test (bool_result == 2U) 1:1 true OK case
+Rval = 0x00000000, idspdrv_cfa_prescaler.c, idspdrv_config_cfa_prescale(), ID = 37, description : test if (horizontalZoomFactor != 0U) true OK case
+Rval = 0x00000000, idspdrv_cfa_prescaler.c, idspdrv_config_cfa_prescale(), ID = 38, description : test if (verticalZoomFactor != 0U) true OK case
+Rval = 0x00000000, idspdrv_cfa_prescaler.c, idspdrv_config_cfa_prescale(), ID = 39, description : test if (p_param->outputSampleMode == IDSP_RGB_SAMPLE_MODE_NORMAL) false OK case
+Rval = 0x00000000, idspdrv_chroma_median.c, idspdrv_config_chroma_median(), ID = 40, description : test (enable == 2U) true and (0u != k0123_table_addr) false OK case
+Rval = 0x00000000, idspdrv_chroma_noise.c, idspdrv_config_wide_chroma_noise_filter(), ID = 41, description : test wide_tbl NULL ptr OK case
+Rval = 0x00000000, idspdrv_chroma_noise.c, idspdrv_update_ca_warp(), ID = 42, description : test (active_grid_array_width <= 32U) false OK case
+Rval = 0x00000000, idspdrv_chroma_noise.c, idspdrv_update_ca_warp(), ID = 43, description : test (active_grid_array_height <= 48U) false OK case
+Rval = 0x00000000, idspdrv_chroma_noise.c, idspdrv_update_ca_warp(), ID = 44, description : test ((active_grid_array_horz_start + active_grid_array_width) <= grid_array_width) false OK case
+Rval = 0x00000000, idspdrv_chroma_noise.c, idspdrv_update_ca_warp(), ID = 45, description : test ((active_grid_array_horz_start + active_grid_array_width) <= grid_array_width) false OK case
+Rval = 0x00000000, idspdrv_chroma_noise.c, idspdrv_update_ca_warp(), ID = 46, description : test if (x < 0) true OK case
+Rval = 0x00000000, idspdrv_circular_vignette.c, idspdrv_load_vignette_table(), ID = 47, description : test if(vignette_gain_table_daddr != 0u) false OK case
+Rval = 0x00000000, idspdrv_circular_vignette.c, idspdrv_load_ce_fe_vignette_table(), ID = 48, description : test if(vignette_gain_table_daddr != 0u) false OK case
+Rval = 0x00000000, idspdrv_color_correct.c, idspdrv_set_color_correction_output_table(), ID = 49, description : test if (out_lookup_dram_addr != 0u) false OK case
+Rval = 0x00000000, idspdrv_color_correct.c, idspdrv_set_color_correction_matrix(), ID = 50, description : test if (matrix_dram_addr != 0u) false OK case
+Rval = 0x00000000, idspdrv_color_correct.c, idspdrv_set_pre_cc_gain(), ID = 51, description : test pre_cc_gain line coverage case
+Rval = 0x00000000, idspdrv_compress.c, idspdrv_set_hdr_decompression(), ID = 52, description : test if (exposure_index == 2u) false OK case
+Rval = 0x00000000, idspdrv_compress.c, idspdrv_set_hdr_decompression(), ID = 53, description : test (p_cfg->bits_per_mantissa <= 9U) false OK case
+Rval = 0x00000000, idspdrv_config_cv2a.c, idspdrv_populate_sect_header(), ID = 54, description : test switch default OK case
+Rval = 0x00000000, idspdrv_config_cv2a.c, idspdrv_populate_sect_header(), ID = 55, description : test if(sect_cfg_buf_sz >= (IDSP_CONFIG_HDR_SIZE + MAX_SEC_2_REG_CFG_SZ)) false OK case
+Rval = 0x00000000, idspdrv_config_cv2a.c, idspdrv_populate_sect_header(), ID = 56, description : test if(sect_cfg_buf_sz >= (IDSP_CONFIG_HDR_SIZE + MAX_SEC_3_REG_CFG_SZ)) false OK case
+Rval = 0x00000000, idspdrv_config_cv2a.c, idspdrv_populate_sect_header(), ID = 57, description : test if(sect_cfg_buf_sz >= (IDSP_CONFIG_HDR_SIZE + MAX_SEC_4_REG_CFG_SZ)) false OK case
+Rval = 0x00000000, idspdrv_config_cv2a.c, idspdrv_populate_sect_header(), ID = 58, description : test if(sect_cfg_buf_sz >= (IDSP_CONFIG_HDR_SIZE + MAX_SEC_18_REG_CFG_SZ)) false OK case
+Rval = 0x00000000, idspdrv_config_cv2a.c, idspdrv_get_filter_section(), ID = 59, description : test (filter_index >= FILTER_SEC2_START) false OK case
+Rval = 0x00000000, idspdrv_config_cv2a.c, idspdrv_get_filter_section(), ID = 60, description : test (filter_index < FILTER_SEC19_START) false OK case
+Rval = 0x00000000, idspdrv_config_cv2a.c, idspdrv_get_cr_index(), ID = 61, description : test if(sect_id == idspdrv_get_filter_section(index)) false OK case
+Rval = 0x00000000, idspdrv_config_cv2a.c, idspdrv_get_cr_index(), ID = 62, description : test switch default OK case
+Rval = 0x00000000, idspdrv_config_cv2a.c, idspdrv_get_filter_addr_in_config_buf_with_header(), ID = 63, description : test if (sect_header_addr == 0u) true OK case
+Rval = 0x00000000, idspdrv_config_cv2a.c, idspdrv_get_filter_addr_in_config_buf_with_header(), ID = 64, description : test if(header.sect_id == (sec_id + 1u)) false OK case
+Rval = 0x00000000, idspdrv_config_cv2a.c, idspdrv_get_filter_addr_in_config_buf_with_header(), ID = 65, description : test if(cr_index < header.config_region_cnt) false OK case
+Rval = 0x00000000, idspdrv_contrast_enhance.c, idspdrv_config_ce_coring_config(), ID = 66, description : test if(0u != p_ce_coring->coring_table_addr) false OK case
+Rval = 0x00000000, idspdrv_contrast_enhance.c, idspdrv_config_ce_output_table(), ID = 67, description : test if(0u != p_out_tbl_cfg->output_table_addr) false OK case
+Rval = 0x00000000, idspdrv_contrast_enhance.c, idspdrv_config_ce_boost_table(), ID = 68, description : test if(0u != p_out_tbl_cfg->boost_table_addr) false OK case
+Rval = 0x00000000, idspdrv_contrast_enhance.c, idspdrv_config_ce_linear_table(), ID = 69, description : test if(0u != linear_table_addr) false OK case
+Rval = 0x00000000, idspdrv_contrast_enhance.c, idspdrv_config_ce_fe_lookup_table(), ID = 70, description : test if(0u != linear_table_addr) false OK case, test if(0u != epsilon_table_addr) false OK case
+Rval = 0x00000000, idspdrv_digital_gain.c, idspdrv_set_hdr_dgain(), ID = 71, description : test idx out of range OK case
+Rval = 0x00000000, idspdrv_digital_gain.c, idspdrv_set_hdr_dgain_saturation(), ID = 72, description : test idx out of range OK case
+Rval = 0x00000000, idspdrv_dma.c, idspdrv_setbits16(), ID = 73, description : test if((p+n) <= 16u) false OK case
+Rval = 0x00000000, idspdrv_dma.c, idspdrv_setbits8(), ID = 74, description : test if((p+n) <= 8u) true OK case
+Rval = 0x00000000, idspdrv_dma.c, idspdrv_setbits8(), ID = 75, description : test if((p+n) <= 8u) false OK case
+Rval = 0x00000000, idspdrv_dma.c, idspdrv_setbits32(), ID = 76, description : test if((p+n) <= 32u) false OK case
+Rval = 0x00000000, idspdrv_dma.c, idspdrv_set_reg(), ID = 77, description : test if(data_unit == BIT_UNIT) true OK case
+Rval = 0x00000000, idspdrv_dma.c, idspdrv_set_reg(), ID = 78, description : test if ((bit_offset + num_bits) > 8u) true OK case
+Rval = 0x00000000, idspdrv_dma.c, idspdrv_get_reg(), ID = 79, description : test if(data_unit == BIT_UNIT) true OK case
+Rval = 0x00000000, idspdrv_dma.c, idspdrv_get_reg(), ID = 80, description : test if(data_unit == BYTE_UNIT) true OK case
+Rval = 0x00000000, idspdrv_dma.c, idspdrv_get_reg(), ID = 81, description : test if (data_unit == DOUBLE_UNIT) true OK case
+Rval = 0x00000000, idspdrv_dma.c, idspdrv_save_filter(), ID = 82, description : test NULL ptr OK case
+Rval = 0x00000000, idspdrv_dynamic_bad_pixel.c, idspdrv_config_cfa_bad_pixel_correction(), ID = 83, description : test hot_pixel_thresh_addr and dark_pixel_thresh_addr == 0 OK case
+Rval = 0x00000000, idspdrv_dynamic_bad_pixel.c, idspdrv_config_ce_cfa_bad_pixel_correction(), ID = 84, description : test if (p_cfg->dynamic_bad_pixel_detection_mode == 0U) false OK case
+Rval = 0x00000000, idspdrv_dynamic_bad_pixel.c, idspdrv_config_ce_cfa_bad_pixel_correction(), ID = 85, description : test hot_pixel_thresh_addr and dark_pixel_thresh_addr != 0 OK case
+Rval = 0xFFFFFFFF, idspdrv_global.c, idspdrv_prepare_global_memory(), ID = 86, description : test if (mem_addr == 0U) true NG case
+Rval = 0x01100003, idspdrv_global.c, idspdrv_get_global(), ID = 87, description : test if(idspdrv_global == NULL) true NG case
+Rval = 0x00000000, idspdrv_luma_sharpen.c, idspdrv_config_luma_sharpen_FIR(), ID = 88, description : test if (p_cfg->enable_FIR1 != 2U) false OK case
+Rval = 0x00000000, idspdrv_luma_sharpen.c, idspdrv_config_luma_sharpen_FIR(), ID = 89, description : test coeff_FIR1_addr coeff_FIR2_addr and coring_table_addr NULL OK case
+Rval = 0x00000000, idspdrv_luma_sharpen.c, idspdrv_find_shift_and_8bit_mantissa(), ID = 90, description : test s > 7 false OK case
+Rval = 0x00000000, idspdrv_luma_sharpen.c, idspdrv_config_luma_sharpen_level_control(), ID = 91, description : test p_cfg->luma_shp_lvl_select is 0 OK case
+Rval = 0x00000000, idspdrv_luma_sharpen.c, idspdrv_config_luma_sharpen_level_control(), ID = 92, description : test p_cfg->luma_shp_lvl_select is 3 OK case
+Rval = 0x00000000, idspdrv_luma_sharpen.c, idspdrv_config_luma_sharpen_level_control(), ID = 93, description : test default OK case
+Rval = 0x00000000, idspdrv_rgbir.c, idspdrv_config_cfa_irconvert_ircorrect(), ID = 94, description : test if(p_cfg->ir_cfa_convert_select <= 3U) false OK case
+Rval = 0x00000000, idspdrv_rgbir.c, idspdrv_config_ce_fe_irconvert_ircorrect(), ID = 95, description : test if(p_cfg->ir_cfa_convert_select <= 3U) false OK case
+Rval = 0x00000000, idspdrv_warp.c, idspdrv_config_horizontal_warp_chroma_format(), ID = 96, description : test (p_cfg->input_chroma_format == 0U) false OK case
+Rval = 0x00000000, idspdrv_warp.c, idspdrv_config_horizontal_warp_chroma_format(), ID = 97, description : test if (p_cfg->warp_enable != 2U) true OK case
+Rval = 0x00000000, idspdrv_warp.c, idspdrv_config_horizontal_warp_chroma_format(), ID = 98, description : test if (p_cfg->output_luma_chroma_ratio == 1U) true OK case
+Rval = 0x00000000, idspdrv_warp.c, idspdrv_config_vertical_warp_chroma_format(), ID = 99, description : test if (input_luma_chroma_ratio == 1U) true OK case
+Rval = 0x00000000, idspdrv_warp.c, idspdrv_update_hwarp_field(), ID = 100, description : test if(tile_mode_enable == 0u) false OK case
+Rval = 0x00000000, idspdrv_warp.c, idspdrv_update_hwarp_field_in_active_window(), ID = 101, description : test (active_grid_array_width <= 128U) false OK case
+Rval = 0x00000000, idspdrv_warp.c, idspdrv_update_hwarp_field_in_active_window(), ID = 102, description : test (active_grid_array_height <= 96U) false OK case
+Rval = 0x00000000, idspdrv_warp.c, idspdrv_update_hwarp_field_in_active_window(), ID = 103, description : test ((active_grid_array_horz_start + active_grid_array_width) <= grid_array_width) false OK case
+Rval = 0x00000000, idspdrv_warp.c, idspdrv_update_hwarp_field_in_active_window(), ID = 104, description : test ((active_grid_array_vert_start + active_grid_array_height) <= grid_array_height)) false OK case
+Rval = 0x00000000, idspdrv_warp.c, idspdrv_update_hwarp_field_in_active_window(), ID = 105, description : test if ((grid_array_width == 128U) && (grid_array_height == 96U) && (active_grid_array_horz_start == 0U) && (active_grid_array_vert_start == 0U)) true OK case
+Rval = 0x00000000, idspdrv_warp.c, idspdrv_update_hwarp_field_in_active_window(), ID = 106, description : test (grid_array_height == 96U) false OK case
+Rval = 0x00000000, idspdrv_warp.c, idspdrv_update_hwarp_field_in_active_window(), ID = 107, description : test (active_grid_array_horz_start == 0U) false OK case
+Rval = 0x00000000, idspdrv_warp.c, idspdrv_update_hwarp_field_in_active_window(), ID = 108, description : test (active_grid_array_vert_start == 0U) false OK case
+Rval = 0x00000000, idspdrv_warp.c, idspdrv_update_vwarp_field_in_active_window(), ID = 109, description : test (active_grid_array_width <= 128U) false OK case
+Rval = 0x00000000, idspdrv_warp.c, idspdrv_update_vwarp_field_in_active_window(), ID = 110, description : test (active_grid_array_height <= 96U) false OK case
+Rval = 0x00000000, idspdrv_warp.c, idspdrv_update_vwarp_field_in_active_window(), ID = 111, description : test ((active_grid_array_horz_start + active_grid_array_width) <= grid_array_width) false OK case
+Rval = 0x00000000, idspdrv_warp.c, idspdrv_update_vwarp_field_in_active_window(), ID = 112, description : test ((active_grid_array_vert_start + active_grid_array_height) <= grid_array_height)) false OK case
+Rval = 0x00000000, idspdrv_warp.c, idspdrv_update_vwarp_field_in_active_window(), ID = 113, description : test if ((grid_array_width == 128U) && (grid_array_height == 96U) && (active_grid_array_horz_start == 0U) && (active_grid_array_vert_start == 0U)) true OK case
+Rval = 0x00000000, idspdrv_warp.c, idspdrv_update_vwarp_field_in_active_window(), ID = 114, description : test (grid_array_height == 96U) false OK case
+Rval = 0x00000000, idspdrv_warp.c, idspdrv_update_vwarp_field_in_active_window(), ID = 115, description : test (active_grid_array_horz_start == 0U) false OK case
+Rval = 0x00000000, idspdrv_warp.c, idspdrv_update_vwarp_field_in_active_window(), ID = 116, description : test (active_grid_array_vert_start == 0U) false OK case
+Rval = 0x00000000, idspdrv_warp.c, idspdrv_warp_grid_interpolate(), ID = 117, description : test if(iks_abs_uint32((int32)warp_vert_val_chk) > warp_vert_max_val) true OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_config_horizontal_Y_resamp(), ID = 118, description : test if (((resamp_select & RESAMP_SELECT_MAIN) != 0u) && ((resamp_control & RESAMP_COEFF_RECTWIN) != 0u)) true OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_config_horizontal_Y_resamp(), ID = 119, description : test ((resamp_select & RESAMP_SELECT_MAIN) != 0u) false OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_config_horizontal_Y_resamp(), ID = 120, description : test if (horizontalLumaPhaseIncrement < 2048u) true OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_config_vertical_Y_resamp(), ID = 121, description : test ((resamp_control & RESAMP_COEFF_RECTWIN) != 0u) false OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_config_vertical_Y_resamp(), ID = 122, description : test if (verticalLumaPhaseIncrement < 2048u) true OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_config_vertical_Y_resamp(), ID = 123, description : test /* up-sampling: 4-tap */ OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_calc_M(), ID = 124, description : test if (M < 16u) OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_enable_resampler(), ID = 125, description : test (resampler == RESAMP_MAIN) true OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_enable_resampler(), ID = 126, description : test (resampler == RESAMP_MAIN_LUMA) true OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_enable_resampler(), ID = 127, description : test (resampler == RESAMP_MAIN_CHROMA) true OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_enable_resampler(), ID = 128, description : test (resampler == RESAMP_VERTICAL_WARP) true OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_enable_resampler(), ID = 129, description : test (resampler == RESAMP_HORIZONTAL_CHROMA) true OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_enable_resampler(), ID = 130, description : test else true OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_config_chroma_horizontal_upsampler(), ID = 131, description : test if (horizontalChromaZoomFactor != 0u) false OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_config_chroma_horizontal_upsampler(), ID = 132, description : test else /* downsampling */ OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_config_chroma_horizontal_upsampler(), ID = 133, description : test (resamp->inputWindowLeft > 0x800u) OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_get_resamp_control(), ID = 134, description : test NULL ptr OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_get_resamp_control(), ID = 135, description : test NULL ptr OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_get_resamp_control(), ID = 136, description : test case RESAMP_CFAPRE OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_get_resamp_control(), ID = 137, description : test case default OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_config_vertical_resampler(), ID = 138, description : test if (verticalZoomFactor != 0u) false OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_config_vertical_resampler(), ID = 139, description : test if(p_param->size_info.inputNumLumaRows==0u) true OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_config_vertical_resampler(), ID = 140, description : test if (p_param->outputSampleMode <= YUV420_HCOSITED_BOT_FIELD) false OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_config_vertical_resampler(), ID = 141, description : test if (verticalLumaInitialPhase < (0x2000u - INITIAL_PHASE_ROUNDING)) false OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_config_vertical_resampler(), ID = 142, description : test if(verticalLumaPhaseIncrement > 8192u) true OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_config_vertical_resampler(), ID = 143, description : test if (verticalLumaPhaseIncrement < 2048u) true OK case
+Rval = 0x00000000, idspdrv_yuv_resamp.c, idspdrv_config_vertical_resampler(), ID = 144, description : test if (verticalChromaInitialPhase < (0x2000u - INITIAL_PHASE_ROUNDING)) false OK case

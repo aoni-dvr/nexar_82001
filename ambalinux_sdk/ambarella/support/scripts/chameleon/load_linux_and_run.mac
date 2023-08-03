@@ -1,0 +1,11 @@
+; Line below will prevent file to be included in public Chameleon release
+; ;Distribution:Ambarella
+
+echo /color=red Nothing here - use Macro menu
+return
+
+:Linux [menu] ; Load and Start Linux
+STOP
+load bin ../../../../output/a9_ambalink/images/Image	0x01208000
+go
+return

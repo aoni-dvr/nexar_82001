@@ -1,0 +1,65 @@
+#############################################################
+#
+# dms_example
+#
+#############################################################
+
+pkg			= DMS_EXAMPLE
+
+$(pkg)_VERSION		= 1.0
+$(pkg)_SITE_METHOD	= local
+$(pkg)_SITE		= $(AMBARELLA_PKG_DIR)/dms_example
+$(pkg)_SOURCE		= dms_example-$($(pkg)_VERSION).tar.gz
+$(pkg)_DEPENDENCIES	= ambaipc amba_util
+$(pkg)_INSTALL_STAGING	= NO
+$(pkg)_INSTALL_IMAGES	= NO
+$(pkg)_INSTALL_TARGET	= YES
+$(pkg)_LICENSE		= MIT
+$(pkg)_LICENSE_FILES	= License_MIT.txt
+
+ifeq ($(BR2_arm),y)
+ARMBADFLAGS = -DUSE_ARM
+endif
+
+#Prepre command line for sub packages
+ifeq ($(BR2_PACKAGE_DMS_EXAMPLE),y)
+  INSTALL_DMS_EXAMPLE = ARMBADFLAGS="$(ARMBADFLAGS)" $(TARGET_CONFIGURE_OPTS) $(TARGET_MAKE_ENV) $(MAKE) -C $(@D) -f br.mk DESTDIR=$(TARGET_DIR) install
+  BUILD_DMS_EXAMPLE =  ARMBADFLAGS="$(ARMBADFLAGS)" $(TARGET_CONFIGURE_OPTS) $(TARGET_MAKE_ENV) $(MAKE) -C $(@D) -f br.mk
+  CLEAN_DMS_EXAMPLE = ARMBADFLAGS="$(ARMBADFLAGS)" $(TARGET_CONFIGURE_OPTS) $(TARGET_MAKE_ENV) $(MAKE) -C $(@D) -f br.mk clean
+  INSTALL_STAGING_DMS_EXAMPLE = ARMBADFLAGS="$(ARMBADFLAGS)" $(TARGET_CONFIGURE_OPTS) $(TARGET_MAKE_ENV) $(MAKE) -C $(@D) -f br.mk DESTDIR=$(STAGING_DIR) lib_install
+  UNINSTALL_STAGING_DMS_EXAMPLE = ARMBADFLAGS="$(ARMBADFLAGS)" $(TARGET_CONFIGURE_OPTS) $(TARGET_MAKE_ENV) $(MAKE) -C $(@D) -f br.mk DESTDIR=$(STAGING_DIR) lib_uninstall
+else
+  INSTALL_DMS_EXAMPLE =
+  BUILD_DMS_EXAMPLE =
+  CLEAN_DMS_EXAMPLE =
+  INSTALL_STAGING_DMS_EXAMPLE =
+  UNINSTALL_STAGING_DMS_EXAMPLE =
+endif
+
+#BuildRoot macro
+define DMS_EXAMPLE_INSTALL_TARGET_CMDS
+  $(INSTALL_DMS_EXAMPLE)
+endef
+
+define DMS_EXAMPLE_BUILD_CMDS
+  $(BUILD_DMS_EXAMPLE)
+endef
+
+define DMS_EXAMPLE_CLEAN_CMDS
+  $(CLEAN_DMS_EXAMPLE)
+endef
+
+define DMS_EXAMPLE_INSTALL_STAGING_CMDS
+  $(INSTALL_STAGING_DMS_EXAMPLE)
+endef
+
+define DMS_EXAMPLE_UNINSTALL_STAGING_CMDS
+  $(UNINSTALL_STAGING_DMS_EXAMPLE)
+endef
+
+define DMS_EXAMPLE_POST_LEGAL_INFO_HOOKS_CMD
+	@$(foreach F,$($(PKG)_LICENSE_FILES),$(call legal-license-file,$$($(PKG)_RAWNAME),$(F),$$($(PKG)_DIR)/$(F))$$(sep))
+endef
+DMS_EXAMPLE_POST_LEGAL_INFO_HOOKS += DMS_EXAMPLE_POST_LEGAL_INFO_HOOKS_CMD
+
+$(eval $(generic-package))

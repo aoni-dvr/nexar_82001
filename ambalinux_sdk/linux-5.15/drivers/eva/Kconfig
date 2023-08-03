@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0
+menu "EVA drivers"
+source "drivers/eva/eva_audio_tick/Kconfig"
+source "drivers/eva/eva_imu_sync/Kconfig"
+endmenu

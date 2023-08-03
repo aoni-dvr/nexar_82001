@@ -1,0 +1,991 @@
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2020 Ambarella International LP
+////////////////////////////////////////////////////////////////////////////////
+// This file and its contents ("Software") are protected by intellectual
+// property rights including, without limitation, U.S. and/or foreign
+// copyrights. This Software is also the confidential and proprietary
+// information of Ambarella International LP and its licensors. You may not use,
+// reproduce, disclose, distribute, modify, or otherwise prepare derivative
+// works of this Software or any portion thereof except pursuant to a signed
+// license agreement or nondisclosure agreement with Ambarella International LP
+// or its authorized affiliates. In the absence of such an agreement, you agree
+// to promptly notify and return this Software to Ambarella International LP.
+//
+// THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT,
+// MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+// IN NO EVENT SHALL AMBARELLA INTERNATIONAL LP OR ITS AFFILIATES BE LIABLE
+// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+// SERVICES; LOSS OF USE, DATA, OR PROFITS; COMPUTER FAILURE OR MALFUNCTION;
+// OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+// ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+////////////////////////////////////////////////////////////////////////////////
+#ifndef mnet_ssd_adas_flex_pic_prim_split_22_H
+#define mnet_ssd_adas_flex_pic_prim_split_22_H
+
+#define vas_gen_header_version                  	7
+
+/* dag name */
+#define mnet_ssd_adas_flex_pic_prim_split_22_DAG_NAME 	"mnet_ssd_adas_flex_pic_prim_split_22"
+
+/* VDG file info */
+#define mnet_ssd_adas_flex_pic_prim_split_22_vdg_name 	"mnet_ssd_adas_flex_pic_split_22.vdg"
+
+/* VDG DAG memory info */
+#define mnet_ssd_adas_flex_pic_prim_split_22_byte_offset 	4294967295	/* 0xffffffff */
+#define mnet_ssd_adas_flex_pic_prim_split_22_byte_size 	1308	/* 0x0000051c */
+#define mnet_ssd_adas_flex_pic_prim_split_22_preferred_dram_xfer_size 	1
+
+/* mnet_ssd_adas_flex_pic_prim_split_22 VMEM info */
+#define mnet_ssd_adas_flex_pic_prim_split_22_use_ping_pong_vmem 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_VMEM_start 	4096	/* 0x00001000 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_VMEM_end 	233176	/* 0x00038ed8 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_image_start 	233176	/* 0x00038ed8 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_image_size 	1308	/* 0x0000051c */
+#define mnet_ssd_adas_flex_pic_prim_split_22_dagbin_start 	233176	/* 0x00038ed8 */
+
+/* mnet_ssd_adas_flex_pic_prim_split_22 DAG info */
+#define mnet_ssd_adas_flex_pic_prim_split_22_estimated_cycles 	26459
+#define mnet_ssd_adas_flex_pic_prim_split_22_ddi_byte_size 	0	/* 0x00000000 */
+
+/*******************************************************************************
+ * DAG byte offset info for HMB/SMB/VCB and their fields
+ * in DAG 'mnet_ssd_adas_flex_pic_prim_split_22' in source file 'pre_split22_mnet_ssd_adas_flex_pic_split_0.vas'
+ ******************************************************************************/
+/* mnet_ssd_adas_flex_pic_prim_split_22 HMB_input __pvcn_2226_ */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__cnngen_demangled_name 	"__pvcn_2226_"
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__is_main_input_output 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__is_constant 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__has_init_data 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__is_variable_scalar 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__ddi_byte_size 	0	/* 0x00000000 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__ddi_byte_offset 	4294967295	/* 0xffffffff */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__is_bitvector 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__is_rlz 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__is_ten_bit_packed 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__byte_offset 	0	/* 0x00000000 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__vbase_byte_offset 	4	/* 0x00000004 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__dbase_byte_offset 	28	/* 0x0000001c */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__dpitchm1_byte_offset 	32	/* 0x00000020 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__dpitchm1_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__vwidth_minus_one_byte_offset 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__vheight_minus_one_byte_offset 	18	/* 0x00000012 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__vheight_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__drotate_bit_offset 	198	/* 0x000000c6 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__hflip_bit_offset 	199	/* 0x000000c7 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__vflip_bit_offset 	200	/* 0x000000c8 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__dflip_bit_offset 	201	/* 0x000000c9 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__pflip_bit_offset 	202	/* 0x000000ca */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__W 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__H 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__D 	36
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__P 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__data_num_bytes 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__denable 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__dpitch_num_bytes 	64
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__dram_format 	3
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__vp_interleave_mode 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__tile_width 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__tile_height 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__vmem_buffer_num_bytes 	7200
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__dram_size_num_bytes 	8640
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__sign 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__datasize 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__expoffset 	14
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__expbits 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__drotate 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__hflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__vflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__dflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__pflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2226__trailing_extra_elements 	0
+
+/* mnet_ssd_adas_flex_pic_prim_split_22 HMB_input __pvcn_2215_ */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__cnngen_demangled_name 	"__pvcn_2215_"
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__is_main_input_output 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__is_constant 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__has_init_data 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__is_variable_scalar 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__ddi_byte_size 	0	/* 0x00000000 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__ddi_byte_offset 	4294967295	/* 0xffffffff */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__is_bitvector 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__is_rlz 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__is_ten_bit_packed 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__byte_offset 	40	/* 0x00000028 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__vbase_byte_offset 	44	/* 0x0000002c */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__dbase_byte_offset 	68	/* 0x00000044 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__dpitchm1_byte_offset 	72	/* 0x00000048 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__dpitchm1_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__vwidth_minus_one_byte_offset 	56	/* 0x00000038 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__vheight_minus_one_byte_offset 	58	/* 0x0000003a */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__vheight_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__drotate_bit_offset 	518	/* 0x00000206 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__hflip_bit_offset 	519	/* 0x00000207 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__vflip_bit_offset 	520	/* 0x00000208 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__dflip_bit_offset 	521	/* 0x00000209 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__pflip_bit_offset 	522	/* 0x0000020a */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__W 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__H 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__D 	40
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__P 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__data_num_bytes 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__denable 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__dpitch_num_bytes 	64
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__dram_format 	3
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__vp_interleave_mode 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__tile_width 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__tile_height 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__vmem_buffer_num_bytes 	8000
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__dram_size_num_bytes 	9600
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__sign 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__datasize 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__expoffset 	14
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__expbits 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__drotate 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__hflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__vflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__dflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__pflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2215__trailing_extra_elements 	0
+
+/* mnet_ssd_adas_flex_pic_prim_split_22 HMB_input __pvcn_2116_ */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__cnngen_demangled_name 	"__pvcn_2116_"
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__is_main_input_output 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__is_constant 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__has_init_data 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__is_variable_scalar 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__ddi_byte_size 	0	/* 0x00000000 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__ddi_byte_offset 	4294967295	/* 0xffffffff */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__is_bitvector 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__is_rlz 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__is_ten_bit_packed 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__byte_offset 	80	/* 0x00000050 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__vbase_byte_offset 	84	/* 0x00000054 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__dbase_byte_offset 	108	/* 0x0000006c */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__dpitchm1_byte_offset 	112	/* 0x00000070 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__dpitchm1_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__vwidth_minus_one_byte_offset 	96	/* 0x00000060 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__vheight_minus_one_byte_offset 	98	/* 0x00000062 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__vheight_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__drotate_bit_offset 	838	/* 0x00000346 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__hflip_bit_offset 	839	/* 0x00000347 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__vflip_bit_offset 	840	/* 0x00000348 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__dflip_bit_offset 	841	/* 0x00000349 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__pflip_bit_offset 	842	/* 0x0000034a */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__W 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__H 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__D 	36
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__P 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__data_num_bytes 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__denable 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__dpitch_num_bytes 	64
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__dram_format 	3
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__vp_interleave_mode 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__tile_width 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__tile_height 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__vmem_buffer_num_bytes 	7200
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__dram_size_num_bytes 	8640
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__sign 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__datasize 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__expoffset 	14
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__expbits 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__drotate 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__hflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__vflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__dflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__pflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2116__trailing_extra_elements 	0
+
+/* mnet_ssd_adas_flex_pic_prim_split_22 HMB_input __pvcn_2182_ */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__cnngen_demangled_name 	"__pvcn_2182_"
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__is_main_input_output 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__is_constant 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__has_init_data 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__is_variable_scalar 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__ddi_byte_size 	0	/* 0x00000000 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__ddi_byte_offset 	4294967295	/* 0xffffffff */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__is_bitvector 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__is_rlz 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__is_ten_bit_packed 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__byte_offset 	120	/* 0x00000078 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__vbase_byte_offset 	124	/* 0x0000007c */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__dbase_byte_offset 	148	/* 0x00000094 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__dpitchm1_byte_offset 	152	/* 0x00000098 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__dpitchm1_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__vwidth_minus_one_byte_offset 	136	/* 0x00000088 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__vheight_minus_one_byte_offset 	138	/* 0x0000008a */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__vheight_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__drotate_bit_offset 	1158	/* 0x00000486 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__hflip_bit_offset 	1159	/* 0x00000487 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__vflip_bit_offset 	1160	/* 0x00000488 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__dflip_bit_offset 	1161	/* 0x00000489 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__pflip_bit_offset 	1162	/* 0x0000048a */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__W 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__H 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__D 	36
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__P 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__data_num_bytes 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__denable 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__dpitch_num_bytes 	64
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__dram_format 	3
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__vp_interleave_mode 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__tile_width 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__tile_height 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__vmem_buffer_num_bytes 	7200
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__dram_size_num_bytes 	8640
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__sign 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__datasize 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__expoffset 	14
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__expbits 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__drotate 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__hflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__vflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__dflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__pflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2182__trailing_extra_elements 	0
+
+/* mnet_ssd_adas_flex_pic_prim_split_22 HMB_input __pvcn_2171_ */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__cnngen_demangled_name 	"__pvcn_2171_"
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__is_main_input_output 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__is_constant 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__has_init_data 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__is_variable_scalar 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__ddi_byte_size 	0	/* 0x00000000 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__ddi_byte_offset 	4294967295	/* 0xffffffff */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__is_bitvector 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__is_rlz 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__is_ten_bit_packed 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__byte_offset 	160	/* 0x000000a0 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__vbase_byte_offset 	164	/* 0x000000a4 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__dbase_byte_offset 	188	/* 0x000000bc */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__dpitchm1_byte_offset 	192	/* 0x000000c0 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__dpitchm1_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__vwidth_minus_one_byte_offset 	176	/* 0x000000b0 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__vheight_minus_one_byte_offset 	178	/* 0x000000b2 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__vheight_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__drotate_bit_offset 	1478	/* 0x000005c6 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__hflip_bit_offset 	1479	/* 0x000005c7 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__vflip_bit_offset 	1480	/* 0x000005c8 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__dflip_bit_offset 	1481	/* 0x000005c9 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__pflip_bit_offset 	1482	/* 0x000005ca */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__W 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__H 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__D 	37
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__P 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__data_num_bytes 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__denable 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__dpitch_num_bytes 	64
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__dram_format 	3
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__vp_interleave_mode 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__tile_width 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__tile_height 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__vmem_buffer_num_bytes 	7400
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__dram_size_num_bytes 	8896
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__sign 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__datasize 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__expoffset 	14
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__expbits 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__drotate 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__hflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__vflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__dflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__pflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2171__trailing_extra_elements 	0
+
+/* mnet_ssd_adas_flex_pic_prim_split_22 HMB_input conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_cnngen_demangled_name 	"conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320"
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_is_main_input_output 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_is_constant 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_has_init_data 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_is_variable_scalar 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_ddi_byte_size 	0	/* 0x00000000 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_ddi_byte_offset 	4294967295	/* 0xffffffff */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_is_bitvector 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_is_rlz 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_is_ten_bit_packed 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_byte_offset 	200	/* 0x000000c8 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_vbase_byte_offset 	204	/* 0x000000cc */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_dbase_byte_offset 	228	/* 0x000000e4 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_dpitchm1_byte_offset 	232	/* 0x000000e8 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_dpitchm1_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_vwidth_minus_one_byte_offset 	216	/* 0x000000d8 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_vheight_minus_one_byte_offset 	218	/* 0x000000da */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_vheight_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_drotate_bit_offset 	1798	/* 0x00000706 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_hflip_bit_offset 	1799	/* 0x00000707 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_vflip_bit_offset 	1800	/* 0x00000708 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_dflip_bit_offset 	1801	/* 0x00000709 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_pflip_bit_offset 	1802	/* 0x0000070a */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_W 	19
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_H 	19
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_D 	21
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_P 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_data_num_bytes 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_denable 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_dpitch_num_bytes 	64
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_dram_format 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_vp_interleave_mode 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_tile_width 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_tile_height 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_vmem_buffer_num_bytes 	8232
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_dram_size_num_bytes 	25536
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_sign 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_datasize 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_expoffset 	3
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_expbits 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_drotate 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_hflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_vflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_dflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_pflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___320_trailing_extra_elements 	0
+
+/* mnet_ssd_adas_flex_pic_prim_split_22 HMB_input __pvcn_2138_ */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__cnngen_demangled_name 	"__pvcn_2138_"
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__is_main_input_output 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__is_constant 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__has_init_data 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__is_variable_scalar 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__ddi_byte_size 	0	/* 0x00000000 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__ddi_byte_offset 	4294967295	/* 0xffffffff */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__is_bitvector 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__is_rlz 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__is_ten_bit_packed 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__byte_offset 	240	/* 0x000000f0 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__vbase_byte_offset 	244	/* 0x000000f4 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__dbase_byte_offset 	268	/* 0x0000010c */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__dpitchm1_byte_offset 	272	/* 0x00000110 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__dpitchm1_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__vwidth_minus_one_byte_offset 	256	/* 0x00000100 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__vheight_minus_one_byte_offset 	258	/* 0x00000102 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__vheight_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__drotate_bit_offset 	2118	/* 0x00000846 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__hflip_bit_offset 	2119	/* 0x00000847 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__vflip_bit_offset 	2120	/* 0x00000848 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__dflip_bit_offset 	2121	/* 0x00000849 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__pflip_bit_offset 	2122	/* 0x0000084a */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__W 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__H 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__D 	39
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__P 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__data_num_bytes 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__denable 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__dpitch_num_bytes 	64
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__dram_format 	3
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__vp_interleave_mode 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__tile_width 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__tile_height 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__vmem_buffer_num_bytes 	7800
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__dram_size_num_bytes 	9376
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__sign 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__datasize 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__expoffset 	14
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__expbits 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__drotate 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__hflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__vflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__dflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__pflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2138__trailing_extra_elements 	0
+
+/* mnet_ssd_adas_flex_pic_prim_split_22 HMB_input conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_cnngen_demangled_name 	"conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321"
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_is_main_input_output 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_is_constant 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_has_init_data 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_is_variable_scalar 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_ddi_byte_size 	0	/* 0x00000000 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_ddi_byte_offset 	4294967295	/* 0xffffffff */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_is_bitvector 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_is_rlz 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_is_ten_bit_packed 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_byte_offset 	280	/* 0x00000118 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_vbase_byte_offset 	284	/* 0x0000011c */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_dbase_byte_offset 	308	/* 0x00000134 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_dpitchm1_byte_offset 	312	/* 0x00000138 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_dpitchm1_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_vwidth_minus_one_byte_offset 	296	/* 0x00000128 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_vheight_minus_one_byte_offset 	298	/* 0x0000012a */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_vheight_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_drotate_bit_offset 	2438	/* 0x00000986 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_hflip_bit_offset 	2439	/* 0x00000987 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_vflip_bit_offset 	2440	/* 0x00000988 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_dflip_bit_offset 	2441	/* 0x00000989 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_pflip_bit_offset 	2442	/* 0x0000098a */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_W 	19
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_H 	19
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_D 	12
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_P 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_data_num_bytes 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_denable 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_dpitch_num_bytes 	64
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_dram_format 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_vp_interleave_mode 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_tile_width 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_tile_height 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_vmem_buffer_num_bytes 	4032
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_dram_size_num_bytes 	14592
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_sign 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_datasize 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_expoffset 	3
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_expbits 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_drotate 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_hflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_vflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_dflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_pflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf___conv2i___76______loc___conv2i___136___crop___321_trailing_extra_elements 	0
+
+/* mnet_ssd_adas_flex_pic_prim_split_22 HMB_input __pvcn_2237_ */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__cnngen_demangled_name 	"__pvcn_2237_"
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__is_main_input_output 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__is_constant 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__has_init_data 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__is_variable_scalar 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__ddi_byte_size 	0	/* 0x00000000 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__ddi_byte_offset 	4294967295	/* 0xffffffff */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__is_bitvector 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__is_rlz 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__is_ten_bit_packed 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__byte_offset 	320	/* 0x00000140 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__vbase_byte_offset 	324	/* 0x00000144 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__dbase_byte_offset 	348	/* 0x0000015c */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__dpitchm1_byte_offset 	352	/* 0x00000160 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__dpitchm1_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__vwidth_minus_one_byte_offset 	336	/* 0x00000150 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__vheight_minus_one_byte_offset 	338	/* 0x00000152 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__vheight_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__drotate_bit_offset 	2758	/* 0x00000ac6 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__hflip_bit_offset 	2759	/* 0x00000ac7 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__vflip_bit_offset 	2760	/* 0x00000ac8 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__dflip_bit_offset 	2761	/* 0x00000ac9 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__pflip_bit_offset 	2762	/* 0x00000aca */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__W 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__H 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__D 	15
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__P 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__data_num_bytes 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__denable 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__dpitch_num_bytes 	64
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__dram_format 	3
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__vp_interleave_mode 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__tile_width 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__tile_height 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__vmem_buffer_num_bytes 	3000
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__dram_size_num_bytes 	3616
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__sign 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__datasize 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__expoffset 	14
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__expbits 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__drotate 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__hflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__vflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__dflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__pflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2237__trailing_extra_elements 	0
+
+/* mnet_ssd_adas_flex_pic_prim_split_22 HMB_input __pvcn_2204_ */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__cnngen_demangled_name 	"__pvcn_2204_"
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__is_main_input_output 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__is_constant 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__has_init_data 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__is_variable_scalar 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__ddi_byte_size 	0	/* 0x00000000 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__ddi_byte_offset 	4294967295	/* 0xffffffff */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__is_bitvector 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__is_rlz 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__is_ten_bit_packed 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__byte_offset 	360	/* 0x00000168 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__vbase_byte_offset 	364	/* 0x0000016c */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__dbase_byte_offset 	388	/* 0x00000184 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__dpitchm1_byte_offset 	392	/* 0x00000188 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__dpitchm1_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__vwidth_minus_one_byte_offset 	376	/* 0x00000178 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__vheight_minus_one_byte_offset 	378	/* 0x0000017a */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__vheight_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__drotate_bit_offset 	3078	/* 0x00000c06 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__hflip_bit_offset 	3079	/* 0x00000c07 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__vflip_bit_offset 	3080	/* 0x00000c08 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__dflip_bit_offset 	3081	/* 0x00000c09 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__pflip_bit_offset 	3082	/* 0x00000c0a */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__W 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__H 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__D 	37
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__P 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__data_num_bytes 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__denable 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__dpitch_num_bytes 	64
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__dram_format 	3
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__vp_interleave_mode 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__tile_width 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__tile_height 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__vmem_buffer_num_bytes 	7400
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__dram_size_num_bytes 	8896
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__sign 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__datasize 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__expoffset 	14
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__expbits 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__drotate 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__hflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__vflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__dflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__pflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2204__trailing_extra_elements 	0
+
+/* mnet_ssd_adas_flex_pic_prim_split_22 HMB_input __pvcn_2193_ */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__cnngen_demangled_name 	"__pvcn_2193_"
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__is_main_input_output 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__is_constant 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__has_init_data 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__is_variable_scalar 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__ddi_byte_size 	0	/* 0x00000000 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__ddi_byte_offset 	4294967295	/* 0xffffffff */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__is_bitvector 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__is_rlz 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__is_ten_bit_packed 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__byte_offset 	400	/* 0x00000190 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__vbase_byte_offset 	404	/* 0x00000194 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__dbase_byte_offset 	428	/* 0x000001ac */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__dpitchm1_byte_offset 	432	/* 0x000001b0 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__dpitchm1_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__vwidth_minus_one_byte_offset 	416	/* 0x000001a0 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__vheight_minus_one_byte_offset 	418	/* 0x000001a2 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__vheight_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__drotate_bit_offset 	3398	/* 0x00000d46 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__hflip_bit_offset 	3399	/* 0x00000d47 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__vflip_bit_offset 	3400	/* 0x00000d48 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__dflip_bit_offset 	3401	/* 0x00000d49 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__pflip_bit_offset 	3402	/* 0x00000d4a */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__W 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__H 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__D 	41
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__P 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__data_num_bytes 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__denable 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__dpitch_num_bytes 	64
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__dram_format 	3
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__vp_interleave_mode 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__tile_width 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__tile_height 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__vmem_buffer_num_bytes 	8200
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__dram_size_num_bytes 	9856
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__sign 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__datasize 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__expoffset 	14
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__expbits 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__drotate 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__hflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__vflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__dflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__pflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2193__trailing_extra_elements 	0
+
+/* mnet_ssd_adas_flex_pic_prim_split_22 HMB_input __pvcn_2160_ */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__cnngen_demangled_name 	"__pvcn_2160_"
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__is_main_input_output 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__is_constant 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__has_init_data 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__is_variable_scalar 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__ddi_byte_size 	0	/* 0x00000000 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__ddi_byte_offset 	4294967295	/* 0xffffffff */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__is_bitvector 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__is_rlz 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__is_ten_bit_packed 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__byte_offset 	440	/* 0x000001b8 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__vbase_byte_offset 	444	/* 0x000001bc */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__dbase_byte_offset 	468	/* 0x000001d4 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__dpitchm1_byte_offset 	472	/* 0x000001d8 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__dpitchm1_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__vwidth_minus_one_byte_offset 	456	/* 0x000001c8 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__vheight_minus_one_byte_offset 	458	/* 0x000001ca */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__vheight_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__drotate_bit_offset 	3718	/* 0x00000e86 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__hflip_bit_offset 	3719	/* 0x00000e87 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__vflip_bit_offset 	3720	/* 0x00000e88 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__dflip_bit_offset 	3721	/* 0x00000e89 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__pflip_bit_offset 	3722	/* 0x00000e8a */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__W 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__H 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__D 	40
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__P 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__data_num_bytes 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__denable 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__dpitch_num_bytes 	64
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__dram_format 	3
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__vp_interleave_mode 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__tile_width 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__tile_height 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__vmem_buffer_num_bytes 	8000
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__dram_size_num_bytes 	9600
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__sign 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__datasize 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__expoffset 	14
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__expbits 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__drotate 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__hflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__vflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__dflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__pflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2160__trailing_extra_elements 	0
+
+/* mnet_ssd_adas_flex_pic_prim_split_22 HMB_input __pvcn_2149_ */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__cnngen_demangled_name 	"__pvcn_2149_"
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__is_main_input_output 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__is_constant 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__has_init_data 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__is_variable_scalar 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__ddi_byte_size 	0	/* 0x00000000 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__ddi_byte_offset 	4294967295	/* 0xffffffff */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__is_bitvector 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__is_rlz 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__is_ten_bit_packed 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__byte_offset 	480	/* 0x000001e0 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__vbase_byte_offset 	484	/* 0x000001e4 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__dbase_byte_offset 	508	/* 0x000001fc */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__dpitchm1_byte_offset 	512	/* 0x00000200 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__dpitchm1_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__vwidth_minus_one_byte_offset 	496	/* 0x000001f0 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__vheight_minus_one_byte_offset 	498	/* 0x000001f2 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__vheight_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__drotate_bit_offset 	4038	/* 0x00000fc6 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__hflip_bit_offset 	4039	/* 0x00000fc7 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__vflip_bit_offset 	4040	/* 0x00000fc8 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__dflip_bit_offset 	4041	/* 0x00000fc9 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__pflip_bit_offset 	4042	/* 0x00000fca */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__W 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__H 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__D 	41
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__P 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__data_num_bytes 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__denable 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__dpitch_num_bytes 	64
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__dram_format 	3
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__vp_interleave_mode 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__tile_width 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__tile_height 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__vmem_buffer_num_bytes 	8200
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__dram_size_num_bytes 	9856
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__sign 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__datasize 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__expoffset 	14
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__expbits 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__drotate 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__hflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__vflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__dflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__pflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2149__trailing_extra_elements 	0
+
+/* mnet_ssd_adas_flex_pic_prim_split_22 HMB_input __pvcn_2127_ */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__cnngen_demangled_name 	"__pvcn_2127_"
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__is_main_input_output 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__is_constant 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__has_init_data 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__is_variable_scalar 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__ddi_byte_size 	0	/* 0x00000000 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__ddi_byte_offset 	4294967295	/* 0xffffffff */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__is_bitvector 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__is_rlz 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__is_ten_bit_packed 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__byte_offset 	520	/* 0x00000208 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__vbase_byte_offset 	524	/* 0x0000020c */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__dbase_byte_offset 	548	/* 0x00000224 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__dpitchm1_byte_offset 	552	/* 0x00000228 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__dpitchm1_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__vwidth_minus_one_byte_offset 	536	/* 0x00000218 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__vheight_minus_one_byte_offset 	538	/* 0x0000021a */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__vheight_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__drotate_bit_offset 	4358	/* 0x00001106 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__hflip_bit_offset 	4359	/* 0x00001107 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__vflip_bit_offset 	4360	/* 0x00001108 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__dflip_bit_offset 	4361	/* 0x00001109 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__pflip_bit_offset 	4362	/* 0x0000110a */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__W 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__H 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__D 	35
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__P 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__data_num_bytes 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__denable 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__dpitch_num_bytes 	64
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__dram_format 	3
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__vp_interleave_mode 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__tile_width 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__tile_height 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__vmem_buffer_num_bytes 	7000
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__dram_size_num_bytes 	8416
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__sign 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__datasize 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__expoffset 	14
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__expbits 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__drotate 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__hflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__vflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__dflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__pflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2127__trailing_extra_elements 	0
+
+/* mnet_ssd_adas_flex_pic_prim_split_22 HMB_input __pvcn_2094_ */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__cnngen_demangled_name 	"__pvcn_2094_"
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__is_main_input_output 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__is_constant 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__has_init_data 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__is_variable_scalar 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__ddi_byte_size 	0	/* 0x00000000 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__ddi_byte_offset 	4294967295	/* 0xffffffff */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__is_bitvector 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__is_rlz 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__is_ten_bit_packed 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__byte_offset 	560	/* 0x00000230 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__vbase_byte_offset 	564	/* 0x00000234 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__dbase_byte_offset 	588	/* 0x0000024c */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__dpitchm1_byte_offset 	592	/* 0x00000250 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__dpitchm1_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__vwidth_minus_one_byte_offset 	576	/* 0x00000240 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__vheight_minus_one_byte_offset 	578	/* 0x00000242 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__vheight_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__drotate_bit_offset 	4678	/* 0x00001246 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__hflip_bit_offset 	4679	/* 0x00001247 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__vflip_bit_offset 	4680	/* 0x00001248 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__dflip_bit_offset 	4681	/* 0x00001249 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__pflip_bit_offset 	4682	/* 0x0000124a */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__W 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__H 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__D 	39
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__P 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__data_num_bytes 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__denable 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__dpitch_num_bytes 	64
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__dram_format 	3
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__vp_interleave_mode 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__tile_width 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__tile_height 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__vmem_buffer_num_bytes 	7800
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__dram_size_num_bytes 	9376
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__sign 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__datasize 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__expoffset 	14
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__expbits 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__drotate 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__hflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__vflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__dflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__pflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2094__trailing_extra_elements 	0
+
+/* mnet_ssd_adas_flex_pic_prim_split_22 HMB_input __pvcn_2105_ */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__cnngen_demangled_name 	"__pvcn_2105_"
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__is_main_input_output 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__is_constant 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__has_init_data 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__is_variable_scalar 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__ddi_byte_size 	0	/* 0x00000000 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__ddi_byte_offset 	4294967295	/* 0xffffffff */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__is_bitvector 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__is_rlz 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__is_ten_bit_packed 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__byte_offset 	596	/* 0x00000254 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__vbase_byte_offset 	600	/* 0x00000258 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__dbase_byte_offset 	624	/* 0x00000270 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__dpitchm1_byte_offset 	628	/* 0x00000274 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__dpitchm1_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__vwidth_minus_one_byte_offset 	612	/* 0x00000264 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__vheight_minus_one_byte_offset 	614	/* 0x00000266 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__vheight_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__drotate_bit_offset 	4966	/* 0x00001366 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__hflip_bit_offset 	4967	/* 0x00001367 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__vflip_bit_offset 	4968	/* 0x00001368 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__dflip_bit_offset 	4969	/* 0x00001369 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__pflip_bit_offset 	4970	/* 0x0000136a */
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__W 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__H 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__D 	40
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__P 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__data_num_bytes 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__denable 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__dpitch_num_bytes 	64
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__dram_format 	3
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__vp_interleave_mode 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__tile_width 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__tile_height 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__vmem_buffer_num_bytes 	8000
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__dram_size_num_bytes 	9600
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__sign 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__datasize 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__expoffset 	14
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__expbits 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__drotate 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__hflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__vflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__dflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__pflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___pvcn_2105__trailing_extra_elements 	0
+
+/* mnet_ssd_adas_flex_pic_prim_split_22 HMB_output conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_cnngen_demangled_name 	"conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw"
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_is_main_input_output 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_is_bitvector 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_is_rlz 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_is_ten_bit_packed 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_byte_offset 	1072	/* 0x00000430 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_vbase_byte_offset 	1076	/* 0x00000434 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_dbase_byte_offset 	1100	/* 0x0000044c */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_dpitchm1_byte_offset 	1104	/* 0x00000450 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_dpitchm1_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_vwidth_minus_one_byte_offset 	1088	/* 0x00000440 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_vheight_minus_one_byte_offset 	1090	/* 0x00000442 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_vheight_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_drotate_bit_offset 	8774	/* 0x00002246 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_hflip_bit_offset 	8775	/* 0x00002247 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_vflip_bit_offset 	8776	/* 0x00002248 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_dflip_bit_offset 	8777	/* 0x00002249 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_pflip_bit_offset 	8778	/* 0x0000224a */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_W 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_H 	10
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_D 	512
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_P 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_data_num_bytes 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_denable 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_dpitch_num_bytes 	64
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_dram_format 	3
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_vp_interleave_mode 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_tile_width 	2
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_tile_height 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_vmem_buffer_num_bytes 	102400
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_dram_size_num_bytes 	122880
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_sign 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_datasize 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_expoffset 	14
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_expbits 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_drotate 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_hflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_vflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_dflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_pflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_6__dw_____bn_conv5_6__dw__scale_mul___muli___79_____bn_conv5_6__dw__scale_mul_____scale___relu5_6__dw_trailing_extra_elements 	0
+
+/* mnet_ssd_adas_flex_pic_prim_split_22 HMB_output conv5_5_mbox_loc_flat */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_cnngen_demangled_name 	"conv5_5_mbox_loc_flat"
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_is_main_input_output 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_is_bitvector 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_is_rlz 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_is_ten_bit_packed 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_byte_offset 	1136	/* 0x00000470 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_vbase_byte_offset 	1140	/* 0x00000474 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_dbase_byte_offset 	1160	/* 0x00000488 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_dpitchm1_byte_offset 	1164	/* 0x0000048c */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_dpitchm1_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_vwidth_minus_one_byte_offset 	1152	/* 0x00000480 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_drotate_bit_offset 	9254	/* 0x00002426 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_hflip_bit_offset 	9255	/* 0x00002427 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_vflip_bit_offset 	9256	/* 0x00002428 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_dflip_bit_offset 	9257	/* 0x00002429 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_pflip_bit_offset 	9258	/* 0x0000242a */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_W 	4332
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_H 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_D 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_P 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_data_num_bytes 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_denable 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_dpitch_num_bytes 	64
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_dram_format 	3
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_vp_interleave_mode 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_tile_width 	4
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_tile_height 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_vmem_buffer_num_bytes 	4336
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_dram_size_num_bytes 	4352
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_sign 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_datasize 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_expoffset 	3
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_expbits 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_drotate 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_hflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_vflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_dflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_pflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_loc_flat_trailing_extra_elements 	0
+
+/* mnet_ssd_adas_flex_pic_prim_split_22 HMB_output conv5_5_mbox_conf_flat */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_cnngen_demangled_name 	"conv5_5_mbox_conf_flat"
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_is_main_input_output 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_is_bitvector 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_is_rlz 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_is_ten_bit_packed 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_byte_offset 	1196	/* 0x000004ac */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_vbase_byte_offset 	1200	/* 0x000004b0 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_dbase_byte_offset 	1220	/* 0x000004c4 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_dpitchm1_byte_offset 	1224	/* 0x000004c8 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_dpitchm1_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_vwidth_minus_one_byte_offset 	1212	/* 0x000004bc */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_drotate_bit_offset 	9734	/* 0x00002606 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_hflip_bit_offset 	9735	/* 0x00002607 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_vflip_bit_offset 	9736	/* 0x00002608 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_dflip_bit_offset 	9737	/* 0x00002609 */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_pflip_bit_offset 	9738	/* 0x0000260a */
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_W 	7581
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_H 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_D 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_P 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_data_num_bytes 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_denable 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_dpitch_num_bytes 	64
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_dram_format 	3
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_vp_interleave_mode 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_tile_width 	4
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_tile_height 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_vmem_buffer_num_bytes 	7584
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_dram_size_num_bytes 	7584
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_sign 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_datasize 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_expoffset 	3
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_expbits 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_drotate 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_hflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_vflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_dflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_pflip 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22_conv5_5_mbox_conf_flat_trailing_extra_elements 	0
+
+/* mnet_ssd_adas_flex_pic_prim_split_22 SMB_output __vas_created_terminate__v0 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___vas_created_terminate__v0_cnngen_demangled_name 	"__vas_created_terminate__v0"
+#define mnet_ssd_adas_flex_pic_prim_split_22___vas_created_terminate__v0_is_main_input_output 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___vas_created_terminate__v0_is_bitvector 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___vas_created_terminate__v0_is_rlz 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___vas_created_terminate__v0_is_ten_bit_packed 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___vas_created_terminate__v0_byte_offset 	1232	/* 0x000004d0 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___vas_created_terminate__v0_vbase_byte_offset 	1236	/* 0x000004d4 */
+#define mnet_ssd_adas_flex_pic_prim_split_22___vas_created_terminate__v0_W 	256
+#define mnet_ssd_adas_flex_pic_prim_split_22___vas_created_terminate__v0_H 	3
+#define mnet_ssd_adas_flex_pic_prim_split_22___vas_created_terminate__v0_D 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___vas_created_terminate__v0_P 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___vas_created_terminate__v0_data_num_bytes 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___vas_created_terminate__v0_denable 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___vas_created_terminate__v0_dram_format 	0
+#define mnet_ssd_adas_flex_pic_prim_split_22___vas_created_terminate__v0_vp_interleave_mode 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___vas_created_terminate__v0_tile_width 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___vas_created_terminate__v0_tile_height 	1
+#define mnet_ssd_adas_flex_pic_prim_split_22___vas_created_terminate__v0_vmem_buffer_num_bytes 	96
+
+
+#endif /* mnet_ssd_adas_flex_pic_prim_split_22_H */

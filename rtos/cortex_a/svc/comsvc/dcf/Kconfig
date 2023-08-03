@@ -1,0 +1,5 @@
+
+config BUILD_COMSVC_DCFCORE
+    depends on BUILD_COMMON_SERVICE_DCF
+    bool "Build DCF Core"
+    default y

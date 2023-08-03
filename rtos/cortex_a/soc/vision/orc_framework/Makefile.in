@@ -1,0 +1,149 @@
+# Copyright (c) 2017-2018 Ambarella, Inc.
+#
+# This file and its contents ("Software") are protected by intellectual
+# property rights including, without limitation, U.S. and/or foreign copyrights.
+# This Software is also the confidential and proprietary information of
+# Ambarella, Inc. and its licensors.  You may not use, reproduce, disclose,
+# distribute, modify, or otherwise prepare derivative works of this Software
+# or any portion thereof except pursuant to a signed license agreement or
+# nondisclosure agreement with Ambarella, Inc. or its authorized affiliates.
+# In the absence of such an agreement, you agree to promptly notify and
+# return this Software to Ambarella, Inc.
+#
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+# INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT,
+# MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL AMBARELLA, INC. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT,
+# INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; COMPUTER FAILURE OR MALFUNCTION;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# -*- makefile -*-
+# You may have noticed that this file doesn't do much.  The reason is
+# that when any of the source files (i.e., the *.in files) change, we
+# need to re-configure and re-generate the Makefiles.  The problem is
+# that the real Makefile includes the make snippets from the subdirs.
+# When we go to re-generate the makefiles, we're still getting old
+# snippets from the submakes, and depending on what those changes
+# were, we may get make errors.
+#
+# The solution is to get the makefiles up-to-date in a Makefile that
+# doesn't include anything, then delegate building to the "real"
+# Makefile that doesn't have to deal with such things.
+#
+# While we're at it, we can do some of the heavyweight work of
+# examining TV versions of files and doing computations based in it.
+# The results of this are plut in .mk files that are included by the
+# "real" Makefile.  The advantage is that this makefile is executed
+# only once, while Makefile.real can be executed several times through
+# recursion.
+
+ifeq ($(PROJECT),cv1)
+$(error project cv1 no longer supported on this branch; please refer to CV1 maintenance branches)
+else ifeq ($(PROJECT),cv1i)
+$(error project cv1i no longer supported on this branch; please refer to CV1 maintenance branches)
+else ifeq ($(PROJECT),cv2)
+CVCHIP := CHIP_CV2
+else ifeq ($(PROJECT),cv2i)
+CVCHIP := CHIP_CV2
+else ifeq ($(PROJECT),cv22)
+CVCHIP := CHIP_CV22
+else ifeq ($(PROJECT),cv22i)
+CVCHIP := CHIP_CV22
+else ifeq ($(PROJECT),cv2s)
+CVCHIP := CHIP_CV22
+else ifeq ($(PROJECT),cv2e)
+CVCHIP := CHIP_CV25
+else ifeq ($(PROJECT),cv25)
+CVCHIP := CHIP_CV25
+else ifeq ($(PROJECT),cv25i)
+CVCHIP := CHIP_CV25
+else ifeq ($(PROJECT),cv2l)
+CVCHIP := CHIP_CV28
+else ifeq ($(PROJECT),cv28)
+CVCHIP := CHIP_CV28
+else ifeq ($(PROJECT),cv28i)
+CVCHIP := CHIP_CV28
+else ifeq ($(PROJECT),cv5)
+CVCHIP := CHIP_CV5
+else ifeq ($(PROJECT),cv5i)
+CVCHIP := CHIP_CV5
+else ifeq ($(PROJECT),cv5s)
+CVCHIP := CHIP_CV5
+else ifeq ($(PROJECT),cv52)
+CVCHIP := CHIP_CV52
+else ifeq ($(PROJECT),cv52s)
+CVCHIP := CHIP_CV52
+else ifeq ($(PROJECT),cv2a)
+CVCHIP := CHIP_CV2A
+else ifeq ($(PROJECT),cv2ai)
+CVCHIP := CHIP_CV2A
+else ifeq ($(PROJECT),cv2fs)
+CVCHIP := CHIP_CV2A
+else ifeq ($(PROJECT),cv22a)
+CVCHIP := CHIP_CV22A
+else ifeq ($(PROJECT),cv22ai)
+CVCHIP := CHIP_CV22A
+else ifeq ($(PROJECT),cv22fs)
+CVCHIP := CHIP_CV22A
+else ifeq ($(PROJECT),cv6)
+CVCHIP := CHIP_CV6
+else ifeq ($(PROJECT),cv6i)
+CVCHIP := CHIP_CV6
+else
+$(error project must be set to cv1[i], cv2[i], cv22[i]/cv2s, cv2e, cv25[i], cv2l, cv28[i], cv5[/i/s], cv52[s], cv2a[i], cv22a[i], cv2fs, cv22fs, or cv6[i])
+endif
+
+TOP_SRCDIR := @srcdir@
+INFILES := $(shell find $(TOP_SRCDIR) -name \*.in)
+MAKEFILE_DEPS := Makefile
+
+###############################################################################
+
+.SUFFIXES:
+
+ifndef VERBOSE_MAKE
+.SILENT:
+endif
+
+.PHONY: default all config versions force
+
+###############################################################################
+
+default: 
+	$(MAKE) -f Makefile.real build CVCHIP=$(CVCHIP)
+	@echo "Done building."
+
+all:
+	$(MAKE) -f Makefile.real all CVCHIP=$(CVCHIP)
+
+###############################################################################
+
+# Make sure the makefile itself is up-to-date
+$(TOP_SRCDIR)/configure: $(TOP_SRCDIR)/configure.ac
+	cd $(TOP_SRCDIR) && autoconf
+
+Makefile: $(INFILES) config.status
+	@echo "Makefile input has changed"
+	$(MAKE) -f Makefile.real nuke NO_INCLUDES=1 NO_TV_INCLUDES=1 CVCHIP=$(CVCHIP)
+	@echo "Regenerating Makefiles"
+	./config.status
+
+config.status: $(TOP_SRCDIR)/configure
+	./config.status --recheck
+
+config:
+	$(MAKE) -B Makefile CVCHIP=$(CVCHIP)
+
+###############################################################################
+
+# Delegate all other targets to Makefile.real
+
+%:
+	@$(MAKE) -f Makefile.real $@ CVCHIP=$(CVCHIP)
+
+###############################################################################

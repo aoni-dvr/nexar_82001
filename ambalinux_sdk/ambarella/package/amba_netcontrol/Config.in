@@ -1,0 +1,45 @@
+menuconfig BR2_PACKAGE_AMBA_NETCONTROL
+	bool "amba_netcontrol"
+	default n
+	help
+		Enable the net control flow.
+
+	menuconfig BR2_PACKAGE_AMBA_NETCONTROL_WIFI
+		bool "Add WiFi support"
+	        default y
+		depends on BR2_PACKAGE_AMBA_NETCONTROL
+		help
+			Add WiFi support into amba_netcontrol
+
+		config BR2_PACKAGE_AMBA_NETCONTROL_WIFI_CMD
+			bool "Add WiFi support for CMD"
+	                default y
+			depends on BR2_PACKAGE_AMBA_NETCONTROL_WIFI
+			help
+				Add WiFi support into amba_netcontrol_cmd
+		config BR2_PACKAGE_AMBA_NETCONTROL_WIFI_DATA
+			bool "Add WiFi support for DATA"
+	                default y
+			depends on BR2_PACKAGE_AMBA_NETCONTROL_WIFI
+			help
+				Add WiFi support into amba_netcontrol_data
+	menuconfig BR2_PACKAGE_AMBA_NETCONTROL_BT
+		bool "Add bluetooth support"
+	        default n
+		depends on BR2_PACKAGE_AMBA_NETCONTROL
+		help
+			Add bluetooth support into amba_netcontrol
+			comment "Need BlueZ utilities to support network message for handling BT."
+			depends on !(BR2_PACKAGE_BLUEZ_UTILS || BR2_PACKAGE_BLUEZ5_UTILS)
+		config BR2_PACKAGE_AMBA_NETCONTROL_BT_CMD
+			bool "Add bluetooth support for CMD"
+	                default n
+			depends on BR2_PACKAGE_AMBA_NETCONTROL_BT
+			help
+				Add bluetooth support into amba_netcontrol_cmd
+		config BR2_PACKAGE_AMBA_NETCONTROL_BT_DATA
+			bool "Add bluetooth support for DATA"
+	                default n
+			depends on BR2_PACKAGE_AMBA_NETCONTROL_BT
+			help
+				Add bluetooth support into amba_netcontrol_data

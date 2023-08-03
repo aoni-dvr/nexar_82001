@@ -1,0 +1,11 @@
+uststrap build flow:
+
+1. Prepare the working .ini and put it in the folder config/
+    The file name should indicate the DRAM type. For LPDDR4, it should contain "lpddr4". for LPDDR5, it should contain "lpddr5" 
+
+2. Execute the helper script to generate the .ust for AmbaUSB and .bin for fastboot
+    ./ust_gen_all.sh your_ini_name.ini
+
+    To use with AmbaUSB, please copy the generated your_ini_name.ust to AmbaUSB's installation folder and add a new board file to use it.
+    To use with fastboot, please copy the generated your_ini_name.bin to fastboot's folder and add a new bat file to use it.
+

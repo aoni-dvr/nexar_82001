@@ -1,0 +1,27 @@
+# record
+ifeq ($(CONFIG_ICAM_RECORD_USED),y)
+SRCS += SvcBRateCalc.c
+SRCS += SvcEnc.c
+SRCS += SvcRecMain.c
+SRCS += SvcRecQpCtrl.c
+SRCS += SvcRecBlend.c
+SRCS += SvcDrawStopwatch.c
+# raw encode
+ifeq ($(CONFIG_ICAM_RAWENC_USED),y)
+SRCS += SvcRawEnc.c
+endif
+# timelapse
+ifeq ($(CONFIG_ICAM_TIMELAPSE_USED),y)
+SRCS += SvcTimeLapse.c
+endif
+endif
+# data gather
+ifeq ($(CONFIG_ICAM_DATA_GATHER_USED),y)
+SRCS += SvcDataGather.c
+endif
+
+ifeq ($(CONFIG_ICAM_RECORD_USED),y)
+ifeq ($(CONFIG_LWIP_ENET),y)
+EXTRA_INCVPATH += $(srctree)/vendors/foss/lwip/ambarella/inc
+endif
+endif

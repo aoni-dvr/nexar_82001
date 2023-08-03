@@ -1,0 +1,26 @@
+#include <vp_vas.h>
+
+#define MAX_VALUE_STRING_HEX        "ff"
+#define ZERO_STRING_HEX             "00"
+
+#define IN_SIZE 262144
+
+DAG thresh_simple_vpp_prim = {
+    VP_input(data, uint8_t, vector(1, 1, 1, IN_SIZE));
+    VP_scalar(thres, uint8_t, 127);
+	
+    VP_scalar(max_value, uint8_t, 255);
+	
+    VP_constant(mux_in0_, uint8_t, vector(1), ZERO_STRING_HEX);
+	
+    VP_gtb(data,
+      thres,
+      VP_tensor(compare_)
+    );
+
+    VP_muxb(max_value, mux_in0_, compare_,
+      VP_tensor(thresh_out_)
+    );
+
+    VP_output(thresh_simple, thresh_out_);
+}

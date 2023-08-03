@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<module name="fs-ambarella">
+  <classification>SDK</classification>
+  <description>
+    <short>FS ambarella library</short>
+    <abstract><![CDATA[
+	                The fs-ambarella library operates the FS, and is needed by certain device drivers to perform FS changement.
+	        ]]></abstract>
+  </description>
+  <supports>
+    <availability>
+      <cpu isa="arm">
+        <byteOrder>le</byteOrder>
+      </cpu>
+    </availability>
+  </supports>
+  <contents>
+    <component id="SharedObj" generated="true">
+      <location basedir="aarch64/so.le">		                libfs-ambarella.so		        </location>
+    </component>
+    <component id="SharedArchive" generated="true">
+      <location basedir="aarch64/so.le">		                libfs-ambarellaS.a		        </location>
+    </component>
+  </contents>
+</module>

@@ -1,0 +1,108 @@
+; -----------------------------------------------------
+;                  TERA TERM GLOBAL SETTING
+; -----------------------------------------------------
+timeout = 30
+
+; -----------------------------------------------------
+;
+;                    iCam Calibration Module
+;                        (2019.12.05)
+;
+; -----------------------------------------------------
+
+; -----------------------------------------------------
+;                      SCRIPT PARAMETER
+; -----------------------------------------------------
+; └─ calibration channel setting ( It is necessary )
+     VinID = 0
+     SensorID = 1
+     VinSelectBits = 3
+     SensorSelectBits = 15
+
+    waitstr = ''
+     
+; └─ WB calibration setting
+     iCamCalib_Wb_On = 1
+     iCamCalib_Wb_table_id = 0
+     iCamCalib_Wb_flicker = 60
+     iCamCalib_Wb_lct_gain_r = 8000         ; low color temperature red   channel golden(reference) value
+     iCamCalib_Wb_lct_gain_g = 4096         ; low color temperature green channel golden(reference) value. It should always 4096
+     iCamCalib_Wb_lct_gain_b = 8000         ; low color temperature blue  channel golden(reference) value
+     iCamCalib_Wb_lct_threshold_r = 30000   ; low color temperature red threshold
+     iCamCalib_Wb_lct_threshold_b = 30000   ; low color temperature blue threshold
+          
+     iCamCalib_Wb_hct_gain_r = 8000         ; high color temperature red   channel golden value
+     iCamCalib_Wb_hct_gain_g = 4096         ; high color temperature green channel golden value. It should always 4096
+     iCamCalib_Wb_hct_gain_b = 8000         ; high color temperature blue  channel golden value
+     iCamCalib_Wb_hct_threshold_r = 30000   ; high color temperature red threshold
+     iCamCalib_Wb_hct_threshold_b = 30000   ; high color temperature blue threshold
+     iCamCalib_Wb_dbg_msg = 1
+                    
+; -----------------------------------------------------
+;                      SCRIPT BEGIN
+; -----------------------------------------------------
+
+if iCamCalib_Wb_On=1 then
+
+    ; Configure the calib channel to calib wb module and reset the setting as default
+    sprintf 'svc_cal wb cfg_calib_chan %d %d %d %d' VinID SensorID VinSelectBits SensorSelectBits
+    sprintf2 waitstr 'Calibration WB Channel'
+    call _SUB_FUNC_CMD_PROC
+    pause 1
+
+    ; Configure the calib wb nand table index
+    sprintf 'svc_cal wb cfg_table_id %d' iCamCalib_Wb_table_id
+    sprintf2 waitstr 'Calibration WB Table Index'
+    call _SUB_FUNC_CMD_PROC
+    pause 1
+    
+    ; Enable / Disable calib wb module debug message
+    sprintf 'svc_cal wb cfg_dbg_msg %d' iCamCalib_Wb_dbg_msg
+    sprintf2 waitstr 'Calibration WB Debug Msg On/Off'
+    call _SUB_FUNC_CMD_PROC
+    pause 1
+
+    ; Generate calib wb low temperature data and save to nand
+    sprintf 'svc_cal wb set_wb_gain %d %d %d %d %d %d %d' 0 iCamCalib_Wb_flicker iCamCalib_Wb_lct_gain_r iCamCalib_Wb_lct_gain_g iCamCalib_Wb_lct_gain_b iCamCalib_Wb_lct_threshold_r iCamCalib_Wb_lct_threshold_b
+    sprintf2 waitstr 'Calibration wb info'
+    call _SUB_FUNC_CMD_PROC
+    pause 1
+
+    ; Generate calib wb high temperature data and save to nand
+    sprintf 'svc_cal wb set_wb_gain %d %d %d %d %d %d %d' 1 iCamCalib_Wb_flicker iCamCalib_Wb_hct_gain_r iCamCalib_Wb_hct_gain_g iCamCalib_Wb_hct_gain_b iCamCalib_Wb_lct_threshold_r iCamCalib_Wb_lct_threshold_b
+    sprintf2 waitstr 'Calibration wb info'
+    call _SUB_FUNC_CMD_PROC
+    pause 1
+
+endif
+
+; -----------------------------------------------------
+;                       SCRIPT END
+; -----------------------------------------------------
+
+exit
+
+:_SUB_FUNC_CMD_PROC
+    strlen inputstr
+    
+    if result>0 then
+        sendln ''
+        sendln ''
+        sendln inputstr
+        
+        strlen waitstr
+        if result>0 then
+            wait waitstr
+            if result=0 goto _ERROR_process_cmd_fail
+            waitstr = ''
+        endif
+    endif
+    
+return
+
+:_ERROR_process_cmd_fail
+    sprintf 'Failure to process command - %s' inputstr
+    
+    dispstr inputstr
+exit
+

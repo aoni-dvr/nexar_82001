@@ -1,0 +1,5 @@
+menuconfig BR2_PACKAGE_AMBAVX
+	bool "ambavx"
+	default n
+	help
+	  This is AmbaVX libraries.

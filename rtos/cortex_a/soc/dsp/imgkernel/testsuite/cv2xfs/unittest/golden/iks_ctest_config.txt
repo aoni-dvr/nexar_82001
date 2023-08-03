@@ -1,0 +1,31 @@
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_query_flow_control_memory_size(), ID = 0, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_query_crc_data_memory_size(), ID = 1, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_prepare_flow_control_memory(), ID = 2, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_prepare_flow_control_memory(), ID = 3, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_prepare_flow_control_memory(), ID = 4, description : test NULL ptr fail case
+Rval = 0x01100007, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_prepare_flow_control_memory(), ID = 5, description : test (FlowMemSize < size) fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_prepare_flow_tbl_memory(), ID = 6, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_prepare_flow_tbl_memory(), ID = 7, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_prepare_flow_tbl_memory(), ID = 8, description : test NULL ptr fail case
+Rval = 0x01100007, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_prepare_flow_tbl_memory(), ID = 9, description : test (CrMemSize < size) fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_prepare_crc_data_memory(), ID = 10, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_prepare_crc_data_memory(), ID = 11, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_prepare_crc_data_memory(), ID = 12, description : test NULL ptr fail case
+Rval = 0x01100007, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_prepare_crc_data_memory(), ID = 13, description : test (CrcMemSize < size) fail case
+Rval = 0x01100008, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_acquire_idsp_step_info(), ID = 14, description : test pipe != Video fail case
+Rval = 0x01100008, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_acquire_idsp_step_info(), ID = 15, description : test pipe != Video or Still fail case
+Rval = 0x00000000, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_acquire_idsp_step_info(), ID = 16, description : test (p_ability->video_pipe < AMBA_IK_VIDEO_MAX) fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_query_total_cr_buffer_size(), ID = 17, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_query_ctx_cr_buffer_size(), ID = 18, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_prepare_cr_buffer(), ID = 19, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_init_flow_control(), ID = 20, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_init_flow_control(), ID = 21, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_init_flow_control(), ID = 22, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_set_flow_control(), ID = 23, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_set_flow_control(), ID = 24, description : test NULL ptr fail case
+Rval = 0x01100003, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_set_flow_control(), ID = 25, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_set_cr_memory_fence(), ID = 26, description : test NULL ptr fail case
+Rval = 0x01100008, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_set_cr_memory_fence(), ID = 27, description : test NULL ptr fail case
+Rval = 0x00000000, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_set_cr_memory_fence(), ID = 28, description : test NULL ptr fail case
+Rval = 0x01100008, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_set_cr_memory_fence(), ID = 29, description : test NULL ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgConfigComponentIF.c, iks_cfg_init_cr_memory_fence(), ID = 30, description : test NULL ptr fail case

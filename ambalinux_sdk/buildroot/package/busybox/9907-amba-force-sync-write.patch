@@ -1,0 +1,15 @@
+When openning a regular file to write the syslog, we force it to be O_SYNC so that
+the log won't be lost due to page caching in case of system failure.
+
+diff -rupN busybox-1.25.0/sysklogd/syslogd.c busybox-new/sysklogd/syslogd.c
+--- busybox-1.25.0/sysklogd/syslogd.c	2016-05-27 01:42:45.000000000 +0800
++++ busybox-new/sysklogd/syslogd.c	2016-10-28 10:51:43.720292838 +0800
+@@ -712,7 +712,7 @@ static void log_locally(time_t now, char
+ 		} else {
+  reopen:
+ 			log_file->fd = open(log_file->path, O_WRONLY | O_CREAT
+-					| O_NOCTTY | O_APPEND | O_NONBLOCK,
++					| O_NOCTTY | O_APPEND | O_NONBLOCK | O_SYNC,
+ 					0666);
+ 			if (log_file->fd < 0) {
+ 				/* cannot open logfile? - print to /dev/console then */

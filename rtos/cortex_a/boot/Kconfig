@@ -1,0 +1,286 @@
+menu "Boot Configuration"
+
+comment "DRAM Component"
+
+choice DRAM_TYPE_SELECTION
+	prompt "Dram Type"
+	default DRAM_TYPE_LPDDR4
+
+config DRAM_TYPE_LPDDR5
+	bool "LPDDR5 DRAM"
+config DRAM_TYPE_LPDDR4
+	bool "LPDDR4 DRAM"
+config DRAM_TYPE_DDR4
+	bool "DDR4 DRAM"
+endchoice
+
+config DDR_SIZE
+	hex "Dram size in bytes"
+	default 0x80000000
+
+comment "Boot Device"
+
+choice
+	prompt "Boot Type"
+	default ENABLE_NAND_BOOT
+
+config ENABLE_EMMC_BOOT
+	bool "eMMC Boot"
+	help
+	Boot from eMMC Managed NAND flash
+
+config ENABLE_NAND_BOOT
+	bool "Parallel-NAND Boot"
+	help
+	Boot from NAND flash
+
+config ENABLE_SPINAND_BOOT
+	bool "Serial-NAND Boot"
+	help
+	Boot from Serial(SPI interface) NAND flash
+
+config ENABLE_SPINOR_BOOT
+	bool "Serial-NOR Boot"
+	help
+	Boot from Serial(SPI interface) NOR flash
+
+endchoice
+
+choice
+	prompt "EMMC Access Bus Width"
+	default CONFIG_EMMC_ACCESS_8BIT
+	help
+	  Select the data bus width to use for EMMC boot flow
+
+config EMMC_ACCESS_8BIT
+	bool "8 bit"
+	help
+	  Always assume a 8 bit data access without doing a bus test.
+
+config EMMC_ACCESS_4BIT
+	bool "4 bit"
+	help
+	  Always assume a 4 bit data access without doing a bus test.
+
+config EMMC_ACCESS_1BIT
+ bool "1 bit"
+ depends on !ENABLE_EMMC_HS200
+ help
+	  Always assume a 1 bit data access without doing a bus test.
+
+endchoice
+
+config ENABLE_EMMC_HS200
+	bool "eMMC Enable HS200 Mode"
+	help
+	Use HS200 Mode timing on eMMC device
+
+
+comment "CRC32 Validation"
+
+choice CHECK_TARGET_SELECTION
+	prompt "Check Target"
+	default CHECK_TARGET_NONE
+config CHECK_TARGET_NONE
+	bool "None"
+config CHECK_TARGET_BST
+	bool "Bst"
+config CHECK_TARGET_BLD
+	bool "Bld"
+config CHECK_TARGET_ALL
+	bool "Bst and Bld"
+endchoice
+
+menu "Set SPINOR boot parameter"
+depends on ENABLE_SPINOR_BOOT
+
+config MUTI_BOOT_DEVICE
+	bool "Mutiple boot device (spinor & emmc)"
+	help
+	Mutiple boot device. Second device is emmc.
+	default n
+config SPINOR_DMA_ENABLE
+    bool "Enable DMA for SPINOR"
+    help
+	Enable DMA for SPINOR.
+    default n
+config SPINOR_DEFAULT_MODE_OCT
+    bool "SPINOR device default on OCT DDR mode"
+    help
+	SPINOR device default use OCT DDR.
+    default n
+endmenu
+
+menu "Set EMMC boot parameter"
+depends on ENABLE_EMMC_BOOT || MUTI_BOOT_DEVICE
+
+config EMMC_MAX_CLOCK
+	hex "MAX eMMC clock rate"
+	default 0x500000
+
+choice
+	prompt "EMMC ACCESS PARTITON "
+	depends on ENABLE_EMMC_BOOT
+	default CONFIG_EMMC_ACCPART_USER
+	help
+	  Select the area of access partition for EMMC boot flow
+
+config EMMC_ACCPART_USER
+	bool "user"
+	help
+	  Always assume a 1 bit data access without doing a bus test.
+
+config EMMC_ACCPART_BP1
+	bool "BP1"
+	help
+	  Always assume a 4 bit data access without doing a bus test.
+
+config EMMC_ACCPART_BP2
+	bool "BP2"
+	help
+	  Always assume a 8 bit data access without doing a bus test.
+
+endchoice
+
+choice
+	prompt "EMMC BOOT PARTITON "
+	depends on ENABLE_EMMC_BOOT || MUTI_BOOT_DEVICE
+	default CONFIG_EMMC_BOOTPART_USER
+	help
+	  Select the area of boot partition for EMMC boot flow
+
+config EMMC_BOOTPART_USER
+	bool "user"
+	help
+	  Always assume a 1 bit data access without doing a bus test.
+
+config EMMC_BOOTPART_BP1
+	bool "BP1"
+	help
+	  Always assume a 4 bit data access without doing a bus test.
+
+config EMMC_BOOTPART_BP2
+	bool "BP2"
+	help
+	  Always assume a 8 bit data access without doing a bus test.
+
+endchoice
+
+choice
+	prompt "EMMC Boot Bus Width"
+	depends on ENABLE_EMMC_BOOT || MUTI_BOOT_DEVICE
+	default CONFIG_EMMC_BOOT_8BIT
+	help
+	  Select the data bus width to use for EMMC boot flow
+
+config EMMC_BOOT_1BIT
+	bool "1 bit"
+	help
+	  Always assume a 1 bit data access without doing a bus test.
+
+config EMMC_BOOT_4BIT
+	bool "4 bit"
+	help
+	  Always assume a 4 bit data access without doing a bus test.
+
+config EMMC_BOOT_8BIT
+	bool "8 bit"
+	help
+	  Always assume a 8 bit data access without doing a bus test.
+
+endchoice
+config ENABLE_EMMC_HIGHSPEED_TIMING
+	bool "eMMC Enable Highspeed"
+	help
+	Use High speed timing on eMMC device
+
+config ENABLE_EMMC_HW_RESET
+	bool "Enable EMMC HW reset pin function"
+	default n
+	help
+	  EMMC RST_n pin should be pull high.
+
+endmenu
+
+menu "Secure Boot Option"
+comment "This page only works with secure booting mode."
+comment "Don't enable it if your board configuration is normal booting."
+config ENABLE_SECURITY
+	bool "Enable system security service"
+	default n
+	select SECURE_TYPE_RSA if !(SOC_CV5 || SOC_CV52)
+	select SECURE_TYPE_ECC if (SOC_CV5 || SOC_CV52)
+	help
+	  Enable system secure features
+
+if ENABLE_SECURITY
+
+config  RSA_PRIVATE_KEY_PATH
+	string "RSA privare key file path"
+	default ""
+	help
+	  RSA private key file path
+
+config  ECC_PRIVATE_KEY_PATH
+	string "ECC privare key file path"
+	default ""
+	help
+	  ECC private key file path
+
+config  OPENSSL_PATH
+	string "openssl path"
+	default "${srctree}/tools/openssl/openssl" if SOC_CV5 || SOC_CV52
+	default ""
+	help
+	  OPENSSL binary path
+
+config SECURE_LNX_SRC_PATH
+	string "LNX source path"
+	default ""
+	help
+	  LNX source path, which will be used to encrypt
+
+config SECURE_TYPE_RSA
+	bool
+	help
+	  OTP support RSA
+
+config SECURE_TYPE_ECC
+	bool
+	help
+	  OTP support ECC
+
+config SECURE_ECC_IDX
+	int "Index/Id of key used"
+	range 0 15
+	default 0
+	depends on SECURE_TYPE_ECC
+	help
+	  Select Index/Id of key (0-15)
+
+
+endif # ENABLE_SECURITY
+
+endmenu
+
+comment "Fast Boot"
+menu "Fast Boot with LZ4"
+config FASTBOOT_LZ4
+	bool "Use LZ4 compress/decompress"
+    default y if !QNX && SVC_APPS_ICAM && (SOC_CV5 || SOC_CV52)
+	help
+	  Use LZ4 compress/decompress for fast boot
+
+if FASTBOOT_LZ4
+
+config FB_LZ4_COMPBASE
+	hex "Base address of compression data"
+    default 0x08000000
+	help
+	  Base address of compression data
+
+endif # FASTBOOT_LZ4
+
+endmenu
+
+endmenu

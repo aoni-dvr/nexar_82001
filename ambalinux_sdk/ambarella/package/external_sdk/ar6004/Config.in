@@ -1,0 +1,5 @@
+config BR2_PACKAGE_AR6004
+	bool "ar6004"
+	help
+		QCA6004 SDK
+

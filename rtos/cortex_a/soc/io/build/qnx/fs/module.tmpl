@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<module name="fs-ambarella">
+	<type>Element</type>
+	<classification>SDK</classification>
+
+	<description>
+	        <short>GPIO Ambarella library</short>
+	        <abstract>
+	                <![CDATA[The fs-ambarella library operates the FS, and is needed by certain device drivers to perform GPIO changement.]]>
+	        </abstract>
+	</description>
+
+	<supports>
+       		 <availability>
+	          <cpu isa="aarch64">
+                       <byteOrder>le</byteOrder>
+	           </cpu>
+	        </availability>
+	</supports>
+
+	<source available="false">
+		<location type="">.</location>
+	</source>
+
+	<contents>
+		<component id="ambarella" generated="true">
+		        <location basedir="{cpu}/so{.:endian}" runtime="true">
+		                libfs-ambarella.so
+		        </location>
+		</component>
+		<component id="SharedArchive" generated="true">
+		<kind type="library"/>
+		        <location basedir="{cpu}/so{.:endian}" runtime="false">
+		                libfs-ambarellaS.a
+		        </location>
+		</component>
+	</contents>
+</module>

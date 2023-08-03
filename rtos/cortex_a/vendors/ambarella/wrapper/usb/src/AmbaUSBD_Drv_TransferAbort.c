@@ -1,0 +1,57 @@
+/**
+ *  @file AmbaUSBD_Drv_TransferAbort.c
+ *
+ *  Copyright (c) 2020 Ambarella International LP
+ *
+ *  This file and its contents ("Software") are protected by intellectual property rights including, without limitation,
+ *  U.S. and/or foreign copyrights.  This Software is also the confidential and proprietary information of Ambarella, Inc.
+ *  and its licensors.  You may not use, reproduce, disclose, distribute, modify, or otherwise prepare derivative works
+ *  of this Software or any portion thereof except pursuant to a signed license agreement or nondisclosure agreement with
+ *  Ambarella, Inc. or its authorized affiliates.  In the absence of such an agreement, you agree to promptly notify and
+ *  return this Software to Ambarella, Inc.
+ *
+ *  THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ *  WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+ *  AMBARELLA, INC. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ *  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ *  COMPUTER FAILURE OR MALFUNCTION; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ *  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *  @details USB kernel driver transfer abort function.
+ */
+
+#include <AmbaTypes.h>
+#include <AmbaKAL.h>
+#include <AmbaUSB_Generic.h>
+#include <AmbaUSBD_API.h>
+#include <AmbaUSBH_API.h>
+#include <AmbaUSB_System.h>
+#include <AmbaUSB_Utility.h>
+
+static void empty_txfifo(void)
+{
+    UINT32 endpoint_index;
+    UINT32 max_count = (UDC_MAX_ENDPOINT_NUM / 2U) + 1U;
+
+    // Flush TX FIFO
+    for (endpoint_index = 0; endpoint_index < max_count; endpoint_index++) {
+        AmbaRTSL_UsbSetEpInCtrlF(endpoint_index, 1);
+    }
+}
+/** \addtogroup Internal_APIs
+ *  @{
+ * */
+/**
+ * Called by USBX to abort transfer on physical Endpoint.
+ * */
+UINT32 USBD_DrvTransferAbort(const UX_SLAVE_TRANSFER *TransferRequest)
+{
+    // PHASE_DATA_OUT here is the "IN" direction of USB specification
+    if (TransferRequest->ux_slave_transfer_request_phase == (UINT32)UX_TRANSFER_PHASE_DATA_OUT) {
+        empty_txfifo();
+    }
+
+    return UX_SUCCESS;
+}
+/** @} */

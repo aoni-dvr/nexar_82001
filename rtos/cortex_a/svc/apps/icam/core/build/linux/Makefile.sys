@@ -1,0 +1,76 @@
+# svc sys function
+SYS_O_PREFIX = ../../src/sys
+SYS_INC_PREFIX = $(src)/$(SYS_O_PREFIX)
+
+ccflags-y += -I$(srctree)/soc/io/src/common/inc/
+ccflags-y += -I$(srctree)/soc/io/src/common/inc/arm
+ccflags-y += -I$(srctree)/soc/io/src/common/inc/rtsl
+
+ccflags-y += -I$(srctree)/bsp/$(AMBA_CHIP_ID)/$(AMBA_BSP_NAME)
+
+ccflags-$(CONFIG_ICAM_SWPLL_CONTROL) += -I$(srctree)/comsvc/ftcm/inc
+ccflags-$(CONFIG_ICAM_CVBS_EXIST) += -I$(srctree)/soc/io/src/$(AMBA_CHIP_ID)/inc/csl
+ccflags-y += -I$(srctree)/soc/io/src/$(AMBA_CHIP_ID)/inc/reg
+
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcBootDev.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcWdt.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcTiming.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcBuffer.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcClock.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcStgMonitor.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcPrint.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcShell.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcSysStat.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcUart.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcFlowControl.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcButtonCtrl.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcFwUpdate.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcWinCalc.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcPyramid.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcGpioButton.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcAdcButton.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcMem.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcPref.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcSysEvent.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcStgMgr.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcNvm.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcCmd.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcTask.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcLog.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcLoadCtrl.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcSafeStateMgr.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcWrap.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcPlat.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcDataCmp.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcDramUtil.o
+
+# swpll
+ifeq ($(CONFIG_ICAM_SWPLL_CONTROL),y)
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcSwPll.o
+endif
+
+# canbus
+ifeq ($(CONFIG_ICAM_CANBUS_USED),y)
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcCan.o
+endif
+
+# rawcap
+ifeq ($(CONFIG_ICAM_IMGRAWCAP_USED),y)
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcRawCap.o
+endif
+
+# chip_io
+ifeq ($(CONFIG_ICAM_CVBS_EXIST), y)
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/io/SvcDiagCVBS.o
+endif
+
+# Dependency of SvcVer.o
+libsvc_icamcore-objs += $(SYS_O_PREFIX)/SvcBuild.o
+
+$(obj)/SvcBuild.o: $(call amba_ver_dep,SvcBuild.o,$(libsvc_icamcore-objs))
+
+ICAM_BUILD_DATE = \""$(shell date)"\"
+ICAM_BUILD_MACHINE = \""$(shell echo `whoami`@`hostname`:[gcc `$(CC) -dumpversion`])"\"
+
+CFLAGS_SvcBuild.o = -DAMBA_BUILD_DATE=$(ICAM_BUILD_DATE)        \
+                    -DAMBA_BUILD_MACHINE=$(ICAM_BUILD_MACHINE)

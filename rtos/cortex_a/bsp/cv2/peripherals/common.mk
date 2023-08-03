@@ -1,0 +1,115 @@
+ifndef QCONFIG
+QCONFIG=qconfig.mk
+endif
+include $(QCONFIG)
+
+include $(objtree)/include/config/auto.conf
+
+AUDIOPATH := audio
+BRIDGEPATH := bridge
+DISPLAYPATH := display
+SENSORPATH := sensor
+YUVINPUTPATH := yuvinput
+IMUPATH := imu
+
+#EXTRA_SRCVPATH += $(PROJECT_ROOT)/$(AUDIOPATH)/
+EXTRA_SRCVPATH += $(PROJECT_ROOT)/$(BRIDGEPATH)/
+EXTRA_SRCVPATH += $(PROJECT_ROOT)/$(DISPLAYPATH)/
+EXTRA_SRCVPATH += $(PROJECT_ROOT)/$(SENSORPATH)/
+EXTRA_SRCVPATH += $(PROJECT_ROOT)/$(YUVINPUTPATH)/
+EXTRA_SRCVPATH += $(PROJECT_ROOT)/$(IMUPATH)/
+
+# src/bridge
+ifdef CONFIG_SENSOR_BRIDGE_MAX9295_9296
+SRCS += $(BRIDGEPATH)/AmbaSbrg_Max9295_9296.c
+endif
+
+ifdef CONFIG_SENSOR_BRIDGE_MAX9295_96712
+SRCS += $(BRIDGEPATH)/AmbaSbrg_Max9295_96712.c
+endif
+
+ifdef CONFIG_SENSOR_BRIDGE_MAX96707_9286
+SRCS += $(BRIDGEPATH)/AmbaSbrg_Max96707_9286.c
+endif
+
+# src/display
+SRCS += $(DISPLAYPATH)/AmbaFPD.c
+ifdef CONFIG_FPD_T30P61
+SRCS += $(DISPLAYPATH)/AmbaFPD_T30P61.o
+endif
+
+ifdef CONFIG_FPD_LT9611UXC
+SRCS += $(DISPLAYPATH)/AmbaFPD_LT9611UXC.c
+endif
+
+ifdef CONFIG_FPD_HXY500HD10IIN0
+SRCS += $(DISPLAYPATH)/AmbaFPD_HXY500HD10IIN0.c
+endif
+
+ifdef CONFIG_FPD_MAXIM_ZS095BH3001A8H3_BII
+SRCS += $(DISPLAYPATH)/AmbaFPD_MAXIM_ZS095BH3001A8H3_BII.c
+endif
+
+# src/sensor
+SRCS += $(SENSORPATH)/AmbaSensor.c
+SRCS += $(SENSORPATH)/AmbaSensor_UnitTest.c
+ifdef CONFIG_SENSOR_SONY_IMX290_MIPI
+SRCS += $(SENSORPATH)/AmbaSensor_IMX290_MIPI.c
+SRCS += $(SENSORPATH)/AmbaSensor_IMX290_MIPITable.c
+endif
+
+ifdef CONFIG_SENSOR_SONY_IMX577
+SRCS += $(SENSORPATH)/AmbaSensor_IMX577.c
+SRCS += $(SENSORPATH)/AmbaSensor_IMX577Table.c
+endif
+
+ifdef CONFIG_SENSOR_MX00_IMX390
+SRCS += $(SENSORPATH)/AmbaSensor_MAX9295_9296_IMX390.c
+SRCS += $(SENSORPATH)/AmbaSensor_MAX9295_9296_IMX390Table.c
+endif
+
+ifdef CONFIG_SENSOR_MX01_IMX390
+SRCS += $(SENSORPATH)/AmbaSensor_MAX9295_96712_IMX390.c
+SRCS += $(SENSORPATH)/AmbaSensor_MAX9295_96712_IMX390Table.c
+endif
+
+ifdef CONFIG_SENSOR_MX00_IMX424
+SRCS += $(SENSORPATH)/AmbaSensor_MAX9295_9296_IMX424_RCCB.c
+SRCS += $(SENSORPATH)/AmbaSensor_MAX9295_9296_IMX424_RCCB_Stereo.c
+SRCS += $(SENSORPATH)/AmbaSensor_MAX9295_9296_IMX424_RCCBTable.c
+endif
+
+# src/yuvinput
+SRCS += $(YUVINPUTPATH)/AmbaYuv.c
+ifdef CONFIG_YUVINPUT_LT6911
+SRCS += $(YUVINPUTPATH)/AmbaYuv_LT6911.c
+SRCS += $(YUVINPUTPATH)/AmbaYuv_LT6911Table.c
+endif
+
+# src/imu
+SRCS += $(IMUPATH)/AmbaIMU.c
+ifdef CONFIG_IMU_MPU6500
+SRCS += $(IMUPATH)/AmbaIMU_MPU6500.c
+endif
+
+EXTRA_INCVPATH += $(PROJECT_ROOT)/../$(AMBA_BSP_NAME)/
+EXTRA_INCVPATH += $(PROJECT_ROOT)/audio/inc/
+EXTRA_INCVPATH += $(PROJECT_ROOT)/bridge/inc/
+EXTRA_INCVPATH += $(PROJECT_ROOT)/display/inc/
+EXTRA_INCVPATH += $(PROJECT_ROOT)/sensor/inc/
+EXTRA_INCVPATH += $(PROJECT_ROOT)/yuvinput/inc/
+EXTRA_INCVPATH += $(PROJECT_ROOT)/imu/inc/
+EXTRA_INCVPATH += $(PROJECT_ROOT)/../../../vendors/ambarella/inc/perif/
+EXTRA_INCVPATH += $(PROJECT_ROOT)/../../../vendors/ambarella/inc/io/
+EXTRA_INCVPATH += $(PROJECT_ROOT)/../../../vendors/ambarella/inc/io/$(AMBA_CHIP_ID)
+EXTRA_INCVPATH += $(PROJECT_ROOT)/../../../vendors/ambarella/inc/dsp/
+EXTRA_INCVPATH += $(PROJECT_ROOT)/../../../vendors/ambarella/inc/dsp/$(AMBA_CHIP_ID)
+EXTRA_INCVPATH += $(PROJECT_ROOT)/../../../svc/comsvc/print/
+EXTRA_INCVPATH += $(PROJECT_ROOT)/../../../svc/comsvc/shell/inc
+EXTRA_INCVPATH += $(PROJECT_ROOT)/../../../svc/comsvc/misc
+EXTRA_INCVPATH += $(PROJECT_ROOT)/../../../svc/comsvc/misc
+EXTRA_INCVPATH += $(PROJECT_ROOT)/../../../svc/comsvc/imumanager/inc
+EXTRA_INCVPATH += $(PROJECT_ROOT)/../../../svc/comsvc/eis/inc
+NAME=perif
+
+include $(MKFILES_ROOT)/qtargets.mk

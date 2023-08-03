@@ -1,0 +1,190 @@
+/*
+ * Copyright (C) 2013 Ambarella,Inc. - http://www.ambarella.com/
+ * Author: Cao Rongrong <rrcao@ambarella.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+/dts-v1/;
+
+/include/ "ambarella-cv2fs.dtsi"
+
+/ {
+	model = "Ambarella CV2FSBUB Board";
+	compatible = "ambarella,cv2fsbub", "ambarella,cv2fs";
+
+	aliases {
+		flexidag_sys = &cv_sys_mem;
+		flexidag_rtos = &cv_rtos_mem;
+		scheduler = &sub_scheduler;
+		dsp_prot_buf = &dsp_prot_buf;
+		dsp_work_buf = &dsp_work_buf;
+		dsp_bin_buf = &dsp_bin_buf;
+		dsp_stat_buf = &dsp_stat_buf;
+		dsp_data_buf = &dsp_data_buf;
+		dsp_log_buf = &dsp_log_buf;
+		dsp = &dsp;
+	};
+
+	chosen {
+	};
+
+	sub_scheduler: sub_scheduler0 {
+		compatible = "ambarella,sub-scheduler";
+		interrupts = <0 161 0x4>;
+		memory-region = <&cv_sys_mem>;
+		memory-region1 = <&cv_rtos_mem>;
+	};
+
+	dsp: dspdrv {
+		compatible = "ambarella,dspdrv";
+		memory-region = <&dsp_prot_buf>;
+		memory-region1 = <&dsp_work_buf>;
+		memory-region2 = <&dsp_bin_buf>;
+		memory-region3 = <&dsp_stat_buf>;
+		memory-region4 = <&dsp_data_buf>;
+		memory-region5 = <&dsp_log_buf>;
+		interrupts = <0 145 0x1 0 146 0x1 0 147 0x1 0 148 0x1>;
+        interrupt-names = "vdsp0", "vdsp1", "vdsp2", "vdsp3";
+
+		/* node for vin0 controller */
+		dspvin0 {
+			compatible = "ambarella,dspvin";
+			interrupts = <0 107 0x1 0 109 0x1>;
+			interrupt-names = "arm_sof", "arm_last_pixel";
+		};
+
+		/* node for vin1 controller */
+		dspvin1 {
+			compatible = "ambarella,dspvin";
+			interrupts = <0 112 0x1 0 114 0x1>;
+			interrupt-names = "arm_sof", "arm_last_pixel";
+		};
+
+		/* node for vin2 controller */
+		dspvin2 {
+			compatible = "ambarella,dspvin";
+			interrupts = <0 117 0x1 0 118 0x1>;
+			interrupt-names = "arm_sof", "arm_last_pixel";
+		};
+
+		/* node for vin3 controller */
+		dspvin3 {
+			compatible = "ambarella,dspvin";
+			interrupts = <0 121 0x1 0 123 0x1>;
+			interrupt-names = "arm_sof", "arm_last_pixel";
+		};
+
+		/* node for vin4 controller */
+		dspvin4 {
+			compatible = "ambarella,dspvin";
+			interrupts = <0 126 0x1 0 128 0x1>;
+			interrupt-names = "arm_sof", "arm_last_pixel";
+		};
+
+		/* node for vin5 controller */
+		dspvin5 {
+			compatible = "ambarella,dspvin";
+			interrupts = <0 142 0x1 0 143 0x1>;
+			interrupt-names = "arm_sof", "arm_last_pixel";
+		};
+
+		/* node for vout0 controller */
+		dspvout0 {
+			compatible = "ambarella,dspvout";
+			interrupts = <0 88 0x1>;
+			interrupt-names = "arm_vout_a";
+		};
+
+		/* node for vout1 controller */
+		dspvout1 {
+			compatible = "ambarella,dspvout";
+			interrupts = <0 87 0x1>;
+			interrupt-names = "arm_vout_b";
+		};
+	};
+
+	reserved-memory {
+		device_type = "reserved-memory";
+		cv_sys_mem: flexidag_sys {
+		};
+		cv_rtos_mem: flexidag_rtos {
+		};
+		dsp_prot_buf: dsp_prot_buf {
+		};
+		dsp_work_buf: dsp_work_buf {
+		};
+		dsp_bin_buf: dsp_bin_buf {
+		};
+		dsp_stat_buf: dsp_stat_buf {
+		};
+		dsp_data_buf: dsp_data_buf {
+		};
+		dsp_log_buf: dsp_log_buf {
+		};
+	};
+
+	ahb@e0000000 {
+		nand0: nand@e0002000 {
+			status = "ok";
+		};
+
+		sdmmc0: sdmmc0@e0004000 { /* SDHC */
+			max-frequency = <12000000>;
+		};
+
+		mac0: ethernet@e000e000 {
+			amb,tx-clk-invert;
+			phy@0 {
+				reg = <0>;
+			};
+		};
+
+		mac1: ethernet@e0032000 {
+			amb,tx-clk-invert;
+			phy@0 {
+				reg = <0>;
+			};
+		};
+	};
+
+	/* for profiling, see aipc_profile.c */
+	profile_timer {
+		compatible = "ambarella,timer19";
+		reg = <0xe4006088 0x4>;
+	};
+
+	ambalink {
+		compatible = "simple-bus";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		aipc_mutex: ambarella-ipc-mutex {
+			compatible = "ambarella,ipc-mutex";
+			interrupts = <0 95 0x4>;
+			amb,scr-regmap = <&scratchpad_syscon>;
+		};
+
+		/* must be consistent with ambalink_cfg.h */
+		rproc0: ambarella-rproc {
+			compatible = "ambarella,rproc";
+			interrupts = <0 90 0x4>,	/* rvq_rx_irq, get rvq kick from rtos */
+				     <0 91 0x4>;	/* svq_rx_irq, get svq ack from rtos */
+			amb,scr-regmap = <&scratchpad_syscon>;
+		};
+
+		/* For RTOS as Master/Host, Linux as Client/Remote */
+		rpclnt0: ambarella-rpclnt {
+			compatible = "ambarella,rpclnt";
+			interrupts = <0 90 0x4>,	/* rvq_rx_irq, get rvq kick from rtos */
+				     <0 91 0x4>;	/* svq_rx_irq, get svq ack from rtos */
+			amb,svq_kick = <92>;		/* svq_tx, C1_to_C0_kick */
+			amb,rvq_ack  = <93>;		/* rvq_tx, C1_to_C0 ack */
+			amb,scr-regmap = <&scratchpad_syscon>;
+		};
+	};
+
+	/delete-node/ iav;
+	/delete-node/ bogus_bus;
+};

@@ -1,0 +1,13 @@
+CLock Driver for Ambarella
+Syntax:
+%C [-v] [-i <id> -f <frequncy>]
+
+Options:
+
+    -i - clock id, set new frequency to specified clock (cpu base clock)
+    -f - frequency value, the value set to specified clock (cpu base clock)
+    -v - increase verbosity
+
+Examples:
+ # Set core clock to 792MHz
+ clock-ambarella -i 0 792000000

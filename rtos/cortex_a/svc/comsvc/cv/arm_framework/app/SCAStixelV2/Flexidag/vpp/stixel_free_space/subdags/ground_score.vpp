@@ -1,0 +1,136 @@
+DAG Ground_Score =
+{
+	arg=
+	{
+		$disparity_in=0,
+		$disparity_in_width=0,
+		$disparity_in_height=0,
+		$default_invalid_penalty=0,
+		$invalid_disp_mask=0,
+		$esti_ground_disparity=0,
+		$ground_in_toler=0,
+		$diff_saturation_val=0,
+		$ground_score_out=0,
+	};
+
+	VP_sub(
+		$disparity_in, $esti_ground_disparity,
+		VP_tensor(sign_road_diff, float16_t, vector(1, 1, $disparity_in_height, $disparity_in_width))
+	);
+
+	// penalty = abs_diff(estimated road disparity, real disparity)
+	VP_abs(
+		sign_road_diff, 
+		VP_tensor(float_abs_road_diff, float16_t, vector(1, 1, $disparity_in_height, $disparity_in_width)),
+		disable_reserved = 1 // allow saturation
+	);
+
+	// Restrict to saturation value
+	VP_clip(		
+		float_abs_road_diff,	
+		VP_tensor(cliped_float_abs_road_diff, float16_t, vector(1, 1, $disparity_in_height, $disparity_in_width)),	
+		max = $diff_saturation_val
+	);
+
+	VP_typeconv(		
+		cliped_float_abs_road_diff,		
+		VP_auto(abs_road_diff_tmp, uint16_t)
+	);
+
+	// consider tolerance
+	VP_ltb(
+		abs_road_diff_tmp, 
+		$ground_in_toler, 
+		VP_auto(less_than_toler_mask)
+	);
+	VP_muxb(		
+		VP_const_tensor("00 00", uint16_t, vector(1)), 
+		abs_road_diff_tmp, 
+		less_than_toler_mask,
+		VP_tensor(abs_road_diff, uint16_t, vector(1, 1, $disparity_in_height, $disparity_in_width))
+	);
+	//---
+
+    // in case of invalid disparity, set default penalty
+	VP_muxb(		
+		VP_const_tensor($default_invalid_penalty, uint16_t, vector(1)), 
+		abs_road_diff, 
+		$invalid_disp_mask,
+		VP_tensor(abs_road_diff_no_outlier, uint16_t, vector(1, 1, $disparity_in_height, $disparity_in_width))
+	);
+	
+	// horizontal flip
+	// sky to ground -> ground to sky
+	VP_hflip(
+		abs_road_diff_no_outlier, 
+		VP_tensor(h_flip_abs_road_diff_no_outlier, uint16_t, vector(1, 1, $disparity_in_height, $disparity_in_width))
+	);
+
+	// accumulate ground penalty, from left(ground) to right(sky)
+	VP_cdf(
+		h_flip_abs_road_diff_no_outlier,
+		VP_auto(h_flip_ground_score, uint16_t)
+	);
+
+	// Normalization
+	// ---------------------------------------
+	VP_index(
+    	VP_tensor(col_index, uint16_t, vector(1, 1, 1, $disparity_in_width)),
+    	w = $disparity_in_width,
+    	h = 1,
+    	d = 1,
+    	p = 1,
+    	dim_coordinate = 0
+    );
+
+	VP_sub(
+		col_index, 
+		VP_const_tensor("01 00", uint16_t, vector(1)), 
+		VP_tensor(col_index_plus_1, uint16_t, vector(1, 1, 1, $disparity_in_width))
+	);
+
+	VP_typeconv(		
+		col_index_plus_1,		
+		VP_auto(col_index_plus_1_float, float16_t)
+	);
+
+	VP_recip(		
+		col_index_plus_1_float,		
+		VP_auto(inv_col_index_plus_1, float16_t)
+	);
+
+	VP_typeconv(		
+		h_flip_ground_score,		
+		VP_auto(inv_h_flip_ground_score, float16_t)
+	);
+
+	VP_mul(		
+		inv_col_index_plus_1,		
+		inv_h_flip_ground_score,
+		VP_auto(normalized_h_flip_ground_score_tmp, float16_t)
+	);
+	// ---------------------------------------
+
+	// Set first col to zero
+	// ---------------------------------------
+	VP_eqib(
+		col_index, 
+		VP_const_tensor("00 00", uint16_t, vector(1)), 
+		VP_auto(first_col_mask)
+	);
+
+	VP_muxb(		
+		VP_const_tensor("00 00", float16_t, vector(1)), 
+		normalized_h_flip_ground_score_tmp,
+		first_col_mask, 		
+		VP_auto(normalized_h_flip_ground_score, float16_t)
+	);
+	// ---------------------------------------
+
+	// horizontal flip to original direction
+	// ground to sky -> sky to ground
+	VP_hflip(
+		normalized_h_flip_ground_score,
+		VP_auto($ground_score_out, float16_t)
+	);
+}

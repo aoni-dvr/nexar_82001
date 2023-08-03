@@ -1,0 +1,112 @@
+DAG Sub_Main =
+{
+	arg=
+	{		
+		$in_line_inv_m=0,
+		$in_line_c=0,		
+		$in_disparity_width=0,		
+		$in_col_index=0,
+		$in_obj_pixel_height=0,
+
+		$out_esti_road_disparity=0,
+		$out_virtual_obj_top_v=0,
+		$out_road_disp_coef=0,
+	};
+
+	call =
+	{
+		callee=Calc_Esti_Road_Disp,
+		$line_inv_m=$in_line_inv_m,
+		$line_c=$in_line_c,
+		$esti_road_disparity_width=$in_disparity_width,
+		$esti_road_disparity_out=$out_esti_road_disparity,
+	};
+
+	VP_typeconv(		
+		$in_line_c,
+		VP_auto(hor_pos, uint16_t)
+	);
+	
+	VP_add(
+		hor_pos,
+		$in_obj_pixel_height,
+		VP_auto(hor_pos_add_min, uint16_t)
+	);
+
+	VP_gtb(
+		$in_col_index, 
+		hor_pos_add_min,
+		VP_auto(greater_than_hor_add_min_mask)
+	);
+
+	// top_pos = index - coef - 1
+	// ==============================================
+	VP_sub(
+		$in_col_index, 
+		$in_obj_pixel_height,
+		VP_auto(index_m_coef, uint16_t)
+	);	
+
+	VP_sub(
+		index_m_coef, 
+		VP_const_tensor("01 00", uint16_t, vector(1)),
+		VP_auto(new_top_pos, uint16_t)
+	);	
+
+	VP_muxb(				
+		new_top_pos, 
+		$in_col_index, 
+		greater_than_hor_add_min_mask,
+		VP_auto(out_virtual_obj_top_v_tmp, uint16_t)
+	);
+	// ==============================================
+
+	// region between [hor, hor+min_pixel_height]
+	// ==============================================
+	VP_gtb(
+		$in_col_index, 
+		hor_pos,
+		VP_auto(greater_than_hor_mask)
+	);
+
+	VP_lteb(
+		$in_col_index, 
+		hor_pos_add_min,
+		VP_auto(less_than_hor_add_min_mask)
+	);
+
+	VP_bwand(
+		greater_than_hor_mask, 
+		less_than_hor_add_min_mask,
+		VP_auto(inter_region_mask)
+	);
+
+	VP_muxb(				
+		hor_pos, 
+		out_virtual_obj_top_v_tmp, 
+		inter_region_mask,
+		VP_auto($out_virtual_obj_top_v, uint16_t)
+	);
+
+	// coef = index - top_pos - 1
+	VP_sub(
+		$in_col_index, 
+		$out_virtual_obj_top_v,
+		VP_auto(index_m_top_pos, uint16_t)
+	);	
+
+	VP_sub(
+		index_m_top_pos, 
+		VP_const_tensor("01 00", uint16_t, vector(1)),
+		VP_auto(new_coef, uint16_t)
+	);	
+
+	VP_muxb(				
+		new_coef, 
+		VP_const_tensor("00 00", uint16_t, vector(1)),
+		greater_than_hor_mask,
+		VP_auto($out_road_disp_coef, uint16_t)
+	);
+	// ==============================================
+
+}

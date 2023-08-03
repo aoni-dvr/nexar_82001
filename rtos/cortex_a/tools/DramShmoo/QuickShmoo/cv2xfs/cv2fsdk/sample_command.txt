@@ -1,0 +1,49 @@
+=== Firmware/Platform configuration ===
+OS      : ThreadX
+App     : IOUT
+DRAM    : LPDDR4
+Platform: CV2FSDK V100
+
+=== Command explanation ===
+diag dram 0x20000000 0x200000 task 999  => Execute memory test via task for 999 loops
+diag_ddr wdt 1                          => Enable WatchDog during Shmoo process for reboot on failure
+diag_ddr task ...                       => Execute Shmoo process via task
+
+=== Full command on A53 console ===
+diag dram 0x20000000 0x200000 task 999
+
+=== Full command on R52 console ===
+diag_ddr wdt 1; diag_ddr task lp4vref 0 - 30000
+diag_ddr wdt 1; diag_ddr task lp4vref 0 + 30000
+diag_ddr wdt 1; diag_ddr task lp4vref 1 - 30000
+diag_ddr wdt 1; diag_ddr task lp4vref 1 + 30000
+diag_ddr wdt 1; diag_ddr task lp4mr14 0 - 30000
+diag_ddr wdt 1; diag_ddr task lp4mr14 0 + 30000
+diag_ddr wdt 1; diag_ddr task lp4mr14 1 - 30000
+diag_ddr wdt 1; diag_ddr task lp4mr14 1 + 30000
+diag_ddr wdt 1; diag_ddr task lp4mr12 0 - 30000
+diag_ddr wdt 1; diag_ddr task lp4mr12 0 + 30000
+diag_ddr wdt 1; diag_ddr task lp4mr12 1 - 30000
+diag_ddr wdt 1; diag_ddr task lp4mr12 1 + 30000
+
+diag_ddr wdt 1; diag_ddr task lp4rdly 0 - 30000
+diag_ddr wdt 1; diag_ddr task lp4rdly 0 + 30000
+diag_ddr wdt 1; diag_ddr task lp4rdly 1 - 30000
+diag_ddr wdt 1; diag_ddr task lp4rdly 1 + 30000
+diag_ddr wdt 1; diag_ddr task lp4wdly 0 - 30000
+diag_ddr wdt 1; diag_ddr task lp4wdly 0 + 30000
+diag_ddr wdt 1; diag_ddr task lp4wdly 1 - 30000
+diag_ddr wdt 1; diag_ddr task lp4wdly 1 + 30000
+
+diag_ddr wdt 1; diag_ddr task shmoo 0 read  - 30000
+diag_ddr wdt 1; diag_ddr task shmoo 0 read  + 30000
+diag_ddr wdt 1; diag_ddr task shmoo 1 read  - 30000
+diag_ddr wdt 1; diag_ddr task shmoo 1 read  + 30000
+diag_ddr wdt 1; diag_ddr task shmoo 0 write - 30000
+diag_ddr wdt 1; diag_ddr task shmoo 0 write + 30000
+diag_ddr wdt 1; diag_ddr task shmoo 1 write - 30000
+diag_ddr wdt 1; diag_ddr task shmoo 1 write + 30000
+diag_ddr wdt 1; diag_ddr task shmoo 0 sync  - 30000
+diag_ddr wdt 1; diag_ddr task shmoo 0 sync  + 30000
+diag_ddr wdt 1; diag_ddr task shmoo 1 sync  - 30000
+diag_ddr wdt 1; diag_ddr task shmoo 1 sync  + 30000

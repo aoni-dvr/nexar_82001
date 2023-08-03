@@ -1,0 +1,68 @@
+config BR2_PACKAGE_NETWORK_TURNKEY
+	bool "Ready-made network turnkey scripts"
+
+config BR2_PACKAGE_NETWORK_TURNKEY_STARTUP
+	bool "Start WiFi turnkey at System Startup"
+	default y
+	depends on BR2_PACKAGE_NETWORK_TURNKEY
+
+config BR2_PACKAGE_NETWORK_TURNKEY_STARTUP_KEEP_POWER
+	bool "Start WiFi Turnkey Script Before hibernation"
+	default n
+	depends on BR2_PACKAGE_NETWORK_TURNKEY_STARTUP && BR2_AMBARELLA_AUTOHIBER
+	help
+	  Remember to always Keep WiFi Power for Fast Boot
+	  Re-do hibernation when WiFi lost power, e.g., Change Camera Battery
+	  Re-do hibernation when you want to change WiFi Setting, e.g., Change SSID
+
+config BR2_PACKAGE_BT_TURNKEY_STARTUP
+	bool "Start turnkey at /etc/init.d/S53bt"
+	default n
+	depends on BR2_PACKAGE_NETWORK_TURNKEY
+
+config BR2_PACKAGE_LTE_TURNKEY_STARTUP
+	bool "Start LTE at /etc/init.d/S54lte"
+	default n
+	depends on BR2_PACKAGE_NETWORK_TURNKEY
+
+config BR2_PACKAGE_TURNKEY_WIFI_EN_GPIO
+	bool "GPIO pin to enable or disable WiFi"
+	default n
+	depends on BR2_PACKAGE_NETWORK_TURNKEY
+
+config BR2_PACKAGE_TURNKEY_WIFI_EN_GPIO_PIN
+	int "GPIO pin to enable or disable WiFi"
+	default 95
+	depends on BR2_PACKAGE_TURNKEY_WIFI_EN_GPIO
+
+
+config BR2_PACKAGE_TURNKEY_WIFI_EN_GPIO_STATUS
+	int "GPIO value to enable WiFi, default GPIO high to enable WiFi"
+	range 0 1
+	default 1
+	depends on BR2_PACKAGE_TURNKEY_WIFI_EN_GPIO
+
+config BR2_PACKAGE_TURNKEY_WIFI_SWITCH_GPIO
+	bool "GPIO physical button that user can turn WiFi ON/OFF"
+	default n
+	depends on BR2_PACKAGE_NETWORK_TURNKEY
+
+config BR2_PACKAGE_TURNKEY_WIFI_SWITCH_GPIO_PIN
+	int "GPIO physical button that user can turn WiFi ON/OFF"
+	depends on BR2_PACKAGE_TURNKEY_WIFI_SWITCH_GPIO
+
+config BR2_PACKAGE_TURNKEY_BT_EN_GPIO
+	bool "GPIO pin to enable or disable Bluetooth"
+	default n
+	depends on BR2_PACKAGE_NETWORK_TURNKEY
+
+config BR2_PACKAGE_TURNKEY_BT_EN_GPIO_PIN
+	int "GPIO pin to enable or disable Bluetooth"
+	default 93
+	depends on BR2_PACKAGE_TURNKEY_BT_EN_GPIO
+
+config BR2_PACKAGE_TURNKEY_BT_EN_GPIO_STATUS
+	int "GPIO value to enable Bluetooth, default GPIO high to enable BT"
+	range 0 1
+	default 1
+	depends on BR2_PACKAGE_TURNKEY_BT_EN_GPIO

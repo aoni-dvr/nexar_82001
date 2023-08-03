@@ -1,0 +1,73 @@
+#!/bin/sh
+
+if [ "$1" = "stop" ]; then
+	exit 0
+fi
+
+# mount /pref
+touch /tmp/FL0/.exist 2>/dev/null
+if [ -f /tmp/FL0/.exist ]; then
+	rm -f /tmp/FL0/.exist
+	mkdir -p /tmp/FL0/pref
+	mount --bind /tmp/FL0/pref /pref
+else
+	echo 'Warning: a:\ is offline!'
+	mkdir /tmp/pref
+	mount --bind /tmp/pref /pref
+fi
+
+function rand(){
+    min=1
+    max=65535
+    num=$(cat /dev/urandom | head -n 10 | cksum | awk -F ' ' '{print $1}')
+    echo $(($num%$max+$min))
+}
+
+if [ -f /pref/devinfo ]; then
+	source /pref/devinfo
+fi
+if [ "${token}" = "" ]; then
+	export token=`tr -cd '0-9a-f' </dev/urandom | head -c 40`
+fi
+if [ "${first_access}" = "" ]; then
+	export first_access=1
+fi
+if [ "${vsn}" = "" ]; then
+	export vsn=`tr -cd '0-9a-zA-Z' </dev/urandom | head -c 20`
+fi
+#if [ "${ibeacon_major}" = "" ]; then
+#	export ibeacon_major=10001
+#fi
+export ibeacon_major=10021
+if [ "${ibeacon_minor}" = "" ]; then
+	export ibeacon_minor=`rand`
+fi
+export trip_key=`tr -cd '0-9a-zA-Z' </dev/urandom | head -c 15`
+
+export startup_index=$((${startup_index} + 1))
+echo "token=${token}" > /pref/devinfo
+echo "first_access=${first_access}" >> /pref/devinfo
+echo "vsn=${vsn}" >> /pref/devinfo
+echo "startup_index=${startup_index}" >> /pref/devinfo
+echo "ibeacon_major=${ibeacon_major}" >> /pref/devinfo
+echo "ibeacon_minor=${ibeacon_minor}" >> /pref/devinfo
+echo "trip_key=${trip_key}" >> /pref/devinfo
+
+#Start httpd
+nexar_httpd
+
+if [ -f /mnt/extsd/settings.ini ]; then
+	conf=`cat /mnt/extsd/settings.ini | grep -Ev "^#" | grep -Ev "^\["`
+else
+	conf=`cat /pref/settings.ini | grep -Ev "^#" | grep -Ev "^\["`
+fi
+export LOCAL_IP=`echo "${conf}" | grep ^local_ip | cut -c 10-`
+export DHCP_IP_START=${LOCAL_IP%*.*}.20
+export DHCP_IP_END=${LOCAL_IP%*.*}.200
+#dnsmasq --nodns -5 -K -R -n -Irtl0 --dhcp-range=$DHCP_IP_START,$DHCP_IP_END,infinite
+dnsmasq -5 -K -R -n -Irtl0 -Iusb0 --dhcp-range=$DHCP_IP_START,$DHCP_IP_END,infinite
+
+# no need to wait wifi/bt/lte boot, notify rtos linux booted
+echo 'S99bootdone' > /sys/module/rpmsg_echo/parameters/example_printk
+
+exit $?

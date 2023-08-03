@@ -1,0 +1,146 @@
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_QueryArchMemorySize(), ID = 0, description : OK case
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_InitArch(), ID = 1, description : OK case
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_InitDefBinary(), ID = 2, description : OK case
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_InitContext(), ID = 3, description : OK case
+Rval = 0x01100005, AmbaDSP_ImgExecuterUnitWindowCalc.c, exe_win_calc(), ID = 4, description : null-ptr fail case
+Rval = 0x01100104, AmbaDSP_ImgExecuterUnitWindowCalc.c, exe_win_calc(), ID = 5, description : null-ptr fail case
+Rval = 0x01100104, AmbaDSP_ImgExecuterUnitWindowCalc.c, exe_win_calc(), ID = 6, description : stitching fail case
+Rval = 0x00000000, AmbaDSP_ImgExecuterUnitWindowCalc.c, exe_win_calc(), ID = 7, description : OK case
+Rval = 0x00000000, AmbaDSP_ImgExecuterUnitWindowCalc.c, exe_win_calc(), ID = 8, description : OK case
+Rval = 0x00000000, AmbaDSP_ImgExecuterUnitWindowCalc.c, exe_win_calc(), ID = 9, description : OK case
+Rval = 0x00000000, AmbaDSP_ImgExecuterUnitWindowCalc.c, exe_win_calc(), ID = 10, description : OK case
+Rval = 0x01100205, AmbaDSP_ImgExecuterUnitConfig.c, exe_process_calib_cr(), ID = 11, description : ring buffer fail case
+Rval = 0x01100205, AmbaDSP_ImgExecuterUnitConfig.c, exe_process_calib_cr(), ID = 12, description : ring buffer fail case
+Rval = 0x0110020D, AmbaDSP_ImgExecuterUnitConfig.c, exe_process_calib_cr(), ID = 13, description : invalid sensor mode + ir_mode fail case
+Rval = 0x0110020D, AmbaDSP_ImgExecuterUnitConfig.c, exe_process_calib_cr(), ID = 14, description : invalid sensor mode + ir_mode fail case
+Rval = 0x0110020D, AmbaDSP_ImgExecuterUnitConfig.c, exe_process_calib_cr(), ID = 15, description : invalid sensor mode + ir_mode fail case
+Rval = 0x01100205, AmbaDSP_ImgExecuterUnitConfig.c, warp_flow_table_op_u32(), ID = 16, description : (compare2 == 1U) false case
+Rval = 0x01100205, AmbaDSP_ImgExecuterUnitConfig.c, exe_process_hdr_ce_cr(), ID = 17, description : ring buffer fail case
+Rval = 0x0110020D, AmbaDSP_ImgExecuterUnitConfig.c, exe_process_hdr_ce_cr(), ID = 18, description : decompand + compression offset fail case
+Rval = 0x01100004, AmbaDSP_ImgExecuterUnitConfig.c, exe_process_hdr_ce_cr(), ID = 19, description : ability fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterUnitConfig.c, exe_process_hdr_ce_cr(), ID = 20, description : exposure number fail case
+Rval = 0x01100205, AmbaDSP_ImgExecuterUnitConfig.c, exe_process_cfa_cr(), ID = 21, description : ring buffer fail case
+Rval = 0x01100205, AmbaDSP_ImgExecuterUnitConfig.c, exe_process_rgb_cr(), ID = 22, description : ring buffer fail case
+Rval = 0x01100205, AmbaDSP_ImgExecuterUnitConfig.c, exe_process_rgb_cr(), ID = 23, description : ring buffer fail case
+Rval = 0x01100205, AmbaDSP_ImgExecuterUnitConfig.c, exe_process_rgb_cr(), ID = 24, description : ring buffer fail case
+Rval = 0x01100205, AmbaDSP_ImgExecuterUnitConfig.c, exe_process_yuv_cr(), ID = 25, description : ring buffer fail case
+Rval = 0x01100205, AmbaDSP_ImgExecuterUnitConfig.c, exe_process_yuv_cr(), ID = 26, description : ring buffer fail case
+Rval = 0x01100205, AmbaDSP_ImgExecuterUnitConfig.c, exe_process_yuv_cr(), ID = 27, description : ring buffer fail case
+Rval = 0x0110020D, AmbaDSP_ImgExecuterUnitConfig.c, exe_process_yuv_cr(), ID = 28, description : invalid burst tile mode + dram_efficiency fail case
+Rval = 0x01100205, AmbaDSP_ImgExecuterUnitConfig.c, exe_process_hdr_ce_sub_cr(), ID = 29, description : ring buffer fail case
+Rval = 0x01100004, AmbaDSP_ImgExecuterUnitConfig.c, exe_process_hdr_ce_sub_cr(), ID = 30, description : ability fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterUnitConfig.c, exe_process_hdr_ce_sub_cr(), ID = 31, description : exposure number fail case
+Rval = 0x01100205, AmbaDSP_ImgExecuterUnitConfig.c, exe_process_hdr_ce_sub_cr(), ID = 32, description : exposure number fail case
+Rval = 0x01100205, AmbaDSP_ImgExecuterUnitConfig.c, exe_process_mctf_mcts_cr(), ID = 33, description : ring buffer fail case
+Rval = 0x01100008, AmbaDSP_ImgExecuterUnitConfig.c, exe_process_mctf_mcts_cr(), ID = 34, description : mctf check fail case
+Rval = 0x01100005, AmbaDSP_ImgExecuterUnitConfig.c, exe_query_calc_geo_buf_size(), ID = 35, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgExecuterUnitConfig.c, exe_calc_geo_settings(), ID = 36, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgExecuterUnitConfig.c, exe_calc_geo_settings(), ID = 37, description : null-ptr fail case
+Rval = 0x01100007, AmbaDSP_ImgExecuterUnitConfig.c, exe_calc_geo_settings(), ID = 38, description : null-ptr fail case
+Rval = 0x01100007, AmbaDSP_ImgExecuterUnitConfig.c, exe_calc_geo_settings(), ID = 39, description : null-ptr fail case
+Rval = 0x01100007, AmbaDSP_ImgExecuterUnitConfig.c, exe_calc_geo_settings(), ID = 40, description : null-ptr fail case
+Rval = 0x01100008, AmbaDSP_ImgExecuterUnitConfig.c, exe_calc_geo_settings(), ID = 41, description : invalid ability fail case
+Rval = 0x01100007, AmbaDSP_ImgExecuterUnitConfig.c, exe_calc_geo_settings(), ID = 42, description : invalid geometry fail case
+Rval = 0x00000000, AmbaDSP_ImgExecuterUnitConfig.c, exe_calc_geo_settings(), ID = 43, description : OK case
+Rval = 0x00000000, AmbaDSP_ImgExecuterUnitConfig.c, exe_calc_geo_settings(), ID = 44, description : OK case
+Rval = 0x01100104, AmbaDSP_ImgExecuterUnitConfig.c, exe_calc_geo_settings(), ID = 45, description : window calculate fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, img_exe_inject_safety_error(), ID = 46, description : ring buffer fail case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, img_exe_inject_safety_error(), ID = 47, description : ctx-id fail case
+Rval = 0x01100008, AmbaDSP_ImgExecuterComponentIF.c, img_exe_inject_safety_error(), ID = 48, description : invalid params fail case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, img_exe_inject_safety_error(), ID = 49, description : ring buffer fail case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, img_exe_init_safety_executer(), ID = 50, description : ctx-id fail case
+Rval = 0x01100005, AmbaDSP_ImgExecuterComponentIF.c, img_exe_query_frame_info(), ID = 51, description : null-ptr fail case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, img_exe_query_frame_info(), ID = 52, description : ctx-id fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, img_exe_query_frame_info(), ID = 53, description : invalid ik-id fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, img_exe_query_frame_info(), ID = 54, description : null flow_tbl_list content fail case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, img_exe_init_executer(), ID = 55, description : ctx-id fail case
+Rval = 0x01100002, AmbaDSP_ImgExecuterComponentIF.c, img_exe_init_executer(), ID = 56, description : non-init fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, img_exe_init_executer(), ID = 57, description : invalid pipe fail case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, img_exe_init_executer(), ID = 58, description : invalid pipe fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, exe_query_frame_info_check_run_num(), ID = 59, description : running number fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, exe_query_frame_info_check_run_num(), ID = 60, description : running number fail case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, exe_query_frame_info_check_run_num(), ID = 61, description : running number OK case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, exe_query_frame_info_check_run_num(), ID = 62, description : running number fail case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, exe_query_frame_info_check_run_num(), ID = 63, description : running number fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, exe_clone_flow_control_and_tbl_list(), ID = 64, description : ctx-id fail case
+Rval = 0x01100005, AmbaDSP_ImgExecuterComponentIF.c, exe_get_next_flow_control_index(), ID = 65, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgExecuterComponentIF.c, exe_get_next_cr_index(), ID = 66, description : null-ptr fail case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, exe_get_next_cr_index(), ID = 67, description : ctx-id fail case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, exe_get_next_cr_index_part1(), ID = 68, description : if (p_update_flag->iso.sensor_information_updated != 0U) case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, exe_get_next_cr_index_part1(), ID = 69, description : if((non_equal_op_u32(p_update_flag->iso.calib_warp_info_updated, 0U) + non_equal_op_u32(p_update_flag->iso.warp_internal_updated, 0U)) != 0U) true OK case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, exe_get_next_cr_index_part2(), ID = 70, description : if (p_update_flag->iso.dgain_sat_lvl_updated  != 0U) case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, exe_get_next_cr_index_part2(), ID = 71, description : if (p_update_flag->iso.pre_cc_gain_updated  != 0U) case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, exe_check_next_cr_index(), ID = 72, description : ctx-id fail case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, exe_get_cr_utilities(), ID = 73, description : hdr_1x OK case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, exe_compute_hdr_1x_cr(), ID = 74, description : hdr_1x OK case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, exe_get_cr_utilities(), ID = 75, description : video pipe fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, exe_get_cr_utilities(), ID = 76, description : pipe fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, exe_cmpt_invalid_cr_utility(), ID = 77, description : invalid execute utility fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, exe_cmpt_invalid_cr_utility(), ID = 78, description : invalid execute utility fail case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, exe_set_flow_header(), ID = 79, description : ctx-id fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, exe_clean_flow_ctrl_cache_sec2(), ID = 80, description : wron cr_id fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, exe_clean_flow_ctrl_cache_sec2(), ID = 81, description : wron cr_id fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, exe_clean_flow_ctrl_cache_sec3(), ID = 82, description : wron cr_id fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, exe_clean_flow_ctrl_cache_sec3(), ID = 83, description : wron cr_id fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, exe_clean_flow_ctrl_cache_sec4(), ID = 84, description : wron cr_id fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, exe_clean_flow_ctrl_cache_sec4(), ID = 85, description : wron cr_id fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, exe_clean_flow_ctrl_cache_sec18(), ID = 86, description : wron cr_id fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, exe_clean_flow_ctrl_cache_sec18(), ID = 87, description : wron cr_id fail case
+Rval = 0x01100005, AmbaDSP_ImgExecuterComponentIF.c, exe_clean_flow_ctrl_cache(), ID = 88, description : null-ptr fail case
+Rval = 0x01100005, AmbaDSP_ImgExecuterComponentIF.c, exe_flow_ctrl_ring_check(), ID = 89, description : null-ptr fail case
+Rval = 0x01100204, AmbaDSP_ImgExecuterComponentIF.c, ik_cr_memory_fence_check(), ID = 90, description : CR fence corruption fail case
+Rval = 0x01100005, AmbaDSP_ImgExecuterComponentIF.c, exe_get_previous_flow_control_index(), ID = 91, description : null-ptr fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, exe_get_previous_flow_control_index(), ID = 92, description : invalid previous_count fail case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_check_cr_mem_fence_4(), ID = 93, description : ctx-id fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_check_cr_mem_fence_4(), ID = 94, description : flow_idx fail case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_check_cr_mem_fence_3(), ID = 95, description : ctx-id fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_check_cr_mem_fence_3(), ID = 96, description : flow_idx fail case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_check_cr_mem_fence_2(), ID = 97, description : ctx-id fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_check_cr_mem_fence_2(), ID = 98, description : flow_idx fail case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_check_cr_mem_fence_1(), ID = 99, description : ctx-id fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_check_cr_mem_fence_1(), ID = 100, description : flow_idx fail case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_check_flow_tbl_memory_fence(), ID = 101, description : ctx-id fail case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_check_ctx_mem_fence_2(), ID = 102, description : ctx-id fail case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_check_ctx_mem_fence_2(), ID = 103, description : ctx-id fail case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, img_exe_inject_safety_error_mem_fence(), ID = 104, description : OK case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, img_exe_inject_safety_crc_mismatch_error(), ID = 105, description : OK case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, exe_set_frame_info(), ID = 106, description : ctx-id fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, img_exe_execute_invalid_cr(), ID = 107, description : test fail case
+Rval = 0x01100200, AmbaDSP_ImgExecuterComponentIF.c, img_exe_execute_safety_cr(), ID = 108, description : test fail case
+Rval = 0x01100100, AmbaDSP_ImgExecuterComponentIF.c, filter_update_check_asf_fstshp(), ID = 109, description : test fail case
+Rval = 0x01100100, AmbaDSP_ImgExecuterComponentIF.c, filter_update_check_asf_fstshp(), ID = 110, description : test fail case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, filter_update_check_non_linear(), ID = 111, description : OK case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, img_exe_execute_first_cr(), ID = 112, description : ctx-id fail case
+Rval = 0x01100002, AmbaDSP_ImgExecuterComponentIF.c, img_exe_execute_first_cr(), ID = 113, description : non-init ctx fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, img_exe_execute_first_cr(), ID = 114, description : get flow_ctr fail case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, img_exe_execute_update_cr(), ID = 115, description : ctx-id fail case
+Rval = 0x01100002, AmbaDSP_ImgExecuterComponentIF.c, img_exe_execute_update_cr(), ID = 116, description : non-init ctx fail case
+Rval = 0x01100000, AmbaDSP_ImgExecuterComponentIF.c, img_exe_execute_update_cr(), ID = 117, description : get flow_ctr fail case
+Rval = 0x01100200, AmbaDSP_ImgExecuterComponentIF.c, img_exe_execute_update_cr(), ID = 118, description : test already enter safety state fail case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, uint32_min_ik(), ID = 119, description : uint32_min_ik(0, 1) = 0 OK case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_select_crc_check_list(), ID = 120, description : test get ctx fail NG case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_calc_crc32_hdr(), ID = 121, description : test get ctx fail NG case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_calc_crc32_hdr(), ID = 122, description : test crc_check_list are 0 OK case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_calc_crc32_cfa(), ID = 123, description : test get ctx fail NG case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_calc_crc32_cfa(), ID = 124, description : test crc_check_list are 0 OK case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_calc_crc32_rgb(), ID = 125, description : test get ctx fail NG case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_calc_crc32_rgb(), ID = 126, description : test crc_check_list are 0 OK case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_calc_crc32_yuv(), ID = 127, description : test get ctx fail NG case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_calc_crc32_yuv(), ID = 128, description : test crc_check_list are 0 OK case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_calc_crc32_sec3(), ID = 129, description : test get ctx fail NG case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_calc_crc32_sec3(), ID = 130, description : test crc_check_list are 0 OK case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_calc_crc32_sec4(), ID = 131, description : test get ctx fail NG case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_calc_crc32_sec4(), ID = 132, description : test ability.pipe == HDR or CE OK case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_calc_crc32_sec4(), ID = 133, description : test ability.pipe == HDR or CE OK case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_calc_crc32_sec4(), ID = 134, description : test crc_check_list are 0 OK case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_calc_crc32_sec18(), ID = 135, description : test get ctx fail NG case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_calc_crc32_sec18(), ID = 136, description : test crc_check_list are 0 OK case
+Rval = 0x01100003, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_calc_crc32(), ID = 137, description : test get ctx fail NG case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_calc_crc32(), ID = 138, description : test crc_check_list are 0 OK case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, exe_ik_calc_crc32(), ID = 139, description : test if(p_ctx->filters.input_param.safety_info.update_freq == 0u) true OK case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, img_exe_execute_first_cr(), ID = 140, description : test if(p_ik_buffer_info->safety_crc_enable == 1u) false OK case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, img_exe_execute_update_cr(), ID = 141, description : test if(p_ik_buffer_info->safety_crc_enable == 1u) false OK case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, img_exe_execute_first_cr(), ID = 142, description : test (p_ctx->filters.input_param.safety_info.update_freq == 1u) false and ((((uint32)p_ctx->organization.active_cr_state.cr_running_number - 1u) % p_ctx->filters.input_param.safety_info.update_freq) == 0u) true OK case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, img_exe_execute_update_cr(), ID = 143, description : test (p_ctx->filters.input_param.safety_info.update_freq == 1u) false and ((((uint32)p_ctx->organization.active_cr_state.cr_running_number - 1u) % p_ctx->filters.input_param.safety_info.update_freq) == 0u) true OK case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, img_exe_execute_first_cr(), ID = 144, description : test (p_ctx->filters.input_param.safety_info.update_freq == 1u) false and ((((uint32)p_ctx->organization.active_cr_state.cr_running_number - 1u) % p_ctx->filters.input_param.safety_info.update_freq) == 0u) false OK case
+Rval = 0x00000000, AmbaDSP_ImgExecuterComponentIF.c, img_exe_execute_update_cr(), ID = 145, description : test (p_ctx->filters.input_param.safety_info.update_freq == 1u) false and ((((uint32)p_ctx->organization.active_cr_state.cr_running_number - 1u) % p_ctx->filters.input_param.safety_info.update_freq) == 0u) false OK case

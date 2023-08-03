@@ -1,0 +1,19 @@
+# img
+
+IMG_SOC_NAME = $(AMBA_CHIP_ID)
+ifeq ($(wildcard $(srctree)/svc/apps/icam/core/src/img/qnx/$(IMG_SOC_NAME)),)
+IMG_SOC_NAME = comsoc
+endif
+
+ifeq ($(CONFIG_ICAM_IMGITUNER_USED),y)
+EXTRA_SRCVPATH += $(ICAM_CORE_SRC)/img/qnx/$(IMG_SOC_NAME)
+EXTRA_INCVPATH += $(srctree)/svc/comsvc/tune/ituner
+SRCS += SvcCmdIK_Idsp.c
+SRCS += SvcCmdIK.c
+endif
+
+SRCS += SvcCvImgUtil.c
+ifeq ($(CONFIG_BUILD_IMGFRW_AAA),y)
+EXTRA_INCVPATH += $(srctree)/svc/comsvc/imgfrw/main/inc
+SRCS += SvcImg.c
+endif

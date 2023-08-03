@@ -1,0 +1,56 @@
+config CV_EXTERNAL_MSG_THREAD
+    bool "Enable external message thread loop"
+    default y
+
+menu "CV Configuration"
+
+config CV_FLEXIDAG_UT
+    bool "Enable FlexidagUT"
+    default n
+
+config CV_FLEXIDAG_AMBAODFC
+    bool "Enable FlexidagAmbaODFC"
+    default n
+
+config CV_FLEXIDAG_AMBAODEM
+    bool "Enable FlexidagAmbaODEM"
+    default n
+
+config CV_FLEXIDAG_AMBASEGFC
+    bool "Enable FlexidagAmbaSEGFC"
+    default n
+
+config CV_FLEXIDAG_AMBASEGAVM
+    bool "Enable FlexidagAmbaSEGAVM"
+    default n
+
+config CV_FLEXIDAG_AMBAOD37FC
+    bool "Enable FlexidagAmbaOD37FC"
+    default n
+
+config CV_FLEXIDAG_AMBASEG39FC
+    bool "Enable FlexidagAmbaSeg39FC"
+    default n
+
+config CV_FLEXIDAG_AMBAPERCEPTION
+    bool "Enable FlexidagAmbaPerception"
+    default n
+
+config CVALGO_CT_SAMPLE
+    bool "Enable CT sample CvAlgo"
+    default n
+
+config CV_FLEXIDAG_STIXEL
+    bool "Enable FlexidagStixel"
+    default n
+
+config CV_FLEXIDAG_STIXEL_V2
+    bool "Enable FlexidagStixel V2"
+    default n
+
+config BUILD_CTFW
+    bool "Build CTFW"
+    default n
+
+endmenu
+

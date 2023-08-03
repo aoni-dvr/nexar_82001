@@ -1,0 +1,74 @@
+menu "Local packages"
+comment "Local packages use recipies maintained under ambarella/"
+source "ambarella/package/ipcdef/Config.in"
+source "ambarella/package/ambaipc/Config.in"
+source "ambarella/package/ambamal/Config.in"
+source "ambarella/package/ambacv/Config.in"
+source "ambarella/package/hostapi/Config.in"
+source "ambarella/package/ambaipc_test/Config.in"
+source "ambarella/package/ambaipc_util/Config.in"
+source "ambarella/package/network_turnkey/Config.in"
+source "ambarella/package/amba_util/Config.in"
+source "ambarella/package/amba_examples/Config.in"
+source "ambarella/package/eva/Config.in"
+source "ambarella/package/ambacomm/Config.in"
+source "ambarella/package/commprocess/Config.in"
+source "ambarella/package/rtsp_server/Config.in"
+source "ambarella/package/basic_usage_environment/Config.in"
+source "ambarella/package/usage_environment/Config.in"
+source "ambarella/package/groupsock/Config.in"
+source "ambarella/package/live_media/Config.in"
+source "ambarella/package/cavalry_lib/Config.in"
+source "ambarella/package/cavalry_test/Config.in"
+source "ambarella/package/amba_camera/Config.in"
+source "ambarella/package/amba_tvm/Config.in"
+source "ambarella/package/ambavx/Config.in"
+source "ambarella/package/amba_dram_statis/Config.in"
+
+menu "Data Distribution Service (DDS)"
+source "ambarella/package/cyclonedds/Config.in"
+source "ambarella/package/fast-dds/Config.in"
+source "ambarella/package/asio/Config.in"
+source "ambarella/package/fast-cdr/Config.in"
+source "ambarella/package/foonathan-memory/Config.in"
+source "ambarella/package/opendds/Config.in"
+source "ambarella/package/ace_tao/Config.in"
+endmenu # DDS
+
+source "ambarella/package/amba_http_server/Config.in"
+source "ambarella/package/qflash/Config.in"
+source "ambarella/package/quectel-gnss-fota/Config.in"
+source "ambarella/package/qconnect_manager/Config.in"
+source "ambarella/package/qfirehose/Config.in"
+source "ambarella/package/http_control_server/Config.in"
+endmenu
+
+menu "Ambarella external packages"
+comment "External SDK from Other vendors like Atheros/Realtek/Broadcom/Marvell"
+source "ambarella/package/external_sdk/Config.in"
+endmenu
+
+config BR2_AMBARELLA_AUTOHIBER
+	bool "Auto hibernation at bootup"
+	default y
+	help
+	  Enabling the option will automatically hibernate at cold boot.
+
+config BR2_AMBARELLA_LINUX_TTY
+	string "Character device to use as console?"
+	default ""
+	help
+	  tty device used for linux console
+
+config BR2_AMBARELLA_LINUX_RESPAWN_SH
+	bool "Put a getty on the serial port?"
+	default y
+	help
+	  Do not enable this if you do not have a linux UART
+
+config BR2_AMBARELLA_SIMPLE_RCS
+	bool "Run a minimum init script"
+	default n
+	help
+	  Enable this if you want to run a minimum system init
+

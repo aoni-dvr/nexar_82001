@@ -1,0 +1,38 @@
+config BR2_PACKAGE_AMBA_DRAM_STATIS
+    bool "Build Ambarella private DRAM Statistics Driver"
+    default n
+    help
+        Build Ambarella private DRAM statistics driver for Linux.
+
+choice
+	prompt "Ambarella_Architectue"
+	default AMBARELLA_ARCH_CV3
+    depends on BR2_PACKAGE_AMBA_DRAM_STATIS
+	help
+	  Choose Ambarella Architecture
+
+config AMBARELLA_ARCH_CV3
+	bool "AMBARELLA_ARCH_CV3"
+	help
+	  CV3x chip
+
+config AMBARELLA_ARCH_CV5
+	bool "AMBARELLA_ARCH_CV5"
+	help
+	  CV5x chip
+
+endchoice # AMBARELLA_ARCH
+
+config AMBARELLA_ARCH
+	string
+	default "cv3" if AMBARELLA_ARCH_CV3
+	default "cv5" if AMBARELLA_ARCH_CV5
+
+config AMBA_DRAM_STATIS_DRV
+	string
+	default "m" if BR2_PACKAGE_AMBA_DRAM_STATIS
+
+menu "DRAM Statistics output"
+    depends on BR2_PACKAGE_AMBA_DRAM_STATIS
+
+endmenu

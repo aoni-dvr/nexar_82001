@@ -1,0 +1,4 @@
+config BR2_PACKAGE_BASIC_USAGE_ENVIRONMENT
+	bool "BasicUsageEnvironment"
+	help
+	  This is the basic usage environment lib.

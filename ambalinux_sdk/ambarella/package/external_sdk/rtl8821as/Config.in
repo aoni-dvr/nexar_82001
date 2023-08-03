@@ -1,0 +1,14 @@
+config BR2_PACKAGE_RTL8821AS
+	bool "RTL8821AS"
+	help
+	  Realtek RTL8821AS.
+
+#if BR2_PACKAGE_RTL8821AS
+#
+#config BR2_PACKAGE_RTL8821AS_BT
+#	bool "Support Bluetooth"
+#	help
+#	  Support Bluetooth.
+#
+#endif
+

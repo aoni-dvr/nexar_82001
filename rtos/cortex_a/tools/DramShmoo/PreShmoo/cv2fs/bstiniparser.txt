@@ -1,0 +1,703 @@
+               BSTINIPARSER
+===========================================
+
+Copyright (C) 2018-2048, Ambarella, Inc.
+Author: Cao Rongrong <rrcao@ambarella.com>
+
+===========================================
+
+
+
+I - Introduction
+----------------
+
+BST is the first firmware loaded by the SoC after power up. The main functions
+of BST are to initialize DRAM and then load the next firmware, i.e., ATF or BLD,
+into DRAM to run.
+
+The BST need to support several boot options, and to cover many DRAM parameters
+for boards with different configurations. Therefore we need a tool to generate
+configurations for BST to use.
+
+For S2L, S3, S3L, S5, S5L and CV1, the BST is provided in binary format which is
+congfigured by "bstconfig", and THEY ARE BEYOND OF THIS DOC.
+
+For later SoCs since CV22, we will provide BST as source code which is configured
+by "bstiniparser", and this doc is to introduce "bstiniparser".
+
+Due to the definition of some registers in DDRC are changed, the SoCs are divided
+into these groups:
+DDRC_V1: CV2, CV22, CV25, S6LM, CV28
+DDRC_V2: CV5
+
+
+
+II - Usage
+----------
+
+"bstiniparser" is located in amboot/src/bst/tools, it takes an .ini file as input,
+and then generate a .h file for BST to include and compile.
+
+Besides generating the .h file for BST, actually "bstiniparser" can also be used
+to generate .ads file and .csf file which are DRAM initialization sequence used by
+dram_preliminary_shmoo, AmbaUSB and JTAG(CodeVisor)
+
+Here are the commands to generate .h, .ads and .csf file:
+1) For BST: bstiniparser --for bst BOARD.ini > parameters.h
+2) For JTAG: bstiniparser --for jtag BOARD.ini > jtag.csf
+3) For AmbaUSB: bstiniparser --for usb BOARD.ini > usb.ads
+
+PS: normally you don't need to generate the .h file manually, as it's already
+    implemented in amboot/src/bst/SOC/Makefile. When you type "make" to build
+    firmware, the .h file will be generated automatically when building BST.
+
+In addition, if you has the old style .ini file which is used by bstconfig, you
+can also use "bstiniparser" to convert it to the new style .ini file.
+e.g., bstiniparser --convert cv22 old_BOARD.ini > new_BOARD.ini
+
+
+
+III - INI File
+--------------
+
+"bstiniparser" takes .ini file as input, so that all of configurations needed
+by BST or DRAM initialization sequence are specified in the .ini file.
+
+The .ini file is in XML format, and only below form is supported:
+    <ITEM value="VALUE"/>
+
+The items in .ini file are divided into these types:
+    [Mandatory]:               Mandatory for all cases
+    [Mandatory for LPDDR5]:    Mandatory for LPDDR5 while Optional for other DDR
+    [Mandatory for LPDDR4]:    Mandatory for LPDDR4 while Optional for other DDR
+    [Mandatory for DDR4]:      Mandatory for DDR4 while Optional for other DDR
+    [Mandatory for "FEATURE"]: Mandatory if need to support "FEATURE"
+    [Optional]:                Optional for all cases
+    [Optional for DDRC_V1]:    Optional for DDRC_V1 only, while invalid for DDRC_V2
+    [Optional for DDRC_V2]:    Optional for DDRC_V2 only, while invalid for DDRC_V1
+    [Optional for LPDDR5]:     Optional for LPDDR5 while invalid for other DDR
+    [Optional for LPDDR4]:     Optional for LPDDR4 while invalid for other DDR
+    [Optional for DDR4]:       Optional for DDR4 while invalid for other DDR
+    [Automatic]:               Specified by "fixbstini", no need to specify manually
+
+
+-----------------------------------------------
+Below are the descriptions for mandotary items.
+-----------------------------------------------
+
+1)  CHIP_NAME [Mandatory]
+    The SoC/Chip name like CV22, CV25 and etc.
+    e.g.: <CHIP_NAME value="CV22"/>
+
+2)  CPU_FREQUENCY [Mandatory]
+    The CPU frequency which is in unit of MHz, and it must be multiple of 12MHz.
+    e.g.: <CPU_FREQUENCY value="1008 MHz"/>
+
+3)  CORE_FREQUENCY [Mandatory]
+    The CORE frequency which is in unit of MHz, and it must be multiple of 12MHz.
+    e.g.: <CORE_FREQUENCY value="792 MHz"/>
+
+4)  IDSP_FREQUENCY [Mandatory]
+    The IDSP frequency which is in unit of MHz, and it must be multiple of 12MHz.
+    e.g.: <IDSP_FREQUENCY value="408 MHz"/>
+
+5)  VISION_FREQUENCY [Mandatory if SoC has vision clock]
+    The VISION frequency which is in unit of MHz, and it must be multiple of 12MHz.
+    e.g.: <VISION_FREQUENCY value="840 MHz"/>
+
+6)  FEX_FREQUENCY [Mandatory if SoC has fex clock]
+    The FEX frequency which is in unit of MHz, and it must be multiple of 12MHz.
+    e.g.: <FEX_FREQUENCY value="504 MHz"/>
+
+7)  DRAM_FREQUENCY [Mandatory]
+    The DRAM frequency which is in unit of MHz, and it must be multiple of 12MHz.
+    e.g.: <DRAM_FREQUENCY value="1800 MHz"/>
+
+8)  DRAM_TYPE [Mandatory]
+    The DRAM type, choices are ["LPDDR5", "LPDDR4", "LPDDR4X", "DDR4"].
+    e.g.: <DRAM_TYPE value="LPDDR4"/>
+
+9)  DRAM_SPEED_GRADE [Mandatory for DDR4]
+    The DRAM speed grade, choices are "DDR4-{DATA RATE}/{CL-nRCD-nRP}" or [
+     "DDR4-2400P", "DDR4-2400R", "DDR4-2400T", "DDR4-2400U",
+     "DDR4-2666T", "DDR4-2666U", "DDR4-2666V", "DDR4-2666W",
+     "DDR4-2933V", "DDR4-2933W", "DDR4-2933Y", "DDR4-2933AA",
+     "DDR4-3200W", "DDR4-3200AA", "DDR4-3200AC"].
+    PS: a) many DDR4's parameters are determined by speed grade, so DRAM_SPEED_GRADE
+           is mandatory for DDR4, but it's useless for LPDDR4, because the LPDDR4's
+           parameters are mainly determined by the frequency.
+        b) "DDR4-2400P"/"DDR4-2400R"/... alike style is defined by DDR4 spec, but
+           some DDR4 vendors like Micron use their own naming scheme, so you may
+           not be able to find the standard speed grade name(defined by DDR4 spec)
+           in corresponding DDR4 datasheet.
+           However, no matter what the speed grade name is, the DDR4's Speed Grade
+           can be uniquely determined by {DATA RATE}/{CL-nRCD-nRP}, and you must be
+           able to find its "Data Rate" and "CL-nRCD-nRP" combination in datasheet.
+           So "DDR4-{DATA RATE}/{CL-nRCD-nRP}" is another choice to specify DDR4's
+           speed grade. (Ignore "{" and "}".)
+    e.g.: <DRAM_SPEED_GRADE value="DDR4-3200AA"/>
+          <DRAM_SPEED_GRADE value="DDR4-3200/22-22-22"/>
+
+10) DRAM_SIZE [Mandatory]
+    The DRAM size which is in unit of Gbits or Mbits.
+    NOTE: this is the entire DRAM size mounted on the board. For example, if there
+          are four DDR4 devices mounted on the board, and each one is 4Gb, then the
+          DRAM_SIZE should be 16Gb.
+    e.g.: <DRAM_SIZE value="8 Gbits"/>
+
+11) DRAM_BUS_WIDTH [Mandatory]
+    The DRAM bus width, choices are ["16 bits", "32 bits", "64 bits"].
+    NOTE: this is the entire DRAM bus width on the board. For example, if there
+          are two LPDDR4 devices mounted on the board, and each one is 32 bits,
+          then the DRAM_BUS_WIDTH should be 64 bits.
+    e.g.: <DRAM_BUS_WIDTH value="32 bits"/>
+
+12) DRAM_DUAL_RANK [Mandatory if using dual rank DDR]
+    The DRAM is dual rank or not, choices are ["Enable", "Disable"].
+    NOTE: for dual rank DDR, both CS_0 and CS_1 are connected seperately to the DDR.
+    e.g.: <DRAM_DUAL_RANK value="Enable"/>
+
+13) DRAM_TRAINING [Mandatory]
+    Enable DRAM training or not, choices are:
+    DDR4:   ["Enable", "Disable"]
+    LPDDR4: ["Enable", "Disable", "Oneshot"]
+    LPDDR5: ["Enable", "Disable"]
+    PS: "Oneshot" means the LPDDR4 training will be done only once, i.e., at the
+           first boot.
+    e.g.: <DRAM_TRAINING value="Enable"/>
+
+14) DDRC_TERM [Mandatory]
+    The termination/ODT in DDRC pad side for DQ bus, choices are
+    ["Disable", "RZQ/1", "RZQ/2", "RZQ/3", "RZQ/4", "RZQ/5", "RZQ/6", "RZQ/7"].
+    e.g.: <DDRC_TERM value="RZQ/4"/>
+
+15) DDRC_DDS [Mandatory]
+    The pull-down drive strength in DDRC pad side for DQ and CA bus, choices are
+    ["Disable", "RZQ/1", "RZQ/2", "RZQ/3", "RZQ/4", "RZQ/5", "RZQ/6", "RZQ/7"].
+    e.g.: <DDRC_DDS value="RZQ/7"/>
+
+16) DDRC_PDDS [Mandatory]
+    The pull-up drive strength in DDRC pad side for DQ and CA bus, choices are
+    ["Disable", "RZQ/1", "RZQ/2", "RZQ/3", "RZQ/4", "RZQ/5", "RZQ/6", "RZQ/7"].
+    e.g.: <DDRC_PDDS value="RZQ/1"/>
+
+17) DDRC_READ_DLL [Mandatory]
+    The SEL value of read DLL, valid range is 0x00 ~ 0x3F.
+    e.g.: <DDRC_READ_DLL value="0x0c"/>
+
+18) DDRC_SYNC_DLL [Mandatory]
+    The SEL value of sync DLL, valid range is 0x00 ~ 0x3F.
+    e.g.: <DDRC_SYNC_DLL value="0x08"/>
+
+19) DDRC_WRITE_DLL [Mandatory]
+    The SEL value of write DLL, valid range is 0x00 ~ 0x3F.
+    e.g.: <DDRC_WRITE_DLL value="0x0c"/>
+
+20) DDRC_DQ_READ_DELAY [Mandatory for LPDDR4 and LPDDR5]
+    The read delay for DQ bus. As the register for read delay in DDRC is changed
+    since DDRC_V2, so there is difference for DDRC_DQ_READ_DELAY between DDRC_V1
+    SoCs and DDRC_V2 SoCs.
+    PS: a) For DDRC_V1: Bit0 of this value is "enable" bit which must be set, so that
+           only odd number is legal. It's valid range is odd number in 0x01 ~ 0x1F.
+           e.g.: <DDRC_DQ_READ_DELAY value="0x03"/>
+        b) For DDRC_V2: there are actually two DELAYs for read DQ, one is "coarse"
+           delay, while another is "fine" delay. And each step of "coarse" delay
+           is about 30.9ps~36.8ps, each step of "fine" delay is about 2.8ps~3.4ps.
+           Hence each coarse delay is nearly 12 times of fine delay, and each coarse
+           delay has 32 steps, so valid range is in 0 ~ 383.
+           e.g.: <DDRC_DQ_READ_DELAY value="35"/>
+
+21) DDRC_DQ_WRITE_DELAY [Mandatory for LPDDR4 and LPDDR5]
+    The write delay for DQ bus. As the register for write delay in DDRC is changed
+    since DDRC_V2, so there is difference for DDRC_DQ_WRITE_DELAY between DDRC_V1
+    SoCs and DDRC_V2 SoCs.
+    PS: a) For DDRC_V1: It's valid range is 0x00 ~ 0x3F.
+           e.g.: <DDRC_DQ_WRITE_DELAY value="0x29"/>
+        b) For DDRC_V2: there are actually two DELAYs for write DQ, one is "coarse"
+           delay, while another is "fine" delay. And each step of "coarse" delay
+           is about 30.9ps~36.8ps, each step of "fine" delay is about 2.8ps~3.4ps.
+           Hence each coarse delay is nearly 12 times of fine delay, and each coarse
+           delay has 32 steps, so valid range is in 0 ~ 383.
+           e.g.: <DDRC_DQ_WRITE_DELAY value="120"/>
+
+22) DDRC_DQ_VREF [Mandatory for LPDDR4 and LPDDR5]
+    The VREF value in DDRC pad side for DQ bus, valid range is 0x00 ~ 0x2F.
+    e.g.: <DDRC_DQ_VREF value="0x20"/>
+
+23) DDRC_BYTE_MAP/DDRC0_BYTE_MAP/DDRC1_BYTE_MAP [Mandatory if bytes are swapped]
+    The byte mapping from data IO to DDRC according to schematic design, choices are
+    ["B3B2B1B0", "B3B2B0B1", "B2B3B1B0", "B2B3B0B1",
+     "B1B0B3B2", "B0B1B3B2", "B1B0B2B3", "B0B1B2B3"]
+    e.g.: <DDRC_BYTE_MAP value="B3B2B0B1"/>
+
+24) DRAM_DS [Mandatory]
+    The drive strength in DDR4/LPDDR4/LPDDR5 side for DQ bus, choices are:
+    DDR4:   ["RZQ/5", "RZQ/6", "RZQ/7"]
+    LPDDR4: ["RZQ/1", "RZQ/2", "RZQ/3", "RZQ/4", "RZQ/5", "RZQ/6"]
+    LPDDR5: ["RZQ/1", "RZQ/2", "RZQ/3", "RZQ/4", "RZQ/5", "RZQ/6"]
+    e.g.: <DRAM_DS value="RZQ/6"/>
+
+25) DRAM_ODT [Mandatory]
+    The termination/ODT in DDR4 side for DQ bus only, or in LPDDR4 side for DQ
+    bus and CA bus, or in LPDDR5 side for DQ/NT-DQ bus, CA bus and WCK, choices are:
+    DDR4:   ["Disable", "RZQ/1", "RZQ/2", "RZQ/3", "RZQ/4", "RZQ/5", "RZQ/6", "RZQ/7"]
+    LPDDR4: ["Disable", "RZQ/1", "RZQ/2", "RZQ/3", "RZQ/4", "RZQ/5", "RZQ/6"]
+    LPDDR5: ["Disable", "RZQ/1", "RZQ/2", "RZQ/3", "RZQ/4", "RZQ/5", "RZQ/6"]
+    e.g.: <DRAM_ODT value="RZQ/6"/>
+
+26) DRAM_VREF [Mandatory for LPDDR4 and LPDDR5]
+    The VREF value for LPDDR4/LPDDR5 DQ and CA bus, it's valid range for LPDDR4 is
+    0x00 ~ 0x3F, while it's valid range for LPDDR5 is 0x00 ~ 0x7F.
+    PS: this item is useless for DDR4.
+    e.g.: <DRAM_VREF value="0x12"/>
+
+27) PARAM_RECOVERY_GPIO [Mandatory for Recovery]
+    The GPIO to indicate recovery, must be specified if need to support Recovery.
+    e.g.: <PARAM_RECOVERY_GPIO value="142"/>
+
+28) PARAM_SOC_NOTIFY_MCU_GPIO [Mandatory for dram self-refresh]
+    The GPIO used by SOC to tell MCU that soc will entry into dram-self-refresh.
+    MCU will do power-down sequence(only keep PSEQ3 up).
+    The Rising-edge signal triggers MCU
+    e.g.: <PARAM_SOC_NOTIFY_MCU_GPIO value="142"/>
+
+29) PARAM_MCU_NOTIFY_SOC_GPIO [Mandatory for dram self-refresh]
+    The GPIO tells SOC Whether it is normal boot or self-refresh resume boot
+    PARAM_MCU_NOTIFY_SOC_GPIO = 1 for normal boot
+    PARAM_MCU_NOTIFY_SOC_GPIO = 0 for self-refresh resume boot
+    e.g.: <PARAM_MCU_NOTIFY_SOC_GPIO value="143"/>
+
+----------------------------------------------
+Below are the descriptions for optional items.
+----------------------------------------------
+
+1)  AMBOOT_BLD_RAM_ADDRESS [Automatic]
+    PARAM_BLD_RAM_ADDRESS [Optional]
+    The DRAM address where BLD/Amboot will be loaded into by BST.
+    AMBOOT_BLD_RAM_ADDRESS will be specified automatically by "fixbstini", so
+    you don't need to specify it in .ini file manually.
+    However, if PARAM_BLD_RAM_ADDRESS is specified, it will overwrite the value
+    of AMBOOT_BLD_RAM_ADDRESS.
+    e.g.: <PARAM_BLD_RAM_ADDRESS value="0x00000000"/>
+
+
+2)  AMBOOT_BLD_MEDIA_START [Automatic]
+    PARAM_BLD_MEDIA_START [Optional]
+    The media address where BLD/Amboot is located in NAND/SPINAND/SPINOR/eMMC.
+    AMBOOT_BLD_MEDIA_START will be specified automatically by "fixbstini", so
+    you don't need to specify it in .ini file manually.
+    However, if PARAM_BLD_MEDIA_START is specified, it will overwrite the value
+    of AMBOOT_BLD_MEDIA_START.
+    e.g.: <PARAM_BLD_MEDIA_START value="0x00020000"/>
+
+
+3)  PARAM_BLD_MEDIA_SIZE [Optional]
+    The size of BLD/Amboot in unit of byte, normally you don't need to specify this
+    parameters at all, but in case PARAM_BLD_MEDIA_SIZE is required to be specified,
+    you should specify it to a large enough size in order to cover the "increased size"
+    in future. Surely, there is a side effect for large PARAM_BLD_MEDIA_SIZE, that is,
+    the boot time will be increased.
+    e.g.: <PARAM_BLD_MEDIA_SIZE value="0x00040000"/>
+
+
+4)  AMBOOT_ATF_MEDIA_START [Automatic]
+    PARAM_ATF_MEDIA_START [Optional]
+    The media address where ATF is located in NAND/SPINAND/SPINOR/eMMC.
+    AMBOOT_ATF_MEDIA_START will be specified automatically by "fixbstini", so
+    you don't need to specify it in .ini file manually.
+    However, if PARAM_ATF_MEDIA_START is specified, it will overwrite the value
+    of AMBOOT_ATF_MEDIA_START.
+    e.g.: <PARAM_ATF_MEDIA_START value="0x00080000"/>
+
+
+5)  AMBOOT_ATF_MEDIA_SIZE [Automatic]
+    PARAM_ATF_MEDIA_SIZE [Optional]
+    The size of ATF in unit of byte.
+    AMBOOT_ATF_MEDIA_SIZE will be specified automatically by "fixbstini", so
+    you don't need to specify it in .ini file manually.
+    However, if PARAM_ATF_MEDIA_SIZE is specified, it will overwrite the value
+    of AMBOOT_ATF_MEDIA_SIZE.
+    NOTE:
+       a) PARAM_ATF_MEDIA_SIZE MUST BE SPECIFIED IN THIS CASE: BST firmware will
+          never be upgraded with ATF together, and there is such a probability that
+          the increased size of upgrading ATF cross the NAND/SPINAND/SPINOR/eMMC
+          page/sector boundary.
+       b) Normally if PARAM_ATF_MEDIA_SIZE is required to be specified, you should
+          specify it to a large enough size in order to cover the "increased size"
+          in future. Surely, there is a side effect for large PARAM_ATF_MEDIA_SIZE,
+          that is, the boot time will be increased.
+    e.g.: <PARAM_ATF_MEDIA_SIZE value="0x00020000"/>
+
+6)  AMBOOT_PTB_RAM_ADDRESS [Automatic]
+    PARAM_PTB_RAM_ADDRESS [Optional]
+    The DRAM address where PTB will be loaded into by BST.
+    AMBOOT_PTB_RAM_ADDRESS will be specified automatically by "fixbstini", so
+    you don't need to specify it in .ini file manually.
+    However, if PARAM_PTB_RAM_ADDRESS is specified, it will overwrite the value
+    of AMBOOT_PTB_RAM_ADDRESS.
+    PS: it's necessary only when PTB is required to be loaded by BST.
+    e.g.: <PARAM_PTB_RAM_ADDRESS value="0x00200000"/>
+
+
+7)  AMBOOT_PTB_MEDIA_START [Automatic]
+    PARAM_PTB_MEDIA_START [Optional]
+    The media address where PTB is located in NAND/SPINAND/SPINOR/eMMC.
+    AMBOOT_PTB_MEDIA_START will be specified automatically by "fixbstini", so
+    you don't need to specify it in .ini file manually.
+    However, if PARAM_PTB_MEDIA_START is specified, it will overwrite the value
+    of AMBOOT_PTB_MEDIA_START.
+    PS: it's necessary only when PTB is required to be loaded by BST.
+    e.g.: <PARAM_PTB_MEDIA_START value="0x00020000"/>
+
+
+8)  AMBOOT_BAK_MEDIA_START [Automatic]
+    PARAM_BAK_MEDIA_START [Optional]
+    The media address where BAK is located in NAND/SPINAND/SPINOR/eMMC.
+    AMBOOT_BAK_MEDIA_START will be specified automatically by "fixbstini", so
+    you don't need to specify it in .ini file manually.
+    However, if PARAM_BAK_MEDIA_START is specified, it will overwrite the value
+    of AMBOOT_BAK_MEDIA_START.
+    PS: PARAM_BAK_MEDIA_START is optional only if Recovery feature is supported.
+    e.g.: <PARAM_BAK_MEDIA_START value="0x00080000"/>
+
+9)  PARAM_NAND_TIMING0/PARAM_NAND_TIMING1/PARAM_NAND_TIMING2 [Optional]
+    PARAM_NAND_TIMING3/PARAM_NAND_TIMING4/PARAM_NAND_TIMING5 [Optional]
+    PARAM_NAND_TIMING6 [Optional]
+    In order to cover all of the NANDs mounted on each boards, BST will use the
+    slowest NAND timing which will increase the boot time obviously. So if boot
+    time is critical, you can specify these items to have BST to use optimized
+    NAND timing to operate NAND faster.
+    The optimized NAND timing depend on the NAND clock and NAND device, but you
+    can read them from corresponding timing registers in NAND controller after
+    system boot up, then specify those values into these items.
+    PS: a) these items are optional for NAND/SPINAND boot only, but useless for
+           other boot media.
+        b) PARAM_NAND_TIMING4/PARAM_NAND_TIMING5/PARAM_NAND_TIMING6 are useless
+           for SPINAND boot as the NAND controller just have 4 timing registers
+           for SPINAND.
+        c) the timing registers address vary from NAND to SPINAND, please check
+           PRM for details.
+    e.g.: <PARAM_NAND_TIMING0 value="0x07060b06"/>
+          <PARAM_NAND_TIMING1 value="0x03030303"/>
+          <PARAM_NAND_TIMING2 value="0x0706340b"/>
+          <PARAM_NAND_TIMING3 value="0x07063424"/>
+          <PARAM_NAND_TIMING4 value="0x0c062001"/>
+          <PARAM_NAND_TIMING5 value="0x00353406"/>
+          <PARAM_NAND_TIMING6 value="0x00000000"/>
+
+10) PARAM_SPINAND_PS_SEL [Optional]
+    For SPINAND only, to choose the bit of row address as the plane select bit in
+    column address phase, choices are ["NO_PS", "PS5", "PS6", "PS7"], and default
+    value is "PS6" if not specified.
+    You should check the SPINAND datasheet to know the plane select bit.
+    e.g.: <PARAM_SPINAND_PS_SEL value="PS6"/>
+
+
+11)  AMBOOT_EMMC_NEXT_FW_AREA [Automatic]
+    The partiton where ATF/BLD is located in eMMC, choices are ["UserPartition",
+    "BootPartition1", "BootPartition2"].
+    PS: You can refer to eMMC spec to know these 3 partitions in details.
+    AMBOOT_EMMC_NEXT_FW_AREA will be specified automatically by "fixbstini", so
+    you don't need to specify it in .ini file manually.
+
+12) PARAM_SPINOR_4B_CONFIG [Optional]
+    For SPINOR only, to choose the way of entering 4B address mode, choices are
+    ["None", "Register", "Command", "CommandWE"], and default value is "None" if
+    not specified.
+    PS: If you need to access the SPINOR address after 0x1000000(16MB) in BST,
+        especially when RECOVERY is enabled, you may need to have the SPINOR to
+        enter 4B mode first. Normally there are 3 ways to enter 4B mode:
+        a) Config register inside spinor device: "Register"
+        b) Use "Enter 4B mode" command: "Command"
+        c) Use "Enter 4B mode" command with "Write Enable" together: "CommandWE"
+        However, some spinor devices no need to switch to 4B mode obviously, as
+        they can determine the 4B mode by the command id automatically. In this
+        case, you don't need to specify this item in .ini file,i.e., "None" is
+        used.
+        You should check the SPINOR datasheet to know the details.
+    e.g.: <PARAM_SPINOR_4B_CONFIG value="CommandWE"/>
+
+
+---------------------------------------------------------------------------------
+Below are the descriptions for advanced items which are optional and specified in
+case for advanced requirement or debug purpose.
+
+PS: NORMALLY MOST OF BELOW ITEMS ARE NOT NECESSARY TO BE SPECIFIED IN .INI FILE.
+---------------------------------------------------------------------------------
+
+1)  DRAM_TRAINING_REPEAT_NUM [Optional for DDRC_V1]
+    The repetition number of LPDDR4 training, it's used to get stable training
+    result as much as possible, valid range is 1 ~ 7, and default value is 3 if
+    not specified.
+    NOTE:
+        a) the value of DRAM_TRAINING_REPEAT_NUM will increase boot time, there
+           may be 10ms roughly for each step of DRAM_TRAINING_REPEAT_NUM.
+        b) if boot time is critical, you can set DRAM_TRAINING_REPEAT_NUM to 1,
+           actually DRAM_TRAINING_REPEAT_NUM=1 is enough for most of cases.
+    PS: it's optional for LPDDR4 only, but useless for DDR4, since DDRC doesn't
+        support standard DDR4 training described in DDR4 spec.
+    e.g.: <DRAM_TRAINING_REPEAT_NUM value="5"/>
+
+
+2)  DRAM_TRAINING_VREF [Optional for DDRC_V1]
+    DRAM_TRAINING_RDDLY_RDDLL [Optional for DDRC_V1]
+    DRAM_TRAINING_WRDLY_DDRVREF [Optional for DDRC_V1]
+    VREF, Read delay, Read DLL, Write Delay and LPDDR4 VREF are parameters trained
+    in LPDDR4 training, but if all of these parameters are trained, it will prolong
+    the boot time which is critical in some cases.
+    So we provide these items to allow you to disable training for some of these
+    parameters. The choices of each items are ["Enable", "Disable"].
+    DRAM_TRAINING_VREF is to enable/disable training for VREF.
+    DRAM_TRAINING_RDDLY_RDDLL is to enable/disable training for Read delay and
+    Read DLL.
+    DRAM_TRAINING_WRDLY_DDRVREF is to enable/disable training for Write Delay and
+    LPDDR4 VREF.
+    If not specified, their values are determined by DRAM_TRAINING.
+    NOTE:
+        a) if the dram clock is high(e.g., > 1GHz), it's NOT suggested to disable
+           training for these parameters, as it may cause the dram instable.
+        b) VREF must be trained if Read delay and Read DLL are trained, so that if
+           DRAM_TRAINING_RDDLY_RDDLL is set as "Enable", DRAM_TRAINING_VREF will be
+           forced to set as "Enable", too.
+    PS: it's optional for LPDDR4 only, but useless for DDR4.
+    e.g.: <DRAM_TRAINING_VREF value="Enable"/>
+          <DRAM_TRAINING_RDDLY_RDDLL value="Disable"/>
+          <DRAM_TRAINING_WRDLY_DDRVREF value="Disable"/>
+
+
+3)  DRAM_TRAINING_RDDLY_OFFSET [Optional]
+    DRAM_TRAINING_WRDLY_OFFSET [Optional]
+    DRAM_TRAINING_VREF_OFFSET [Optional]
+    DRAM_TRAINING_DDRVREF_OFFSET [Optional]
+    Read delay, Write delay, VREF and LPDDR4/LPDDR5 VREF are parameters trained in
+    LPDDR4/LPDDR5 training, and the training result for these parameters may be not
+    the best one for some cases occasionally, so we need to provide an offset which
+    is used to fine tune the final results after LPDDR4/LPDDR5 training.
+    The valid range for DRAM_TRAINING_RDDLY_OFFSET and DRAM_TRAINING_WRDLY_OFFSET
+    is -7 ~ 7, and default value is 0 if not specified.
+    The valid range for DRAM_TRAINING_VREF_OFFSET and DRAM_TRAINING_DDRVREF_OFFSET
+    is -31 ~ 31, and if not specified, the default value of DRAM_TRAINING_VREF_OFFSET
+    is 0, while the default value of DRAM_TRAINING_DDRVREF_OFFSET is -6 for LPDDR4,
+    but 0 for LPDDR5.
+    NOTE:
+        a) the offset will take effect on the entire DQ bus including Byte0, Byte1,
+           Byte2 and Byte3.
+        b) if it happens that each Byte need different offset, please contact me.
+        c) DRAM_TRAINING_VREF_OFFSET may be critical to some boards. If your board
+           can boot up successfully with <DRAM_TRAINING value="Disable"/>, while
+           failed to boot with <DRAM_TRAINING value="Enable"/>, you may need to try
+           different values manually for DRAM_TRAINING_VREF_OFFSET.
+    PS: it's optional for LPDDR4/LPDDR5 only, but useless for DDR4, since DDRC doesn't
+        support standard DDR4 training described in DDR4 spec.
+    e.g.: <DRAM_TRAINING_RDDLY_OFFSET value="+2"/>
+          <DRAM_TRAINING_WRDLY_OFFSET value="-2"/>
+          <DRAM_TRAINING_VREF_OFFSET value="-4"/>
+          <DRAM_TRAINING_DDRVREF_OFFSET value="-6"/>
+
+
+4)  DRAM_TRAINING_RDDLL [Optional for DDRC_V1]
+    DRAM_TRAINING_WRDLL [Optional for DDRC_V1]
+    RDDLL(DLL0) and WRDLL(DLL2) are the only two parameters tuned in DDR4 tuning,
+    we can enable or disable them seperately by these two options, choices are
+    ["Enable", "Disable"].
+    PS: it's optional for DDR4 only, but useless for LPDDR4/LPDDR5.
+    e.g.: <DRAM_TRAINING_RDDLL value="Enable"/>
+          <DRAM_TRAINING_WRDLL value="Disable"/>
+
+
+5)  DRAM_TRAINING_RDDLL_OFFSET [Optional for DDRC_V1]
+    DRAM_TRAINING_WRDLL_OFFSET [Optional for DDRC_V1]
+    RDDLL(DLL0) and WRDLL(DLL2) are the only two parameters tuned in DDR4 tuning,
+    and the read/write DLL tuning result may be not the best one for some cases
+    occasionally, so that we need to provide an offset which is used to fine tune
+    the final read/write DLL after DDR4 tuning. Their valid range is -7 ~ 7, and
+    default value is 0 if not specified.
+    NOTE:
+        a) the offset will take effect on the entire DQ bus including Byte0, Byte1,
+           Byte2 and Byte3.
+        b) if it happens that each Byte need different offset, please contact me.
+    PS: it's optional for DDR4 only, but useless for LPDDR4/LPDDR5.
+    e.g.: <DRAM_TRAINING_RDDLL_OFFSET value="+2"/>
+          <DRAM_TRAINING_WRDLL_OFFSET value="-2"/>
+
+6)  DDRC_DQS_SYNC_MODE [Optional for DDRC_V1]
+    The DDRC SYNC mode, choices are ["Sync", "Highskew"], and its default value is
+    "Highskew" if not specified.
+    NOTE: DDRC_V2 SoCs has dropped "Sync" mode.
+    PS: "Highskew" mode is working in most cases, and it's more powerful than "Sync"
+        mode to reduce the impact of electrical noise, so that "Sync" mode is for
+        debug purpose only in fact. However, if the DRAM frequency is slow, you may
+        need to use "Sync" mode.
+    e.g.: <DDRC_DQS_SYNC_MODE value="Highskew"/>
+
+7)  DDRC_DLL_MODE [Optional]
+    The DDRC DLL mode, choices are ["Normal", "Boost"] on DDRC_V1 SoCs, while
+    ["Normal", "Boost", "Manual"] on DDRC_V2 SoCs, and if not specified, its
+    default value is:
+      a) "Normal": if DRAM frequency is < 1200MHz
+      b) "Boost":  if DRAM frequency is < 2112MHz, but >= 1200MHz
+      c) "Manual": if DRAM frequency is >= 2112MHz
+    NOTE:
+        a) the DLL will be saturated if DRAM frequency is >= 2500MHz, so "Manual"
+           mode must be used in this case.
+        b) "Boost" mode is working in most cases if DRAM frequency is >= 1200MHz,
+           but < 2500MHz.
+        c) if DLL is in "Manual" mode, there will be 100ps phase shift at minimal
+           due to the inertial delay inside DLL, so "Manual" mode is only suggested
+           when DRAM frequency is very high.
+        d) the DLL mode will affect the delay of each step of READ/WRITE/SYNC DLL:
+           "Boost"/"Manual" mode: fine tune DLL
+           "Normal" mode: coarse tune DLL
+    e.g.: <DDRC_DLL_MODE value="Normal"/>
+
+8)  DRAM_LINK_ECC_READ/DRAM_LINK_ECC_WRITE [Optional for LPDDR5]
+    Read/Write ECC for LPDDR5, choices are ["Enable", "Disable"].
+    The default value is "Enable" if DRAM frequency is > 2112MHz, otherwise it's
+    "Disable".
+    e.g.: <DRAM_LINK_ECC_READ value="Enable"/>
+          <DRAM_LINK_ECC_WRITE value="Enable"/>
+
+9)  DRAM_DQ_VREF/DRAM_CA_VREF [Optional]
+    The VREF value for LPDDR4/LPDDR5 DQ/CA bus, valid range is 0x00 ~ 0x3F if LPDDR4,
+    while 0x00 ~ 0x7F if LPDDR5.
+    The default value is determined by DRAM_VREF if not specified.
+    PS: it's optional for LPDDR4/LPDDR5 only, but useless for DDR4 which don't have
+        VREF.
+    e.g.: <DRAM_DQ_VREF value="0x12"/>
+          <DRAM_CA_VREF value="0x12"/>
+
+10) DRAM_DQ_ODT/DRAM_CA_ODT [Optional]
+    The termination/ODT in LPDDR4/LPDDR5 side for DQ/CA bus, choices are:
+    ["Disable", "RZQ/1", "RZQ/2", "RZQ/3", "RZQ/4", "RZQ/5", "RZQ/6"]
+    The default value is determined by DRAM_ODT if not specified.
+    PS: it's optional for LPDDR4/LPDDR5 only, but useless for DDR4 which don't have CA
+        ODT, so DRAM_ODT is enough for DDR4.
+    e.g.: <DRAM_DQ_ODT value="RZQ/6"/>
+          <DRAM_CA_ODT value="RZQ/6"/>
+
+11) DRAM_WCK_ODT/DRAM_NT_DQ_ODT [Optional for LPDDR5]
+    The termination/ODT in LPDDR5 side for WCK/NT-DQ bus, choices are:
+    ["Disable", "RZQ/1", "RZQ/2", "RZQ/3", "RZQ/4", "RZQ/5", "RZQ/6"]
+    The default value is determined by DRAM_ODT if not specified.
+    e.g.: <DRAM_DQ_ODT value="RZQ/6"/>
+          <DRAM_CA_ODT value="RZQ/6"/>
+
+12) DRAM_SOC_ODT [Optional]
+    Controller ODT value for Voh calibration, only for LPDDR4/LPDDR5.
+    Choices are: ["Disable", "RZQ/1", "RZQ/2", "RZQ/3", "RZQ/4", "RZQ/5", "RZQ/6"].
+    Its default value is "Disable" if not specified.
+    NOTE:
+        a) LPDDR4/LPDDR5 will use DRAM_SOC_ODT to do DQ Voh calibration, so it will
+           affect DDRC_DQ_VREF.
+        b) DRAM_SOC_ODT and DDRC_TERM can have different values.
+    e.g.: <DRAM_SOC_ODT value="RZQ/6"/>
+
+13) DDRC0_TERM/DDRC0_WORD0_DQ_TERM/DDRC0_WORD1_DQ_TERM [Optional]
+    DDRC1_TERM/DDRC1_WORD0_DQ_TERM/DDRC1_WORD1_DQ_TERM [Optional]
+    Similar as DDRC_TERM, but they have higher priority than DDRC_TERM to set the
+    ODT for each specific DDRC, or for each specific DDRC's DQ bus LSB/MSB 16bits.
+
+14) DDRC0_DQ_DDS/DDRC0_CA_DDS/DDRC_DQ_DDS/DDRC_CA_DDS [Optional]
+    DDRC0_DDS/DDRC0_WORD0_DQ_DDS/DDRC0_WORD1_DQ_DDS [Optional]
+             /DDRC0_WORD0_CA_DDS/DDRC0_WORD1_CA_DDS [Optional]
+    DDRC1_DDS/DDRC1_WORD0_DQ_DDS/DDRC1_WORD1_DQ_DDS [Optional]
+             /DDRC1_WORD0_CA_DDS/DDRC1_WORD1_CA_DDS [Optional]
+    Similar as DDRC_DDS, but they have higher priority than DDRC_DDS to set the
+    pull-down drive strength for each specific DDRC, or for each specific DDRC's
+    DQ bus LSB/MSB 16bits, or for each specific DDRC's CA bus LSB/MSB 16bits.
+
+15) DDRC0_DQ_PDDS/DDRC0_CA_PDDS/DDRC_DQ_PDDS/DDRC_CA_PDDS [Optional]
+    DDRC0_PDDS/DDRC0_WORD0_DQ_PDDS/DDRC0_WORD1_DQ_PDDS [Optional]
+              /DDRC0_WORD0_CA_PDDS/DDRC0_WORD1_CA_PDDS [Optional]
+    DDRC1_PDDS/DDRC1_WORD0_DQ_PDDS/DDRC1_WORD1_DQ_PDDS [Optional]
+              /DDRC1_WORD0_CA_PDDS/DDRC1_WORD1_CA_PDDS [Optional]
+    Similar as DDRC_PDDS, but they have higher priority than DDRC_PDDS to set the
+    pull-up drive strength for each specific DDRC, or for each specific DDRC's DQ
+    bus LSB/MSB 16bits, or for each specific DDRC's CA bus LSB/MSB 16bits.
+
+16) DDRC0_READ_DLL/DDRC0_BYTE0_READ_DLL/DDRC0_BYTE1_READ_DLL [Optional]
+                  /DDRC0_BYTE2_READ_DLL/DDRC0_BYTE3_READ_DLL [Optional]
+    DDRC1_READ_DLL/DDRC1_BYTE0_READ_DLL/DDRC1_BYTE1_READ_DLL [Optional]
+                  /DDRC1_BYTE2_READ_DLL/DDRC1_BYTE3_READ_DLL [Optional]
+    Similar as DDRC_READ_DLL, but they have higher priority than DDRC_READ_DLL
+    to set the read DLL for each specific DDRC, or for each specific DDRC's DQ
+    bus Byte0/Byte1/Byte2/Byte3.
+
+17) DDRC0_SYNC_DLL/DDRC0_BYTE0_SYNC_DLL/DDRC0_BYTE1_SYNC_DLL [Optional]
+                  /DDRC0_BYTE2_SYNC_DLL/DDRC0_BYTE3_SYNC_DLL [Optional]
+    DDRC1_SYNC_DLL/DDRC1_BYTE0_SYNC_DLL/DDRC1_BYTE1_SYNC_DLL [Optional]
+                  /DDRC1_BYTE2_SYNC_DLL/DDRC1_BYTE3_SYNC_DLL [Optional]
+    Similar as DDRC_SYNC_DLL, but they have higher priority than DDRC_SYNC_DLL
+    to set the sync DLL for each specific DDRC, or for each specific DDRC's DQ
+    bus Byte0/Byte1/Byte2/Byte3.
+
+18) DDRC0_WRITE_DLL/DDRC0_BYTE0_WRITE_DLL/DDRC0_BYTE1_WRITE_DLL [Optional]
+                   /DDRC0_BYTE2_WRITE_DLL/DDRC0_BYTE3_WRITE_DLL [Optional]
+    DDRC1_WRITE_DLL/DDRC1_BYTE0_WRITE_DLL/DDRC1_BYTE1_WRITE_DLL [Optional]
+                   /DDRC1_BYTE2_WRITE_DLL/DDRC1_BYTE3_WRITE_DLL [Optional]
+    Similar as DDRC_WRITE_DLL, but they have higher priority than DDRC_WRITE_DLL
+    to set the write DLL for each specific DDRC, or for each specific DDRC's DQ
+    bus Byte0/Byte1/Byte2/Byte3.
+
+19) DDRC0_DQ_READ_DELAY/DDRC0_BYTE0_DQ_READ_DELAY/DDRC0_BYTE1_DQ_READ_DELAY [Optional]
+                       /DDRC0_BYTE2_DQ_READ_DELAY/DDRC0_BYTE3_DQ_READ_DELAY [Optional]
+    DDRC1_DQ_READ_DELAY/DDRC1_BYTE0_DQ_READ_DELAY/DDRC1_BYTE1_DQ_READ_DELAY [Optional]
+                       /DDRC1_BYTE2_DQ_READ_DELAY/DDRC1_BYTE3_DQ_READ_DELAY [Optional]
+    Similar as DDRC_DQ_READ_DELAY, but they have higher priority than DDRC_DQ_READ_DELAY
+    to set the read delay for each specific DDRC, or for each specific DDRC's DQ bus
+    Byte0/Byte1/Byte2/Byte3.
+
+20) DDRC0_DQ_WRITE_DELAY/DDRC0_BYTE0_DQ_WRITE_DELAY/DDRC0_BYTE1_DQ_WRITE_DELAY [Optional]
+                        /DDRC0_BYTE2_DQ_WRITE_DELAY/DDRC0_BYTE3_DQ_WRITE_DELAY [Optional]
+    DDRC1_DQ_WRITE_DELAY/DDRC1_BYTE0_DQ_WRITE_DELAY/DDRC1_BYTE1_DQ_WRITE_DELAY [Optional]
+                        /DDRC1_BYTE2_DQ_WRITE_DELAY/DDRC1_BYTE3_DQ_WRITE_DELAY [Optional]
+    Similar as DDRC_DQ_WRITE_DELAY, but they have higher priority than DDRC_DQ_WRITE_DELAY
+    to set the write delay for each specific DDRC, or for each specific DDRC's DQ bus
+    Byte0/Byte1/Byte2/Byte3.
+
+21) DDRC0_WCK_WRITE_DELAY/DDRC1_WCK_WRITE_DELAY/DDRC_WCK_WRITE_DELAY [Optional for LPDDR5]
+    Similar as DDRC_DQ_WRITE_DELAY, but they are for WCK.
+    e.g.: <DDRC_WCK_WRITE_DELAY value="6"/>
+
+22) DDRC0_DQ_CA_VREF/DDRC1_DQ_CA_VREF [Optional]
+    Similar as DDRC_DQ_VREF, but they have higher priority than DDRC_DQ_VREF to
+    set the VREF for each specific DDRC.
+
+23)  DDRC_DQS_VREF [Optional for LPDDR5]
+    Similar as DDRC_DQ_VREF, but it's for LPDDR5 Read DQS. The default value is determined
+    by DDRC_DQ_VREF if not specified.
+    e.g.: <DDRC_DQS_VREF value="0x12"/>
+
+24) DRAM_ODTE_CK/DRAM_ODTE_CS [Optional]
+    CK/CS ODT enabled for non-terminating rank, only for LPDDR4/LPDDR4X.
+    When LPDDR4X, default value is "enable".
+    When LPDDR4, default value is "disable".
+    Choices are ["enable", "disable"]
+    For more information, please check dram datasheet MR22 register.
+    e.g.: <DRAM_ODTE_CK value="enable"/>
+          <DRAM_ODTE_CS value="enable"/>
+
+25) DRAM_ODTD_CA [Optional]
+    CA ODT enabled for non-terminating rank, only for LPDDR4/LPDDR4X.
+    Default value is "enable".
+    Choices are ["enable", "disable"]
+    For more information, please check dram datasheet MR22 register.
+    e.g.: <DRAM_ODTD_CA value="disable"/>
+
+26) DRAM_PU_CAL [Optional]
+    Pull-up calibration point, only for LPDDR4/LPDDR4X.
+    When LPDDR4X, choices are ["vddq*0.6", "vddq*0.5"], default value is "vddq*0.5".
+    When LPDDR4, choices are ["vddq/2.5", "vddq/3"], default value is "vddq/3".
+    For more information, please check dram datasheet MR3 register.
+    e.g.: <DRAM_PU_CAL value="vddq*0.6"/>
+
+27) DDRC0_CA_DEALY/DDRC0_WORD0_CA_DELAY/DDRC0_WORD1_CA_DELAY [Optional]
+    DDRC1_CA_DELAY/DDRC1_WORD0_CA_DELAY/DDRC1_WORD1_CA_DEALY [Optional]
+    Similar as DDRC_CA_DELAY, but they have higher priority than DDRC_CA_DELAY to set the
+    CA write delay for each specific DDRC, or for each specific DDRC's DQ bus LSB/MSB 16bits.
+
+28) DDRC0_CK_DEALY/DDRC0_WORD0_CK_DELAY/DDRC0_WORD1_CA_DELAY [Optional]
+    DDRC1_CK_DELAY/DDRC1_WORD0_CK_DELAY/DDRC1_WORD1_CA_DEALY [Optional]
+    Similar as DDRC_CK_DELAY, but they have higher priority than DDRC_CK_DELAY to set the
+    CK write delay for each specific DDRC, or for each specific DDRC's DQ bus LSB/MSB 16bits.
+

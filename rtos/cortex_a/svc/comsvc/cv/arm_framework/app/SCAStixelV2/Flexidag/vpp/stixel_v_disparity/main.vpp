@@ -1,0 +1,80 @@
+#include "vp_vas.h"
+
+#define IN_DISP_W	(1920)
+#define IN_DISP_H	(480)
+#define MAX_DISPARITY_VALUE (4095)
+#define DISPARITY_RIGHT_SHIFT_BITS	"03"
+#define HISTOGRAM_BINS	((MAX_DISPARITY_VALUE+1)>>3)
+
+
+DAG V_DISPARITY = {
+    VP_input(disparity_in, uint16_t, vector(1, 1, IN_DISP_H, IN_DISP_W));
+
+    /* 	0, 0, ... 0,
+    	1, 1, ... 1,
+    	2, 2, ... 2,
+    	...........	*/	
+    VP_index(
+    	VP_tensor(row_index, uint16_t, vector(1, 1, IN_DISP_H, IN_DISP_W)),
+    	w = IN_DISP_W,
+    	h = IN_DISP_H,
+    	d = 1,
+    	p = 1,
+    	dim_coordinate = 1
+    );
+
+    VP_rshi(
+    	disparity_in,
+    	VP_const_tensor(DISPARITY_RIGHT_SHIFT_BITS, uint8_t, vector(1)),
+    	VP_tensor(rsh_disparity, uint16_t, vector(1, 1, IN_DISP_H, IN_DISP_W)),
+    	arithmetic = 0	// unsinged
+    );
+
+    VP_mergep(      
+        row_index, 
+        rsh_disparity, 
+        VP_tensor(stat_category, uint16_t, vector(2, 1, IN_DISP_H, IN_DISP_W)),
+    );
+
+    VP_stats(
+        stat_category,
+        undef,
+        VP_tensor(v_disp, uint16_t, vector(IN_DISP_H, HISTOGRAM_BINS, 1, 1)),
+        count = 1,              
+        out_h = 1,
+        out_d = HISTOGRAM_BINS,
+        out_p = IN_DISP_H,
+    );
+
+    VP_reshape(
+        v_disp, 
+        VP_tensor(reshaped_v_disp, uint16_t, vector(1, 1, IN_DISP_H, HISTOGRAM_BINS)),
+        w = HISTOGRAM_BINS, h = IN_DISP_H, d = 1, p = 1
+    );
+
+    // To find maximum, remove invalid value
+    VP_crop(
+        reshaped_v_disp, 
+        VP_tensor(reshaped_v_disp_rm_invalid, uint16_t, vector(1, 1, IN_DISP_H, HISTOGRAM_BINS-1)),
+        w = HISTOGRAM_BINS-1,
+        h = IN_DISP_H,
+        d = 1,
+        p = 1,
+        start_w = 0,
+        start_h = 0,
+        start_d = 0,
+        start_p = 0,
+        zr = 1
+    ); 
+
+    // Find max value on each row
+    VP_mmrw(        
+        reshaped_v_disp_rm_invalid,
+        VP_tensor(max_v_disp, uint16_t, vector(1, 1, 1, IN_DISP_H)),
+        VP_tensor(max_v_disp_pos, uint16_t, vector(1, 1, 1, IN_DISP_H)),
+        op = 1 // max
+    );
+
+    VP_output(v_disp_out, reshaped_v_disp); 
+    VP_output(max_v_disp_pos_out, max_v_disp_pos);   
+}

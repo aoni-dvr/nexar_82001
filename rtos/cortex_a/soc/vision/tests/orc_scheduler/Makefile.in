@@ -1,0 +1,109 @@
+#
+# Copyright (c) 2018-2018 Ambarella, Inc.
+#
+# This file and its contents ("Software") are protected by intellectual property rights including,
+# without limitation, U.S. and/or foreign copyrights.  This Software is also the confidential and
+# proprietary information of Ambarella, Inc. and its licensors.  You may not use, reproduce, disclose,
+# distribute, modify, or otherwise prepare derivative works of this Software or any portion thereof
+# except pursuant to a signed license agreement or nondisclosure agreement with Ambarella, Inc. or
+# its authorized affiliates.  In the absence of such an agreement, you agree to promptly notify and
+# return this Software to Ambarella, Inc.
+#
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+# TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL AMBARELLA, INC. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+# OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; COMPUTER FAILURE OR MALFUNCTION; OR
+# BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+
+SRCDIR        = @srcdir@
+BINDIR        = @abs_top_builddir@
+
+# determine the runtime environment we are building for
+ifeq (@amalgam_diag@, 0)
+APP_TYPE      = linux
+else
+APP_TYPE      = pace
+endif
+
+ARM_APP       = none
+LIB_BUILDDIR  = @lib_root@/arm/$(APP_TYPE)
+ARM_BUILDDIR  = @abs_top_builddir@/$(APP_TYPE)
+CVCOMMON_DIR  = @cv_common_dir@
+
+ifndef PREBUILDDIR
+PREBUILDDIR  := $(shell cat $(CVCOMMON_DIR)/.release_lib_root)/arm/$(APP_TYPE)
+endif
+
+ifndef VERBOSE_MAKE
+.SILENT:
+endif
+
+.PHONY: default all build build_sdag data code_orc code_arm \
+	copy_apps sysflow cvtable run_sim \
+	cleancode cleanrun cleandata clean
+
+###############################################################################
+# primary targets
+###############################################################################
+
+all: clean build
+
+default: build
+
+build: code data
+
+###############################################################################
+# make code
+###############################################################################
+
+bin_link:
+	mkdir -p bin bin/visorc
+	ln -sf ../../orc/build/orcvp.bin bin/visorc
+
+code_arm:
+	mkdir -p $(ARM_BUILDDIR)
+	APP_TYPE=$(APP_TYPE) BUILDDIR=$(ARM_BUILDDIR) APP_NAME=$(ARM_APP) \
+	$(MAKE) -C $(SRCDIR)/arm -f $(SRCDIR)/../common_arm.mk all;
+
+code_orc:
+	$(MAKE) -C orc code
+
+
+APP_CVTABLE = $(notdir $(basename $(wildcard $(BINDIR)/arm/*.mnft)))
+APP_TBAR = $(BINDIR)/bin/$(ARM_APP)/$(APP_CVTABLE).tbar
+
+flexibin0:
+	$(MAKE) -C flexidag0 code
+	$(MAKE) -C flexidag0 flexibin APP_TBAR=$(APP_TBAR)
+
+code: bin_link code_orc flexibin0
+
+###############################################################################
+# make data
+###############################################################################
+
+data:
+	$(MAKE) -C orc data
+
+###############################################################################
+# make clean
+###############################################################################
+
+cleancode:
+	$(MAKE) -C orc cleancode
+	rm -rf $(APP_TYPE)
+
+cleanrun:
+	$(MAKE) -C orc cleanrun
+
+cleandata:
+	$(MAKE) -C orc cleanrun
+	@rm -f *.tbar
+	@rm -f *.sfb
+	@rm -f *.pdf
+
+clean: cleancode cleanrun cleandata

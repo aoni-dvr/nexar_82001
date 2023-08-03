@@ -1,0 +1,8 @@
+CV22 diag commands
+
+%C [i2c] [-c %d] [-v]
+
+Options:
+I2C:
+-c          I2C Channel ID
+-v          verbose

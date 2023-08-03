@@ -1,0 +1,127 @@
+#include "subdags/calc_world_y.vpp"
+#include "subdags/calc_world_z.vpp"
+#include "subdags/calc_image_d.vpp"
+
+DAG Calc_Delta_D_Tbl =
+{
+	arg=
+	{
+		$max_disparity_val=0,
+		$delata_distance=0,
+		$sin_pitch=0,
+		$cos_pitch=0,
+		$focal_length=0,
+		$camera_v0=0,
+		$base_line=0,
+						
+		$deleta_d_out=0,
+	};
+
+
+	// deleta_d_out[i]	= disparity - disparity(with additional distance: delata_distance)
+	//					= disparity - to_disparity( to_world(i) + delata_distance )
+	
+	// value of column index doesn't matter, each row should have the same delta_d
+	// [0, 0, 0, 0, 0...]
+	VP_index(
+    	VP_tensor(disp_column_index_u, uint16_t, vector(1, 1, 1, $max_disparity_val)),
+    	w = $max_disparity_val,
+    	h = 1,
+    	d = 1,
+    	p = 1,
+    	dim_coordinate = 1
+    );
+
+	VP_typeconv(
+		disp_column_index_u,
+		VP_auto(disp_column_index_ft, float16_t)
+	);
+
+	VP_index(
+    	VP_tensor(disp_index_u, uint16_t, vector(1, 1, 1, $max_disparity_val)),
+    	w = $max_disparity_val,
+    	h = 1,
+    	d = 1,
+    	p = 1,
+    	dim_coordinate = 0
+    );
+
+    VP_typeconv(
+		disp_index_u,
+		VP_auto(disp_index_ft, float16_t)
+	);
+
+    call =
+	{
+		callee=Calc_World_Y,
+		$disparity=disp_index_ft,		
+		$col_index=disp_column_index_ft,
+		$sin_pitch=$sin_pitch,
+		$cos_pitch=$cos_pitch,
+		$focal_length=$focal_length,
+		$camera_v0=$camera_v0,
+		$base_line=$base_line,
+		$world_y_out=world_y,	
+	};	
+
+	call =
+	{
+		callee=Calc_World_Z,
+		$disparity=disp_index_ft,		
+		$col_index=disp_column_index_ft,
+		$sin_pitch=$sin_pitch,
+		$cos_pitch=$cos_pitch,
+		$focal_length=$focal_length,
+		$camera_v0=$camera_v0,
+		$base_line=$base_line,
+		$world_z_out=world_z,	
+	};
+	
+	VP_add(
+		world_z,
+		$delata_distance,
+		VP_auto(far_world_z, float16_t)
+	);
+
+	call =
+	{
+		callee=Calc_Image_D,
+		$in_world_y=world_y,		
+		$in_world_z=far_world_z,
+		$sin_pitch=$sin_pitch,
+		$cos_pitch=$cos_pitch,
+		$focal_length=$focal_length,
+		$base_line=$base_line,				
+		$image_d_out=far_disparity,
+	};
+
+	VP_sub(
+		disp_index_ft,
+		far_disparity,
+		VP_auto(deleta_d_ft, float16_t)
+	);
+
+	// To DO: effect result of $deleta_d_out?, otherwise MSB of $deleta_d_out is inversed
+	VP_output(far_disparity_out, far_disparity);
+	
+	VP_typeconv(
+		deleta_d_ft,
+		VP_auto(deleta_d_u_tmp, uint16_t)
+	);
+
+	// Force 0 to be 1
+	//-----------------------------------------------
+	VP_eqib(
+		deleta_d_u_tmp, 
+		VP_const_tensor("00 00", uint16_t, vector(1)),
+		VP_auto(zero_mask, uint8_t)
+	);
+
+	VP_muxb(		
+		VP_const_tensor("01 00", uint16_t, vector(1)), 
+		deleta_d_u_tmp, 
+		zero_mask,
+		VP_auto($deleta_d_out, uint16_t)
+	);	
+
+}

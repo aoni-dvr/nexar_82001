@@ -1,0 +1,36 @@
+DAG Subsample_Width =
+{	
+	arg=
+	{
+		$in=0,
+		$in_width=0,
+		$in_stride=0,
+
+		$out=0,
+	};
+
+	VP_reshape(
+		$in,
+		VP_tensor(in_reshape, uint16_t, vector(1, 1, $in_width/$in_stride, $in_stride)),
+		w = $in_stride,
+		h = $in_width/$in_stride,
+		d = 1,
+		p = 1
+	);
+
+	VP_crop(
+		in_reshape,
+		VP_tensor(crop_column0, uint16_t, vector(1, 1, $in_width/$in_stride, 1)),
+		w = 1, h = $in_width/$in_stride, d = 1, p = 1,
+		start_w = 0, start_h = 0, start_d = 0, start_p = 0, zr = 1,
+	);
+
+	VP_reshape(
+		crop_column0,
+		VP_tensor($out, uint16_t, vector(1, 1, 1, $in_width/$in_stride)),
+		w = $in_width/$in_stride,
+		h = 1,
+		d = 1,
+		p = 1
+	);
+}

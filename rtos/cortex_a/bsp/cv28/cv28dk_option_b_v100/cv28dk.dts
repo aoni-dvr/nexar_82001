@@ -1,0 +1,99 @@
+/*
+ * board level device tree source
+ */
+
+/dts-v1/;
+
+/include/ "cv28.dtsi"
+
+/ {
+	model = "Ambarella CV28BUB Board";
+	compatible = "ambarella,cv28bub", "ambarella,cv28";
+
+	chosen {
+		stdout-path = &uart0;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		xen,xen-bootargs = "dom0_mem=256M bootscrub=0 dom0_max_vcpus=1 dom0_vcpus_pin timer_slop=0";
+		module@0 {
+			 compatible = "xen,linux-zimage", "xen,multiboot-module";
+			 reg = <0x0 0x0>;
+			 bootargs = "root=/dev/mtdblock21 rootfstype=squashfs rdinit=/sbin/init console=hvc0 earlycon=xenboot quiet";
+		};
+
+		domu_tx {
+			#address-cells = <1>;
+			#size-cells = <1>;
+			compatible = "xen,domain";
+			memory = <0x0 0x0>;
+			cpus = <1>;
+
+			module@0 {
+				compatible = "multiboot,kernel", "multiboot,module";
+				reg = <0x0 0x0>;
+			};
+		};
+
+	};
+
+	n_apb@e4000000 {
+        i2c2: i2c@e400a000 {
+            status = "ok";
+            nau8822: codec@1d {
+            compatible = "nuvoton,nau8822";
+            #sound-dai-cells = <0>;
+            reg = <0x1d>;
+            };
+        };
+    };
+
+	n_ahb@e0000000 {
+		nand0: nand@e0002000 {
+			status = "ok";
+		};
+
+		mac0: ethernet@e000e000 {
+			amb,tx-clk-invert;
+			phy@0 {
+				reg = <0>;
+			};
+		};
+
+		uart3: uart@e0019000 {
+			pinctrl-0 = <&uart3_pins_c>;
+			status = "ok";
+		};
+
+		i2s0: i2s@e001c000{
+			status = "ok";
+		};
+
+		sound {
+			compatible = "ambarella,audio-board";
+			simple-audio-card,name = "nau8822 @ AMBEVK";
+			simple-audio-card,mclk-fs = <256>;
+			simple-audio-card,widgets =
+			"Speaker", "Speaker",
+			"Microphone", "Mic Internal";
+			simple-audio-card,routing =
+			"LMICN", "Mic Internal",
+			"LMICP", "Mic Internal",
+			"RMICP", "Mic Internal",
+			"RMICP", "Mic Internal",
+			"Speaker", "LSPK",
+			"Speaker", "RSPK";
+
+			simple-audio-card,dai-link@0 {
+				format = "i2s";
+
+				cpu {
+					sound-dai = <&i2s0>;
+				};
+
+				codec {
+					sound-dai = <&nau8822>;
+				};
+			};
+		};
+	};
+};

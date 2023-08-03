@@ -1,0 +1,47 @@
+DAG Calc_Esti_Road_Disp =
+{
+	arg=
+	{		
+		$line_inv_m=0,
+		$line_c=0,
+		$esti_road_disparity_width=0,
+		
+		$esti_road_disparity_out=0,
+	};
+
+	VP_index(
+    	VP_tensor(col_index, uint16_t, vector(1, 1, 1, $esti_road_disparity_width)),
+    	w = $esti_road_disparity_width,
+    	h = 1,
+    	d = 1,
+    	p = 1,
+    	dim_coordinate = 0
+    );
+
+	VP_sub
+	(
+		col_index,
+		$line_c,
+		VP_auto(col_index_m_c, float16_t)
+	);
+
+	VP_mul
+	(
+		col_index_m_c,
+		$line_inv_m,
+		VP_auto(esti_road_disp, float16_t)
+	);
+
+	VP_gtib(
+		esti_road_disp,
+		VP_const_tensor("00 00", float16_t, vector(1)),
+		VP_auto(positive_mask, uint8_t)
+	);
+
+	VP_muxb(		
+		esti_road_disp,
+		VP_const_tensor("00 00", float16_t, vector(1)),		
+		positive_mask,
+		VP_auto($esti_road_disparity_out, float16_t)
+	);
+}

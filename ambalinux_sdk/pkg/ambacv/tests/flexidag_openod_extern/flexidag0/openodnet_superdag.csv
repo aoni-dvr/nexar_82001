@@ -1,0 +1,13 @@
+instance,algorithm,step,cvtask,uuid,num_inputs,num_feedback,input[0],input[1],input[2],input[3],input[4],input[5],input[6],input[7],input[8],input[9],input[10],input[11],input[12],input[13],input[14],input[15],feedback[0],feedback[1],feedback[2],feedback[3],engine_name,init_freq,deadline,deadline_fail,dbglvl,config[0],config[1],config[2],config[3],config[4],config[5],config[6],config[7],chan_id
+INPUT,0,data,$##FLEXIDAG,6,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+INPUT,1,data_uv,$##FLEXIDAG,7,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+openodnet_ag,,,openodnet_ag,101,2,,6,7,,,,,,,,,,,,,,,,,,,,1,,,,,,,,,,,,
+EXTERN_OPENOD_NMS,,,EXTERN_OPENOD_NMS,102,4,,101,101,101,101,,,,,,,,,,,,,,,,,,1,,,,,,,,,,,,
+OUTPUT,0,arm_conf_flatten,$##FLEXIDAG,8,,,101,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+OUTPUT,1,arm_loc,$##FLEXIDAG,9,,,101,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+OUTPUT,2,odm_conf_flatten,$##FLEXIDAG,10,,,101,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+OUTPUT,3,odm_loc,$##FLEXIDAG,11,,,101,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+OUTPUT,4,num_objects,$##FLEXIDAG,12,,,102,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+OUTPUT,5,decbox,$##FLEXIDAG,13,,,102,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+OUTPUT,6,clsId,$##FLEXIDAG,14,,,102,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+OUTPUT,7,score,$##FLEXIDAG,15,,,102,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

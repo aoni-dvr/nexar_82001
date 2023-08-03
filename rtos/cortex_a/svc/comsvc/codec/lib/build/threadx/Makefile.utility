@@ -1,0 +1,20 @@
+# codec common function
+ifeq ($(CONFIG_BUILD_COMAMBA_CODEC_COMMON), y)
+
+COMAMBA_CODEC_COMMON_SRC = lib/src/common/utility
+
+libcomsvc_codec-objs += $(COMAMBA_CODEC_COMMON_SRC)/AmbaBitsFifo.o
+libcomsvc_codec-objs += $(COMAMBA_CODEC_COMMON_SRC)/AmbaSvcGdma.o
+libcomsvc_codec-objs += $(COMAMBA_CODEC_COMMON_SRC)/AmbaUtc.o
+libcomsvc_codec-objs += $(COMAMBA_CODEC_COMMON_SRC)/AmbaVfs.o
+
+ifeq ($(CONFIG_ICAM_ENABLE_REGRESSION_FLOW), y)
+ccflags-y += -I$(srctree)/svc/comsvc/ambalink/inc
+ccflags-y += -I$(srctree)/svc/comsvc/ambalink/link_user
+
+libcomsvc_codec-objs += $(COMAMBA_CODEC_COMMON_SRC)/AmbaRPCStreamWrap.o
+else
+libcomsvc_codec-objs += $(COMAMBA_CODEC_COMMON_SRC)/AmbaStreamWrap.o
+endif
+
+endif

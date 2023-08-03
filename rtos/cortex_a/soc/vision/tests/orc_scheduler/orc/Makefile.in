@@ -1,0 +1,107 @@
+#
+# Copyright (c) 2018-2018 Ambarella, Inc.
+#
+# This file and its contents ("Software") are protected by intellectual property rights including,
+# without limitation, U.S. and/or foreign copyrights.  This Software is also the confidential and
+# proprietary information of Ambarella, Inc. and its licensors.  You may not use, reproduce, disclose,
+# distribute, modify, or otherwise prepare derivative works of this Software or any portion thereof
+# except pursuant to a signed license agreement or nondisclosure agreement with Ambarella, Inc. or
+# its authorized affiliates.  In the absence of such an agreement, you agree to promptly notify and
+# return this Software to Ambarella, Inc.
+#
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+# TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL AMBARELLA, INC. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+# OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; COMPUTER FAILURE OR MALFUNCTION; OR
+# BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+
+SRCDIR        = @srcdir@
+CV_COMMON_DIR = @cv_common_dir@
+
+USER_DATA_RULE := 1
+USER_CHECKDATA_RULE := 1
+USER_CHECK_RULE := 1
+USER_CODE_RULE := 1
+USER_CHECKRTL_RULE := 1
+USER_RUNRTL_RULE := 1
+
+ifeq (@use_ace_platform@, 0)
+DUMP_OUT_DIR = ./amalgam
+endif
+
+# jobs for code build (Allow infinite jobs to fix compiler warning and promote building performance)
+j =
+
+##############################################################################
+
+CHECKDATA_TO_CLEAN :=
+RESULTS_TO_CLEAN   :=
+
+##############################################################################
+
+# data
+
+DATA_TARGETS :=
+
+DATA_TO_CLEAN := $(DATA_TARGETS)
+
+##############################################################################
+
+CHECKDATA_TO_CLEAN +=
+
+##############################################################################
+
+##############################################################################
+
+CHECK_UTILS :=
+
+##############################################################################
+
+##############################################################################
+include $(SRCDIR)/../../Makefile.run
+
+###############################################################################
+
+# clean
+
+CLEAN_DATA_FILES = $(DATA_TO_CLEAN) $(CHECKDATA_TO_CLEAN) $(RESULTS_TO_CLEAN) $(CHECK_UTILS)
+
+# the only way in which this is non-standard is that it passes -j to submake
+code:
+	@echo ""
+	@echo "===============Building ORC code================"
+	@echo ""
+	$(MAKE) -j$(j) -C build
+
+###############################################################################
+# make data
+###############################################################################
+
+.PHONY: data_targets
+.PHONY: check_utils
+
+data: force
+	@echo ""
+	@echo "Building data"
+	@echo ""
+	$(MAKE) -j$(j) data_targets
+	$(MAKE) -j$(j) -C build data
+	$(MAKE) -j$(j) check_utils
+	@echo "Done building data."
+
+data_targets: $(DATA_TARGETS)
+
+check_utils: $(CHECK_UTILS)
+
+# Use this if manifest is in the source directory.  If the data files
+# are in the data directory, however, then make the manifest a .in
+# file so it gets copied to the build directory, and then remove the
+# "$(SRCDIR)/" from the manifest path.
+unittest_cvtable.tbar : diag_manifest.mnft
+	@echo "Generating archive file $@"
+	table_ar -c build/$@ -a $< $(TABLE_AR_FLAGS)
+

@@ -1,0 +1,8 @@
+config BUILD_MONFRW_GRAPH
+	bool "Build monfrw graph functions"
+    default y
+
+config BUILD_MONFRW_SERDES
+	bool "Build monfrw serdes query functions"
+    default n
+

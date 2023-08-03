@@ -1,0 +1,4 @@
+include 'quick_shmoo_lpddr4_1_vref.ttl'
+include 'quick_shmoo_lpddr4_2_delay.ttl'
+include 'quick_shmoo_lpddr4_3_dll.ttl'
+

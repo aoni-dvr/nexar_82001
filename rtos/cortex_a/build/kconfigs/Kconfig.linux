@@ -1,0 +1,11 @@
+
+config LINUX
+	def_bool y
+	select ARM64
+	select BLD_SEQ_ATF if !ATF_HAVE_BL2
+	select BLD_SEQ_ATF_LINUX if !ATF_HAVE_BL2
+	select BLD_SEQ_LINUX if ATF_HAVE_BL2
+	help
+	  Linux amba_camera solution.
+
+

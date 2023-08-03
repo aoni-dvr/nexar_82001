@@ -1,0 +1,18 @@
+#include "vp_vas.h"
+
+DAG reduce_min_w_u8_1280x720 = {
+	VP_input(input0, uint8_t, vector(1, 1, 720, 1280));
+
+//==============================================================
+
+
+	VP_mmrw(input0, 
+		VP_tensor(data, uint8_t),
+		undef,
+		op = 0,
+		);
+
+
+//==============================================================
+	VP_output(reduce_output, data);
+}

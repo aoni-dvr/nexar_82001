@@ -1,0 +1,73 @@
+menu "Image Sensor Driver"
+
+menuconfig SENSOR_SONY_IMX290_MIPI
+    bool "Sony IMX290"
+    default n
+
+menuconfig SENSOR_SONY_IMX577
+    bool "Sony IMX577"
+    default n
+config IMX577_POSTCFG_ENABLED
+    bool "enable post configuration"
+    depends on SENSOR_SONY_IMX577
+    default n
+
+menuconfig SENSOR_MX00_IMX390
+    bool "SONY IMX390 @ MAXIM 9295/9296 (in slave mode)"
+    default n
+config MX00_IMX390_POSTCFG_ENABLED
+    bool "enable post configuration"
+    depends on SENSOR_MX00_IMX390
+    default n
+config MX00_IMX390_IN_SLAVE_MODE
+    bool "configure sensor in slave mode"
+    depends on SENSOR_MX00_IMX390
+    default y
+config MX00_IMX390_SHORTEN_SYNC_LATENCY
+    bool "shorten sync latency bwtween different VIN"
+    depends on MX00_IMX390_IN_SLAVE_MODE
+    default n
+config MX00_IMX390_SHARING_MASTER_SYNC
+    bool "share master sync between different VIN"
+    depends on MX00_IMX390_IN_SLAVE_MODE
+    default n
+
+menuconfig SENSOR_MX01_IMX390
+    bool "SONY IMX390 @ MAXIM 9295/96712 (in slave mode)"
+    default n
+config MX01_IMX390_POSTCFG_ENABLED
+    bool "enable post configuration"
+    depends on SENSOR_MX01_IMX390
+    default n
+config MX01_IMX390_IN_SLAVE_MODE
+    bool "configure sensor in slave mode"
+    depends on SENSOR_MX01_IMX390
+    default y
+
+menuconfig SENSOR_MX03_AR0144
+    bool "OnSemi AR0144 @ MAXIM 96707/9286 (in slave mode)"
+    default n
+menuconfig SENSOR_MX00_AR0239
+	bool "OnSemi AR0239 @ MAXIM 9295/9296 (in slave mode)"
+	default n
+menuconfig SENSOR_MX00_IMX390_RCCB
+    bool "SONY IMX390_RCCB @ MAXIM 9295/9296 (in slave mode)"
+    default n
+menuconfig SENSOR_MX00_IMX424
+    bool "SONY IMX424 @ MAXIM 9295/9296 (in slave mode)"
+    default n
+config IMX424_RCCB_PSLIN_DISABLE
+	bool "disable pesudo linear config"
+	depends on SENSOR_MX00_IMX424
+	default y
+
+menuconfig SENSOR_MX00_AR0233
+    bool "OnSemi AR0233 @ MAXIM 9295/9296 (in master mode)"
+    default n
+menuconfig SENSOR_MX00_OV2312_RGBIR
+	bool "OV2312 RGBIR @ MAXIM 9295/9296 (in master mode)"
+	default n
+menuconfig SENSOR_MX00_IMX490
+    bool "SONY IMX490 @ MAXIM 9295/9296 (in slave mode)"
+    default n
+endmenu

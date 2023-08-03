@@ -1,0 +1,13 @@
+if SVC_APPS_CVUT
+
+menu "CVUT Project"
+menuconfig APP_PROJECT_NAME
+    string "APP_PROJECT_NAME"
+	default "CVUT"
+
+    config DSP_SUB_PART
+    hex "dsp sub part number, When cv2xfs, 0x0 imply to cv2fs; 0x1 imply to cv22fs"
+    default 0x0
+endmenu
+
+endif

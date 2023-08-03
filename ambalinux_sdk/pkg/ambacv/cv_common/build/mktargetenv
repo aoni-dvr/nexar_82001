@@ -1,0 +1,14 @@
+#!/bin/sh
+# Generates a small Makefile used in the root of the diag test
+# directory, to allow make to be started from there.
+
+# Usage
+# $1 - toolchain dir
+# $2 - target-env makefile name
+
+test ! -r $2 -o -O $2 || exit 0
+
+echo "  GEN     $2"
+cat << EOF > $2
+PATH="$1/host/bin:$1/host/sbin:$1/host/usr/bin:$1/host/usr/sbin:$PATH" AR="$1/host/usr/bin//aarch64-linux-gnu-ar" AS="$1/host/usr/bin/aarch64-linux-gnu-as" LD="$1/host/usr/bin/aarch64-linux-gnu-ld" NM="$1/host/usr/bin/aarch64-linux-gnu-nm" CC="$1/host/usr/bin/aarch64-linux-gnu-gcc" GCC="$1/host/usr/bin/aarch64-linux-gnu-gcc" CPP="$1/host/usr/bin/aarch64-linux-gnu-cpp" CXX="$1/host/usr/bin//aarch64-linux-gnu-g++" CPPFLAGS="-D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64" CFLAGS="-D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -Os " CXXFLAGS="-D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -Os "
+EOF

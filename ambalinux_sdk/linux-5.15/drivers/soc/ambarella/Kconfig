@@ -1,0 +1,41 @@
+#
+# Ambarella SoC drivers
+#
+
+config AMBARELLA_PIO
+	tristate "Ambarella Enable PIO mem allocator"
+	depends on ARCH_AMBARELLA
+	default m if ARCH_AMBA_CAMERA
+	default n if !ARCH_AMBA_CAMERA
+	help
+	  Say y here to peripheral IO memory allocator
+
+config AMBARELLA_RCT_PROFILE
+	tristate "Ambarella Enable RCT profile"
+	depends on ARCH_AMBARELLA
+	default y if ARCH_AMBA_CAMERA
+	default n if !ARCH_AMBA_CAMERA
+	help
+	  Say y here to enable rct profile
+
+config AMBARELLA_SUPPORT_GDMA
+	bool "Ambarella Enable GDMA"
+        depends on ARCH_AMBARELLA
+	default n
+	help
+	  Say y here to enable gdma
+
+config AMBARELLA_LPDDR5_ADJUST
+	bool "Ambarella adjust lpddr5 dynamically"
+	depends on ARCH_AMBARELLA
+	default n
+	help
+	  Say y here to adjust lpddr5 dynamically
+
+config AMBARELLA_DRAMC_STATS
+	bool "Ambarella show dramc stats"
+	depends on ARCH_AMBARELLA
+	default n
+	help
+	  Say y here to show dramc stats
+

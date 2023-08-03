@@ -1,0 +1,1 @@
+subdir-y += build/threadx

@@ -1,0 +1,14 @@
+%C Driver for AMBA Ethernet
+Syntax:
+  io-pkt-v6-hc -d eth-ambarella mac=XXXXXXXXXXXX [option[,option ...]] ...
+
+Options:
+  speed=10|100|1000 Force media data rate. Default auto-detect.
+  duplex=0|1        Force half (0) or full (1) duplex mode.
+  mac=XXXXXXXXXXXX  MAC address of the controller.
+  verbose(=N)       Set verbosity level.
+
+Examples:
+
+  // Start Ethernet driver
+  io-pkt-v6-hc -d eth-ambarella mac=000A350373B1

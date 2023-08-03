@@ -1,0 +1,26 @@
+<!------------------------------------------------------------------------------------------------------------- ->
+<!- @FileName       :: ucode.list                                                                               ->
+<!-                                                                                                             ->
+<!- @Copyright      :: Copyright (C) 2022 Ambarella Corporation. All rights reserved.                           ->
+<!-                                                                                                             ->
+<!-                    No part of this file may be reproduced, stored in a retrieval system,                    ->
+<!-                    or transmitted, in any form, or by any means, electronic, mechanical, photocopying,      ->
+<!-                    recording, or otherwise, without the prior consent of Ambarella Corporation.             ->
+<!-                                                                                                             ->
+<!- @Description    :: the file list for Ambarella DSP uCodes                                                   ->
+<!------------------------------------------------------------------------------------------------------------- ->
+
+<romfs>
+    <!- Relative path from the top directory of the build ->
+    <top>vendors/ambarella/ucode/cv5/cv52u85</top>
+    <!- DSP uCodes ->
+    <file>orccode.bin<alias>orccode.bin</alias></file>
+    <file>orcvin.bin<alias>orcvin.bin</alias></file>
+    <file>orcidsp0.bin<alias>orcidsp0.bin</alias></file>
+    <file>orcidsp1.bin<alias>orcidsp1.bin</alias></file>
+    <file>orcme0.bin<alias>orcme0.bin</alias></file>
+    <file>orcme1.bin<alias>orcme1.bin</alias></file>
+    <file>orcmdxf0.bin<alias>orcmdxf0.bin</alias></file>
+    <file>orcmdxf1.bin<alias>orcmdxf1.bin</alias></file>
+    <file>default_binary.bin<alias>default_binary.bin</alias></file>
+</romfs>

@@ -1,0 +1,14 @@
+config BR2_PACKAGE_RTL8821AU
+	bool "RTL8811AU or RTL8821AU"
+	help
+	  Realtek RTL8811AU or
+	  Realtek RTL8821AU (RTL8811AU + Bluetooth)
+
+if BR2_PACKAGE_RTL8821AU
+config BR2_PACKAGE_RTL8821AU_BT
+	bool "Include Bluetooth"
+	help
+	  i.e. Realtek RTL8821AU (RTL8811AU + Bluetooth)
+
+endif
+

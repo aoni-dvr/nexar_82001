@@ -1,0 +1,29 @@
+#
+# This file is used to customize the build of ambacv module.
+# It is included in both Makfile and link bash script, so please follow the
+#   syntax carefully. Whitespace and quote DO mater .
+#
+
+# cvtasks to be built from source code
+CVTASK_AS_SRC=""
+
+# cvtask to be linked by binary
+CVTASK_AS_BIN=""
+
+# application-specific tbar manifest file(s)
+# can have zero/single/multiple file names, whitespace separated
+# can be ommited if not needed
+APP_MNFT_FILES=""
+
+# application-specific csv files
+# can have zero/single/multiple file names, whitespace separated
+# can be ommited if not needed
+APP_CSV_FILES=""
+
+ifeq ($(CONFIG_SOC_CV2), y)
+CVAPP_AS_SRC="AmbaCV_Flexidag stereopriv_cv2"
+else ifeq ($(CONFIG_SOC_CV2FS), y)
+CVAPP_AS_SRC="AmbaCV_Flexidag stereopriv_cv2a"
+else
+CVAPP_AS_SRC="AmbaCV_Flexidag"
+endif

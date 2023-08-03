@@ -1,0 +1,72 @@
+
+ccflags-y += -I$(srctree)/bsp/$(AMBA_CHIP_ID)/peripherals/display/inc
+
+DISPLAYPATH=display
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD.o
+
+ifeq ($(CONFIG_SVC_APPS_ICAM),y)
+
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_WDF9648W.o
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_T30P61.o
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_Y85006.o
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_Y85183.o
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_C101EAN01_0.o
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_ZS095BH3001A8H3_BII.o
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_MAXIM_Dual_TFT1280768.o
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_MAXIM_Dual_ZS095BH.o
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_MAXIM_TFT1280768.o
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_MAXIM_ZS095BH3001A8H3_BII.o
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_MAXIM_AUOB101UAN02.o
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_LT9611UXC.o
+
+else
+
+ifdef CONFIG_FPD_WDF9648W
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_WDF9648W.o
+endif
+
+ifdef CONFIG_FPD_T30P61
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_T30P61.o
+endif
+
+ifdef CONFIG_FPD_Y85006
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_Y85006.o
+endif
+
+ifdef CONFIG_FPD_Y85183
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_Y85183.o
+endif
+
+ifdef CONFIG_FPD_C101EAN01_0
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_C101EAN01_0.o
+endif
+
+ifdef CONFIG_FPD_ZS095BH3001A8H3_BII
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_ZS095BH3001A8H3_BII.o
+endif
+
+ifdef CONFIG_FPD_MAXIM_DUAL_TFT1280768
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_MAXIM_Dual_TFT1280768.o
+endif
+
+ifdef CONFIG_FPD_MAXIM_DUAL_ZS095BH
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_MAXIM_Dual_ZS095BH.o
+endif
+
+ifdef CONFIG_FPD_MAXIM_TFT1280768
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_MAXIM_TFT1280768.o
+endif
+
+ifdef CONFIG_FPD_MAXIM_ZS095BH3001A8H3_BII
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_MAXIM_ZS095BH3001A8H3_BII.o
+endif
+
+ifdef CONFIG_FPD_MAXIM_AUOB101UAN02
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_MAXIM_AUOB101UAN02.o
+endif
+
+ifdef CONFIG_FPD_LT9611UXC
+libperif_$(AMBA_CHIP_ID)-objs += $(DISPLAYPATH)/AmbaFPD_LT9611UXC.o
+endif
+
+endif

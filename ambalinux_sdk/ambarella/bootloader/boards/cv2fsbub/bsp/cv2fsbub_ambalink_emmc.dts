@@ -1,0 +1,162 @@
+/*
+ * Copyright (C) 2013 Ambarella,Inc. - http://www.ambarella.com/
+ * Author: Cao Rongrong <rrcao@ambarella.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+/dts-v1/;
+
+/include/ "ambarella-cv2fs-ambalink.dtsi"
+
+/ {
+	model = "Ambarella CV2FSBUB Board";
+	compatible = "ambarella,cv2fsbub", "ambarella,cv2fs";
+
+	aliases {
+		emmc = &sdmmc0;
+	};
+
+	chosen {
+	};
+
+	apb@e4000000 {
+		uart0: uart@e4000000 {
+			status = "disabled";
+		};
+	};
+
+	ahb@e0000000 {
+		nand0: nand@e0002000 {
+			status = "ok";
+		};
+
+		sdmmc0: sdmmc0@e0004000 {
+			/*pwr-gpios = <&gpio 35 0x1>;*/
+			/*v18-gpios = <&gpio 102 0x1>;*/
+			/*amb,fixed-cd = <1>;*/
+			//Modify start byte addr and size to 64bits.
+			#address-cells = <2>;
+			#size-cells = <2>;
+			amb,fixed-cd = <1>;
+			keep-power-in-suspend;
+			no-1-8-v;
+			max-frequency = <25000000>;
+			non-removable;
+			bus-width = <8>;
+			pinctrl-0 = <&sdmmc0_pins_8bit>;
+			status = "ok";
+		};
+
+		sdmmc1: sdmmc1@e0005000 {
+			/*pwr-gpios = <&gpio 56 0x1>;*/
+			/*v18-gpios = <&gpio 0 0x1>;*/
+			/*amb,fixed-cd = <1>;*/
+			keep-power-in-suspend;
+			no-1-8-v;
+			max-frequency = <50000000>;
+			status = "ok";
+		};
+
+		dma0: dma@e0020000 {
+			/* amb,dma-startchannel = <2>; */ /* Prevent conflict between RTOS. */
+			status = "disabled";
+		};
+
+		dma1: dma@e0021000 {
+			/* amb,dma-startchannel = <2>; */ /* Prevent conflict between RTOS. */
+			status = "disabled";
+		};
+
+		mac0: ethernet@e000e000 {
+			amb,tx-clk-invert;
+			phy@0 {
+				reg = <0>;
+			};
+		};
+
+		mac1: ethernet@e0032000 {
+			amb,tx-clk-invert;
+			phy@0 {
+				reg = <0>;
+			};
+		};
+
+
+		uart1: uart@e0017000 {
+			/*/delete-property/ amb,msr-used;    */
+			/delete-property/ amb,txdma-used;
+			/delete-property/ amb,rxdma-used;
+			status = "ok";
+		};
+
+		uart2: uart@e0018000 {
+			/*/delete-property/ amb,msr-used;    */
+			/delete-property/ amb,txdma-used;
+			/delete-property/ amb,rxdma-used;
+			status = "disabled";
+		};
+
+		uart3: uart@e0019000 {
+			/*/delete-property/ amb,msr-used;    */
+			/delete-property/ amb,txdma-used;
+			/delete-property/ amb,rxdma-used;
+			status = "disabled";
+		};
+
+		uart4: uart@e001a000 {
+			/*/delete-property/ amb,msr-used;    */
+			/delete-property/ amb,txdma-used;
+			/delete-property/ amb,rxdma-used;
+			status = "disabled";
+		};
+	};
+
+	rct@ed080000 {
+		usbphy: usbphy@ed080050 {
+			/* high will trigger the ocp interrupt */
+			amb,ocp-polarity = <0>;
+			pinctrl-names = "default";
+			pinctrl-0 = <&usb_host0_pins_a>;
+			/*status = "disabled";*/
+		};
+	};
+
+	/* for profiling, see aipc_profile.c */
+	profile_timer {
+		compatible = "ambarella,timer19";
+		reg = <0xe4006088 0x4>;
+	};
+
+	ambalink {
+		compatible = "simple-bus";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		aipc_mutex: ambarella-ipc-mutex {
+			compatible = "ambarella,ipc-mutex";
+			interrupts = <0 95 0x4>;
+			amb,scr-regmap = <&scratchpad_syscon>;
+		};
+
+		/* must be consistent with ambalink_cfg.h */
+		rproc0: ambarella-rproc {
+			compatible = "ambarella,rproc";
+			interrupts = <0 90 0x4>,	/* rvq_rx_irq, get rvq kick from rtos */
+				     <0 91 0x4>;	/* svq_rx_irq, get svq ack from rtos */
+			amb,scr-regmap = <&scratchpad_syscon>;
+		};
+
+		/* For RTOS as Master/Host, Linux as Client/Remote */
+		rpclnt0: ambarella-rpclnt {
+			compatible = "ambarella,rpclnt";
+			interrupts = <0 90 0x4>,	/* rvq_rx_irq, get rvq kick from rtos */
+				     <0 91 0x4>;	/* svq_rx_irq, get svq ack from rtos */
+			amb,svq_kick = <92>;		/* svq_tx, C1_to_C0_kick */
+			amb,rvq_ack  = <93>;		/* rvq_tx, C1_to_C0 ack */
+			amb,scr-regmap = <&scratchpad_syscon>;
+		};
+	};
+
+};

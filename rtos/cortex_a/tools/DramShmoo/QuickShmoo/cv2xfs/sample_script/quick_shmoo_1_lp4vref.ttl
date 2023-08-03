@@ -1,0 +1,2 @@
+CMD_shmoo='lp4vref'
+include 'quick_shmoo_main.ttl'

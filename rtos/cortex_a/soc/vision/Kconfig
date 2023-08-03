@@ -1,0 +1,109 @@
+menu "Ambarella CV sub-system"
+    depends on SOC_CV2 || SOC_CV22 || SOC_CV25 || SOC_CV28 || SOC_CV2A || SOC_CV22A || SOC_CV2FS || SOC_CV22FS || SOC_CV5 || SOC_CV52
+
+config CV_MEM_SIZE
+	hex "CV memory size"
+        default 0x20000000 if BUILD_CV
+        default 0x0
+	help
+	  The size of CV memory partition
+
+config CV_MEM_RTOS_SIZE
+	hex "CV RTOS USER memory size"
+        default 0x0
+	help
+	  The size of CV RTOS memory which is inside the CV memory.
+	  This area is used by flexidag to allocate IO buffers.
+	depends on AMBALINK_BOOT_OS
+
+config CV_MEM_SCHDR_SIZE
+	hex "CV SCHDR memory size"
+        default 0x4000000 if BUILD_CV
+        default 0x0
+	help
+		SCHDR_SIZE is used for RTOS and Linux
+
+menuconfig BUILD_CV
+	bool "Computer Vision for CVx"
+	default y
+
+config CV_CONFIG_FILE
+	string "file name of CV configuration"
+	default "default"
+	help
+	  the file name of ambacv configuration
+
+config DISABLE_ARM_CVTASK
+	bool "Disable arm cvtask"
+	help
+	  Arm cvtask support is for develop purpose
+        default n
+
+config DISABLE_CAVALRY
+	bool "Disable cavalry"
+	help
+	  Cavalry support is for develop purpose
+    	default n
+
+config BUILD_CV_THREADX
+	bool "Enable to build ambacv with ThreadX"
+	default y
+	depends on BUILD_CV
+
+config ENABLE_CV_MONITOR
+	bool "Enable CV safety monitor"
+	default n
+	depends on BUILD_CV
+
+config THPOOL_EXTRA_PER_THREAD
+	int "extra thread for blockable cvtack per-thread"
+	default 2
+	depends on !DISABLE_ARM_CVTASK
+	help
+	  Extra thread for running blockable cvtask
+
+config THPOOL_PRIORITY
+	int "thread pool priority"
+	default 40
+	depends on !DISABLE_ARM_CVTASK
+	help
+	  Thread priority for runing unblockable cvtask
+
+config EXTRA_THPOOL_PRIORITY
+	int "extra thread pool priority"
+	default 39
+	depends on !DISABLE_ARM_CVTASK
+	help
+	  Thread priority for running blockable cvtask
+
+config THPOOL_STACK_SIZE
+	hex "thread pool stack size"
+	default 0x20000
+	depends on !DISABLE_ARM_CVTASK
+	help
+	  Thread stack size for runing unblockable cvtask
+
+config EXTRA_THPOOL_STACK_SIZE
+	hex "extra thread pool stack size"
+	default 0x20000
+	depends on !DISABLE_ARM_CVTASK
+	help
+	  Thread stack size for runing blockable cvtask
+
+config CV_PROTECT_PRIORITY
+	int "cv protect task priority"
+	default 40
+	help
+	  Thread priority for running cv protection flow
+
+config CV_PROTECT_STACK_SIZE
+	hex "cv protect stack size"
+	default 0x800
+	help
+	  Thread stack size for running cv protection flow
+
+config CV_CV22FS
+	bool "cv chip cv22fs"
+	default n
+
+endmenu

@@ -1,0 +1,119 @@
+diff --git a/apps/iout/amba_svc.lds.S b/apps/iout/amba_svc.lds.S
+index 37486f5d2..3f9ffe325 100755
+--- a/apps/iout/amba_svc.lds.S
++++ b/apps/iout/amba_svc.lds.S
+@@ -84,6 +84,20 @@ SECTIONS
+ 		/* For libaudio.a */
+ 		* (i.__ARM_common*)
+ 		* (FFTCODE*)
++		. = ALIGN(32);
++		PROVIDE_HIDDEN (__preinit_array_start = .);
++		KEEP (*(.preinit_array))
++		PROVIDE_HIDDEN (__preinit_array_end = .);
++		. = ALIGN(32);
++		PROVIDE_HIDDEN (__init_array_start = .);
++		KEEP (*(SORT_BY_INIT_PRIORITY(.init_array.*) SORT_BY_INIT_PRIORITY(.ctors.*)))
++		KEEP (*(.init_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .ctors))
++		PROVIDE_HIDDEN (__init_array_end = .);
++		. = ALIGN(32);
++		PROVIDE_HIDDEN (__fini_array_start = .);
++		KEEP (*(SORT_BY_INIT_PRIORITY(.fini_array.*) SORT_BY_INIT_PRIORITY(.dtors.*)))
++		KEEP (*(.fini_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .dtors))
++		PROVIDE_HIDDEN (__fini_array_end = .);
+ 		__ddr_region0_ro_end = .;
+ 
+ 		. = ALIGN(64);
+@@ -154,7 +168,7 @@ SECTIONS
+ 	. = ALIGN(0x1000);
+ 	PROVIDE (end = .);
+ 	__sbrk_start = .;
+-	. = __sbrk_start + 0x2000;
++	. = __sbrk_start + 0x20000;
+ 	/*
+ 	 * Provide a end symbol for newlib malloc.
+ 	 * We dont use malloc for newlib, so it should be ok.
+@@ -170,6 +184,11 @@ SECTIONS
+     . = __varsym_start + 0x20000;
+     __varsym_end = .;
+ 
++	. = ALIGN(32);
++	__memutilpool_start = .;
++	. = __memutilpool_start + 0x400000;
++	__memutilpool_end = .;
++
+ 	.bss.noinit : {
+ 		. = ALIGN(64);
+ 		__noinit_start = .;
+@@ -181,6 +200,8 @@ SECTIONS
+ 		. = ALIGN(64);
+ 		__bss_start = .;
+ 		* (.bss*)
++		* (COMMON)
++		*(.gnu.linkonce.b.*)
+ 		__bss_end = .;
+ 	}
+ 
+diff --git a/apps/iout/link-amba_data.sh b/apps/iout/link-amba_data.sh
+index ff8e9ab37..4488c311a 100755
+--- a/apps/iout/link-amba_data.sh
++++ b/apps/iout/link-amba_data.sh
+@@ -92,6 +92,8 @@ if [ "${CONFIG_BUILD_SSP_PCIE_LIB}" = "y" ]; then
+ 	AMBA_LIBS="${AMBA_LIBS} libpcie.a libnvme.a"
+ fi
+ 
++AMBA_LIBS="${AMBA_LIBS} libwolfssl.a  libwolfssl_test.a libstdsupp.a libsyscall.a"
++
+ AMBA_LIBS=$(echo ${AMBA_LIBS} | tr " " "\n" | uniq | tr "\n" " ")
+ AMBA_LIBS_NUM=$(echo ${AMBA_LIBS} | wc -w)
+ 
+@@ -216,3 +218,5 @@ else
+ 	NM_CMD=""
+ 	OBJCOPY_CMD=""
+ fi
++LINK_CMD+=" --wrap=malloc --wrap=free --wrap=calloc --wrap=realloc "
++
+diff --git a/apps/iout/src/threadx/AmbaUserSysInit.c b/apps/iout/src/threadx/AmbaUserSysInit.c
+index 43eafe81b..68920d951 100755
+--- a/apps/iout/src/threadx/AmbaUserSysInit.c
++++ b/apps/iout/src/threadx/AmbaUserSysInit.c
+@@ -273,6 +273,19 @@ static void AmbaSysInitConsole(void)
+     AmbaPrint_PrintUInt5("Print Service Ready!", 0U, 0U, 0U, 0U, 0U);
+ }
+ 
++
++void AmbaShell_CommandWBenchmark(UINT32 argc, char * const * argv, AMBA_SHELL_PRINT_f PrintFunc)
++{
++    (void)argc;
++    (void)argv;
++    (void)PrintFunc;
++    {
++        INT32 benchmark_test(void *args);
++
++        (void)benchmark_test(NULL);
++    }
++}
++
+ static void AmbaSysInitShell(void)
+ {
+ 
+@@ -307,7 +320,7 @@ static void AmbaSysInitShell(void)
+         {.pName = "writel",   .MainFunc = AmbaShell_CommandWriteLong, .pNext = NULL},
+         {.pName = "atf",      .MainFunc = AmbaShell_CommandAtf,       .pNext = NULL },
+         {.pName = "iostat",   .MainFunc = AmbaShell_CommandIoStat,    .pNext = NULL},
+-        {.pName = "sysinfo",  .MainFunc = AmbaShell_CommandSysInfo,   .pNext = NULL},
++        {.pName = "wbenchmark",  .MainFunc = AmbaShell_CommandWBenchmark,   .pNext = NULL},
+     #ifdef CONFIG_ENABLE_AMBALINK
+         {.pName = "ambalink", .MainFunc = AmbaShell_CommandAmbaLink, .pNext = NULL},
+     #endif
+@@ -666,6 +679,11 @@ static void *AmbaSysInitTaskEntry(void * EntryArg)
+     }
+ 
+     AmbaSysInitShell();
++    {
++        void AmbaCRT0(void);
++
++        AmbaCRT0();
++    }
+ 
+ #if 0
+     AmbaShowAllClk();

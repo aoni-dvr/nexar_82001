@@ -1,0 +1,42 @@
+if SOC_CV25
+
+source build/kconfigs/bsp/cv25/peripherals/Kconfig
+
+comment "Board Configuration"
+choice CV25_BSP_SELECTION
+	prompt "BSP"
+	default BSP_CV25BUB_OPTION_A_V300
+
+config BSP_CV25BUB_OPTION_A_V300
+	bool "CV25 Bringup Board Option-A V300"
+config BSP_CV25BUB_OPTION_A_V200
+	bool "CV25 Bringup Board Option-A V200"
+config BSP_CV25DK_V100
+	bool "CV25 Development Kit V100"
+config BSP_CV25DK_8LAYER_V110
+	bool "CV25 Development Kit 8-layer V110"
+config BSP_CV25_NEXAR_D161
+	bool "CV25 D161 For Nexar"
+config BSP_CV25_NEXAR_D161V2
+	bool "CV25 D161V2 For Nexar"
+config BSP_CV25_NEXAR_D080
+	bool "CV25 D080 For Nexar"
+endchoice
+
+choice CV25_DRAM_SELECTION
+	prompt "Dram"
+	default CV25_LPDDR4_MT53D512M32D2DS_1200MHZ
+
+config CV25_LPDDR4_MT53D512M32D2DS_1200MHZ
+	bool "MT53D512M32D2DS 1200MHz"
+config CV25_LPDDR4_MT53D512M32D2DS_1596MHZ
+	bool "MT53D512M32D2DS 1596MHz"
+endchoice
+
+config ATT_MAP
+	string "Att Map File Name"
+	default "AmbaUserMemProt"
+	help
+		File name of the Att Map file (remove '.c')
+
+endif

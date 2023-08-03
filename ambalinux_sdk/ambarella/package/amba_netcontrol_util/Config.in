@@ -1,0 +1,4 @@
+menuconfig BR2_PACKAGE_AMBA_NETCONTROL_UTIL
+	bool "amba_netcontrol_util"
+	help
+	  Enable the net control flow utility.

@@ -1,0 +1,6 @@
+BEGIN_ddrc=0
+END_ddrc=0
+include 'quick_shmoo_cv5_1_lp4vref.ttl'
+include 'quick_shmoo_cv5_1_dqsvref.ttl'
+include 'quick_shmoo_cv5_1_lp4mr14.ttl'
+include 'quick_shmoo_cv5_1_lp4mr12.ttl'

@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: GPL-2.0
+
+config EVA_AUDIO_TICK
+	tristate "EVA Audio Tick Support"
+	default n
+	help
+	  enable eva audio tick.

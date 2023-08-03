@@ -1,0 +1,19 @@
+roi[0].start_x  338
+roi[0].start_y  216
+roi[0].width    350
+roi[0].height   300
+
+roi[1].start_x  357
+roi[1].start_y  481
+roi[1].width    350
+roi[1].height   300
+
+roi[2].start_x 1343
+roi[2].start_y  189
+roi[2].width    350
+roi[2].height   300
+
+roi[3].start_x 1329
+roi[3].start_y  462
+roi[3].width    350
+roi[3].height   300

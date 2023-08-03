@@ -1,0 +1,16 @@
+config BR2_PACKAGE_AI_CAM_APP
+	tristate "AI Sample App"
+	select BR2_PACKAGE_JPEG
+	help
+	  AI Sample App.
+
+if BR2_PACKAGE_AI_CAM_APP
+
+config BR2_PACKAGE_AI_CAM_LIB_PREBUILT
+	bool "Prebuilt library"
+	depends on !BR2_PACKAGE_AI_CAM_LIB
+	default y
+	help
+	  Using Prebuilt library.
+endif
+

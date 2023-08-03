@@ -1,0 +1,8 @@
+config BR2_PACKAGE_ACE_TAO
+	bool
+	default n
+	help
+	  ACE (the ADAPTIVE Communication Environment) +
+	  TAO (The ACE ORB) -- C++, CORBA-compliant object request broker (ORB)
+	  Not be built but used by OpenDDS.
+

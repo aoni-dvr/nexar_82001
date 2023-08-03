@@ -1,0 +1,211 @@
+if SVC_APPS_ICAM
+menu "iCam Project"
+
+choice
+    prompt "Select SVC App function to be used"
+    default ICAM_PROJECT_EMIRROR
+
+    config ICAM_PROJECT_EMIRROR
+        bool "EMIRROR"
+    config ICAM_PROJECT_ADAS_DVR
+        bool "ADAS DVR"
+    config ICAM_PROJECT_DMS
+        bool "DMS"
+    config ICAM_PROJECT_SURROUND
+        bool "SURROUND"
+    config ICAM_PROJECT_CNNTESTBED
+        bool "CNN"
+    config ICAM_PROJECT_SHMOO
+        bool "SHMOO"
+endchoice
+
+menuconfig ICAM_PROJECT_NAME
+    string "ICAM_PROJECT_NAME"
+    depends on  ICAM_PROJECT_EMIRROR || ICAM_PROJECT_ADAS_DVR || ICAM_PROJECT_DMS || ICAM_PROJECT_SURROUND || ICAM_PROJECT_CNNTESTBED || ICAM_PROJECT_SHMOO
+    default "EMR"   if ICAM_PROJECT_EMIRROR
+    default "ADAS"  if ICAM_PROJECT_ADAS_DVR
+    default "DMS"   if ICAM_PROJECT_DMS
+    default "SUR"   if ICAM_PROJECT_SURROUND
+    default "CNN"   if ICAM_PROJECT_CNNTESTBED
+    default "SHMOO" if ICAM_PROJECT_SHMOO
+
+menuconfig ICAM_ENABLE_VOUT_FRAME_CTRL
+    bool "VOUT Frame Control Test"
+    default n
+if ICAM_ENABLE_VOUT_FRAME_CTRL
+config ICAM_VOUT_FRAME_CTRL_AUTO_START
+    bool "Auto start at booting"
+    default n
+config ICAM_VOUT_FRAME_CTRL_SYNC_MODE
+    hex "Sync Mode. 0: Constant delay, 1: OSD sync, 2: OSD sync and GUI master."
+    default 0x0
+config ICAM_VOUT_FRAME_CTRL_DLY_COUNT
+    hex "Delay count"
+    default 0x0
+config ICAM_VOUT_FRAME_CTRL_STREAM_IDX
+    hex "Target display stream index"
+    default 0x0
+config ICAM_VOUT_FRAME_CTRL_VOUT_YUV_BUF_NUM
+    hex "Number of VOUT YUV buffer"
+    default 0x10
+endif
+
+menuconfig ICAM_ENABLE_VOUT_DEF_IMG
+    bool "Enable VOUT default image"
+    default n
+
+menuconfig SVC_VIN_ERR_CTRL_USED
+	bool "Enable VIN error control task"
+	default n
+
+menuconfig SVC_VOUT_ERR_CTRL_USED
+	bool "Enable VOUT error control task"
+	default n
+
+menuconfig ICAM_ENABLE_REGRESSION_FLOW
+    bool "Enable Regression Flow"
+    default n
+    help
+      Enable Regression flow.
+
+config ICAM_TRANSIENT_DRAM_SIZE
+	hex "icam transient dram size"
+    depends on ICAM_STLCAP_USED || ICAM_IMGRAWCAP_USED || ICAM_FW_UPDATER_USED
+    default 0x4FA8780
+
+config APP_MEM_SIZE
+    depends on ICAM_ENABLE_REGRESSION_FLOW
+    hex "APP share mem size"
+    default 0x1000000
+    help
+      APP Share memory size for RPC usage.
+
+config VIN_DELAY_MASTER_SYNC_SUPPORT
+    bool "Support delay master sync"
+    depends on SOC_CV2 || SOC_CV2FS
+    default n
+    
+config VIN_ONE_MASTER_SYNC_SUPPORT
+    bool "Support one master sync"
+    depends on SOC_CV2 || SOC_CV2FS
+    default n
+
+choice
+    prompt "VoutB OSD dimension"
+    default ICAM_VOUTB_OSD_BUF_DEFAULT
+
+    config ICAM_VOUTB_OSD_BUF_DEFAULT
+        bool "Default OSD"
+    config ICAM_VOUTB_OSD_BUF_FHD
+        bool "FHD OSD"
+    config ICAM_VOUTB_OSD_BUF_HD
+        bool "HD OSD"
+endchoice
+
+config SVC_ENABLE_STEREO_CLUT
+    bool "Enable Stereo color lookup table"
+    depends on SOC_CV2 || SOC_CV2FS
+    default n
+
+menuconfig SVC_ENABLE_WDT
+    bool "enable watchdog module"
+    default n
+
+if SOC_CV5 || SOC_CV52 || SOC_CV2FS
+if SVC_ENABLE_WDT
+config GPIO_PIN_WDT_EXT
+    hex "watchdog externel mode GPIO pin"
+    default 0x3007   if SOC_CV2FS
+    default 0x2000   if SOC_CV5 || SOC_CV52
+    default 0
+endif
+endif
+
+if ICAM_PROJECT_EMIRROR
+menu "Image Calibration"
+config ICAM_IMGCAL_STITCH_USED
+    bool "Enable calibration stitch"
+    depends on ICAM_IMGCAL_USED
+    default n
+endmenu
+endif
+
+menuconfig ICAM_SYS_INFO_TASK
+    bool "System Info Task"
+    default n
+if ICAM_SYS_INFO_TASK
+config ICAM_ENABLE_SYS_INFO_OSD
+    bool "Display System info OSD"
+    default n
+endif
+
+menu "Demo Test"
+config ICAM_AMBANET_V2_TEST
+    bool "AmbaNet V2 Test"
+    default n
+
+config ICAM_CV5_12VIN_TEST
+    bool "CV5 12VIN Test"
+    default n
+
+if ICAM_CV5_12VIN_TEST
+config ICAM_CV5_12VIN_TEST_OD_NUM
+    int "OD draw bounding box maximum number"
+    default 10
+endif
+endmenu
+
+menuconfig ICAM_REBEL_USAGE
+    bool "Rebel usage purpose"
+    default n
+if ICAM_REBEL_USAGE
+config ICAM_REBEL_CUSTOMER_NN
+    bool "Customer NN"
+    default n
+if ICAM_REBEL_CUSTOMER_NN
+config ICAM_REBEL_CUSTOMER_NN_LOGO
+    bool "Customer NN Logo"
+    default n
+config ICAM_REBEL_CUSTOMER_NN_LT6911
+    bool "Customer NN + LT6911"
+    default n
+endif
+endif
+
+choice
+    prompt "Select SVC App Flow to be used"
+    default APP_FLOW_CARDV_AONI
+
+	config APP_FLOW_NONE
+        bool "NO APP FLOW"
+    config APP_FLOW_CARDV_AONI
+        bool "AONI CARDV"
+endchoice
+
+if APP_FLOW_CARDV_AONI
+menuconfig APP_FLOW_AONI_MODULE_PLATFORM_NAME
+    string "APP_FLOW_AONI_MODULE_PLATFORM_NAME"
+    default "amba_cv25"
+config APP_FLOW_CARDV_UVC
+    bool "Enable uvc"
+    default y
+config APP_FLOW_AONI_CV_RUN
+    bool "Enable cv"
+    default n
+config APP_FIRMWARE_FOR_MP
+    bool "MP Firmware"
+    default n
+config APP_FIRMWARE_FOR_CMDMODE
+    bool "Cmd Firmware"
+    default n
+config GNSS_PPS_TIME_SYNC_ENABLE
+    bool "Gnss pps function"
+    default n
+source svc/apps/icam/cardv/cardv_modules/Kconfig.cardv_modules
+endif
+
+endmenu
+
+source svc/apps/icam/core/Kconfig
+
+endif

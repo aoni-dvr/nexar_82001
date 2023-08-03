@@ -1,0 +1,134 @@
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_QueryArchMemorySize(), ID = 0, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_InitArch(), ID = 1, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_InitDefBinary(), ID = 2, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_InitCheckParamFunc(), ID = 3, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_SetDebugLogId(), ID = 4, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_InitContext(), ID = 5, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetWindowSizeInfo(), ID = 6, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetWindowSizeInfo(), ID = 7, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFlipMode(), ID = 8, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetStitchingInfo(), ID = 9, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetWarpBufferInfo(), ID = 10, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetVinSensorInfo(), ID = 11, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetVinSensorInfo(), ID = 12, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetRgbIr(), ID = 13, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFeToneCurve(), ID = 14, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFeStaticBlc(), ID = 15, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetDynamicBadPxlCor(), ID = 16, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetCfaLeakageFilter(), ID = 17, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetCfaNoiseFilter(), ID = 18, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetAntiAliasing(), ID = 19, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFeWbGain(), ID = 20, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetAfterCeWbGain(), ID = 21, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetBeforeCeWbGain(), ID = 22, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetDemosaic(), ID = 23, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetGrgbMismatch(), ID = 24, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetRgbTo12Y(), ID = 25, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetColorCorrection(), ID = 26, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetToneCurve(), ID = 27, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetRgbToYuvMatrix(), ID = 28, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetChromaScale(), ID = 29, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetChromaMedianFilter(), ID = 30, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetChromaFilter(), ID = 31, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetWideChromaFilter(), ID = 32, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetWideChromaFilterCombine(), ID = 33, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetLumaNoiseReduction(), ID = 34, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFirstLumaProcMode(), ID = 35, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFstShpNsBoth(), ID = 36, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFstShpNsNoise(), ID = 37, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFstShpNsFir(), ID = 38, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFstShpNsCoring(), ID = 39, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFstShpNsCorIdxScl(), ID = 40, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFstShpNsMinCorRst(), ID = 41, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFstShpNsMaxCorRst(), ID = 42, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFstShpNsSclCor(), ID = 43, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFnlShpNsBoth(), ID = 44, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFnlShpNsBothTdt(), ID = 45, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFnlShpNsNoise(), ID = 46, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFnlShpNsFir(), ID = 47, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFnlShpNsCoring(), ID = 48, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFnlShpNsCorIdxScl(), ID = 49, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFnlShpNsMinCorRst(), ID = 50, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFnlShpNsMaxCorRst(), ID = 51, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetFnlShpNsSclCor(), ID = 52, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetVideoMctf(), ID = 53, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetVideoMctfTa(), ID = 54, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetVideoMctfAndFnlshp(), ID = 55, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetVinActiveWin(), ID = 56, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetDummyMarginRange(), ID = 57, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetDzoomInfo(), ID = 58, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetStaticBadPxlCorEnb(), ID = 59, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetVignetteEnb(), ID = 60, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetCawarpEnb(), ID = 61, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_SetWarpEnb(), ID = 62, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_ExecuteConfig(), ID = 63, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_QueryDebugConfigSize(), ID = 64, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_DumpDebugConfig(), ID = 65, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageUtility.c, AmbaIK_GetContextAbility(), ID = 66, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Ability.Pipe = 0, Ability.StillPipe = 0, Ability.VideoPipe = 0
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFlipMode(), ID = 67, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+FlipInfo = 0
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetStitchingInfo(), ID = 68, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+StitchInfo.Enable = 1
+StitchInfo.TileNum_x = 2
+StitchInfo.TileNum_y = 4
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetWarpBufferInfo(), ID = 69, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+WarpBufInfo.DramEfficiency = 2
+WarpBufInfo.LumaWaitLines = 64
+WarpBufInfo.LumaDmaSize = 32
+WarpBufInfo.Reserved = 32
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetVinSensorInfo(), ID = 70, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetRgbIr(), ID = 71, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFeToneCurve(), ID = 72, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFeStaticBlc(), ID = 73, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetDynamicBadPxlCor(), ID = 74, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetCfaLeakageFilter(), ID = 75, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetCfaNoiseFilter(), ID = 76, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetAntiAliasing(), ID = 77, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFeWbGain(), ID = 78, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetAfterCeWbGain(), ID = 79, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetBeforeCeWbGain(), ID = 80, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetRgbTo12Y(), ID = 81, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetDemosaic(), ID = 82, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetGrgbMismatch(), ID = 83, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetColorCorrection(), ID = 84, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetToneCurve(), ID = 85, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetRgbToYuvMatrix(), ID = 86, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetChromaScale(), ID = 87, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetChromaMedianFilter(), ID = 88, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetChromaFilter(), ID = 89, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetWideChromaFilter(), ID = 90, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetWideChromaFilterCombine(), ID = 91, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetLumaNoiseReduction(), ID = 92, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFirstLumaProcMode(), ID = 93, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFstShpNsBoth(), ID = 94, description : OK case in ik_ctest_vid8_ldly_tile2x4.c.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFstShpNsNoise(), ID = 95, description : OK case in ik_ctest_vid8_ldly_tile2x4.c.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFstShpNsFir(), ID = 96, description : OK case in ik_ctest_vid8_ldly_tile2x4.c.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFstShpNsCoring(), ID = 97, description : OK case in ik_ctest_vid8_ldly_tile2x4.c.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFstShpNsCorIdxScl(), ID = 98, description : OK case in ik_ctest_vid8_ldly_tile2x4.c.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFstShpNsMinCorRst(), ID = 99, description : OK case in ik_ctest_vid8_ldly_tile2x4.c.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFstShpNsMaxCorRst(), ID = 100, description : OK case in ik_ctest_vid8_ldly_tile2x4.c.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFstShpNsSclCor(), ID = 101, description : OK case in ik_ctest_vid8_ldly_tile2x4.c.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFnlShpNsBoth(), ID = 102, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFnlShpNsBothTdt(), ID = 103, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFnlShpNsNoise(), ID = 104, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFnlShpNsFir(), ID = 105, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFnlShpNsCoring(), ID = 106, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFnlShpNsCorIdxScl(), ID = 107, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFnlShpNsMinCorRst(), ID = 108, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFnlShpNsMaxCorRst(), ID = 109, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetFnlShpNsSclCor(), ID = 110, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetVideoMctf(), ID = 111, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetVideoMctfTa(), ID = 112, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetVideoMctfAndFnlshp(), ID = 113, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetVinActiveWin(), ID = 114, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetDummyMarginRange(), ID = 115, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetDzoomInfo(), ID = 116, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetWarpInfo(), ID = 117, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+WarpEnb = 0
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetCawarpInfo(), ID = 118, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+CawarpEnb = 0
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetVignette(), ID = 119, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+VignetteEnb = 0
+Rval = 0x00000000, AmbaDSP_ImageFilters.c, AmbaIK_GetStaticBadPxlCor(), ID = 120, description : OK case in ik_ctest_vid8_ldly_tile2x4.c
+StaticBadPxlCorEnb = 0

@@ -1,0 +1,119 @@
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2020 Ambarella International LP
+////////////////////////////////////////////////////////////////////////////////
+// This file and its contents ("Software") are protected by intellectual
+// property rights including, without limitation, U.S. and/or foreign
+// copyrights. This Software is also the confidential and proprietary
+// information of Ambarella International LP and its licensors. You may not use,
+// reproduce, disclose, distribute, modify, or otherwise prepare derivative
+// works of this Software or any portion thereof except pursuant to a signed
+// license agreement or nondisclosure agreement with Ambarella International LP
+// or its authorized affiliates. In the absence of such an agreement, you agree
+// to promptly notify and return this Software to Ambarella International LP.
+//
+// THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT,
+// MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+// IN NO EVENT SHALL AMBARELLA INTERNATIONAL LP OR ITS AFFILIATES BE LIABLE
+// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+// SERVICES; LOSS OF USE, DATA, OR PROFITS; COMPUTER FAILURE OR MALFUNCTION;
+// OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+// ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+////////////////////////////////////////////////////////////////////////////////
+
+=====================
+     vas summary     
+=====================
+DAG name: 'pre_split30_mnet_ssd_adas_flex_pic_prim_split_0'
+vas command: /opt/amba/cv28/tv2/release/Vas/cv28.qa.2020-09-02.773/bin/vas1 -auto -no-split-dag -recompile -no-pre-split -fs pre_split30_mnet_ssd_adas_flex_pic_split_0.vas /tmp/vascppB1sHKA.vii -max-name-id 620100000 -comp2-id-range 620100000~620110000 -info "(ARCH cv28 VERSION 77 CVTOOLS_RELEASE 2.2.0) run at 'Tue Sep  8 10:26:29 2020'"
+source op primitives:          0
+final operators:              10
+final descriptors:            16
+DAG code num bytes:          676
+vmem num bytes:           442992(432 K)
+dcb num bytes:             65536(64 K)
+dcb:         1
+vcb:         5  full:    2
+hmb:         4  full:    3  const:    0
+smb:         5              const:    4
+scalar:      1
+subspace:    0
+subspace parent:    0
+total hmb input dram size: 20480 bytes
+total hmb output dram size: 4736 bytes
+total const data + dagbin size: 397404 bytes
+total dvi size: 397404 bytes
+total ddi size:    0 bytes
+
+total write traffic:
+    dcb:            3200 bytes
+    vcb:           14550 bytes
+    hmb:            3954 bytes
+    smb:             768 bytes
+
+total read traffic
+    dcb:            3200 bytes
+    vcb:           24250 bytes
+    hmb:           12800 bytes
+    smb:          396680 bytes
+    scalar:            1 bytes
+
+VMEM usage >= 4K bytes:
+
+======================
+       VMEM map       
+======================
+vmem_base = 0x1000
+
+0x00000000      --------------------------------------
+                  -- nil -- (4096 bytes)
+0x00001000      --------------------------------------
+                  __vas_created_terminate__v0(software_managed) (96 bytes)
+0x00001060      --------------------------------------
+                  conv7_2_mbox_loc_flat(hardware_managed) (608 bytes)
+0x000012c0      --------------------------------------
+                  conv7_2_mbox_conf___conv2i___98______8_1_____bn_conv8_1__scale_mul___muli___101_____bn_conv8_1__scale_mul_____scale___loc___conv2i___140___crop___327(vmem_chaining) (960 bytes)
+0x00001680      --------------------------------------
+                  conv7_2_mbox_conf_flat(hardware_managed) (1056 bytes)
+0x00001aa0      --------------------------------------
+                  conv7_2_mbox_conf___conv2i___98______8_1_____bn_conv8_1__scale_mul___muli___101_____bn_conv8_1__scale_mul___crop___325(vmem_chaining) (1512 bytes)
+0x00002088      --------------------------------------
+                  conv8_2_____bn_conv8_2__scale_mul___muli___104_____bn_conv8_2__scale_mul_____scale___relu8_2(hardware_managed) (3072 bytes)
+0x00002c88      --------------------------------------
+                  conv7_2_mbox_conf___conv2i___98______8_1_____bn_conv8_1__scale_mul___muli___101_____bn_conv8_1__scale_mul_____scale___loc___conv2i___140______muli___373(vmem_chaining) (4656 bytes)
+0x00003eb8      --------------------------------------
+                  conv7_2_mbox_conf___conv2i___98______8_1_____bn_conv8_1__scale_mul___muli___101_____bn_conv8_1__scale_mul_____scale___loc___conv2i___140___muli___372___4(vmem_chaining) (4656 bytes)
+0x000050e8      --------------------------------------
+                  relu8_1(vmem_chaining) (5120 bytes)
+0x000064e8      --------------------------------------
+                  conv7_2_____bn_conv7_2__scale_mul___muli___96_____bn_conv7_2__scale_mul_____scale___relu7_2(hardware_managed) (24576 bytes)
+0x0000c4e8      --------------------------------------
+                  __pvcn_2629_(software_managed) (294912 bytes)
+0x000544e8      --------------------------------------
+                  __pvcn_2625_(software_managed) (99328 bytes)
+0x0006c8e8      --------------------------------------
+                  __pvcn_2630_(software_managed) (1408 bytes)
+0x0006ce68      --------------------------------------
+                  __pvcn_2626_(software_managed) (1032 bytes)
+0x0006d270      --------------------------------------
+                  dag binary (724 bytes)
+0x0006d544      --------------------------------------
+                  -- nil -- (76476 bytes)
+0x00080000      --------------- (end) ----------------
+
+Mac count summary: 
+  total normalized mac count:          7658980
+    - Ice mac count:                                13936800
+      - ice true mac count:            7644430
+      - ice normalized mac count:      7644430
+    - Arithmetic normalized mac count:                  8050
+    - Transfer normalized mac count:                    6500
+
+Estimated ICE cycle count: 122528
+
+total vas running time: 0.61 seconds
+
+

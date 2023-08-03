@@ -1,0 +1,51 @@
+
+IMG_O_PREFIX = ../../src/img
+IMG_INC_PREFIX =  $(src)/$(IMG_O_PREFIX)
+
+ifdef CONFIG_SOC_CV2
+IMG_SOC_NAME = cv2
+endif
+ifdef CONFIG_SOC_CV22
+IMG_SOC_NAME = cv22
+endif
+ifdef CONFIG_SOC_CV25
+IMG_SOC_NAME = cv25
+endif
+ifdef CONFIG_SOC_CV28
+IMG_SOC_NAME = cv28
+endif
+ifdef CONFIG_SOC_H32
+IMG_SOC_NAME = h32
+endif
+ifdef CONFIG_SOC_CV2FS
+IMG_SOC_NAME = cv2fs
+endif
+ifdef CONFIG_SOC_CV5
+IMG_SOC_NAME = cv5
+endif
+ifdef CONFIG_SOC_CV52
+IMG_SOC_NAME = cv5
+endif
+
+ifeq ($(wildcard $(srctree)/svc/apps/icam/core/src/img/threadx/$(IMG_SOC_NAME)),)
+ifdef CONFIG_ARM64
+IMG_SOC_NAME = comsoc_tx64
+else
+IMG_SOC_NAME = comsoc
+endif
+endif
+
+ccflags-y += -I$(IMG_INC_PREFIX)/inc
+ifdef CONFIG_ICAM_IMGITUNER_USED
+ccflags-y += -I$(srctree)/svc/comsvc/tune/ituner
+endif
+
+libsvc_icamcore-objs += $(IMG_O_PREFIX)/threadx/$(IMG_SOC_NAME)/SvcCmdIK_Idsp.o
+libsvc_icamcore-objs += $(IMG_O_PREFIX)/SvcCmdIK.o
+
+ifeq ($(CONFIG_BUILD_IMGFRW_AAA),y)
+ccflags-y += -I$(srctree)/svc/comsvc/imgfrw/main/inc
+libsvc_icamcore-objs += $(IMG_O_PREFIX)/SvcImg.o
+endif
+
+libsvc_icamcore-objs += $(IMG_O_PREFIX)/SvcCvImgUtil.o

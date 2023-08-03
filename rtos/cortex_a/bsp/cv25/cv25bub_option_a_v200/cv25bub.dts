@@ -1,0 +1,58 @@
+/*
+ * board level device tree source
+ */
+
+/dts-v1/;
+
+/include/ "cv25.dtsi"
+
+/ {
+	model = "Ambarella CV25BUB Board";
+	compatible = "ambarella,cv25bub", "ambarella,cv25";
+
+	chosen {
+		stdout-path = &uart0;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		xen,xen-bootargs = "dom0_mem=256M bootscrub=0 dom0_max_vcpus=1 dom0_vcpus_pin timer_slop=0";
+		module@0 {
+			 compatible = "xen,linux-zimage", "xen,multiboot-module";
+			 reg = <0x0 0x0>;
+			 bootargs = "root=/dev/mtdblock21 rootfstype=squashfs rdinit=/sbin/init console=hvc0 earlycon=xenboot quiet";
+		};
+
+		domu_tx {
+			#address-cells = <1>;
+			#size-cells = <1>;
+			compatible = "xen,domain";
+			memory = <0x0 0x0>;
+			cpus = <1>;
+
+			module@0 {
+				compatible = "multiboot,kernel", "multiboot,module";
+				reg = <0x0 0x0>;
+			};
+		};
+
+	};
+
+	n_ahb@e0000000 {
+		nand0: nand@e0002000 {
+			status = "ok";
+		};
+
+		mac0: ethernet@e000e000 {
+			amb,tx-clk-invert;
+			phy@0 {
+				reg = <0>;
+			};
+		};
+	};
+    
+	rct@ed080000 {
+		usbphy: usbphy@ed080050 {
+            pinctrl-names = "default";
+            pinctrl-0 = <&usb_host0_pins_a>;
+		};
+	};    
+};

@@ -1,0 +1,333 @@
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2020 Ambarella International LP
+////////////////////////////////////////////////////////////////////////////////
+// This file and its contents ("Software") are protected by intellectual
+// property rights including, without limitation, U.S. and/or foreign
+// copyrights. This Software is also the confidential and proprietary
+// information of Ambarella International LP and its licensors. You may not use,
+// reproduce, disclose, distribute, modify, or otherwise prepare derivative
+// works of this Software or any portion thereof except pursuant to a signed
+// license agreement or nondisclosure agreement with Ambarella International LP
+// or its authorized affiliates. In the absence of such an agreement, you agree
+// to promptly notify and return this Software to Ambarella International LP.
+//
+// THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT,
+// MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+// IN NO EVENT SHALL AMBARELLA INTERNATIONAL LP OR ITS AFFILIATES BE LIABLE
+// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+// SERVICES; LOSS OF USE, DATA, OR PROFITS; COMPUTER FAILURE OR MALFUNCTION;
+// OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+// ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+////////////////////////////////////////////////////////////////////////////////
+#ifndef flexidag_openseg_prim_split_45_H
+#define flexidag_openseg_prim_split_45_H
+
+#define vas_gen_header_version                  	7
+
+/* dag name */
+#define flexidag_openseg_prim_split_45_DAG_NAME 	"flexidag_openseg_prim_split_45"
+
+/* VDG file info */
+#define flexidag_openseg_prim_split_45_vdg_name 	"flexidag_openseg_split_45.vdg"
+
+/* VDG DAG memory info */
+#define flexidag_openseg_prim_split_45_byte_offset 	4294967295	/* 0xffffffff */
+#define flexidag_openseg_prim_split_45_byte_size 	432	/* 0x000001b0 */
+#define flexidag_openseg_prim_split_45_preferred_dram_xfer_size 	1
+
+/* flexidag_openseg_prim_split_45 VMEM info */
+#define flexidag_openseg_prim_split_45_use_ping_pong_vmem 	0
+#define flexidag_openseg_prim_split_45_VMEM_start 	4096	/* 0x00001000 */
+#define flexidag_openseg_prim_split_45_VMEM_end 	512776	/* 0x0007d308 */
+#define flexidag_openseg_prim_split_45_image_start 	482024	/* 0x00075ae8 */
+#define flexidag_openseg_prim_split_45_image_size 	31184	/* 0x000079d0 */
+#define flexidag_openseg_prim_split_45_dagbin_start 	512776	/* 0x0007d308 */
+
+/* flexidag_openseg_prim_split_45 DAG info */
+#define flexidag_openseg_prim_split_45_estimated_cycles 	328208
+#define flexidag_openseg_prim_split_45_ddi_byte_size 	0	/* 0x00000000 */
+
+/*******************************************************************************
+ * DAG byte offset info for HMB/SMB/VCB and their fields
+ * in DAG 'flexidag_openseg_prim_split_45' in source file 'pre_split28_flexidag_openseg_split_6.vas'
+ ******************************************************************************/
+/* flexidag_openseg_prim_split_45 HMB_input concat_1_580000132_ */
+#define flexidag_openseg_prim_split_45_concat_1_580000132__cnngen_demangled_name 	"concat_1_580000132_"
+#define flexidag_openseg_prim_split_45_concat_1_580000132__is_main_input_output 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000132__is_constant 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000132__has_init_data 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000132__is_variable_scalar 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000132__ddi_byte_size 	0	/* 0x00000000 */
+#define flexidag_openseg_prim_split_45_concat_1_580000132__ddi_byte_offset 	4294967295	/* 0xffffffff */
+#define flexidag_openseg_prim_split_45_concat_1_580000132__is_bitvector 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000132__is_rlz 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000132__is_ten_bit_packed 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000132__byte_offset 	0	/* 0x00000000 */
+#define flexidag_openseg_prim_split_45_concat_1_580000132__vbase_byte_offset 	4	/* 0x00000004 */
+#define flexidag_openseg_prim_split_45_concat_1_580000132__dbase_byte_offset 	28	/* 0x0000001c */
+#define flexidag_openseg_prim_split_45_concat_1_580000132__dpitchm1_byte_offset 	32	/* 0x00000020 */
+#define flexidag_openseg_prim_split_45_concat_1_580000132__dpitchm1_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_45_concat_1_580000132__vwidth_minus_one_byte_offset 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_45_concat_1_580000132__vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_45_concat_1_580000132__vheight_minus_one_byte_offset 	18	/* 0x00000012 */
+#define flexidag_openseg_prim_split_45_concat_1_580000132__vheight_minus_one_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_45_concat_1_580000132__drotate_bit_offset 	198	/* 0x000000c6 */
+#define flexidag_openseg_prim_split_45_concat_1_580000132__hflip_bit_offset 	199	/* 0x000000c7 */
+#define flexidag_openseg_prim_split_45_concat_1_580000132__vflip_bit_offset 	200	/* 0x000000c8 */
+#define flexidag_openseg_prim_split_45_concat_1_580000132__dflip_bit_offset 	201	/* 0x000000c9 */
+#define flexidag_openseg_prim_split_45_concat_1_580000132__pflip_bit_offset 	202	/* 0x000000ca */
+#define flexidag_openseg_prim_split_45_concat_1_580000132__W 	18
+#define flexidag_openseg_prim_split_45_concat_1_580000132__H 	64
+#define flexidag_openseg_prim_split_45_concat_1_580000132__D 	342
+#define flexidag_openseg_prim_split_45_concat_1_580000132__P 	1
+#define flexidag_openseg_prim_split_45_concat_1_580000132__data_num_bytes 	2
+#define flexidag_openseg_prim_split_45_concat_1_580000132__denable 	1
+#define flexidag_openseg_prim_split_45_concat_1_580000132__dpitch_num_bytes 	64
+#define flexidag_openseg_prim_split_45_concat_1_580000132__dram_format 	3
+#define flexidag_openseg_prim_split_45_concat_1_580000132__vp_interleave_mode 	2
+#define flexidag_openseg_prim_split_45_concat_1_580000132__tile_width 	4
+#define flexidag_openseg_prim_split_45_concat_1_580000132__tile_height 	1
+#define flexidag_openseg_prim_split_45_concat_1_580000132__vmem_buffer_num_bytes 	10944
+#define flexidag_openseg_prim_split_45_concat_1_580000132__dram_size_num_bytes 	1050624
+#define flexidag_openseg_prim_split_45_concat_1_580000132__sign 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000132__datasize 	1
+#define flexidag_openseg_prim_split_45_concat_1_580000132__expoffset 	13
+#define flexidag_openseg_prim_split_45_concat_1_580000132__expbits 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000132__drotate 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000132__hflip 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000132__vflip 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000132__dflip 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000132__pflip 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000132__trailing_extra_elements 	0
+
+/* flexidag_openseg_prim_split_45 HMB_input concat_1_580000133_ */
+#define flexidag_openseg_prim_split_45_concat_1_580000133__cnngen_demangled_name 	"concat_1_580000133_"
+#define flexidag_openseg_prim_split_45_concat_1_580000133__is_main_input_output 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000133__is_constant 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000133__has_init_data 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000133__is_variable_scalar 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000133__ddi_byte_size 	0	/* 0x00000000 */
+#define flexidag_openseg_prim_split_45_concat_1_580000133__ddi_byte_offset 	4294967295	/* 0xffffffff */
+#define flexidag_openseg_prim_split_45_concat_1_580000133__is_bitvector 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000133__is_rlz 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000133__is_ten_bit_packed 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000133__byte_offset 	40	/* 0x00000028 */
+#define flexidag_openseg_prim_split_45_concat_1_580000133__vbase_byte_offset 	44	/* 0x0000002c */
+#define flexidag_openseg_prim_split_45_concat_1_580000133__dbase_byte_offset 	68	/* 0x00000044 */
+#define flexidag_openseg_prim_split_45_concat_1_580000133__dpitchm1_byte_offset 	72	/* 0x00000048 */
+#define flexidag_openseg_prim_split_45_concat_1_580000133__dpitchm1_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_45_concat_1_580000133__vwidth_minus_one_byte_offset 	56	/* 0x00000038 */
+#define flexidag_openseg_prim_split_45_concat_1_580000133__vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_45_concat_1_580000133__vheight_minus_one_byte_offset 	58	/* 0x0000003a */
+#define flexidag_openseg_prim_split_45_concat_1_580000133__vheight_minus_one_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_45_concat_1_580000133__drotate_bit_offset 	518	/* 0x00000206 */
+#define flexidag_openseg_prim_split_45_concat_1_580000133__hflip_bit_offset 	519	/* 0x00000207 */
+#define flexidag_openseg_prim_split_45_concat_1_580000133__vflip_bit_offset 	520	/* 0x00000208 */
+#define flexidag_openseg_prim_split_45_concat_1_580000133__dflip_bit_offset 	521	/* 0x00000209 */
+#define flexidag_openseg_prim_split_45_concat_1_580000133__pflip_bit_offset 	522	/* 0x0000020a */
+#define flexidag_openseg_prim_split_45_concat_1_580000133__W 	160
+#define flexidag_openseg_prim_split_45_concat_1_580000133__H 	64
+#define flexidag_openseg_prim_split_45_concat_1_580000133__D 	340
+#define flexidag_openseg_prim_split_45_concat_1_580000133__P 	1
+#define flexidag_openseg_prim_split_45_concat_1_580000133__data_num_bytes 	2
+#define flexidag_openseg_prim_split_45_concat_1_580000133__denable 	1
+#define flexidag_openseg_prim_split_45_concat_1_580000133__dpitch_num_bytes 	64
+#define flexidag_openseg_prim_split_45_concat_1_580000133__dram_format 	3
+#define flexidag_openseg_prim_split_45_concat_1_580000133__vp_interleave_mode 	2
+#define flexidag_openseg_prim_split_45_concat_1_580000133__tile_width 	4
+#define flexidag_openseg_prim_split_45_concat_1_580000133__tile_height 	1
+#define flexidag_openseg_prim_split_45_concat_1_580000133__vmem_buffer_num_bytes 	108800
+#define flexidag_openseg_prim_split_45_concat_1_580000133__dram_size_num_bytes 	6963200
+#define flexidag_openseg_prim_split_45_concat_1_580000133__sign 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000133__datasize 	1
+#define flexidag_openseg_prim_split_45_concat_1_580000133__expoffset 	13
+#define flexidag_openseg_prim_split_45_concat_1_580000133__expbits 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000133__drotate 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000133__hflip 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000133__vflip 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000133__dflip 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000133__pflip 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000133__trailing_extra_elements 	0
+
+/* flexidag_openseg_prim_split_45 HMB_input concat_1_580000127_ */
+#define flexidag_openseg_prim_split_45_concat_1_580000127__cnngen_demangled_name 	"concat_1_580000127_"
+#define flexidag_openseg_prim_split_45_concat_1_580000127__is_main_input_output 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000127__is_constant 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000127__has_init_data 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000127__is_variable_scalar 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000127__ddi_byte_size 	0	/* 0x00000000 */
+#define flexidag_openseg_prim_split_45_concat_1_580000127__ddi_byte_offset 	4294967295	/* 0xffffffff */
+#define flexidag_openseg_prim_split_45_concat_1_580000127__is_bitvector 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000127__is_rlz 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000127__is_ten_bit_packed 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000127__byte_offset 	76	/* 0x0000004c */
+#define flexidag_openseg_prim_split_45_concat_1_580000127__vbase_byte_offset 	80	/* 0x00000050 */
+#define flexidag_openseg_prim_split_45_concat_1_580000127__dbase_byte_offset 	104	/* 0x00000068 */
+#define flexidag_openseg_prim_split_45_concat_1_580000127__dpitchm1_byte_offset 	108	/* 0x0000006c */
+#define flexidag_openseg_prim_split_45_concat_1_580000127__dpitchm1_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_45_concat_1_580000127__vwidth_minus_one_byte_offset 	92	/* 0x0000005c */
+#define flexidag_openseg_prim_split_45_concat_1_580000127__vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_45_concat_1_580000127__vheight_minus_one_byte_offset 	94	/* 0x0000005e */
+#define flexidag_openseg_prim_split_45_concat_1_580000127__vheight_minus_one_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_45_concat_1_580000127__drotate_bit_offset 	806	/* 0x00000326 */
+#define flexidag_openseg_prim_split_45_concat_1_580000127__hflip_bit_offset 	807	/* 0x00000327 */
+#define flexidag_openseg_prim_split_45_concat_1_580000127__vflip_bit_offset 	808	/* 0x00000328 */
+#define flexidag_openseg_prim_split_45_concat_1_580000127__dflip_bit_offset 	809	/* 0x00000329 */
+#define flexidag_openseg_prim_split_45_concat_1_580000127__pflip_bit_offset 	810	/* 0x0000032a */
+#define flexidag_openseg_prim_split_45_concat_1_580000127__W 	18
+#define flexidag_openseg_prim_split_45_concat_1_580000127__H 	64
+#define flexidag_openseg_prim_split_45_concat_1_580000127__D 	342
+#define flexidag_openseg_prim_split_45_concat_1_580000127__P 	1
+#define flexidag_openseg_prim_split_45_concat_1_580000127__data_num_bytes 	2
+#define flexidag_openseg_prim_split_45_concat_1_580000127__denable 	1
+#define flexidag_openseg_prim_split_45_concat_1_580000127__dpitch_num_bytes 	64
+#define flexidag_openseg_prim_split_45_concat_1_580000127__dram_format 	3
+#define flexidag_openseg_prim_split_45_concat_1_580000127__vp_interleave_mode 	2
+#define flexidag_openseg_prim_split_45_concat_1_580000127__tile_width 	4
+#define flexidag_openseg_prim_split_45_concat_1_580000127__tile_height 	1
+#define flexidag_openseg_prim_split_45_concat_1_580000127__vmem_buffer_num_bytes 	10944
+#define flexidag_openseg_prim_split_45_concat_1_580000127__dram_size_num_bytes 	1050624
+#define flexidag_openseg_prim_split_45_concat_1_580000127__sign 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000127__datasize 	1
+#define flexidag_openseg_prim_split_45_concat_1_580000127__expoffset 	13
+#define flexidag_openseg_prim_split_45_concat_1_580000127__expbits 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000127__drotate 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000127__hflip 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000127__vflip 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000127__dflip 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000127__pflip 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000127__trailing_extra_elements 	0
+
+/* flexidag_openseg_prim_split_45 SMB_input __pvcn_580000054_ */
+#define flexidag_openseg_prim_split_45___pvcn_580000054__cnngen_demangled_name 	"__pvcn_580000054_"
+#define flexidag_openseg_prim_split_45___pvcn_580000054__is_constant 	1
+#define flexidag_openseg_prim_split_45___pvcn_580000054__has_init_data 	1
+#define flexidag_openseg_prim_split_45___pvcn_580000054__is_variable_scalar 	0
+#define flexidag_openseg_prim_split_45___pvcn_580000054__is_bitvector 	0
+#define flexidag_openseg_prim_split_45___pvcn_580000054__is_rlz 	0
+#define flexidag_openseg_prim_split_45___pvcn_580000054__is_ten_bit_packed 	0
+#define flexidag_openseg_prim_split_45___pvcn_580000054__byte_offset 	116	/* 0x00000074 */
+#define flexidag_openseg_prim_split_45___pvcn_580000054__vbase_byte_offset 	120	/* 0x00000078 */
+#define flexidag_openseg_prim_split_45___pvcn_580000054__dbase_byte_offset 	144	/* 0x00000090 */
+#define flexidag_openseg_prim_split_45___pvcn_580000054__dpitchm1_byte_offset 	148	/* 0x00000094 */
+#define flexidag_openseg_prim_split_45___pvcn_580000054__dpitchm1_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_45___pvcn_580000054__W 	30716
+#define flexidag_openseg_prim_split_45___pvcn_580000054__H 	1
+#define flexidag_openseg_prim_split_45___pvcn_580000054__D 	1
+#define flexidag_openseg_prim_split_45___pvcn_580000054__P 	1
+#define flexidag_openseg_prim_split_45___pvcn_580000054__data_num_bytes 	1
+#define flexidag_openseg_prim_split_45___pvcn_580000054__denable 	1
+#define flexidag_openseg_prim_split_45___pvcn_580000054__dpitch_num_bytes 	30720
+#define flexidag_openseg_prim_split_45___pvcn_580000054__dram_format 	0
+#define flexidag_openseg_prim_split_45___pvcn_580000054__vp_interleave_mode 	0
+#define flexidag_openseg_prim_split_45___pvcn_580000054__tile_width 	1
+#define flexidag_openseg_prim_split_45___pvcn_580000054__tile_height 	1
+#define flexidag_openseg_prim_split_45___pvcn_580000054__vmem_buffer_num_bytes 	30716
+#define flexidag_openseg_prim_split_45___pvcn_580000054__dram_size_num_bytes 	30720
+
+/* flexidag_openseg_prim_split_45 SMB_input __pvcn_580000055_ */
+#define flexidag_openseg_prim_split_45___pvcn_580000055__cnngen_demangled_name 	"__pvcn_580000055_"
+#define flexidag_openseg_prim_split_45___pvcn_580000055__is_constant 	1
+#define flexidag_openseg_prim_split_45___pvcn_580000055__has_init_data 	1
+#define flexidag_openseg_prim_split_45___pvcn_580000055__is_variable_scalar 	0
+#define flexidag_openseg_prim_split_45___pvcn_580000055__is_bitvector 	0
+#define flexidag_openseg_prim_split_45___pvcn_580000055__is_rlz 	0
+#define flexidag_openseg_prim_split_45___pvcn_580000055__is_ten_bit_packed 	0
+#define flexidag_openseg_prim_split_45___pvcn_580000055__byte_offset 	156	/* 0x0000009c */
+#define flexidag_openseg_prim_split_45___pvcn_580000055__vbase_byte_offset 	160	/* 0x000000a0 */
+#define flexidag_openseg_prim_split_45___pvcn_580000055__dbase_byte_offset 	184	/* 0x000000b8 */
+#define flexidag_openseg_prim_split_45___pvcn_580000055__dpitchm1_byte_offset 	188	/* 0x000000bc */
+#define flexidag_openseg_prim_split_45___pvcn_580000055__dpitchm1_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_45___pvcn_580000055__W 	36
+#define flexidag_openseg_prim_split_45___pvcn_580000055__H 	1
+#define flexidag_openseg_prim_split_45___pvcn_580000055__D 	1
+#define flexidag_openseg_prim_split_45___pvcn_580000055__P 	1
+#define flexidag_openseg_prim_split_45___pvcn_580000055__data_num_bytes 	1
+#define flexidag_openseg_prim_split_45___pvcn_580000055__denable 	1
+#define flexidag_openseg_prim_split_45___pvcn_580000055__dpitch_num_bytes 	64
+#define flexidag_openseg_prim_split_45___pvcn_580000055__dram_format 	0
+#define flexidag_openseg_prim_split_45___pvcn_580000055__vp_interleave_mode 	0
+#define flexidag_openseg_prim_split_45___pvcn_580000055__tile_width 	1
+#define flexidag_openseg_prim_split_45___pvcn_580000055__tile_height 	1
+#define flexidag_openseg_prim_split_45___pvcn_580000055__vmem_buffer_num_bytes 	36
+#define flexidag_openseg_prim_split_45___pvcn_580000055__dram_size_num_bytes 	64
+
+/* flexidag_openseg_prim_split_45 VCB concat_1_580000010_ */
+#define flexidag_openseg_prim_split_45_concat_1_580000010__cnngen_demangled_name 	"concat_1_580000010_"
+#define flexidag_openseg_prim_split_45_concat_1_580000010__is_bitvector 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000010__is_rlz 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000010__is_ten_bit_packed 	0
+#define flexidag_openseg_prim_split_45_concat_1_580000010__byte_offset 	196	/* 0x000000c4 */
+#define flexidag_openseg_prim_split_45_concat_1_580000010__vbase_byte_offset 	204	/* 0x000000cc */
+#define flexidag_openseg_prim_split_45_concat_1_580000010__vmem_buffer_num_bytes 	344064
+
+/* flexidag_openseg_prim_split_45 HMB_output Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014_ */
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__cnngen_demangled_name 	"Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014_"
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__is_main_input_output 	0
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__is_bitvector 	0
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__is_rlz 	0
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__is_ten_bit_packed 	0
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__byte_offset 	316	/* 0x0000013c */
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__vbase_byte_offset 	320	/* 0x00000140 */
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__dbase_byte_offset 	344	/* 0x00000158 */
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__dpitchm1_byte_offset 	348	/* 0x0000015c */
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__dpitchm1_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__vwidth_minus_one_byte_offset 	332	/* 0x0000014c */
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__vwidth_minus_one_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__vheight_minus_one_byte_offset 	334	/* 0x0000014e */
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__vheight_minus_one_bsize 	16	/* 0x00000010 */
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__drotate_bit_offset 	2726	/* 0x00000aa6 */
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__hflip_bit_offset 	2727	/* 0x00000aa7 */
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__vflip_bit_offset 	2728	/* 0x00000aa8 */
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__dflip_bit_offset 	2729	/* 0x00000aa9 */
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__pflip_bit_offset 	2730	/* 0x00000aaa */
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__W 	16
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__H 	64
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__D 	5
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__P 	1
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__data_num_bytes 	1
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__denable 	1
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__dpitch_num_bytes 	64
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__dram_format 	3
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__vp_interleave_mode 	2
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__tile_width 	2
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__tile_height 	1
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__vmem_buffer_num_bytes 	3080
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__dram_size_num_bytes 	5120
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__sign 	0
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__datasize 	0
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__expoffset 	6
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__expbits 	0
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__drotate 	0
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__hflip 	0
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__vflip 	0
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__dflip 	0
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__pflip 	0
+#define flexidag_openseg_prim_split_45_Conv_5__Conv2D___BiasAdd___BatchNorm_5__FusedBatchNorm___muli___136___BatchNorm_5__FusedBatchNorm___Relu_3___muli___492___Mean_3_src0_nhwc___nhwc___transpose___138_580000014__trailing_extra_elements 	0
+
+/* flexidag_openseg_prim_split_45 SMB_output __vas_created_terminate__v0 */
+#define flexidag_openseg_prim_split_45___vas_created_terminate__v0_cnngen_demangled_name 	"__vas_created_terminate__v0"
+#define flexidag_openseg_prim_split_45___vas_created_terminate__v0_is_main_input_output 	0
+#define flexidag_openseg_prim_split_45___vas_created_terminate__v0_is_bitvector 	1
+#define flexidag_openseg_prim_split_45___vas_created_terminate__v0_is_rlz 	0
+#define flexidag_openseg_prim_split_45___vas_created_terminate__v0_is_ten_bit_packed 	0
+#define flexidag_openseg_prim_split_45___vas_created_terminate__v0_byte_offset 	356	/* 0x00000164 */
+#define flexidag_openseg_prim_split_45___vas_created_terminate__v0_vbase_byte_offset 	360	/* 0x00000168 */
+#define flexidag_openseg_prim_split_45___vas_created_terminate__v0_W 	256
+#define flexidag_openseg_prim_split_45___vas_created_terminate__v0_H 	3
+#define flexidag_openseg_prim_split_45___vas_created_terminate__v0_D 	1
+#define flexidag_openseg_prim_split_45___vas_created_terminate__v0_P 	1
+#define flexidag_openseg_prim_split_45___vas_created_terminate__v0_data_num_bytes 	1
+#define flexidag_openseg_prim_split_45___vas_created_terminate__v0_denable 	0
+#define flexidag_openseg_prim_split_45___vas_created_terminate__v0_dram_format 	0
+#define flexidag_openseg_prim_split_45___vas_created_terminate__v0_vp_interleave_mode 	1
+#define flexidag_openseg_prim_split_45___vas_created_terminate__v0_tile_width 	1
+#define flexidag_openseg_prim_split_45___vas_created_terminate__v0_tile_height 	1
+#define flexidag_openseg_prim_split_45___vas_created_terminate__v0_vmem_buffer_num_bytes 	96
+
+
+#endif /* flexidag_openseg_prim_split_45_H */

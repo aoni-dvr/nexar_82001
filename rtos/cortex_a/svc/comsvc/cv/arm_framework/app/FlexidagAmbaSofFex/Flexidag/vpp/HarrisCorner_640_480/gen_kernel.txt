@@ -1,0 +1,2 @@
+cv_f2vp_convert -it -fmt 1,0,0,0 -i ./grad.txt -o ./grad.bin
+cv_f2vp_convert -it -fmt 1,0,8,0 -i ./gaussian.txt  -o ./gaussian.bin

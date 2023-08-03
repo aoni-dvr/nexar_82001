@@ -1,0 +1,6 @@
+config BR2_PACKAGE_MEMTEST
+	bool "memtest"
+	default n
+	help
+	  Memtest.
+

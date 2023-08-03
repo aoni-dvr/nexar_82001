@@ -1,0 +1,7 @@
+menu "YUV input Driver"
+
+menuconfig YUVINPUT_LT6911
+    bool "LT6911"
+    default n
+
+endmenu

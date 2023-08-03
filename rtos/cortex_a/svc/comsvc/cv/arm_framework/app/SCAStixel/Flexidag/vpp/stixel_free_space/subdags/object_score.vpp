@@ -1,0 +1,81 @@
+DAG Object_Score =
+{	
+	arg=
+	{
+		$disparity_in=0,
+		$disparity_in_width=0,
+		$disparity_in_height=0,
+		$obj_top_index=0,
+		$ground_disp_coef=0,
+		$esti_ground_disparity=0,
+		$obj_score_out=0,
+	};
+
+	// integral_disparity[i][j] = accmulated disparity (from left)
+	VP_cdf(
+		$disparity_in,
+		VP_tensor(integral_disparity, uint16_t, vector(1, 1, $disparity_in_height, $disparity_in_width))
+	);
+
+	// obj_top_integral_disparity[i][j] = accmulated disparity of corresponding virtual object top pos
+	VP_gather(integral_disparity, $obj_top_index,
+		VP_tensor(obj_top_integral_disparity, uint16_t, vector(1, 1, 1, $disparity_in_width*$disparity_in_height)),
+		block_w = 1,
+		block_h = 1,
+		block_d = 1,
+		start_w = 0,
+		start_h = 0,
+		start_d = 0,
+		start_p = 0,
+		zr = 1,
+	);	
+
+	VP_reshape(
+		obj_top_integral_disparity,
+		VP_tensor(obj_top_integral_disparity_reshape, uint16_t, vector(1, 1, $disparity_in_height, $disparity_in_width)),
+		w = $disparity_in_width,
+		h = $disparity_in_height,
+		d = 1,
+		p = 1
+	);
+
+	// acc_disp[i][j] = accmulated disparity within object height
+	VP_sub(
+		integral_disparity, obj_top_integral_disparity_reshape,
+		VP_tensor(acc_disp, uint16_t, vector(1, 1, $disparity_in_height, $disparity_in_width))
+	);
+
+	// acc_disp_remove_self[i][j] = accmulated disparity within object height (remove itself)
+	VP_sub(
+		acc_disp, $disparity_in,
+		VP_tensor(acc_disp_remove_self, uint16_t, vector(1, 1, $disparity_in_height, $disparity_in_width))
+	);
+	
+	// esti_ground_disparity_mul[i][j] = expected disparity sum
+	VP_mul(
+		$esti_ground_disparity, $ground_disp_coef,
+		VP_tensor(esti_ground_disparity_mul, uint16_t, vector(1, 1, 1, $disparity_in_width))
+	);
+
+	// penalty[i][j] = expected disparity sum - accmulated disparity
+	VP_sub(
+		esti_ground_disparity_mul, acc_disp_remove_self,
+		VP_tensor(sign_obj_score, int16_t, vector(1, 1, $disparity_in_height, $disparity_in_width))
+	);
+
+	VP_abs(
+		sign_obj_score, 
+		VP_tensor($obj_score_out, uint16_t, vector(1, 1, $disparity_in_height, $disparity_in_width)),
+		disable_reserved = 1 // allow saturation
+	);
+
+	/*
+	// In case of invalid disparity, set to ground disparity coef, which mean penalty = 1 for each invalid disparity
+	VP_muxb(		
+		$ground_disp_coef, 
+		abs_obj_score, 
+		$invalid_disp_mask,
+		VP_tensor($obj_score_out, uint16_t, vector(1, 1, $disparity_in_height, $disparity_in_width))
+	);
+	*/
+}

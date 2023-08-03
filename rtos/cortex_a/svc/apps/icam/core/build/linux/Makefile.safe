@@ -1,0 +1,10 @@
+# svc safe function
+SAFE_O_PREFIX = ../../src/safe
+SAFE_INC_PREFIX = $(src)/$(SAFE_O_PREFIX)
+
+ccflags-$(CONFIG_BUILD_MONFRW_GRAPH) += -I$(SAFE_INC_PREFIX)/inc
+
+ifeq ($(CONFIG_BUILD_MONFRW_GRAPH), y)
+ccflags-y += -I$(srctree)/svc/comsvc/monfrw/main/inc
+libsvc_icamcore-objs += $(SAFE_O_PREFIX)/SvcSafe.o
+endif

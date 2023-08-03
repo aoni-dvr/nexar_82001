@@ -1,0 +1,35 @@
+# For bootstrap
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaBST_UserConfig.o
+
+ifdef CONFIG_ENABLE_SPINOR_BOOT
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaBST_NOR_MT35XU01GBBA1G.o
+else
+ifdef CONFIG_ENABLE_SPINAND_BOOT
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaBST_SPINAND_Generic.o
+else
+ifdef CONFIG_ENABLE_NAND_BOOT
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaBST_NAND_Generic.o
+else
+ifdef CONFIG_ENABLE_EMMC_BOOT
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaBST_EMMC_Generic.o
+endif
+endif
+endif
+endif
+
+ifdef CONFIG_CV52_LPDDR5_1992MHZ
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaLPDDR5_1992Mhz.o
+endif
+ifdef CONFIG_CV52_LPDDR5_2496MHZ
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaLPDDR5_2496Mhz.o
+endif
+
+# For bootloader
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaUserGpioConfig.o             \
+                                $(BSP_PATH)/AmbaUserDefinedPreBoot.o         \
+                                $(BSP_PATH)/AmbaNAND_S34ML04G2.o             \
+                                $(BSP_PATH)/AmbaSpiNOR_MT35XU01GBBA1G.o      \
+                                $(BSP_PATH)/AmbaSPINAND_W25N02JW.o
+ifeq ($(CONFIG_SVC_APPS_ICAM),)
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaUserNandPartition.o
+endif

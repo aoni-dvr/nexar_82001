@@ -1,0 +1,9 @@
+menuconfig BR2_PACKAGE_CONTROLBOX
+	bool "control box app"
+	help
+	  This is the control box app
+
+menuconfig BR2_PACKAGE_CONTROLBOX_S
+	bool "control box apps"
+	help
+	  This is the control box app for supercam 1s.

@@ -1,0 +1,11 @@
+# player function
+ifeq ($(CONFIG_BUILD_COMSVC_PLAYER), y)
+
+COMAMBA_CODEC_PLAYER_SRC = lib/src/common/player
+
+libcomsvc_codec-objs += $(COMAMBA_CODEC_PLAYER_SRC)/AmbaDmux.o
+libcomsvc_codec-objs += $(COMAMBA_CODEC_PLAYER_SRC)/AmbaPlayer.o
+
+ccflags-y += -I$(srctree)/svc/comsvc/codec/lib/src/common/utility
+
+endif

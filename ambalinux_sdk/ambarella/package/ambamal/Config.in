@@ -1,0 +1,11 @@
+config BR2_PACKAGE_AMBAMAL
+	bool "ambamal"
+	default y
+	depends on BR2_PACKAGE_AMBA_CAMERA
+	help
+	  This is AMBA MAL implementation.
+
+config BR2_PACKAGE_BUILD_AMBAMAL_SHARED_LIB
+	bool "Build shared libs"
+	default y
+	depends on BR2_PACKAGE_AMBAMAL

@@ -1,0 +1,4 @@
+config BR2_PACKAGE_GROUPSOCK
+	bool "groupsock"
+	help
+	  This is the groupsock lib.

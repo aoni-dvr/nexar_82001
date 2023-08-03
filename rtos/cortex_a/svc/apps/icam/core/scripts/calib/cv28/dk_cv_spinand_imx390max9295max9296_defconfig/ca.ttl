@@ -1,0 +1,102 @@
+; -----------------------------------------------------
+;                  TERA TERM GLOBAL SETTING
+; -----------------------------------------------------
+timeout = 30
+
+; -----------------------------------------------------
+;
+;                    iCam Calibration Module
+;                        (2019.12.05)
+;
+; -----------------------------------------------------
+
+; -----------------------------------------------------
+;                      SCRIPT PARAMETER
+; -----------------------------------------------------
+; └─ calibration channel setting ( It is necessary )
+     VinID = 0
+     SensorID = 1
+     VinSelectBits = 3
+     SensorSelectBits = 15
+
+    waitstr = ''
+     
+; └─ ca calibration setting
+     iCamCalib_Ca_On = 1
+     iCamCalib_Ca_table_id = 0
+     iCamCalib_Ca_dbg_msg = 2
+     iCamCalib_Ca_ctuner = 'd:\calib_sd_card\ca_tuner.txt'
+                    
+; -----------------------------------------------------
+;                      SCRIPT BEGIN
+; -----------------------------------------------------
+    
+    ; Reboot to standby mode before calibration    
+    sprintf 'svc_app standby'
+    sprintf2 waitstr 'This is Command mode'
+    call _SUB_FUNC_CMD_PROC
+    pause 1
+
+if iCamCalib_Ca_On=1 then
+    
+    ; Enable / Disable calib ca module debug message
+    sprintf 'svc_cal ca cfg_dbg_msg %d' iCamCalib_Ca_dbg_msg
+    sprintf2 waitstr 'Calibration CA Debug Msg On/Off'
+    call _SUB_FUNC_CMD_PROC
+    pause 1
+    
+    ; Initial bpc calib item
+    sprintf 'svc_cal mgr item init 3'
+    sprintf2 waitstr 'Initial calib item done 3'
+    call _SUB_FUNC_CMD_PROC
+    pause 1
+
+    ; Configure the calib channel to calib ca module and reset the setting as default
+    sprintf 'svc_cal ca cfg_calib_chan %d %d %d %d' VinID SensorID VinSelectBits SensorSelectBits
+    sprintf2 waitstr 'Calibration CA Channel'
+    call _SUB_FUNC_CMD_PROC
+    pause 1
+
+    ; Configure the calib ca nand table index
+    sprintf 'svc_cal ca cfg_table_id %d' iCamCalib_Ca_table_id
+    sprintf2 waitstr 'Calibration CA Table Index'
+    call _SUB_FUNC_CMD_PROC
+    pause 1
+    
+    ; Generate calib ca table by Ctuner and save to nand
+    sprintf 'svc_cal ca gen_table %s' iCamCalib_Ca_ctuner
+    sprintf2 waitstr 'Successful to save data. calib(3)'
+    call _SUB_FUNC_CMD_PROC
+    pause 1
+endif
+    
+; -----------------------------------------------------
+;                       SCRIPT END
+; -----------------------------------------------------
+
+exit
+
+:_SUB_FUNC_CMD_PROC
+    strlen inputstr
+    
+    if result>0 then
+        sendln ''
+        sendln ''
+        sendln inputstr
+        
+        strlen waitstr
+        if result>0 then
+            wait waitstr
+            if result=0 goto _ERROR_process_cmd_fail
+            waitstr = ''
+        endif
+    endif
+    
+return
+
+:_ERROR_process_cmd_fail
+    sprintf 'Failure to process command - %s' inputstr
+    
+    dispstr inputstr
+exit
+

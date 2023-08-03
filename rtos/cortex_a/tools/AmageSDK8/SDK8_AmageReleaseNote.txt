@@ -1,0 +1,38 @@
+V 1.0.0 Add Video and HDR mode.
+
+V 1.0.1 Correct the CV2fs CC bin issue.
+
+V 1.1.0
+    1. Let CV2FS and CV2X co-exist with CC REG and 3D bin.
+    2. Update IDSP pipeline with additional blocks for CV2FS.
+    3. Update ituner params description.
+
+V 1.2.0
+    1. Add ContextID switch button.
+    2. Update ituner params description.
+    3. Change the version number to the windows title and add loaded ituner path on the title.
+
+V 1.3.0
+    1. Add still high iso rawencode function.
+
+V 1.4.0
+    1. Add LISO_lite and HDR_lite tabs for the lite version.
+    2. Update some UI.
+
+V 1.5.0
+	1. Add Ethernet function.
+	2. Fix some minor bugs.
+	
+	Useage:
+	Execute the following commands in the QNX console:
+		io-pkt-v6-hc -d /proc/boot/libeth-ambarella.so
+		ifconfig eth0 192.168.1.100
+	Execute the following command in the SVC console:
+		svc_app amage_srv_create 192.168.1.100 5001
+
+V 1.6.0
+	1. Add still low and high iso rawencode for CV5.
+	2. Add still high iso rawencode for CV22.
+	3. Update some UI.
+	4. Fix some minor bugs.
+	

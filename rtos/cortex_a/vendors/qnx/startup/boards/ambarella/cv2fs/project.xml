@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<module name="startup-ambarella-cv2fs">
+  <classification>Driver</classification>
+  <description>
+    <short>Startup for ambarella cv2 board</short>
+    <abstract><![CDATA[
+	                The startup-ambarella-cv2fs program is responsible for the second stage initialization of the Ambarella CV2FS board. This stage mainly involves populating the syspage, which is an in-memory data structure that contains information about the system, such as memory size and location, information about the CPU(s), caches, clocks and timers, and interrupt subsystem. At runtime, the information in the syspage is accessed and used by procnto, and by various processes.
+	        ]]></abstract>
+  </description>
+  <supports>
+    <availability>
+      <cpu isa="aarch64">
+        <byteOrder>le</byteOrder>
+      </cpu>
+    </availability>
+  </supports>
+  <contents>
+    <component id="ambarella" generated="true">
+      <location basedir="aarch64/le">startup-ambarella-cv2fs</location>
+    </component>
+    <component id="ambarella-build" generated="true">
+      <location basedir=".">build</location>
+    </component>
+  </contents>
+  <requires>
+    <part rootMacro="LIBSTARTUP_ROOT" build="true" location="hardware/startup/lib"/>
+  </requires>
+</module>

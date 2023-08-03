@@ -1,0 +1,10 @@
+abs
+memcmp
+memmove
+__aeabi_memmove
+memset
+__aeabi_memset
+__errno
+rand
+srand
+

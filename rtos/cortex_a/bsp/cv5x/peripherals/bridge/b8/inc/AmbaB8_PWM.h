@@ -1,0 +1,49 @@
+/**
+ *  @file AmbaB8_PWM.h
+ *
+ *  @copyright Copyright (c) 2017 Ambarella, Inc.
+ *
+ *  This file and its contents ("Software") are protected by intellectual property rights including, without limitation,
+ *  U.S. and/or foreign copyrights.  This Software is also the confidential and proprietary information of Ambarella, Inc.
+ *  and its licensors.  You may not use, reproduce, disclose, distribute, modify, or otherwise prepare derivative works
+ *  of this Software or any portion thereof except pursuant to a signed license agreement or nondisclosure agreement with
+ *  Ambarella, Inc. or its authorized affiliates.  In the absence of such an agreement, you agree to promptly notify and
+ *  return this Software to Ambarella, Inc.
+ *
+ *  THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ *  WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+ *  AMBARELLA, INC. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ *  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ *  COMPUTER FAILURE OR MALFUNCTION; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ *  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *  @details Definitions & Constants for B6 PWM APIs
+ *
+ */
+
+#ifndef AMBA_B8_PWM_H
+#define AMBA_B8_PWM_H
+
+typedef enum {
+    B8_PWM_CHANNEL0 = 0,           /* PWM Channel0 */
+    B8_PWM_CHANNEL1,               /* PWM Channel1 */
+
+    B8_NUM_PWM_CHANNEL             /* Total Number of PWM Channels */
+} B8_PWM_CHANNEL_e;
+
+typedef struct {
+    UINT32  SampleFreq;             /* Current souce clk freq, max value is 3MHz */
+    /* Current pulse rate is SampleFreq / (OnTicks + OffTicks) */
+    UINT16  OnTicks;                /* Output logic high duration ticks */
+    UINT16  OffTicks;               /* Output logic low duration ticks */
+} B8_PWM_CONFIG_s;
+
+/*-----------------------------------------------------------------------------------------------*\
+ * Defined in AmbaB8_PWM.c
+\*-----------------------------------------------------------------------------------------------*/
+UINT32 AmbaB8_PwmInit(UINT32 ChipID, B8_PWM_CHANNEL_e PwmChanNo);
+UINT32 AmbaB8_PwmStart(UINT32 ChipID, B8_PWM_CHANNEL_e PwmChanNo, B8_PWM_CONFIG_s *pPwmConfig);
+UINT32 AmbaB8_PwmStop(UINT32 ChipID, B8_PWM_CHANNEL_e PwmChanNo);
+
+#endif /* AMBA_B8_PWM_H */

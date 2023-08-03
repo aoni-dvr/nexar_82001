@@ -1,0 +1,10 @@
+$ aarch64-none-elf-gcc -v
+Using built-in specs.
+COLLECT_GCC=aarch64-none-elf-gcc
+COLLECT_LTO_WRAPPER=/usr/local/gcc-linaro-10.2.1-amba-r1_20210622-x86_64_aarch64-none-elf/bin/../libexec/gcc/aarch64-none-elf/10.2.1/lto-wrapper
+Target: aarch64-none-elf
+Configured with: /home/chho/toolchain/abe/gcc-10_64b/snapshots/gcc/configure SHELL=/bin/bash --with-mpc=/home/chho/toolchain/abe/gcc-10_64b/builds/destdir/x86_64-pc-linux-gnu --with-mpfr=/home/chho/toolchain/abe/gcc-10_64b/builds/destdir/x86_64-pc-linux-gnu --with-gmp=/home/chho/toolchain/abe/gcc-10_64b/builds/destdir/x86_64-pc-linux-gnu --with-gnu-as --with-gnu-ld --disable-libmudflap --enable-lto --enable-shared --without-included-gettext --enable-nls --with-system-zlib --disable-sjlj-exceptions --enable-gnu-unique-object --enable-linker-build-id --disable-libstdcxx-pch --enable-c99 --enable-clocale=gnu --enable-libstdcxx-debug --enable-long-long --with-cloog=no --with-ppl=no --with-isl=no --enable-multilib --enable-fix-cortex-a53-835769 --enable-fix-cortex-a53-843419 --with-arch=armv8-a --enable-threads=no --disable-multiarch --with-newlib --with-build-sysroot= --with-sysroot=/home/chho/toolchain/abe/gcc-10_64b/builds/destdir/x86_64-pc-linux-gnu/aarch64-none-elf/libc --enable-checking=release --disable-bootstrap --enable-languages=c,c++,lto CFLAGS=-D__DYNAMIC_REENT__ CPPFLAGS=-D__DYNAMIC_REENT__ CXXFLAGS=-D__DYNAMIC_REENT__ --prefix=/home/chho/toolchain/abe/gcc-10_64b/builds/destdir/x86_64-pc-linux-gnu --build=x86_64-pc-linux-gnu --host=x86_64-pc-linux-gnu --target=aarch64-none-elf
+Thread model: single
+Supported LTO compression algorithms: zlib
+gcc version 10.2.1 20201103(with DYNAMIC_REENT by Ambarella, r1) (GCC)
+

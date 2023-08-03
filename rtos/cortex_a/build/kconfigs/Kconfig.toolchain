@@ -1,0 +1,327 @@
+#
+# For a description of the syntax of this configuration file,
+# see build/scripts/Documentation/kbuild/kconfig-language.txt.
+#
+
+config CC_AMBAVER_LIB_DATE
+	bool "KBUILD_LIB_DATE support"
+	default y
+	help
+	  AmbaVer defines support KBUILD_LIB_DATE.
+	  If set y, libraries use this variable will always be updated.
+	  cf. build/scripts/Kbuild.include
+
+menu "GCC Options"
+
+choice
+	prompt "C Standard"
+	default CC_STD_C99
+	help
+	  Set C standard for gcc
+
+config CC_STD_C99
+	bool "ISO C99"
+	help
+	  Compiled all C files by ISO C99
+
+
+config CC_STD_GNU99
+	bool "ISO GNU99"
+	help
+	  Compiled all C files by GNU99
+
+endchoice # CC_STD
+
+choice
+	 prompt "gcc optimization level"
+	 default CC_OPTIMIZE_2
+	 help
+	   Set the optimization level for gcc
+
+config CC_OPTIMIZE_0
+	bool "optimization level 0"
+	help
+	  Reduce compilation time and make debugging produce the expected results.
+	  Compile C source without optimize. KBUILD_CFLAGS += -O0.
+
+config CC_OPTIMIZE_1
+	bool "optimization level 1"
+	help
+	  Optimize. KBUILD_CFLAGS += -O1.
+
+config CC_OPTIMIZE_2
+	bool "optimization level 2"
+	help
+	  Optimize even more. KBUILD_CFLAGS += -O2.
+
+config CC_OPTIMIZE_3
+	bool "optimization level 3"
+	help
+	  Optimize yet more. KBUILD_CFLAGS += -O3.
+
+endchoice # CC_OPTIMIZE
+
+config CC_FRAME_WARN
+	int "Warn for stack frames larger than (needs gcc 4.4)"
+	range 0 8192
+	default 0
+	help
+	  Tell gcc to warn at build time for stack frames larger than this.
+	  Setting this too low will cause a lot of warnings.
+	  Setting it to 0 disables the warning.
+	  For 32bit, recommand to use 1024
+	  For 64bit, recommand to use 2048
+	  Requires gcc 4.4
+
+config CC_DEBUG_INFO
+	bool "Compile with debug info"
+	default y
+	help
+	  Compile with debug info,
+	  i.e. KBUILD_CFLAGS += -g
+
+if CC_DEBUG_INFO
+
+config CC_READABLE_ASM
+	bool "Generate readable assembler code"
+	default n
+	help
+	  Disable some compiler optimizations that tend to generate human unreadable
+	  assembler output. This may make the kernel slightly slower, but it helps
+	  to keep kernel developers who have to stare a lot at assembler listings
+	  sane.
+
+config CC_DEBUG_INFO_REDUCED
+	bool "Reduce debugging information"
+	default n
+	help
+	  If you say Y here gcc is instructed to generate less debugging
+	  information for structure types. This means that tools that
+	  need full debugging information won't be happy.
+	  But if you merely need debugging information to
+	  resolve line numbers there is no loss. Advantage is that
+	  build directory object sizes shrink dramatically over a full
+	  CC_DEBUG_INFO build and compile times are reduced too.
+	  Only works with newer gcc versions.
+
+config CC_DEBUG_INFO_SPLIT
+	bool "Produce split debuginfo in .dwo files"
+	default n
+	help
+	  Generate debug info into separate .dwo files. This significantly
+	  reduces the build directory size for builds with DEBUG_INFO,
+	  because it stores the information only once on disk in .dwo
+	  files instead of multiple times in object files and executables.
+	  In addition the debug information is also compressed.
+
+	  Requires recent gcc (4.7+) and recent gdb/binutils.
+	  Any tool that packages or reads debug information would need
+	  to know about the .dwo files and include them.
+	  Incompatible with older versions of ccache.
+
+endif # CC_DEBUG_INFO
+
+config CC_FRAME_POINTER
+	bool "Compile with frame pointers"
+	default n
+	help
+	  Compile with frame pointers,
+	  i.e. KBUILD_CFLAGS += -fno-omit-frame-pointer -fno-optimize-sibling-calls
+	  If you say N here, the resulting kernel will be slightly smaller and
+	  faster.
+	  It will use 4 words.
+	  FP -> PC
+	        LR
+	        SP
+	        FP -> PC
+	              ...
+	              FP -> ...
+
+config CC_FUNCTION_TRACER
+	bool "Compile with compact frame pointers"
+	default n
+	depends on !CC_FRAME_POINTER
+	help
+	  Compile with compact frame pointers.
+	  It will use 2 words.
+	  FP -> LR
+	        FP -> LR
+	              FP -> ...
+
+comment "Warnings"
+
+config CC_WEXTRA
+	bool "Compile with '-Wextra'"
+	default y
+	help
+	  Compiling with -Wextra for more checking.
+	  cf. https://gcc.gnu.org/onlinedocs/gcc-8.2.0/gcc/Warning-Options.html
+	  Or using <CC> -Q --help=warnings -Wextra for detail.
+
+menu "Disable any extra warning"
+	depends on CC_WEXTRA
+
+config CC_W_NO_CLOBBERED
+	bool "Disable -Wclobbered"
+	help
+	  -Wclobbered
+	    Warn for variables that might be changed by longjmp or vfork.
+
+config CC_W_NO_CAST_FUNCTION_TYPE
+	bool "Disable -Wcast-function-type"
+	help
+	  -Wcast-function-type
+	    Warn when a function pointer is cast to an incompatible function pointer.
+
+config CC_W_NO_EMPTY_BODY
+	bool "Disable -Wempty-body"
+	help
+	  -Wempty-body
+	    Warn if an empty body occurs in an if, else or do while statement.
+
+config CC_W_NO_EXPANSION_TO_DEFINED
+	bool "Disable -Wexpansion-to-defined"
+	help
+	  -Wexpansion-to-defined
+	    Warn whenever 'defined' is encountered in the expansion of a macro
+	    (including the case where the macro is expanded by an '#if'
+	     directive). Such usage is not portable.
+
+config CC_W_NO_IGNORED_QUALIFIERS
+	bool "Disable -Wignored-qualifiers"
+	help
+	  -Wignored-qualifiers
+	    Warn if the return type of a function has a type qualifier such as
+	    const.
+
+# No config for -Wimplicit-fallthrough=3, force it for MISRA C
+
+config CC_W_NO_MISSING_FIELD_INITIALIZERS
+	bool "Disable -Wmissing-field-initializers"
+	help
+	  -Wmissing-field-initializers
+	    Warn if a structure's initializer has some fields missing.
+
+config CC_W_NO_MISSING_PARAMETER_TYPE
+	bool "Disable -Wmissing-parameter-type"
+	help
+	  -Wmissing-parameter-type
+	    A function parameter is declared without a type specifier in K&R-style
+	    functions.
+
+config CC_W_NO_OLD_STYLE_DECLARATION
+	bool "Disable -Wold-style-declaration"
+	help
+	  -Wold-style-declaration
+	    Warn for obsolescent usages, according to the C Standard,
+	    in a declaration.
+
+config CC_W_NO_OVERRIDE_INIT
+	bool "Disable -Woverride-init"
+	help
+	  -Woverride-init
+	    Warn if an initialized field without side effects is overridden
+	    when using designated initializers.
+
+config CC_W_NO_SIGN_COMPARE
+	bool "Disable -Wsign-compare"
+	help
+	  -Wsign-compare
+	    Warn when a comparison between signed and unsigned values could
+	    produce an incorrect result when the signed value is converted to
+	    unsigned.
+
+config CC_W_NO_TYPE_LIMITS
+	bool "Disable -Wtype-limits"
+	help
+	  -Wtype-limits
+	    Warn if a comparison is always true or always false due to
+	    the limited range of the data type,
+	    but do not warn for constant expressions.
+
+config CC_W_NO_UNUSED_BUT_SET_PARAMETER
+	bool "Disable -Wunused-but-set-parameter"
+	help
+	  -Wunused-but-set-parameter
+	    Warn whenever a function parameter is assigned to,
+	    but otherwise unused.
+
+config CC_W_NO_UNUSED_PARAMETER
+	bool "Disable -Wunused-parameter"
+	help
+	  -Wunused-parameter
+	    Warn whenever a function parameter is unused aside from
+	    its declaration.
+
+endmenu # CC_WEXTRA
+
+comment "Additional"
+
+menu "Options for Fastboot profiling"
+
+config CC_ENABLE_INSTRUMENT_FUNC
+	bool "Enable function trace collecting functions"
+	default n
+	help
+	  Enable GCC function trace collecting functions.
+	  For dynamic call-flow analysis.
+	  It will add -finstrument-functions options.
+	  You will need to implement these callback functions:
+	  __cyg_profile_func_enter() and __cyg_profile_func_exit().
+
+config CC_DUMP_RTL_EXPAND
+	bool "Dump after RTL generation"
+	default n
+	help
+	  Dump after RTL generation.
+	  For static call-flow analysis.
+	  Add -fdump-rtl-expand for compiling
+
+endmenu # Fastboot profiling
+
+#config CC_CXX_SUPPORT
+#	bool "Support C++ files (code size will be bigger)"
+#	default n
+#	select CC_USESTD
+#	help
+#	  Support C++ files, only *.cpp files.
+#	  Note-1: libstd++.a is required. So the code size will be bigger.
+#	  Note-2: cf. http://wiki.osdev.org/C++
+#	    You need to implement __dso_handle, a handle for the DSO
+#	    (Dynamic Shared Object) or just declare "void *__dso_handle = NULL;"
+#	    The operators 'new' and 'delete' are necessary to be implemented
+#	    for proper memory handle.
+
+config CC_USESTD
+	bool
+	prompt "Use standard libraries from toolchain" if THREADX
+	default n if THREADX
+	default y if !THREADX
+	help
+	  Say N will add "-nostdinc, -nostdinc++, -nostdlib" into
+	  compiling/linking options. So that standard libraries could not be
+	  used.
+	  For Wrapper from Ambarella (vendors/ambarella/wrapper/std) need to enable this.
+
+comment "LTO and debug info can not be combined."
+	depends on CC_DEBUG_INFO
+
+config CC_LTO
+	bool "Enable Link Time Optimization (LTO)"
+	depends on !CC_USESTD
+	depends on !CC_DEBUG_INFO
+	default n
+	help
+	  Say Y will need to add options for compiler and linker.
+	  GCC wrappers: gcc-ar, gcc-nm and gcc-ranlib will be used.
+	  https://gcc.gnu.org/onlinedocs/gccint/LTO.html
+	  https://gcc.gnu.org/wiki/LinkTimeOptimizationFAQ
+
+	  Need to use whole-archive when linking, so take care of C libraries.
+	  We disable it.
+
+	  Combining -flto with -g is currently experimental and expected to
+	  produce unexpected results.
+
+endmenu # "GCC Options"
+

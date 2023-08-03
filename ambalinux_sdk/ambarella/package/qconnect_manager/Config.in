@@ -1,0 +1,5 @@
+config BR2_PACKAGE_QCONNECT_MANAGER
+	bool "qconnect_manager"
+	default n
+	help
+	  This is the qconnect_manager for quectel lte.

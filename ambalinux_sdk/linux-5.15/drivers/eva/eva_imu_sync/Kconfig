@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: GPL-2.0
+
+config EVA_IMU_SYNC
+	tristate "EVA IMU Sync Support"
+	default n
+	help
+	  enable eva imu sync support.

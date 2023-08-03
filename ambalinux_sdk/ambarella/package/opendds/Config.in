@@ -1,0 +1,9 @@
+config BR2_PACKAGE_OPENDDS
+	bool "OpenDDS"
+	default n
+#	select BR2_PACKAGE_PERL
+#	select BR2_PACKAGE_PERL_THREADS
+    select BR2_PACKAGE_ACE_TAO
+	help
+	  OpneDDS
+

@@ -1,0 +1,7 @@
+# to compile everything
+#TMP0 := $(wildcard $(FMWDIR)/cvtask/*)
+#TMP1 := $(TMP0:$(FMWDIR)/cvtask/%=%)
+#CVTASK_MODULES := $(filter-out makefile,$(TMP1))
+
+CVTASK_MODULES := @armA_cvtask_build@
+CVLIB_MODULES := @armA_cv_lib@

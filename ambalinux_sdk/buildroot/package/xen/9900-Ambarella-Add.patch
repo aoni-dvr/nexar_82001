@@ -1,0 +1,261 @@
+diff --git a/xen/Makefile b/xen/Makefile
+index 4a45e71..4fdb49e 100644
+--- a/xen/Makefile
++++ b/xen/Makefile
+@@ -210,7 +210,7 @@ CFLAGS += -nostdinc -fno-builtin -fno-common
+ CFLAGS += -Werror -Wredundant-decls -Wno-pointer-arith
+ $(call cc-option-add,CFLAGS,CC,-Wvla)
+ CFLAGS += -pipe -D__XEN__ -include $(BASEDIR)/include/xen/config.h
+-CFLAGS-$(CONFIG_DEBUG_INFO) += -g
++CFLAGS-$(CONFIG_DEBUG_INFO) += -g -gdwarf-3
+ 
+ ifneq ($(CONFIG_CC_IS_CLANG),y)
+ # Clang doesn't understand this command line argument, and doesn't appear to
+diff --git a/xen/arch/arm/Kconfig.debug b/xen/arch/arm/Kconfig.debug
+index 35ccd13..687a250 100644
+--- a/xen/arch/arm/Kconfig.debug
++++ b/xen/arch/arm/Kconfig.debug
+@@ -174,6 +174,10 @@ choice
+ 		bool "Early printk with Cadence UART for Xilinx ZynqMP SoCs"
+ 		select EARLY_UART_CADENCE
+ 		depends on ARM_64
++	config EARLY_PRINTK_AMBARELLA
++		bool "Early printk with Ambarella SoCs"
++		select EARLY_UART_AMBARELLA
++		depends on ARM_64
+ endchoice
+ 
+ 
+@@ -198,6 +202,9 @@ config EARLY_UART_PL011
+ config EARLY_UART_SCIF
+ 	select EARLY_PRINTK
+ 	bool
++config EARLY_UART_AMBARELLA
++	select EARLY_PRINTK
++	bool
+ 
+ config EARLY_PRINTK
+ 	bool
+@@ -225,6 +232,7 @@ config EARLY_UART_BASE_ADDRESS
+ 	default 0x1c021000 if EARLY_PRINTK_XGENE_MCDIVITT
+ 	default 0x1c020000 if EARLY_PRINTK_XGENE_STORM
+ 	default 0xff000000 if EARLY_PRINTK_ZYNQMP
++	default 0xe4000000 if EARLY_PRINTK_AMBARELLA
+ 
+ config EARLY_UART_PL011_BAUD_RATE
+ 	depends on EARLY_UART_PL011
+@@ -287,3 +295,4 @@ config EARLY_PRINTK_INC
+ 	default "debug-mvebu.inc" if EARLY_UART_MVEBU
+ 	default "debug-pl011.inc" if EARLY_UART_PL011
+ 	default "debug-scif.inc" if EARLY_UART_SCIF
++	default "debug-ambarella.inc" if EARLY_UART_AMBARELLA
+diff --git a/xen/arch/arm/domain_build.c b/xen/arch/arm/domain_build.c
+index e824ba3..91c2bb7 100644
+--- a/xen/arch/arm/domain_build.c
++++ b/xen/arch/arm/domain_build.c
+@@ -2483,6 +2483,8 @@ void __init create_domUs(void)
+             .max_grant_frames = 64,
+             .max_maptrack_frames = 1024,
+         };
++        // Amba, for XEN_DOMCTL
++        bool is_priv;
+ 
+         if ( !dt_device_is_compatible(node, "xen,domain") )
+             continue;
+@@ -2506,8 +2508,14 @@ void __init create_domUs(void)
+                 d_cfg.arch.nr_spis = MAX(d_cfg.arch.nr_spis,
+                                          GUEST_VPL011_SPI - 32 + 1);
+         }
+-
+-        d = domain_create(++max_init_domid, &d_cfg, false);
++        // Amba, for XEN_DOMCTL
++        if ( dt_property_read_bool(node, "amba,xen,privileged") )
++            is_priv = true;
++        else
++            is_priv = false;
++
++//        d = domain_create(++max_init_domid, &d_cfg, false);
++        d = domain_create(++max_init_domid, &d_cfg, is_priv);
+         if ( IS_ERR(d) )
+             panic("Error creating domain %s\n", dt_node_name(node));
+ 
+@@ -2516,6 +2524,83 @@ void __init create_domUs(void)
+         if ( construct_domU(d, node) != 0 )
+             panic("Could not set up domain %s\n", dt_node_name(node));
+ 
++        /* Private hacking from Ambarella */
++        if (1) {
++            struct dt_device_node *node_ambaxen;
++
++            dt_for_each_child_node(node, node_ambaxen)
++            {
++                if ( !dt_device_is_compatible(node_ambaxen, "amba,xen,iomem") )
++                    continue;
++                else
++                {
++                    u32 len;
++                    const __be32 *val;
++                    const __be32 **cell;
++                    int addr_cells;
++                    int size_cells;
++                    u64 addr, size;
++                    long ret;
++                    long i;
++
++                    val = dt_get_property(node_ambaxen, "reg", &len);
++                    addr_cells = dt_n_addr_cells(node_ambaxen);
++                    size_cells = dt_n_size_cells(node_ambaxen);
++                    if (!addr_cells || !size_cells ||
++                        (len/4 < (addr_cells + size_cells))) {
++                        panic("Incorrect addr-cells: %d or size-cells: %d\n",
++                                addr_cells, size_cells);
++                    }
++
++                    cell = &val;
++                    for (i = 0; i < (len/4); i += (addr_cells + size_cells)) {
++                        addr = dt_next_cell(addr_cells, cell);
++                        size = dt_next_cell(size_cells, cell);
++
++                        ret = iomem_permit_access(d, paddr_to_pfn(addr),
++                                paddr_to_pfn(PAGE_ALIGN(addr + size - 1)));
++                        if (!ret) {
++                            ret = map_mmio_regions(d, gaddr_to_gfn(addr),
++                                    size/PAGE_SIZE,
++                                    maddr_to_mfn(addr));
++                        }
++                        if (ret)
++                            panic("Cound not set mmio map, 0x%lX with size 0x%lX\n", addr, size);
++                        else
++                            memory_type_changed(d);
++                    }
++                }
++            }
++
++            dt_for_each_child_node(node, node_ambaxen)
++            {
++                if ( !dt_device_is_compatible(node_ambaxen, "amba,xen,irqs") )
++                    continue;
++                else
++                {
++                    u32 len;
++                    const __be32 *val;
++                    const __be32 **cell;
++                    u64 irq;
++                    long ret;
++                    long i;
++
++                    val = dt_get_property(node_ambaxen, "reg", &len);
++                    if (!(len/4))
++                        panic("Incorrect irqs settings\n");
++
++                    cell = &val;
++                    for (i = 0; i < (len/4); i++) {
++                        irq = dt_next_cell(1, cell);
++
++                        ret = map_irq_to_domain(d, irq, true, "private");
++                        if (ret)
++                            panic("map failed.\n");
++                    }
++                }
++            }
++        }
++
+         domain_unpause_by_systemcontroller(d);
+     }
+ }
+diff --git a/xen/arch/arm/platforms/Kconfig b/xen/arch/arm/platforms/Kconfig
+index 4bb7319..1f112c3 100644
+--- a/xen/arch/arm/platforms/Kconfig
++++ b/xen/arch/arm/platforms/Kconfig
+@@ -37,6 +37,12 @@ config MPSOC
+ 	---help---
+ 	Enable all the required drivers for Xilinx Ultrascale+ MPSoC
+ 
++config AMBARELLA
++	bool "Ambarella SoC support"
++	depends on ARM_64
++	---help---
++	Enable all the required drivers for Ambarella SoC
++
+ config NO_PLAT
+ 	bool "No Platforms"
+ 	---help---
+@@ -56,3 +62,6 @@ config MPSOC_PLATFORM
+ 	bool
+ 	default (ALL64_PLAT || MPSOC)
+ 
++config AMBARELLA_PLATFORM
++	bool
++	default (ALL64PLAT || AMBARELLA)
+diff --git a/xen/arch/arm/platforms/Makefile b/xen/arch/arm/platforms/Makefile
+index 8632f41..f9cbb43 100644
+--- a/xen/arch/arm/platforms/Makefile
++++ b/xen/arch/arm/platforms/Makefile
+@@ -11,3 +11,4 @@ obj-$(CONFIG_ALL64_PLAT) += xgene-storm.o
+ obj-$(CONFIG_ALL64_PLAT) += brcm-raspberry-pi.o
+ obj-$(CONFIG_MPSOC_PLATFORM)  += xilinx-zynqmp.o
+ obj-$(CONFIG_MPSOC_PLATFORM)  += xilinx-zynqmp-eemi.o
++obj-$(CONFIG_AMBARELLA_PLATFORM)   += ambarella.o
+diff --git a/xen/common/gunzip.c b/xen/common/gunzip.c
+index db4efcd..73ffc0b 100644
+--- a/xen/common/gunzip.c
++++ b/xen/common/gunzip.c
+@@ -113,7 +113,8 @@ __init int perform_gunzip(char *output, char *image, unsigned long image_len)
+ 
+     window = (unsigned char *)output;
+ 
+-    free_mem_ptr = (unsigned long)alloc_xenheap_pages(HEAPORDER, 0);
++    if (!free_mem_ptr)
++        free_mem_ptr = (unsigned long)alloc_xenheap_pages(HEAPORDER, 0);
+     free_mem_end_ptr = free_mem_ptr + (PAGE_SIZE << HEAPORDER);
+ 
+     inbuf = (unsigned char *)image;
+@@ -132,6 +133,8 @@ __init int perform_gunzip(char *output, char *image, unsigned long image_len)
+     }
+ 
+     free_xenheap_pages((void *)free_mem_ptr, HEAPORDER);
++    free_mem_ptr = 0;
++    bytes_out = 0;
+ 
+     return rc;
+ }
+diff --git a/xen/common/inflate.c b/xen/common/inflate.c
+index f99c985..b1713c7 100644
+--- a/xen/common/inflate.c
++++ b/xen/common/inflate.c
+@@ -244,7 +244,7 @@ static void *INIT malloc(int size)
+ 
+     if (size < 0)
+         error("Malloc error");
+-    if (!malloc_ptr)
++    if ((!malloc_ptr) || (!malloc_count))
+         malloc_ptr = free_mem_ptr;
+ 
+     malloc_ptr = (malloc_ptr + 3) & ~3;     /* Align */
+diff --git a/xen/drivers/char/Kconfig b/xen/drivers/char/Kconfig
+index b572305..0deac18 100644
+--- a/xen/drivers/char/Kconfig
++++ b/xen/drivers/char/Kconfig
+@@ -66,3 +66,10 @@ config HAS_EHCI
+ 	help
+ 	  This selects the USB based EHCI debug port to be used as a UART. If
+ 	  you have an x86 based system with USB, say Y.
++
++config HAS_AMBARELLA
++	bool "Ambarella UART driver"
++	default y
++	depends on ARM_64
++	help
++	  This selects the Ambarella SoC UART driver.
+diff --git a/xen/drivers/char/Makefile b/xen/drivers/char/Makefile
+index 7c646d7..6b15ed9 100644
+--- a/xen/drivers/char/Makefile
++++ b/xen/drivers/char/Makefile
+@@ -8,6 +8,7 @@ obj-$(CONFIG_HAS_MVEBU) += mvebu-uart.o
+ obj-$(CONFIG_HAS_OMAP) += omap-uart.o
+ obj-$(CONFIG_HAS_SCIF) += scif-uart.o
+ obj-$(CONFIG_HAS_EHCI) += ehci-dbgp.o
++obj-$(CONFIG_HAS_AMBARELLA) += ambarella-uart.o
+ obj-$(CONFIG_ARM) += arm-uart.o
+ obj-y += serial.o
+ obj-$(CONFIG_XEN_GUEST) += xen_pv_console.o

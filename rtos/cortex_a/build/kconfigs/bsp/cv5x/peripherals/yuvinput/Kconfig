@@ -1,0 +1,11 @@
+menu "YUV input Driver"
+
+menuconfig YUVINPUT_LT6911
+    bool "LT6911"
+    default n
+config LT6911_ERASED_MCU_FW
+    bool "if LT6911 MCU FW erased"
+    depends on YUVINPUT_LT6911
+    default n
+
+endmenu

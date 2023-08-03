@@ -1,0 +1,142 @@
+
+menu "ARM-Trusted-Firmware"
+
+config ATF_BUILD
+	bool "Build ATF from source"
+	default y
+
+config ATF_DEBUG
+	bool "Debug information"
+	depends on ATF_BUILD
+	default n
+	help
+	  Include debug information.
+
+config ATF_HAVE_BL2
+	bool "Have ATF BL2"
+	default n
+	help
+	  Boot Loader stage 2 (BL2) Trusted Boot Firmware.
+
+if ATF_HAVE_BL2
+config ATF_BL2_BASE
+	hex
+	default FWPROG_BLD_LOADADDR if !SOC_CV2FS
+	default FWPROG_BLD2_LOADADDR if SOC_CV2FS
+	help
+	  For CV2FS, boot-loader runs at R52.
+	  So FIP includes BL31, BL32, BL33 (A53 boot-loader), SRTOS image files.
+
+config ATF_BL2_SIZE
+	hex "Size of ATF(BL2)"
+	default 0x00C00000 if ATF_SPD_OPTEE
+	default 0x00A00000 if (!ATF_SPD_OPTEE && AUTO_DRAM_TRAINING)
+	default 0x0003C000 if !ATF_SPD_OPTEE
+
+endif # ATF_HAVE_BL2
+
+config ATF_BL31_BASE
+	hex "Base Address of ATF(BL31)"
+	default FWPROG_ATF_LOADADDR
+
+config ATF_BL31_SIZE
+	hex "Size of ATF(BL31)"
+	depends on ATF_BUILD
+	default 0x0004C000 if (ATF_HAVE_BL2 && !ATF_SPD_OPTEE)
+	default 0x000FC000 if (ATF_HAVE_BL2 && ATF_SPD_OPTEE)
+	default 0x0003C000 if !ATF_HAVE_BL2
+
+config ATF_SPD_OPTEE
+	bool "Have OP-TEE"
+	default n
+	select ATF_HAVE_BL2
+	help
+	  Have OP-TEE as BL32.
+
+config ATF_BL32_BASE
+	hex
+	default 0x00100000
+	depends on ATF_SPD_OPTEE
+
+config ATF_BL32_SIZE
+	hex
+	default 0x00B00000
+	depends on ATF_SPD_OPTEE
+
+config ATF_BL32_SHMEM_SIZE
+	hex
+	default 0x400000
+	depends on ATF_SPD_OPTEE
+	help
+	  cf. TEE_SHMEM_SIZE in core/arch/arm/plat-ambarella/platform_config.h
+	      of optee-os
+	  The start address is before the end of DDR.
+
+config ATF_BL33_BLD_BASE
+	hex
+	default 0x3D000000 if (DDR_SIZE <= 0x40000000)
+	default 0x6D000000 if (ATF_HAVE_BL2 && !ATF_SPD_OPTEE && (DDR_SIZE > 0x40000000))
+	default 0x7D000000
+	depends on ATF_HAVE_BL2
+	help
+	  for PSCI jump to BL33 AmBoot (Temporary)
+
+config ATF_BL33_BASE
+	hex
+	default FWPROG_SYS_LOADADDR if BLD_SEQ_ATF_SRTOS && !BUILD_QNX_IPL
+	default FWPROG_LNX_LOADADDR if BLD_SEQ_ATF_LINUX
+	default FWPROG_XEN_LOADADDR if BLD_SEQ_ATF_XEN
+	default 0x6F004000 if BUILD_QNX_IPL
+	depends on !ATF_HAVE_BL2
+	help
+	 in QNX, this set to IPL start address
+	 in ThreadX/Linux, this set to ThreadX/Linux start address
+
+config ATF_BL31_BIN
+	string
+	default "${srctree}/vendors/arm/arm-trusted-firmware/bin/${AMBA_CHIP_ID}/bl31.bin"
+
+config ATF_BL32_BIN
+	string "Path of BL32 optee os image"
+	default "${srctree}/svc/comsvc/ambalink/linux_image/${AMBA_CHIP_ID}/tee-pager_v2.bin"
+	depends on ATF_SPD_OPTEE
+
+config ATF_BL33_BIN
+	string "Path of BL33 boot loader"
+	default "${srctree}/output.64/out/amba_bld.bin"
+	depends on ATF_HAVE_BL2
+
+config ATF_AMBALINK
+	def_bool y
+
+config ATF_SUSPEND_SRAM
+    bool "Support suspend to SRAM and enter DDR self-refresh"
+	depends on ATF_BUILD && SOC_CV5
+    default n
+
+config ATF_FIP_RTOS
+	bool "Add RTOS image into ATF fip image"
+	depends on BLD_SEQ_SRTOS && ATF_HAVE_BL2 && ATF_SPD_OPTEE
+	default y
+	help
+	  Add RTOS image into FIP (Firmware Image Package)
+
+config ATF_SCP_SIZE
+	hex
+	depends on ATF_FIP_RTOS
+	default 0xC00000
+	help
+	  Size of SCP.
+	  We put binary of RTOS into this partition.
+	  This value is memory size.
+	  It's necessary to add this region into mmap before loading image to.
+
+config ATF_FUSA
+	bool
+	depends on SOC_CV2FS
+	default y if !BUILD_QNX_IPL
+	default n if BUILD_QNX_IPL
+	help
+	  FUnctional SAfety & self-diagnostic
+
+endmenu # "ARM-Trusted-Firmware"

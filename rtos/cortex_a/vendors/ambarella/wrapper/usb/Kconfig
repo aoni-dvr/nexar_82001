@@ -1,0 +1,24 @@
+#
+# For a description of the syntax of this configuration file,
+# see Documentation/kbuild/kconfig-language.txt.
+#
+config BUILD_SSP_USBX_LIBRARY
+	bool "Build USBX libraries"
+    depends on BUILD_SSP_USB_LIBRARY
+    default y
+choice
+    prompt "USB controller"
+    depends on BUILD_SSP_USB_LIBRARY
+    default BUILD_SYNOPSYS_USB2_DRIVER
+
+    config BUILD_SYNOPSYS_USB2_DRIVER
+        bool "Build Synopsys USB 2 driver"
+
+    config BUILD_CADENCE_USB3_DRIVER
+        bool "Build Cadence USB 3 libraries"
+endchoice
+
+config ENABLE_USB_DRV_DBG_MSG
+	bool "Enable USB driver debug messages"
+    depends on BUILD_SSP_USB_LIBRARY
+    default n

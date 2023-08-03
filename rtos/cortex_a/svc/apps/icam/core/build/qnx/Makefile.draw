@@ -1,0 +1,16 @@
+# draw
+SRCS += SvcGui.c
+SRCS += SvcGuiDiagBox.c
+SRCS += SvcGuiCheckBox.c
+SRCS += SvcGuiTextView.c
+
+ifeq ($(CONFIG_ICAM_32BITS_OSD_USED),y)
+ifeq ($(CONFIG_SVC_LVGL_USED),y)
+SRCS += SvcOsd32bits_LVGL.c
+else
+SRCS += SvcOsd32bits.c
+endif
+else
+SRCS += SvcOsd.c
+SRCS += SvcGuiOsdPalette.c
+endif

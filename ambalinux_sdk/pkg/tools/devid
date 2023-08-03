@@ -1,0 +1,348 @@
+#!/bin/sh -eu
+
+print_help()
+{
+    echo "Usage: $(basename "$0") --all|--serial|--device_id|--imei|--iccid|--wifi_mac|--bt_mac|--key|--linux_ver|--rtos_ver|--hw_model|--hw_rev"
+    echo "Get hardware identifiers"
+    echo ""
+    echo "  --all           Return JSON object with all parameters"
+    echo "  --serial        Return serial number"
+    echo "  --device_id     Return device id"
+    echo "  --sim           Return SIM Card Status"
+    echo "  --imei          Return LTE modem IMEI"
+    echo "  --iccid         Return SIM card ICCID"
+    echo "  --imsi          Return SIM card IMSI"
+    echo "  --wifi_mac      Return WiFi MAC address"
+    echo "  --usb_wifi_mac  Return Usb WiFi MAC address"
+    echo "  --bt_mac        Return Bluetooth MAC address"
+    echo "  --key           Return device key fingerprint"
+    echo "  --linux_ver     Return Linux firmware version"
+    echo "  --rtos_ver      Return RTOS firmware version"
+    echo "  --hw_model      Return hardware model"
+    echo "  --hw_rev        Return hardware revision"
+    echo "  --lte_ver       Return LTE version"
+    echo "  --csq           Return CSQ"
+    echo ""
+    echo "Note: only first option will be processed"
+}
+
+wifi_iface="wlan0"
+usb_wifi_iface="rtl0"
+
+get_serial()
+{
+    if ! serial=$(hwid) || [ -z "${serial}" ]; then
+            serial="N/A"
+    fi
+    # temporary fallback
+    if [ "${serial}" = "N/A" ] || echo "${serial}" | grep -q 'SN'; then
+        if [ -f /mnt/extsd/id.txt ]; then
+            if ! serial=$(cat /mnt/extsd/id.txt) || [ -z "${serial}" ]; then
+                serial="N/A"
+            fi
+        else
+            serial=$(echo "${serial}" | tr -d 'SN')
+        fi
+    fi
+    if [ "${serial}" = "N/A" ]; then
+        echo "N/A"
+        return 1
+    fi
+    echo "${serial}" | tr '[:upper:]' '[:lower:]'
+}
+
+get_device_id()
+{
+    if [ ! -f /pref/device_id ]; then
+        echo "Not registered"
+        return 1
+    fi
+    if ! device_id=$(cat /pref/device_id) || [ -z "${serial}" ]; then
+        echo "N/A"
+        return 1
+    fi
+    echo "${device_id}" | tr '[:upper:]' '[:lower:]'
+}
+
+get_sim()
+{
+    PIN_STATE="N/A"
+    usb_devices=$(lsusb) || { echo "N/A"; return 1; }
+    if echo "${usb_devices}" | grep -q '2c7c:'; then #Quectel
+        at_dev='/dev/ttyUSB3'
+        PIN_STATE=$(send_at_cmd_rtr "AT+CPIN?" || echo "N/A")
+    fi
+    if [ "${PIN_STATE}" = "N/A" ]; then
+        echo "N/A"
+        return 1
+    fi
+    echo "${PIN_STATE}" | tr '[:upper:]' '[:lower:]'
+}
+
+get_imei()
+{
+    imei="N/A"
+    usb_devices=$(lsusb) || { echo "N/A"; return 1; }
+    if echo "${usb_devices}" | grep -q '2c7c:'; then #Quectel
+        at_dev='/dev/ttyUSB3'
+        imei=$(send_at_cmd_rtr "AT+GSN" || echo "N/A")
+    fi
+    if [ "${imei}" = "N/A" ]; then
+        echo "N/A"
+        return 1
+    fi
+    echo "${imei}" | tr '[:upper:]' '[:lower:]'
+}
+
+get_iccid()
+{
+    iccid="N/A"
+    usb_devices=$(lsusb) || { echo "N/A"; return 1; }
+    if echo "${usb_devices}" | grep -q '2c7c:'; then #Quectel
+        at_dev='/dev/ttyUSB3'
+        iccid=$(send_at_cmd_rtr "AT+QCCID" || echo "N/A")
+    fi
+    if [ "${iccid}" = "N/A" ]; then
+        echo "N/A"
+        return 1
+    fi
+    echo "${iccid}" | tr '[:upper:]' '[:lower:]'
+}
+
+get_imsi()
+{
+    imsi="N/A"
+    usb_devices=$(lsusb) || { echo "N/A"; return 1; }
+    if echo "${usb_devices}" | grep -q '2c7c:'; then #Quectel
+        at_dev='/dev/ttyUSB3'
+        imsi=$(send_at_cmd_rtr "AT+CIMI" || echo "N/A")
+    fi
+    if [ "${imsi}" = "N/A" ]; then
+        echo "N/A"
+        return 1
+    fi
+    echo "${imsi}" | tr '[:upper:]' '[:lower:]'
+}
+
+get_wifi_mac()
+{
+    if ! wifi_mac=$(ip addr show "${wifi_iface}" | awk '/ether/{print $2}') || [ -z "${wifi_mac}" ]; then
+        echo "N/A"
+        return 1
+    fi
+    echo "${wifi_mac}" | tr '[:upper:]' '[:lower:]'
+}
+
+get_bt_mac()
+{
+    if ! bt_mac=$(bluetoothctl list | awk '/Controller/{print $2}') || [ -z "${bt_mac}" ]; then
+        echo "N/A"
+        return 1
+    fi
+    echo "${bt_mac}" | tr '[:upper:]' '[:lower:]'
+}
+
+get_usb_wifi_mac()
+{
+    if ! wifi_mac=$(ip addr show "${usb_wifi_iface}" | awk '/ether/{print $2}') || [ -z "${wifi_mac}" ]; then
+        echo "N/A"
+        return 1
+    fi
+    echo "${wifi_mac}" | tr '[:upper:]' '[:lower:]'
+}
+
+get_key()
+{
+    echo "Not implemented"
+    return 1
+}
+
+get_linux_ver()
+{
+    if [ ! -f /etc/release ] || ! linux_ver=$(cat /etc/release); then
+        echo "N/A"
+        return 1
+    fi
+    echo "${linux_ver}"
+}
+
+get_rtos_ver()
+{
+    if ! rtos_ver=$(awk -v FS="rtos_ver=" 'NF>1{print $2}' /proc/cmdline | cut -d' ' -f1) || [ -z "${rtos_ver}" ]; then
+        echo "N/A"
+        return 1
+    fi
+    echo "${rtos_ver}"
+}
+
+get_hw_model()
+{
+    if ! sn=$(get_serial); then
+        echo "N/A"
+        return 1
+    fi
+    sn=$(echo "$sn" | tr '[:lower:]' '[:upper:]')
+    echo "ibase=16; ${sn: -13:1}" | bc
+}
+
+get_hw_rev()
+{
+    if ! sn=$(get_serial); then
+        echo "N/A"
+        return 1
+    fi
+    sn=$(echo "$sn" | tr '[:lower:]' '[:upper:]')
+    echo "ibase=16; ${sn: -12:1}" | bc
+}
+
+get_lte_ver()
+{
+    lte_ver="N/A"
+    usb_devices=$(lsusb) || { echo "N/A"; return 1; }
+    if echo "${usb_devices}" | grep -q '2c7c:'; then #Quectel
+        at_dev='/dev/ttyUSB3'
+        lte_ver=$(send_at_cmd_rtr "AT+QGMR" || echo "N/A")
+    fi
+    if [ "${lte_ver}" = "N/A" ]; then
+        echo "N/A"
+        return 1
+    fi
+    echo "${lte_ver}" | tr '[:upper:]' '[:lower:]'
+}
+
+get_csq()
+{
+    csq="N/A"
+    usb_devices=$(lsusb) || { echo "N/A"; return 1; }
+    if echo "${usb_devices}" | grep -q '2c7c:'; then #Quectel
+        at_dev='/dev/ttyUSB3'
+        csq=$(send_at_cmd_rtr "AT+CSQ" || echo "N/A")
+    fi
+    if [ "${csq}" = "N/A" ]; then
+        echo "N/A"
+        return 1
+    fi
+    echo "${csq}" | tr '[:upper:]' '[:lower:]'
+}
+
+###############################################################################
+send_at_cmd()
+{
+    if [ -z "$1" ]; then
+        return 1
+    fi
+    if ! ans=$(echo -e "$1\r" | microcom -s 115200 -t 1000 ${at_dev}) || ! echo "${ans}" | grep -q 'OK'; then
+        echo "${ans}"
+        return 1
+    fi
+    echo "${ans}" | grep -v "OK\|$1" | tr -d '\r' || :
+    return 0
+}
+send_at_cmd_rtr()
+{
+    n=1
+    while true; do
+        ans=$(send_at_cmd "$1") && break
+        if [ ${n} -lt 3 ]; then
+            n=$(echo "${n} + 1" | bc -l)
+        else
+            return 1
+        fi
+    done
+    at_cmd=$(echo "$1" | tr '[:lower:]' '[:upper:]' | sed 's/^AT[^0-9A-Z]*\([^?=]*\).*$/\1/g') || :
+    echo "${ans}" | sed "s/^[ \t+]*${at_cmd}:[ \t]*\(.*\)$/\1/g" | grep . || :
+    return 0
+}
+
+###############################################################################
+##################################### Main ####################################
+###############################################################################
+
+if [ $# -gt 0 ]; then
+case $1 in
+    --serial)
+        get_serial || exit 1
+    ;;
+    --dev_id)
+        echo "'--dev_id' option deprecated, use '--serial' instead" >&2
+        get_serial || exit 1
+    ;;
+    --device_id)
+        get_device_id || exit 1
+    ;;
+    --sim)
+        get_sim || exit 1
+    ;;
+    --imei)
+        get_imei || exit 1
+    ;;
+    --iccid)
+        get_iccid || exit 1
+    ;;
+    --imsi)
+        get_imsi || exit 1
+    ;;
+    --wifi_mac)
+        get_wifi_mac || exit 1
+    ;;
+    --bt_mac)
+        get_bt_mac || exit 1
+    ;;
+    --usb_wifi_mac)
+        get_usb_wifi_mac || exit 1
+    ;;
+    --key)
+        get_key || exit 1
+    ;;
+    --linux_ver)
+        get_linux_ver || exit 1
+    ;;
+    --rtos_ver)
+        get_rtos_ver || exit 1
+    ;;
+    --hw_model)
+        get_hw_model || exit 1
+    ;;
+    --hw_rev)
+        get_hw_rev || exit 1
+    ;;
+    --lte_ver)
+        get_lte_ver || exit 1
+    ;;
+    --csq)
+        get_csq || exit 1
+    ;;
+    --all)
+        answer=$(jq -n '{"serial":$serial,"device_id":$device_id,"imei":$imei,"iccid":$iccid,"wifi_mac":$wifi_mac,"bt_mac":$bt_mac,"key":$key,"linux_ver":$linux_ver,"rtos_ver":$rtos_ver,"hw_model":$hw_model,"hw_rev":$hw_rev}' \
+            --arg serial "$(get_serial || :)" \
+            --arg device_id "$(get_device_id || :)" \
+            --arg imei "$(get_imei || :)" \
+            --arg iccid "$(get_iccid || :)" \
+            --arg imsi "$(get_imsi || :)" \
+            --arg wifi_mac "$(get_wifi_mac || :)" \
+            --arg bt_mac "$(get_bt_mac || :)" \
+            --arg usb_wifi_mac "$(get_usb_wifi_mac || :)" \
+            --arg key "$(get_key || :)" \
+            --arg linux_ver "$(get_linux_ver || :)" \
+            --arg rtos_ver "$(get_rtos_ver || :)" \
+            --arg hw_model "$(get_hw_model || :)" \
+            --arg hw_rev "$(get_hw_rev || :)" \
+            --arg lte_ver "$(get_lte_ver || :)" \
+            --arg csq "$(get_csq || :)" \
+            )
+        echo "${answer}" | jq .
+    ;;
+    -h|--help)
+        print_help
+        exit 0
+    ;;
+    *)
+        echo "Syntax: Unknown option $1"
+        print_help
+        exit 1
+    ;;
+esac
+else
+    print_help
+    exit 1
+fi

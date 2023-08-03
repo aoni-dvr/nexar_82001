@@ -1,0 +1,98 @@
+#include <vp_primitive.h>
+#define input_width 320
+#define input_height 180
+DAG Fnz = {
+
+	VP_input(input0, uint8_t, vector(input_height, input_width));
+
+	VP_index(VP_tensor(pos_y, uint16_t),
+			w = input_width,
+			h = input_height,
+			d = 1,
+			p = 1,
+			offset = 0,
+			dim_coordinate = 1,
+			flip = 0,
+			inc = 0,
+			);
+
+	VP_index(VP_tensor(pos_x, uint16_t),
+			w = input_width,
+			h = input_height,
+			d = 1,
+			p = 1,
+			offset = 0,
+			dim_coordinate = 0,
+			flip = 0,
+			inc = 0,
+			);
+
+	VP_reshape(pos_x, 
+			VP_tensor(pos_x_1d, uint16_t),
+			w = input_height*input_width ,
+			h = 1,
+			d = 1,
+			p = 1
+			);
+
+	VP_reshape(pos_y, 
+			VP_tensor(pos_y_1d, uint16_t),
+			w = input_height*input_width ,
+			h = 1,
+			d = 1,
+			p = 1
+			);
+
+	VP_reshape(input0, 
+			VP_tensor(img_1d, uint8_t),
+			w = input_height*input_width ,
+			h = 1,
+			d = 1,
+			p = 1
+			);
+
+	VP_neib(img_1d,
+		    VP_imm("00", uint8_t, vector(1)),
+		    VP_tensor(nz_sel, uint16_t)
+			);
+
+	VP_selectb(pos_x_1d, nz_sel, 
+			VP_tensor(one_pos_x, uint16_t),
+			undef,
+			block_sel=0
+			);
+
+	VP_selectb(pos_y_1d, nz_sel, 
+			VP_tensor(one_pos_y, uint16_t),
+			undef,
+			block_sel=0
+			);
+
+	VP_mergeh(one_pos_x, one_pos_y, 
+			VP_tensor(data_dram, uint16_t)
+			);
+
+	VP_bitcntrw(nz_sel,
+			VP_tensor(non_zero_count, uint16_t)
+			);
+
+	VP_transpose(data_dram,
+			VP_tensor(data_dram_transposed, uint16_t),
+			to_w = 1,
+			to_h = 0,
+			to_d = 2,
+			to_p = 3
+			);
+
+	VP_reshape(data_dram_transposed,
+			VP_tensor(data_dram_transposed_reshaped, uint16_t),
+			w = input_height*input_width*2,
+			h = 1,
+			d = 1,
+			p = 1
+			);
+	VP_typeconv(data_dram_transposed_reshaped, VP_tensor(out, uint32_t));
+	
+	VP_output(non_zero_count_output, non_zero_count);
+	VP_output(main_output, out);
+}

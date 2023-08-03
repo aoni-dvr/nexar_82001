@@ -1,0 +1,98 @@
+###################################################################################
+#
+# QNX Neutrino on the AMBA CV2FS Evaluation Kit,
+# based on ARM Cortex A53
+#
+####################################################################################
+
+[+keeplinked]
+[+compress]
+[image=0x40000000]
+
+[virtual=aarch64le,raw] .bootstrap = {
+    startup-ambarella-cv2fs -vvv -S
+    PATH=/proc/boot:/bin:/usr/bin:/sbin:/usr/sbin LD_LIBRARY_PATH=/proc/boot:/lib:/lib/dll:/lib/dll/pci:/usr/lib procnto-smp-instr -v -P 129
+}
+[+script] .script = {
+    display_msg Welcome to QNX Neutrino 7.0 on the AMBA CV2FS-BUB (ARM Cortex-A53)
+
+    procmgr_symlink ../../proc/boot/libc.so /usr/lib/ldqnx-64.so.2
+
+    # Start some common servers
+    slogger2 &
+    pipe &
+    mqueue
+
+    SYSNAME=nto
+    TERM=qansi
+    HOME=/
+    PATH=:/bin:/usr/bin:/sbin:/usr/sbin:/proc/boot
+    LD_LIBRARY_PATH=:/lib:/usr/lib:/lib/dll:/proc/boot
+
+    display_msg Shell Init done...
+
+    # Workaround for a performance issue with memcpy() on aarch64 targets
+    LD_PRELOAD=/proc/boot/libstringsa64.so
+
+    [+session] ksh &
+}
+
+# Redirect console messages
+[type=link] /bin/sh=/proc/boot/ksh
+[type=link] /dev/console=/dev/ser1
+[type=link] /tmp=/dev/shmem
+
+# Shared libraries
+libc.so
+libm.so
+libncursesw.so
+libstringsa64.so
+
+###########################################################################
+## general commands
+###########################################################################
+awk
+cat
+chmod
+cksum
+cp
+date
+dd
+devb-ram
+diff
+env
+fdisk
+grep
+in32
+isendrecv
+ksh
+ln
+ls
+mkdosfs
+chkdosfs
+mv
+on
+out32
+pidin
+pipe
+random
+rm
+shutdown
+slay
+sleep
+stty
+top
+touch
+uname
+use
+waitfor
+wc
+which
+mqueue
+split
+mkdir
+
+###########################################################################
+## END OF BUILD SCRIPT
+###########################################################################
+}

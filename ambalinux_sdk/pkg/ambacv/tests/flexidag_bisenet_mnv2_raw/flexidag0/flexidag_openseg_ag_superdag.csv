@@ -1,0 +1,5 @@
+instance,algorithm,step,cvtask,chan_id,num_inputs,num_feedback,init_freq,uuid,dbglvl,extrabuf_input,extrabuf_feedback,flag2,config[0],config[1],config[2],config[3],config[4],config[5],config[6],config[7],deadline,deadline_fail,input[0],input[1],input[2],input[3],input[4],input[5],input[6],input[7],input[8],input[9],input[10],input[11],input[12],input[13],input[14],input[15],feedback[0],feedback[1],feedback[2],feedback[3],engine_name,timeout_warning,timeout_error,timeout_panic1,timeout_panic2,timeout_cvtask,
+INPUT,0,FLEXIDAG_OPENSEG_AG_INP_0,$##FLEXIDAG,0,0,0,1,0,0,0,0,0,,,,,,,,,0,0,,,,,,,,,,,,,,,,,,,,,"",0,0,0,0,0,
+INPUT,1,FLEXIDAG_OPENSEG_AG_INP_1,$##FLEXIDAG,0,0,0,1,2,0,0,0,0,,,,,,,,,0,0,,,,,,,,,,,,,,,,,,,,,"",0,0,0,0,0,
+FLEXIDAG_OPENSEG_AG_SUPERDAG,flexidag_openseg_ag,flexidag_openseg_ag_orc,flexidag_openseg_ag,0,2,0,1,4,5,0,0,0,,,,,,,,,0,0,0,2,,,,,,,,,,,,,,,,,,,"",0,0,0,0,0,
+OUTPUT,0,FLEXIDAG_OPENSEG_AG_OUT_0,$##FLEXIDAG,0,1,0,1,6,0,0,0,0,,,,,,,,,0,0,4,,,,,,,,,,,,,,,,,,,,"",0,0,0,0,0,

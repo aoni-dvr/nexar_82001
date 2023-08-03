@@ -1,0 +1,133 @@
+#include "vp_vas.h"
+#define IN_SIZE_W 1280
+#define IN_SIZE_H 512
+#define OUT_SIZE_W 1824
+#define OUT_SIZE_H 736
+#define TABLE_SIZE 8*4
+DAG OSD = {
+
+	VP_input(image, uint8_t, vector(1, 1, IN_SIZE_H, IN_SIZE_W));
+	
+//========================================
+	VP_resamp(image, 
+		VP_tensor(image_resamp, uint8_t),
+		replicate_w = 1,
+		replicate_h = 1,
+		initial_phase_w = 0,
+		initial_phase_h = 0,
+		phase_inc_w = IN_SIZE_W*8192/OUT_SIZE_W,
+		phase_inc_h = IN_SIZE_H*8192/OUT_SIZE_H,
+		out_w = OUT_SIZE_W,
+		out_h = OUT_SIZE_H
+	);
+
+	VP_reshape(image_resamp,
+		VP_tensor(image_index, uint8_t),
+		w = OUT_SIZE_W*OUT_SIZE_H,
+		h = 1,
+		d = 1,
+		p = 1
+	);
+
+	VP_muli(image_index, VP_imm("04", uint8_t, vector(1)),
+		VP_tensor(segment_index, uint8_t),
+		disable_reserved = 1,
+	);
+	VP_addi(segment_index, VP_imm("01", uint8_t, vector(1)),
+		VP_tensor(segment_index_R, uint8_t),
+	);
+	VP_addi(segment_index, VP_imm("02", uint8_t, vector(1)),
+		VP_tensor(segment_index_G, uint8_t),
+	);
+	VP_addi(segment_index, VP_imm("03", uint8_t, vector(1)),
+		VP_tensor(segment_index_B, uint8_t),
+	);
+
+	VP_gather(VP_imm("table.bin", uint8_t, vector(1,1,1,TABLE_SIZE))
+					,segment_index
+					,VP_tensor(image_resamp_I, uint8_t)
+					,block_w = 1
+					,block_h = 1
+					,block_d = 1
+					,start_w = 0
+					,start_h = 0
+					,start_d = 0
+					,start_p = 0
+					,zr = 1);
+
+	VP_gather(VP_imm("table.bin", uint8_t, vector(1,1,1,TABLE_SIZE))
+					,segment_index_R
+					,VP_tensor(image_resamp_R, uint8_t)
+					,block_w = 1
+					,block_h = 1
+					,block_d = 1
+					,start_w = 0
+					,start_h = 0
+					,start_d = 0
+					,start_p = 0
+					,zr = 1);
+
+	VP_gather(VP_imm("table.bin", uint8_t, vector(1,1,1,TABLE_SIZE))
+					,segment_index_G
+					,VP_tensor(image_resamp_G, uint8_t)
+					,block_w = 1
+					,block_h = 1
+					,block_d = 1
+					,start_w = 0
+					,start_h = 0
+					,start_d = 0
+					,start_p = 0
+					,zr = 1);
+
+	VP_gather(VP_imm("table.bin", uint8_t, vector(1,1,1,TABLE_SIZE))
+					,segment_index_B
+					,VP_tensor(image_resamp_B, uint8_t)
+					,block_w = 1
+					,block_h = 1
+					,block_d = 1
+					,start_w = 0
+					,start_h = 0
+					,start_d = 0
+					,start_p = 0
+					,zr = 1);
+
+	VP_typeconv(image_resamp_R,
+		VP_tensor(image_resamp_R_32, uint32_t),
+	);
+	VP_typeconv(image_resamp_G,
+		VP_tensor(image_resamp_G_32, uint32_t),
+	);
+	VP_typeconv(image_resamp_B,
+		VP_tensor(image_resamp_B_32, uint32_t),
+	);
+
+	VP_lshi(image_resamp_R_32, VP_imm("08", uint8_t, vector(1)),
+		VP_tensor(image_resamp_R_sh, uint32_t),
+	);
+	VP_lshi(image_resamp_G_32, VP_imm("10", uint8_t, vector(1)),
+		VP_tensor(image_resamp_G_sh, uint32_t),
+	);
+	VP_lshi(image_resamp_B_32, VP_imm("18", uint8_t, vector(1)),
+		VP_tensor(image_resamp_B_sh, uint32_t),
+	);
+
+	VP_add(image_resamp_I, image_resamp_R_sh,
+		VP_tensor(A, uint32_t),
+	);
+	VP_add(A, image_resamp_G_sh,
+		VP_tensor(B, uint32_t),
+	);
+	VP_add(B, image_resamp_B_sh,
+		VP_tensor(result, uint32_t),
+	);
+	
+	VP_reshape(result,
+		VP_tensor(result_reshape, uint32_t),
+		w = OUT_SIZE_W,
+		h = OUT_SIZE_H,
+		d = 1,
+		p = 1
+	);
+//=============================================
+	VP_output(output_color_add, result_reshape, dram_format = 0);
+}

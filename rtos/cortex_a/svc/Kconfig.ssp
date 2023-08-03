@@ -1,0 +1,61 @@
+# For a description of the syntax of this configuration file,
+# see build/scripts/Documentation/kbuild/kconfig-language.txt.
+#
+comment "System Configuration"
+menu "System Support Package"
+
+menuconfig BUILD_SSP_KAL
+        bool "Build Kernel Abstraction Layer (KAL) support library"
+        default y
+
+if BUILD_SSP_KAL
+source vendors/ambarella/wrapper/kal/Kconfig
+endif
+
+config BUILD_SSP_NETX
+	bool "ThreadX NetX support"
+	depends on THREADX
+	default n
+	help
+	  NetX: Network protocol stack for ThreadX.
+
+if BUILD_SSP_NETX
+
+config NETX_ENET
+	bool "Ethernet driver for Ambarella platform"
+	help
+	  Ethernet driver for Ambarella platform.
+
+endif # BUILD_SSP_NETX
+
+menuconfig BUILD_SSP_FS
+        bool "Build File System (FS) support library"
+        depends on !LINUX
+        default y
+
+if BUILD_SSP_FS
+source vendors/ambarella/wrapper/fs/Kconfig
+endif
+
+menuconfig BUILD_SSP_DRIVER
+        bool "Build SoC device driver library"
+        default y
+
+if BUILD_SSP_DRIVER
+source soc/io/Kconfig
+source soc/dsp/Kconfig
+endif
+
+if SOC_CV2FS
+config SHADOW_SHARED_MEM_ADDR
+	hex "Shadow memory address"
+	default 0x7fe00000
+	help
+	  Shadow Area Base Memory Address
+endif # SOC_CV2FS
+
+config EXCEPTION_BACKTRACE_LEVEL
+	hex "System backtrace level in exception handler"
+	default 1
+
+endmenu

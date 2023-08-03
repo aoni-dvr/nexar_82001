@@ -1,0 +1,7 @@
+
+menuconfig ARCH_AMBARELLA_MAL
+	tristate "Amba MAL Support"
+	default m
+        depends on ARCH_AMBARELLA
+	help
+                This enables Ambarella MAL module

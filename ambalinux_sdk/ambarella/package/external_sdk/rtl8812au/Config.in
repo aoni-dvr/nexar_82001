@@ -1,0 +1,6 @@
+config BR2_PACKAGE_RTL8812AU
+	bool "RTL8812AU"
+	help
+	  Realtek RTL8812AU 11ac 2x2
+	  CONFIG_USB_EHCI_AMBARELLA of Linux is required.
+

@@ -1,0 +1,43 @@
+################################################################
+#                             Linux                            #
+################################################################
+CURDIR := $(patsubst %/build/linux/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
+APP := $(notdir $(CURDIR))
+
+ccflags-y := -I$(srctree)/$(CV_COMSVC_DIR)/cv_common/inc
+ccflags-y += -I$(srctree)/$(CV_COMSVC_DIR)/cv_common/inc/cvapi
+ccflags-y += -I$(srctree)/$(CV_COMSVC_DIR)/cv_common/inc/svccvalgo
+ccflags-y += -I$(srctree)/$(CV_COMSVC_DIR)/cv_common/inc/svccvalgo/linux
+
+ccflags-y += -I$(srctree)/$(CV_CORE_DIR)/cv_common/inc
+ccflags-y += -I$(srctree)/$(CV_CORE_DIR)/cv_common/inc/cvsched_common
+ccflags-y += -I$(srctree)/$(CV_CORE_DIR)/cv_common/inc/cvapi
+ccflags-y += -I$(srctree)/vendors/ambarella/inc
+ccflags-y += -I$(srctree)/vendors/ambarella/inc/io
+
+ccflags-y += -I$(srctree)/soc/io/src/common/inc/arm/
+ccflags-y += -I$(srctree)/soc/io/src/$(AMBA_CHIP_ID)/inc
+
+ccflags-y += -I$(srctree)/svc/comsvc/print
+ccflags-y += -I$(srctree)/svc/comsvc/misc
+ccflags-y += -I$(srctree)/svc/comsvc/shell/inc
+
+ccflags-y += -I$(OUTDIR)
+ccflags-y += -O3 -g
+
+obj-y += libcv_$(APP).a
+
+#C_SRCS := $(patsubst $(CURDIR)/%,%,$(wildcard $(CURDIR)/src/*.c $(CURDIR)/src/linux/*.c))
+#libcv_$(APP)-objs = $(C_SRCS:%.c=%.o)
+
+libcv_$(APP)-objs := ../../src/SvcCvAlgo.o           \
+                     ../../src/CvCommFlexi.o         \
+                     ../../src/linux/ArmEventFlag.o    \
+                     ../../src/linux/ArmFIO.o          \
+                     ../../src/linux/ArmLog.o          \
+                     ../../src/linux/ArmMemPool.o      \
+                     ../../src/linux/ArmMsgQueue.o     \
+                     ../../src/linux/ArmMutex.o        \
+                     ../../src/linux/ArmTask.o
+
+install-files += libcv_$(APP).a

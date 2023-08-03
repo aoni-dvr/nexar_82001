@@ -1,0 +1,4 @@
+config BR2_PACKAGE_FLEXIBLE_UTIL
+	help
+	  Enable Flexible Linux SDK utility
+

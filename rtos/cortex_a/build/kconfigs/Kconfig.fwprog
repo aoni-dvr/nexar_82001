@@ -1,0 +1,475 @@
+#
+# For a description of the syntax of this configuration file,
+# see build/scripts/Documentation/kbuild/kconfig-language.txt.
+#
+
+comment "Firmware Programmer configration"
+
+menu "Firmware Partition Manager"
+
+menu "Bootstrap Partition"
+
+config FWPROG_BST
+	string "Bootstrap image file"
+	default "${KBUILD_AMBA_OUT_DIR}/amba_bst.bin"
+	help
+	  Location of the bootstrap image.
+
+config FWPROG_BST_VIF
+	string "Bootstrap version number"
+	default "1.0.0"
+	help
+	  The version number of the bootstrap image.
+	  The format is major.minor.patch.
+
+config FWPROG_BST_LOADADDR
+	hex
+	default 0
+
+config FWPROG_BST_SIGNED
+	bool
+	default y if (ENABLE_SECURITY && !SOC_CV2FS)
+	help
+	  Image need to be signed when enable security.
+
+endmenu # "Bootstrap Partition"
+
+
+menu "Bootloader Partition"
+
+config FWPROG_BLD
+	string "Bootloader image file"
+	default "${KBUILD_AMBA_OUT_DIR}/amba_bld.bin" if !ATF_HAVE_BL2
+	default "${KBUILD_AMBA_OUT_DIR}/amba_bld.bin" if (ATF_HAVE_BL2 && CPU_CORTEX_R52)
+	default "${srctree}/vendors/arm/arm-trusted-firmware/bin/${AMBA_CHIP_ID}/bl2.bin" if (ATF_HAVE_BL2 && !CPU_CORTEX_R52)
+	help
+	  Location of the bootloader image.
+
+config FWPROG_BLD_VIF
+	string "Bootloader version number"
+	default "1.0.0"
+	help
+	  The version number of the bootloader image.
+	  The format is major.minor.patch.
+
+config FWPROG_BLD_LOADADDR
+	hex "Load address"
+	default 0x10000000 if !ATF_HAVE_BL2
+	default 0x00004000 if ATF_HAVE_BL2
+
+config FWPROG_BLD_SIGNED
+	bool
+	default y if (ENABLE_SECURITY && !SOC_CV2FS)
+	help
+	  Image need to be signed when enable security.
+
+endmenu # "Bootloader Partition"
+
+
+menu "SD Firmware Update Partition"
+
+config FWPROG_PBA
+	string "SD firmware update image file"
+	default ""
+	help
+	  Location of the SD firmware update image.
+
+config FWPROG_PBA_VIF
+	string "SD firmware update version number"
+	default "1.0.0"
+	help
+	  The version number of the SD firmware update image.
+	  The format is major.minor.patch.
+
+config FWPROG_PBA_LOADADDR
+	hex "Load address"
+	default 0x00020000
+
+endmenu # "SD Firmware Update Partition"
+
+if !SOC_CV5 && !SOC_CV52
+config FWPROG_ATF_ENABLE
+	bool
+	default y
+endif
+
+if SOC_CV5 || SOC_CV52
+#todo: remove this after unified boot
+config FWPROG_ATF_ENABLE
+	bool "Enable ARM Trusted Firmware"
+	default n
+endif
+
+if FWPROG_ATF_ENABLE
+menu "ARM Trust Firmware Partition"
+
+config FWPROG_ATF
+	string "ARM Trust Firmware image file"
+	default "${srctree}/vendors/arm/arm-trusted-firmware/bin/${AMBA_CHIP_ID}/bl31.bin" if !ATF_HAVE_BL2
+	default "${KBUILD_AMBA_OUT_DIR}/fip.bin" if ATF_HAVE_BL2
+	help
+	  Location of the ARM Trust Firmware image.
+	  image = bl31.bin + bl32.bin + bld.bin, if (have BL2 and spd-optee)
+	  image = bl31.bin + bld.bin, if (have BL2)
+	  image = bl31.bin if (have no BL2)
+
+config FWPROG_ATF_VIF
+	string "ARM Trust Firmware version number"
+	default "1.0.0"
+	help
+	  The version number of the ARM Trust Firmware image.
+	  The format is major.minor.patch.
+
+config FWPROG_ATF_LOADADDR
+	hex "Load address"
+	default 0x00004000
+
+config FWPROG_ATF_SIGNED
+	bool
+	default y if ENABLE_SECURITY
+	help
+	  Image need to be signed when enable security.
+
+endmenu # "ARM Trust Firmware Partition"
+endif # FWPROG_ATF_ENABLE
+
+
+menu "Initial Program Loader Partition"
+
+config FWPROG_IPL
+	string "Initial program loader image file"
+	default ""
+	help
+	  Initial Program Loader image
+
+config FWPROG_IPL_VIF
+	string "Version number"
+	default "1.0.0"
+	help
+	  The version number of the Initial Program Loader image.
+	  The format is major.minor.patch.
+
+config FWPROG_IPL_LOADADDR
+	hex
+	default 0x6F000000
+
+endmenu # "Initial Program Loader Partition"
+
+if SOC_CV2FS || SOC_CV22FS
+menu "BLD2"
+
+config FWPROG_BLD2
+	string "2nd bootloader"
+	default ""
+	help
+	  2nd bootloader
+
+
+config FWPROG_BLD2_VIF
+	string "Version number"
+	default "1.0.0"
+	help
+	  2nd bootloader
+
+config FWPROG_BLD2_LOADADDR
+	hex "Load address"
+	default 0x20000000
+
+config FWPROG_BLD2_SIGNED
+	bool
+	default y if ENABLE_SECURITY
+	help
+	  Image need to be signed when enable security.
+
+endmenu # "BLD2"
+endif
+
+menu "RTOS System Partition"
+
+config FWPROG_SYS
+	string "RTOS system image file"
+	default "${KBUILD_AMBA_OUT_DIR}/amba_svc.bin"
+	help
+	  Location of the RTOS system image.
+
+config FWPROG_SYS_VIF
+	string "RTOS system version number"
+	default "1.0.0"
+	help
+	  The version number of the RTOS system image.
+	  The format is major.minor.patch.
+
+config FWPROG_SYS_LOADADDR
+	hex "Load address"
+	default 0x00040000 if (!ATF_HAVE_BL2 && !DEVICE_TREE_SUPPORT)
+	default 0x00050000 if (!ATF_HAVE_BL2 && DEVICE_TREE_SUPPORT)
+	default 0x00050000 if (ATF_HAVE_BL2 && !ATF_SPD_OPTEE && !DEVICE_TREE_SUPPORT)
+	default 0x00C00000 if (ATF_HAVE_BL2 && ATF_SPD_OPTEE)
+
+config FWPROG_SYS_SIGNED
+	bool
+	default y if ENABLE_SECURITY && !LINUX
+	help
+	  Image need to be signed when enable security.
+
+endmenu # "RTOS System Partition"
+
+
+if SOC_CV2FS || SOC_CV22FS
+config FWPROG_R52SYS_ENABLE
+	bool "Enable and run OS on R52"
+	default n
+
+if FWPROG_R52SYS_ENABLE
+menu "R52 RTOS Partition"
+
+config FWPROG_R52SYS
+	string "R52 RTOS Partition"
+	default ""
+	help
+	  Location of the R52 RTOS image.
+
+config FWPROG_R52SYS_VIF
+	string "R52 RTOS image version number"
+	default "1.0.0"
+	help
+	  The version number of the R52 RTOS image.
+
+config FWPROG_R52SYS_LOADADDR
+	hex "Load address"
+	default 0x60000000
+
+config FWPROG_R52SYS_SIGNED
+	bool
+	default y if ENABLE_SECURITY && !LINUX
+	help
+	  Image need to be signed when enable security.
+
+endmenu # "R52 RTOS Partition"
+endif # FWPROG_R52SYS_ENABLE
+
+config FWPROG_R52SYS_PATH
+	string "path of R52 RTOS configuraton"
+	default "cv2fs/cv2fs_ut_guardian_defconfig" if BSP_CV2FSBUB_OPTION_A_V100
+	default "cv2fs/cv2fs_ut_guardian_dk_defconfig" if BSP_CV2FSDK_OPTION_A_V110
+	help
+	  Location of the R52 RTOS configuration.
+
+endif # SOC_CV2FS
+
+menu "XEN/RTOS DTB Partition"
+depends on DEVICE_TREE_SUPPORT
+
+config FWPROG_XTB
+	string "XEN/RTOS DTB Partition"
+	default "${KBUILD_AMBA_OUT_DIR}/sdk8.dtb"
+	help
+	  Location of the DTB image.
+
+config FWPROG_XTB_VIF
+	string "XEN/RTOS DTB image version number"
+	default "1.0.0"
+	help
+	  The version number of the DTB image.
+
+config FWPROG_XTB_LOADADDR
+	hex
+	default DTB_LOADADDR
+
+config FWPROG_XTB_SIGNED
+	bool
+	default y if ENABLE_SECURITY
+	help
+	  Image need to be signed when enable security.
+
+endmenu # "XEN/RTOS DTB Partition"
+
+menu "XEN Partition"
+	depends on XEN_SUPPORT
+
+config FWPROG_XEN
+	string "XEN Partition"
+	default ""
+	help
+	  Location of the XEN image.
+
+config FWPROG_XEN_VIF
+	string "XEN image version number"
+	default "1.0.0"
+	help
+	  The version number of the XEN image.
+
+config FWPROG_XEN_LOADADDR
+	hex "Load address"
+	default 0x00200000
+
+endmenu # "XEN Partition"
+
+#menu "XEN Dom0 Kernel Partition"
+#	depends on XEN_SUPPORT
+#
+#config FWPROG_X0K
+#	string "XEN Dom0 Kernel Partition"
+#	default ""
+#	help
+#	  Location of the XEN Dom0 kernel image.
+#
+#config FWPROG_X0K_VIF
+#	string "XEN Dom0 kernel image version number"
+#	default "1.0.0"
+#	help
+#	  The version number of the XEN Dom0 kernel image.
+#
+#config FWPROG_X0K_LOADADDR
+#	hex "Load address"
+#	default 0x01000000
+#
+#endmenu # "XEN Dom0 Kernel Partition"
+#
+#menu "XEN Dom0 Initrd Partition"
+#	depends on XEN_SUPPORT
+#
+#config FWPROG_X0D
+#	string "XEN Dom0 Initrd Partition"
+#	default ""
+#	help
+#	  Location of the XEN Dom0 initrd image.
+#
+#config FWPROG_X0D_VIF
+#	string "XEN Dom0 initrd image version number"
+#	default "1.0.0"
+#	help
+#	  The version number of the XEN Dom0 initrd image.
+#
+#config FWPROG_X0D_LOADADDR
+#	hex "Load address"
+#	default 0x02000000
+#
+#endmenu # "XEN Dom0 Initrd Partition"
+
+
+menu "DSP uCode Partition"
+
+config FWPROG_DSP
+	string "DSP uCode image file"
+	default ""
+	help
+	  Location of the DSP ucode image.
+
+config FWPROG_DSP_VIF
+	string "DSP uCode version number"
+	default "1.0.0"
+	help
+	  The version number of the DSP uCode image.
+	  The format is major.minor.patch.
+
+config FWPROG_DSP_LIST_FILE
+	string "DSP uCode list file"
+	default "${srctree}/vendors/ambarella/ucode/x99/ucode.list"
+	help
+	  Location of the dsp list file that describes
+	  the files included in the DSP uCode image.
+
+endmenu # "DSP uCode Partition"
+
+
+menu "System ROM Partition"
+
+config FWPROG_ROM
+	string "ROM image file"
+	default ""
+	help
+	  Location of the ROM image.
+
+config FWPROG_ROM_VIF
+	string "ROM version number"
+	default "1.0.0"
+	help
+	  The version number of the system ROM image.
+	  The format is major.minor.patch.
+
+config FWPROG_ROM_LIST_FILE
+	string "ROM list file"
+	default ""
+	help
+	  Location of the romfs list file that describes
+	  the files included in the ROM image.
+
+endmenu # "System ROM Partition"
+
+
+if (LINUX || AMBALINK_BOOT_OS || BLD_SEQ_ATF_LINUX || XEN_DOM0_LX || XEN_DOMU_LX || BLD_SEQ_LINUX)
+menu "Linux Kernel Partition"
+
+config FWPROG_LNX
+	string "Linux image file"
+	default "${BINARIES_DIR}/Image" if LINUX
+	default "${srctree}/svc/comsvc/ambalink/linux_image/${AMBA_CHIP_ID}/Image"
+	help
+	  Location of the Linux image.
+
+config FWPROG_LNX_VIF
+	string "Linux version number"
+	default "1.0.0"
+	help
+	  The version number of the Linux kernel image.
+	  The format is major.minor.patch.
+
+config FWPROG_LNX_LOADADDR
+	hex "Load address"
+	default 0x20080000 if LINUX || BLD_SEQ_LINUX
+	default 0x78680000 if !ATF_HAVE_BL2
+	default 0x78280000 if (ATF_HAVE_BL2 && ATF_SPD_OPTEE)
+	default 0x78680000 if (ATF_HAVE_BL2 && !ATF_SPD_OPTEE)
+	help
+	  If Linux is placed at the end of the memory, the calculation of load address is,
+	  	(CONFIG_DDR_SIZE - CONFIG_AMBALINK_MEM_SIZE + CONFIG_AMBALINK_SHARED_MEM_SIZE + 0x80000)
+
+config FWPROG_LNX_SIGNED
+	bool
+	default y if ENABLE_SECURITY && LINUX
+	help
+	  Image need to be signed when enable security.
+
+if LINUX
+config FWPROG_DTB
+	string
+	default FWPROG_XTB
+	help
+	  DTB equals to XTB in pure linux env
+endif
+
+if !LINUX
+config FWPROG_DTB
+	string "DTB image file"
+	default "${srctree}/svc/comsvc/ambalink/linux_image/${AMBA_CHIP_ID}/${AMBA_CHIP_ID}bub_ambalink.dtb"
+	help
+	  Location of the dtb image.
+endif
+
+endmenu # "Linux Kernel Partition"
+
+
+menu "Linux Root FS Partition"
+
+config FWPROG_RFS
+	string "RootFS image file"
+	default "${BINARIES_DIR}/rootfs.squashfs" if LINUX
+	default "${srctree}/svc/comsvc/ambalink/linux_image/${AMBA_CHIP_ID}/rootfs.squashfs" if !ENABLE_EMMC_BOOT
+	default "${srctree}/svc/comsvc/ambalink/linux_image/${AMBA_CHIP_ID}/rootfs.ext2" if ENABLE_EMMC_BOOT
+	help
+	  Location of the Linux root FS image.
+
+config FWPROG_RFS_VIF
+	string "RootFS version number"
+	default "1.0.0"
+	help
+	  The version number of the Linux root file system image.
+	  The format is major.minor.patch.
+
+endmenu # "Linux Root FS Partition"
+
+endif # LINUX
+
+endmenu # "Firmware Partition Manager"
+

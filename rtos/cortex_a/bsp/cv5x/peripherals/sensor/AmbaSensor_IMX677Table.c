@@ -1,0 +1,311 @@
+/**
+ *  @file AmbaSensor_IMX677Table.c
+ *
+ *  Copyright (c) 2021 Ambarella International LP
+ *
+ *  This file and its contents ("Software") are protected by intellectual
+ *  property rights including, without limitation, U.S. and/or foreign
+ *  copyrights. This Software is also the confidential and proprietary
+ *  information of Ambarella International LP and its licensors. You may not use, reproduce,
+ *  disclose, distribute, modify, or otherwise prepare derivative works of this
+ *  Software or any portion thereof except pursuant to a signed license agreement
+ *  or nondisclosure agreement with Ambarella International LP or its authorized affiliates.
+ *  In the absence of such an agreement, you agree to promptly notify and return
+ *  this Software to Ambarella International LP.
+ *
+ *  This file includes sample code and is only for internal testing and evaluation.  If you
+ *  distribute this sample code (whether in source, object, or binary code form), it will be
+ *  without any warranty or indemnity protection from Ambarella International LP or its affiliates.
+ *
+ *  THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ *  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT,
+ *  MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ *  IN NO EVENT SHALL AMBARELLA INTERNATIONAL LP OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT,
+ *  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ *  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; COMPUTER FAILURE OR MALFUNCTION; OR BUSINESS
+ *  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ *  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ *  POSSIBILITY OF SUCH DAMAGE.
+ *
+ *  @details Control APIs of SONY IMX677 CMOS sensor with SLVS-EC interface
+ *
+ */
+
+#include "AmbaSensor.h"
+#include "AmbaSensor_IMX677.h"
+
+/*-----------------------------------------------------------------------------------------------*\
+ * Sensor Device Information
+\*-----------------------------------------------------------------------------------------------*/
+const AMBA_SENSOR_DEVICE_INFO_s IMX677DeviceInfo = {
+    .UnitCellWidth          = (FLOAT)1.12,
+    .UnitCellHeight         = (FLOAT)1.12,
+    .NumTotalPixelCols      = 5700,
+    .NumTotalPixelRows      = 5160,
+    .NumEffectivePixelCols  = 5663,
+    .NumEffectivePixelRows  = 4223,
+    .MinAnalogGainFactor    = (FLOAT)1.0,
+    .MaxAnalogGainFactor    = (FLOAT)22.75555556, /* 27.14174886 dB */
+    .MinDigitalGainFactor   = (FLOAT)1.0,
+    .MaxDigitalGainFactor   = (FLOAT)7.943282347, /* 18 dB */
+
+    .FrameRateCtrlInfo = {
+        .CommunicationTime      = AMBA_SENSOR_COMMUNICATION_AT_NON_VBLANK,
+        .FirstReflectedFrame    = 2,
+        .FirstBadFrame          = 2,
+        .NumBadFrames           = 1
+    },
+    .ShutterSpeedCtrlInfo = {
+        .CommunicationTime      = AMBA_SENSOR_COMMUNICATION_AT_NON_VBLANK,
+        .FirstReflectedFrame    = 2,
+        .FirstBadFrame          = 0,
+        .NumBadFrames           = 0
+    },
+    .AnalogGainCtrlInfo = {
+        .CommunicationTime      = AMBA_SENSOR_COMMUNICATION_AT_NON_VBLANK,
+        .FirstReflectedFrame    = 1,
+        .FirstBadFrame          = 0,
+        .NumBadFrames           = 0
+    },
+    .DigitalGainCtrlInfo = {
+        .CommunicationTime      = AMBA_SENSOR_COMMUNICATION_AT_NON_VBLANK,
+        .FirstReflectedFrame    = 1,
+        .FirstBadFrame          = 0,
+        .NumBadFrames           = 0
+    },
+
+    .StrobeCtrlInfo = {0},
+    .HdrIsSupport = 0U,
+};
+
+/*-----------------------------------------------------------------------------------------------*\
+ * Drive pulse timing register settings
+\*-----------------------------------------------------------------------------------------------*/
+IMX677_REG_s IMX677PlstmgRegTable[IMX677_NUM_PLSTMG_REG] = {
+    {0x0004, 0x01},
+    {0x0201, 0x88},
+    {0x0387, 0x00},
+    {0x0268, 0x33},
+    {0x0269, 0x00},
+    {0x026A, 0x33},
+    {0x026B, 0x00},
+    {0x026C, 0x33},
+    {0x026D, 0x00},
+    {0x0206, 0x07},
+    {0x078F, 0xFF},
+    {0x2033, 0x10},
+    {0x2034, 0x10},
+    {0x2037, 0x00},
+    {0x2038, 0x00},
+    {0x0003, 0x01},
+    {0x020A, 0x2D},
+    {0x083A, 0x8A},
+    {0x083B, 0x00},
+    {0x0843, 0x8A},
+    {0x0844, 0x00},
+    {0x0214, 0x15},
+    {0x0215, 0x00},
+    {0x021A, 0x15},
+    {0x021B, 0x00},
+    {0x0220, 0x15},
+    {0x0221, 0x00},
+    {0x022E, 0x0C},
+    {0x022F, 0x00},
+    {0x0234, 0x11},
+    {0x0235, 0x00},
+    {0x023A, 0x18},
+    {0x023B, 0x00},
+    {0x1300, 0xBF},
+    {0x1301, 0xDF},
+    {0x1302, 0x01},
+    {0x1315, 0x01},
+    {0x1316, 0x00},
+    {0x1321, 0xB0},
+    {0x1322, 0x00},
+    {0x1323, 0xB0},
+    {0x1324, 0x00},
+    {0x1325, 0xB4},
+    {0x1326, 0x00},
+    {0x1327, 0xD9},
+    {0x1328, 0x00},
+    {0x132B, 0x14},
+    {0x132C, 0x00},
+    {0x132D, 0x15},
+    {0x132E, 0x00},
+    {0x132F, 0x13},
+    {0x1330, 0x00},
+    {0x1331, 0x13},
+    {0x1332, 0x00},
+    {0x1335, 0x13},
+    {0x1336, 0x00},
+    {0x1339, 0x13},
+    {0x133A, 0x00},
+    {0x133B, 0x13},
+    {0x133C, 0x00},
+    {0x133D, 0x13},
+    {0x133E, 0x00},
+    {0x133F, 0x13},
+    {0x1340, 0x00},
+    {0x1341, 0x13},
+    {0x1342, 0x00},
+    {0x1343, 0x13},
+    {0x1344, 0x00},
+    {0x1345, 0x13},
+    {0x1346, 0x00},
+    {0x1347, 0x12},
+    {0x1348, 0x00},
+    {0x1349, 0x12},
+    {0x134A, 0x00},
+    {0x134D, 0x16},
+    {0x134E, 0x00},
+    {0x136D, 0x13},
+    {0x136E, 0x00},
+    {0x136F, 0x13},
+    {0x1370, 0x00},
+    {0x1371, 0xB4},
+    {0x1372, 0x00},
+    {0x1373, 0xD9},
+    {0x1374, 0x00},
+    {0x1375, 0x12},
+    {0x1376, 0x00},
+    {0x1393, 0xB0},
+    {0x1394, 0x00},
+    {0x1395, 0xB0},
+    {0x1396, 0x00},
+    {0x1397, 0x01},
+    {0x1398, 0x00},
+    {0x1399, 0x14},
+    {0x139A, 0x00},
+    {0x139B, 0x03},
+};
+
+/*-----------------------------------------------------------------------------------------------*\
+ * Sensor register settings of each readout modes
+\*-----------------------------------------------------------------------------------------------*/
+IMX677_MODE_REG_s IMX677ModeRegTable[IMX677_NUM_READOUT_MODE_REG] = {
+    /* Addr,     0,    1,    2,    3     4,    5,    6,    7*/
+    {0x0005, {0x00, 0x00, 0x00, 0x00, 0x02, 0x03, 0x12, 0x16}},
+    {0x0248, {0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06}},
+    {0x024A, {0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06}},
+    {0x024C, {0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06}},
+    {0x0296, {0x14, 0x14, 0x14, 0x14, 0x14, 0x14, 0x14, 0x14}},
+    {0x0298, {0x14, 0x14, 0x14, 0x14, 0x14, 0x14, 0x14, 0x14}},
+    {0x029A, {0x14, 0x14, 0x14, 0x14, 0x14, 0x14, 0x14, 0x14}},
+    {0x029C, {0x16, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16}},
+    {0x029E, {0x16, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16}},
+    {0x02A0, {0x16, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16}},
+    {0x02A2, {0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C}},
+    {0x02A4, {0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C}},
+    {0x02A6, {0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C}},
+    {0x02FC, {0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F}},
+    {0x02FE, {0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x00}},
+    {0x0300, {0x00, 0x00, 0x00, 0x00, 0x00, 0x2B, 0x2B, 0x00}},
+    {0x0301, {0x00, 0x00, 0x00, 0x00, 0x00, 0x30, 0x30, 0x00}},
+    {0x0305, {0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x03, 0x00}},
+    {0x0306, {0x00, 0x00, 0x00, 0x00, 0x00, 0x0F, 0x0F, 0x00}},
+    {0x0315, {0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00}},
+    {0x0386, {0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03}},
+    {0x041C, {0x01, 0x01, 0x01, 0x01, 0x02, 0x04, 0x04, 0x02}},
+    {0x0446, {0x00, 0x00, 0x00, 0x00, 0x19, 0x00, 0x00, 0x19}},
+    {0x044E, {0x00, 0x00, 0x00, 0x00, 0x00, 0x1E, 0x1E, 0x00}},
+    {0x044F, {0x00, 0x00, 0x00, 0x00, 0x00, 0x1E, 0x1E, 0x00}},
+    {0x063C, {0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17}},
+    {0x0745, {0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00}},
+    {0x0746, {0x0F, 0x0F, 0x0F, 0x0F, 0x00, 0x00, 0x00, 0x00}},
+    {0x0747, {0x00, 0x00, 0x00, 0x00, 0x14, 0x14, 0x14, 0x14}},
+    {0x0789, {0x30, 0x30, 0x30, 0x30, 0x30, 0x2B, 0x2B, 0x30}},
+    {0x078A, {0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02}},
+    {0x083A, {0x8A, 0x8A, 0x8A, 0x8A, 0x8A, 0x8A, 0x8A, 0x8A}},
+    {0x0843, {0x8A, 0x8A, 0x8A, 0x8A, 0x8A, 0x8A, 0x8A, 0x8A}},
+    {0x0A41, {0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08}},
+    {0x1130, {0x26, 0x26, 0x26, 0x26, 0x26, 0x26, 0x26, 0x26}},
+    {0x1132, {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
+    {0x1134, {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
+    {0x1136, {0x28, 0x28, 0x28, 0x28, 0x28, 0x28, 0x28, 0x28}},
+    {0x1138, {0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03}},
+    {0x113A, {0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17}},
+    {0x113C, {0x1D, 0x1D, 0x1D, 0x1D, 0x1D, 0x1D, 0x1D, 0x1D}},
+    {0x113E, {0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05}},
+    {0x11E0, {0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78}},
+    {0x1909, {0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01}},
+    {0x191D, {0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01}},
+    {0x1975, {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00}},
+    {0x1981, {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00}},
+    {0x1A00, {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
+    {0x1A32, {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
+    {0x1C00, {0x41, 0x41, 0x41, 0x41, 0x3C, 0x37, 0x37, 0x7D}},
+    {0x1C02, {0xF0, 0x5A, 0x86, 0xC7, 0xC4, 0x76, 0x76, 0xC4}},
+    {0x1C03, {0x02, 0x02, 0x05, 0x02, 0x01, 0x01, 0x01, 0x01}},
+    {0x1C04, {0xC2, 0xC2, 0x86, 0x86, 0x4A, 0x36, 0x36, 0x54}},
+    {0x1C05, {0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01}},
+    {0x1C06, {0xC2, 0xC2, 0x86, 0x86, 0x4A, 0x36, 0x36, 0x54}},
+    {0x1C07, {0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01}},
+    {0x1C08, {0x04, 0x04, 0x04, 0x04, 0xF0, 0xDC, 0xDC, 0xF0}},
+    {0x1C09, {0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00}},
+    {0x1F06, {0x00, 0x00, 0x02, 0x02, 0x00, 0x00, 0x00, 0x00}},
+};
+
+/*-----------------------------------------------------------------------------------------------*\
+ * Attribute register and PHY control code
+\*-----------------------------------------------------------------------------------------------*/
+IMX677_REG_s IMX677AttrRegTable[IMX677_NUM_ATTR_REG] = {
+    {0x1FE0, 0x10}, /* [4:0] INIT_LENGTH[4:0], [7:5] - */
+    {0x1FE1, 0xFF}, /* [7:0] SYNC_LENGTH[7:0] - */
+    {0x1FE2, 0x7F}, /* [7:0] SYNC_LENGTH[15:8] - */
+    {0x1FE3, 0x00}, /* [7:0] SYNC_LENGTH[23:16] - */
+    {0x1FE4, 0xFF}, /* [7:0] DESKEW_LENGTH[7:0] */
+    {0x1FE5, 0xFC}, /* [7:0] DESKEW_INTERVAL[7:0] (must be multiple of 4)*/
+    {0x1FE6, 0xFF}, /* [7:0] STANDBY_LENGTH[7:0] - */
+    {0x1FE7, 0xAA}, /* [7:0] SYNC_SYMBOL[7:0] */
+    {0x1FE8, 0x00}, /* [0] SYNC_SYMBOL[8], [7:1] - */
+    {0x1FE9, 0x60}, /* [7:0] DESKEW_SYMBOL[7:0] */
+    {0x1FEA, 0x00}, /* [0] DESKEW_SYMBOL[8], [7:1] - */
+    {0x1FEB, 0x00}, /* [7:0] IDLECODE1[7:0] */
+    {0x1FEC, 0x00}, /* [0] IDLECODE1[8], [7:1] - */
+    {0x1FED, 0x00}, /* [7:0] IDLECODE2[7:0] */
+    {0x1FEE, 0x00}, /* [0] IDLECODE2[8], [7:1] - */
+    {0x1FEF, 0x00}, /* [7:0] IDLECODE3[7:0] */
+    {0x1FF0, 0x00}, /* [0] IDLECODE3[8], [7:1] - */
+    {0x1FF1, 0x00}, /* [7:0] IDLECODE4[7:0] */
+    {0x1FF2, 0x00}, /* [0] IDLECODE4[8], [7:1] - */
+    {0x1FF3, 0x03}, /* [7:0] STANDBY_SYMBOL[7:0] */
+    {0x1FF4, 0x00}, /* [0] STANDBY_SYMBOL[8], [7:1] - */
+};
+
+const AMBA_SENSOR_OUTPUT_INFO_s IMX677OutputInfo[IMX677_NUM_MODE] = {
+    /* IMX677_5599_4223_30P   */ {2304000000U,  8, 12, AMBA_SENSOR_BAYER_PATTERN_RG, 5696, 4307, { 64, 77, 5599, 4223}, {0}},
+    /* IMX677_5599_4223_30P_1 */ {4608000000U,  8, 12, AMBA_SENSOR_BAYER_PATTERN_RG, 5696, 4307, { 64, 77, 5599, 4223}, {0}},
+    /* IMX677_5599_4223_15P   */ {2304000000U,  4, 12, AMBA_SENSOR_BAYER_PATTERN_RG, 5696, 4307, { 64, 77, 5599, 4223}, {0}},
+    /* IMX677_5599_4223_30P_2 */ {4608000000U,  4, 12, AMBA_SENSOR_BAYER_PATTERN_RG, 5696, 4307, { 64, 77, 5599, 4223}, {0}},
+    /* IMX677_5599_4223_30P_3 */ {4608000000U,  8, 12, AMBA_SENSOR_BAYER_PATTERN_RG, 5696, 4307, { 64, 77, 5599, 4223}, {0}},
+    /* IMX677_5599_4223_30P_4 */ {4608000000U,  8, 10, AMBA_SENSOR_BAYER_PATTERN_RG, 5696, 4307, { 64, 77, 5599, 4223}, {0}},
+    /* IMX677_5599_3119_30P   */ {4608000000U,  8, 10, AMBA_SENSOR_BAYER_PATTERN_RG, 5696, 3167, { 64, 41, 5599, 3119}, {0}},
+    /* IMX677_1865_4223_30P   */ {4608000000U,  8, 12, AMBA_SENSOR_BAYER_PATTERN_RG, 1900, 4307, { 22, 77, 1865, 4223}, {0}},
+};
+
+/* NOTE: The information in this table needs to be revisied according to pixel address of each mode from Sony */
+const AMBA_SENSOR_INPUT_INFO_s IMX677InputInfo[IMX677_NUM_MODE] = {
+    /* IMX677_5599_4223_30P   */ {{  0, 0, 5599, 4223}, {  AMBA_SENSOR_SUBSAMPLE_NORMAL, 1, 1}, {  AMBA_SENSOR_SUBSAMPLE_NORMAL, 1,  1}, 1},
+    /* IMX677_5599_4223_30P_1 */ {{  0, 0, 5599, 4223}, {  AMBA_SENSOR_SUBSAMPLE_NORMAL, 1, 1}, {  AMBA_SENSOR_SUBSAMPLE_NORMAL, 1,  1}, 1},
+    /* IMX677_5599_4223_15P   */ {{  0, 0, 5599, 4223}, {  AMBA_SENSOR_SUBSAMPLE_NORMAL, 1, 1}, {  AMBA_SENSOR_SUBSAMPLE_NORMAL, 1,  1}, 1},
+    /* IMX677_5599_4223_30P_2 */ {{  0, 0, 5599, 4223}, {  AMBA_SENSOR_SUBSAMPLE_NORMAL, 1, 1}, {  AMBA_SENSOR_SUBSAMPLE_NORMAL, 1,  1}, 1},
+    /* IMX677_5599_4223_30P_3 */ {{  0, 0, 5599, 4223}, {  AMBA_SENSOR_SUBSAMPLE_NORMAL, 1, 1}, {  AMBA_SENSOR_SUBSAMPLE_NORMAL, 1,  1}, 1},
+    /* IMX677_5599_4223_30P_4 */ {{  0, 0, 5599, 4223}, {  AMBA_SENSOR_SUBSAMPLE_NORMAL, 1, 1}, {  AMBA_SENSOR_SUBSAMPLE_NORMAL, 1,  1}, 1},
+    /* IMX677_5599_3119_30P   */ {{  0, 0, 5599, 3119}, {  AMBA_SENSOR_SUBSAMPLE_NORMAL, 1, 1}, {  AMBA_SENSOR_SUBSAMPLE_NORMAL, 1,  1}, 1},
+    /* IMX677_1865_4223_30P   */ {{  0, 0, 1865, 4223}, {  AMBA_SENSOR_SUBSAMPLE_NORMAL, 1, 1}, {  AMBA_SENSOR_SUBSAMPLE_NORMAL, 1,  1}, 1},
+};
+
+IMX677_MODE_INFO_s IMX677ModeInfoList[IMX677_NUM_MODE] = {
+    /* IMX677_5599_4223_30P   */ {0, 12, { 72000000,  924, 0.5, 2600, 1, { .Interlace = 0, .TimeScale =  30000,  .NumUnitsInTick = 1001}}, 0.0f},
+    /* IMX677_5599_4223_30P_1 */ {0, 12, { 72000000,  924, 0.5, 2600, 1, { .Interlace = 0, .TimeScale =  30000,  .NumUnitsInTick = 1001}}, 0.0f},
+    /* IMX677_5599_4223_15P   */ {0, 12, { 72000000, 1848, 0.5, 2600, 1, { .Interlace = 0, .TimeScale =  15000,  .NumUnitsInTick = 1001}}, 0.0f},
+    /* IMX677_5599_4223_30P_2 */ {0, 12, { 72000000,  924, 0.5, 2600, 1, { .Interlace = 0, .TimeScale =  30000,  .NumUnitsInTick = 1001}}, 0.0f},
+    /* IMX677_5599_4223_30P_3 */ {0, 12, { 72000000,  924, 0.5, 2600, 1, { .Interlace = 0, .TimeScale =  30000,  .NumUnitsInTick = 1001}}, 0.0f},
+    /* IMX677_5599_4223_30P_4 */ {0, 12, { 72000000,  924, 0.5, 2600, 1, { .Interlace = 0, .TimeScale =  30000,  .NumUnitsInTick = 1001}}, 0.0f},
+    /* IMX677_5599_3119_30P   */ {0, 12, { 72000000,  924, 0.5, 2600, 1, { .Interlace = 0, .TimeScale =  30000,  .NumUnitsInTick = 1001}}, 0.0f},
+    /* IMX677_1865_4223_30P   */ {0, 12, { 72000000,  924, 0.5, 2600, 1, { .Interlace = 0, .TimeScale =  30000,  .NumUnitsInTick = 1001}}, 0.0f},
+};
+
+const AMBA_SENSOR_HDR_INFO_s IMX677HdrInfo[IMX677_NUM_MODE] = {0};

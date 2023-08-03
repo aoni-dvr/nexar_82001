@@ -1,0 +1,37 @@
+TARGET(elf64-littleaarch64)
+OUTPUT_FORMAT(elf64-littleaarch64)
+OUTPUT_ARCH(aarch64)
+ENTRY(_start)
+
+MEMORY
+{
+    data    :    ORIGIN = 0x40060000,    LENGTH = 0x10000
+    stack   :    ORIGIN = 0x40070000,    LENGTH = 0x8000
+    code    :    ORIGIN = 0x40090000,    LENGTH = 0x10000
+}
+
+SECTIONS
+{
+
+     __stack_ptr = 0x40078000;
+
+    .text : {
+            *(.text)
+            *(.note.gnu.build-id)
+            *(.rodata*)
+        } > code
+
+    . = ALIGN(4);
+    _etext = .;
+
+    .data2 : {
+            *(.data)
+            *(.sdata)
+            *(.bss)
+            *(.sbss)
+        } > data
+
+    .bss : {
+
+        } > data
+}

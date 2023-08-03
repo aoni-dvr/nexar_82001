@@ -1,0 +1,113 @@
+
+# ---------------------------------------------------------------------------
+# Install path
+#      Here export default AMBA_LIB_FOLDER and AMBA_O_LIB,
+#      but then override if module declare install-path
+#      AMBA_LIB_FOLDER:
+#              default folder to put released libraries (or new compiled libraries)
+#      AMBA_O_LIB:
+#              With O=<somepath>, new compiled libraries will be put at <somepath>/lib
+#              Release libraries will also be copied to this folder.
+# ---------------------------------------------------------------------------
+
+ifeq ($(CONFIG_KAL_THREADX_SMP),y)
+AMBA_LIB_FOLDER := $(srctree)/vendors/ambarella/libsmp
+else
+AMBA_LIB_FOLDER := $(srctree)/vendors/ambarella/lib
+endif
+export AMBA_LIB_FOLDER
+
+ifneq ($(O),)
+    AMBA_O_LIB := $(objtree)/lib
+    export AMBA_O_LIB
+endif
+
+# ---------------------------------------------------------------------------
+# Link flags for targets
+# ---------------------------------------------------------------------------
+
+# Amba Target out dir
+ifeq ("$(origin T)", "command line")
+  KBUILD_AMBA_OUT_DIR := $(T)
+endif
+ifndef KBUILD_AMBA_OUT_DIR
+# KBUILD_AMBA_OUT_DIR is a relative path to $(objtree).
+  KBUILD_AMBA_OUT_DIR := out
+endif
+export KBUILD_AMBA_OUT_DIR
+
+ifneq ($(KBUILD_AMBA_OUT_DIR),)
+# KBUILD_AMBA_FWPROG_OUT_DIR is a relative path to $(objtree).
+export KBUILD_AMBA_FWPROG_OUT_DIR := $(KBUILD_AMBA_OUT_DIR)/fwprog
+endif
+
+export BSP_DIR := $(shell cat $(srctree)/$(if $(O),$(O)/,).config | grep "^CONFIG_BSP" | awk -F "=" '{print $$1}' | sed -e 's/CONFIG_BSP_//' | tr [:upper:] [:lower:])
+
+# ---------------------------------------------------------------------------
+# Externally visible symbols (used by link-amba.sh)
+# ---------------------------------------------------------------------------
+export LINK_AMBA_SH	:= $(wildcard $(srctree)/example/link-amba*.sh)
+export AMBA_LDS		:= example/amba.lds
+
+# ---------------------------------------------------------------------------
+# Dirs for targets
+# ---------------------------------------------------------------------------
+if_exist = $(if $(wildcard $(srctree)/$(1)), $(1))
+if_mk_exist = $(if $(wildcard $(srctree)/$(1)/Makefile), $(1))
+
+
+rtos_common_dirs	:=
+rtos_common_dirs	+= $(call if_exist,comsvc)
+
+# ---------------------------------------------------------------------------
+example_dirs		:= $(rtos_common_dirs)
+example_dirs		+= $(call if_exist,example)
+
+# ---------------------------------------------------------------------------
+amba-alldirs	:= $(sort $(example_dirs))
+
+
+# Handle descending into subdirectories listed in $(amba-dirs)
+# Preset locale variables to speed up the build process. Limit locale
+# tweaks to this spot to avoid wrong language settings when running
+# make menuconfig etc.
+# Error messages still appears in the original language
+
+PHONY += $(amba-alldirs)
+$(amba-alldirs): prepare build/scripts
+	$(Q)$(MAKE) $(build)=$@
+
+
+$(objtree)/$(KBUILD_AMBA_OUT_DIR)/amba_img.elf: $(LINK_SH) $(amba-alldirs) FORCE
+	$(Q)$(LINK_AMBA_SH) $@
+
+PHONY += amba_all
+amba_all: $(objtree)/$(KBUILD_AMBA_OUT_DIR)/amba_img.elf
+	@echo "Done !"
+
+PHONY += amba_fwprog
+amba_fwprog: amba_all
+ifeq ($(CONFIG_ARM64),y)
+	@echo "Building FW programmer"
+	@cd $(srctree) && build/scripts/mk_fwprog64.sh
+else
+    @:
+endif
+
+PHONY += amba_test
+amba_test: $(objtree)/$(KBUILD_AMBA_OUT_DIR)/amba_img.elf
+	@$(srctree)/example/test-amba.sh $< && sleep 1
+	@echo ""
+
+# Show text and data size of lib
+PHONY += size
+size:
+	@$(srctree)/build/maintenance/dump_size.sh $(if $(SN),$(SN))
+
+# Show final-used text and data size of lib.
+O_DIR := $(if (O),$(subst $(srctree)/,,$(O)))
+MAP_FINALSIZE := $(srctree)/$(if $(O_DIR),$(O_DIR),.)/out/amba_img.map
+PHONY += finalsize
+finalize:
+	$(Q)$(srctree)/build/maintenance/cnt_finalsize.sh $(MAP_FINALSIZE)
+

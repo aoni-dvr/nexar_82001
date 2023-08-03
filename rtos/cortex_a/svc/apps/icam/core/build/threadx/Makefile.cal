@@ -1,0 +1,35 @@
+ifeq ($(CONFIG_ICAM_IMGCAL_USED), y)
+
+CAL_O_PREFIX   = ../../src/cal
+CAL_INC_PREFIX = $(src)/$(CAL_O_PREFIX)
+
+CALIB_SOC_IO_PREFIX = $(srctree)/soc/io/src/$(AMBA_CHIP_ID)/inc
+CALIB_COMSVC_PREFIX = $(srctree)/svc/comsvc
+CALIB_ALGO_PREFIX   = $(CALIB_COMSVC_PREFIX)/imgcal
+CALIB_CTUNER_PREFIX = $(CALIB_COMSVC_PREFIX)/tune/ctuner
+
+ccflags-y += -I$(CAL_INC_PREFIX)/inc                             \
+             -I$(CALIB_ALGO_PREFIX)                              \
+             -I$(CALIB_ALGO_PREFIX)/arch                         \
+             -I$(CALIB_CTUNER_PREFIX)                            \
+             -I$(CALIB_CTUNER_PREFIX)/inc                        \
+             -I$(CALIB_COMSVC_PREFIX)/imgproc/imgaaa/inc/wbcalib \
+             -I$(CALIB_SOC_IO_PREFIX)
+
+ifdef CONFIG_SOC_H22
+CALIB_CHIP_ID = h22
+endif
+CALIB_CHIP_ID ?= ../cal
+
+libsvc_icamcore-objs += $(CAL_O_PREFIX)/SvcCalibMgr.o \
+                        $(CAL_O_PREFIX)/SvcCalibLdc.o \
+                        $(CAL_O_PREFIX)/SvcCalibCa.o \
+                        $(CAL_O_PREFIX)/SvcCalibVig.o \
+                        $(CAL_O_PREFIX)/SvcCalibBpc.o \
+                        $(CAL_O_PREFIX)/SvcCalibWb.o
+                        
+ifeq ($(CONFIG_ICAM_EEPROM_USED), y)
+include $(src)/Makefile.cal.module
+endif
+
+endif

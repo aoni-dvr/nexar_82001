@@ -1,0 +1,86 @@
+# svc cv function
+CV_O_PREFIX = ../../src/cv
+CV_INC_PREFIX =  $(src)/$(CV_O_PREFIX)
+
+ifeq ($(CONFIG_BUILD_CV), y)
+
+COMSVC_PREFIX = $(srctree)/svc/comsvc
+CT_CVALGO_PREFIX = $(COMSVC_PREFIX)/cv/arm_framework/app
+
+ccflags-y += -I$(srctree)/vendors/ambarella/inc/vision
+ccflags-y += -I$(srctree)/svc/comsvc/adas/inc
+ccflags-y += -I$(srctree)/svc/comsvc/adas/refflow/inc
+ccflags-y += -I$(srctree)/svc/comsvc/codec/inc
+ccflags-y += -I$(srctree)/svc/comsvc/flexidagio/inc
+ccflags-y += -I$(srctree)/svc/comsvc/cv/cv_common/inc/cvapi
+ccflags-y += -I$(srctree)/svc/comsvc/cv/cv_common/inc/svccvalgo
+ccflags-y += -I$(srctree)/svc/comsvc/cv/cv_common/inc/svccvalgo/threadx
+ccflags-y += -I$(srctree)/soc/vision/cv_common/inc
+ccflags-y += -I$(srctree)/soc/vision/cv_common/inc/cvapi
+ccflags-y += -I$(CV_INC_PREFIX)/inc
+ccflags-y += -I$(CV_INC_PREFIX)/cvflow/inc
+ccflags-y += -I$(CV_INC_PREFIX)/transfer/inc
+ccflags-y += -I$(CT_CVALGO_PREFIX)/CtUtils/inc
+ccflags-y += -I$(CT_CVALGO_PREFIX)/CtSingleFD/inc
+ccflags-y += -I$(CT_CVALGO_PREFIX)/CtSSD/inc
+ccflags-y += -I$(CT_CVALGO_PREFIX)/CtDetCls/inc
+
+ccflags-$(CONFIG_ICAM_CV_STIXEL) += -I$(srctree)/svc/comsvc/cv/arm_framework/app/SCAStixel
+
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcCvFlow.o
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcCvFlowProfile.o
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcCvFlowUtil.o
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcCvFlowAlgoUtil.o
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcCvFlow_Shared.o
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcImgFeeder.o
+libsvc_icamcore-objs += $(CV_O_PREFIX)/SvcImgFIFO.o
+
+ifeq ($(CONFIG_ICAM_CV_FLEXIDAG),y)
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcCvFlow_AmbaOD.o
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcCvFlow_AmbaODTable.o
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcCvFlow_AmbaSeg.o
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcCvFlow_AmbaSegTable.o
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcCvFlow_RefOD.o
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcCvFlow_RefODTable.o
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcCvFlow_RefSeg.o
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcCvFlow_RefSegTable.o
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcCvFlow_RemoteApp.o
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcCvFlow_RemoteAppTable.o
+endif
+
+ifeq ($(CONFIG_ICAM_PROJECT_CNNTESTBED),y)
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcCvFlow_CnnTestbed.o
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcCvFlow_CnnTestbedTable.o
+ifeq ($(CONFIG_AMBALINK_BOOT_OS),y)
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcCvFlow_CnnTestbedIpc.o
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcCvFlow_CnnTestbedIpcTable.o
+endif
+endif
+
+ifeq ($(CONFIG_ICAM_CV_STEREO),y)
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcCvFlow_Stereo.o
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcCvFlow_StereoTable.o
+endif
+
+ifeq ($(CONFIG_ICAM_CV_STIXEL),y)
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcCvFlow_Stixel.o
+libsvc_icamcore-objs += $(CV_O_PREFIX)/cvflow/SvcCvFlow_StixelTable.o
+endif
+
+ifeq ($(CONFIG_ICAM_CV_LOGGER),y)
+libsvc_icamcore-objs += $(CV_O_PREFIX)/SvcCvLogger.o
+endif
+
+libsvc_icamcore-objs += $(CV_O_PREFIX)/transfer/SvcCvFlexidagIO.o
+
+endif
+
+# dirt detection
+ifeq ($(CONFIG_ICAM_USE_AMBA_DIRTDETECT),y)
+ifneq ($(wildcard $(srctree)/vendors/ambarella/inc/adas/AmbaDirtDetect.h),)
+ccflags-y += -I$(srctree)/vendors/ambarella/inc/adas
+ccflags-y += -I$(srctree)/svc/apps/icam/core/sys/inc
+
+libsvc_icamcore-objs += $(CV_O_PREFIX)/SvcDirtDetect.o
+endif
+endif

@@ -1,0 +1,50 @@
+# svc drivers
+DRV_O_PREFIX = ../../src/driver
+DRV_INC_PREFIX = $(src)/$(DRV_O_PREFIX)
+
+# wrapper hdmi/cvbs driver
+ifeq ($(CONFIG_ICAM_HDMI_EXIST),y)
+libsvc_icamcore-objs += $(DRV_O_PREFIX)/AmbaFPD_HDMI.o
+endif
+ifeq ($(CONFIG_ICAM_CVBS_EXIST),y)
+libsvc_icamcore-objs += $(DRV_O_PREFIX)/AmbaFPD_CVBS.o
+endif
+
+# eeprom driver
+ifeq ($(CONFIG_ICAM_EEPROM_USED),y)
+
+# cv2
+#ccflags-$(CONFIG_BSP_CV2BUB_OPTION_A_V300)  += -I$(srctree)/bsp/cv2/cv2bub_option_a_v300
+#ccflags-$(CONFIG_BSP_CV2DK)                 += -I$(srctree)/bsp/cv2/cv2dk
+# cv22
+#ccflags-$(CONFIG_BSP_CV22BUB_OPTION_A_V300) += -I$(srctree)/bsp/cv22/cv22bub_option_a_v300
+#ccflags-$(CONFIG_BSP_CV22DK)                += -I$(srctree)/bsp/cv22/cv22dk
+# cv25
+#ccflags-$(CONFIG_BSP_CV25BUB_OPTION_A_V300) += -I$(srctree)/bsp/cv25/cv25bub_option_a_v300
+#ccflags-$(CONFIG_BSP_CV25DK_8LAYER_V110)    += -I$(srctree)/bsp/cv25/cv25dk_8layer_v110
+# h32
+#ccflags-$(CONFIG_BSP_H32BUB_OPTION_A_V300)  += -I$(srctree)/bsp/h32/h32bub_option_a_v300
+#ccflags-$(CONFIG_BSP_H32DK_V100)            += -I$(srctree)/bsp/h32/h32dk_v100
+
+ccflags-y += -I$(srctree)/bsp/$(AMBA_CHIP_ID)/peripherals/bridge/inc
+ccflags-y += -I$(srctree)/bsp/$(AMBA_CHIP_ID)/$(AMBA_BSP_NAME)
+
+libsvc_icamcore-objs += $(DRV_O_PREFIX)/AmbaEEPROM.o
+libsvc_icamcore-objs += $(DRV_O_PREFIX)/AmbaEEPROM_UnitTest.o
+libsvc_icamcore-objs += $(DRV_O_PREFIX)/AmbaEEPROM_MAX9295_96712_MICRO_24AA256.o
+libsvc_icamcore-objs += $(DRV_O_PREFIX)/AmbaEEPROM_MAX9295_9296_MICRO_24AA256.o
+
+endif
+
+
+ifeq ($(CONFIG_ICAM_CANBUS_DEMO),y)
+
+ccflags-y  += -I$(srctree)/soc/io/src/common/inc/arm
+ccflags-y  += -I$(DRV_INC_PREFIX)/demo
+
+libsvc_icamcore-objs += $(DRV_O_PREFIX)/demo/AmbaCAN.o
+libsvc_icamcore-objs += $(DRV_O_PREFIX)/demo/AmbaCANPeer.o
+libsvc_icamcore-objs += $(DRV_O_PREFIX)/demo/AmbaCSL_CAN.o
+libsvc_icamcore-objs += $(DRV_O_PREFIX)/demo/AmbaRTSL_CAN.o
+
+endif

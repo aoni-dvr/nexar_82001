@@ -1,0 +1,149 @@
+/*
+ * Copyright (C) 2013 Ambarella,Inc. - http://www.ambarella.com/
+ * Author: Cao Rongrong <rrcao@ambarella.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+/dts-v1/;
+
+/include/ "ambarella-h32m-ambalink.dtsi"
+
+/ {
+	model = "Ambarella H32MBUB Board";
+	compatible = "ambarella,h32mbub", "ambarella,s6lm";
+
+	chosen {
+	};
+
+	n_apb@e4000000 {
+		uart0: uart@e4000000 {
+			status = "disabled";
+		};
+	};
+
+	n_ahb@e0000000 {
+		nand0: nand@e0002000 {
+			status = "ok";
+		};
+
+		spinor0: spinor@e0001000 {
+			status = "disabled";
+		};
+
+		sdmmc0: sdmmc0@e0004000 {
+			/*pwr-gpios = <&gpio 63 0x1>;*/
+			/*v18-gpios = <&gpio 85 0x1>;*/
+			/*amb,fixed-cd = <1>;*/
+			status = "disabled";
+		};
+
+		sdmmc1: sdmmc1@e0005000 {
+			/*pwr-gpios = <&gpio 62 0x1>;*/
+			/*v18-gpios = <&gpio 12 0x1>;*/
+			amb,fixed-cd = <1>;
+			keep-power-in-suspend;
+			no-1-8-v;
+			max-frequency = <50000000>;
+			status = "ok";
+		};
+
+		sdmmc2: sdmmc2@e0016000 {
+			status = "disabled";
+		};
+
+		dma0: dma@e0020000 {
+			/* amb,dma-startchannel = <2>; */ /* Prevent conflict between RTOS. */
+			status = "disabled";
+		};
+
+		dma1: dma@e0021000 {
+			/* amb,dma-startchannel = <2>; */ /* Prevent conflict between RTOS. */
+			status = "disabled";
+		};
+
+#if 1
+		mac0: ethernet@e000e000 {
+			amb,tx-clk-invert;
+			phy@0 {
+				reg = <0>;
+			};
+		};
+#else
+		mac0: ethernet@e000e000 {
+			device_type 	= "network";
+			compatible	= "st,stih416-dwmac", "snps,dwmac", "snps,dwmac-3.710";
+			status 		= "ok";
+			reg		= <0xe000e000 0x2000>;
+			reg-names	= "stmmaceth";
+			interrupts = <0 58 0x4>;
+			interrupt-names = "macirq";
+			snps,pbl 	= <32>;
+			snps,mixed-burst;
+			snps,scr-regmap = <&scratchpad_syscon>;
+#if 0
+			/*rx-fifo-depth = <256>;*/
+			/*tx-fifo-depth = <256>;*/
+			/*snps,force_sf_dma_mode;*/
+			phy-handle = <&ethernet_phy>;
+			mdio {
+				compatible = "snps,dwmac-mdio";
+				ethernet_phy: ethernet-phy@0 {
+					reg = <0>;
+					compatible = "ethernet-phy-id0007.0570";
+				};
+			};
+#endif
+		};
+#endif
+
+		uart1: uart@e0017000 {
+			/*/delete-property/ amb,msr-used;  */
+			/*/delete-property/ amb,txdma-used;*/
+			/*/delete-property/ amb,rxdma-used;*/
+			status = "ok";
+		};
+
+		uart2: uart@e0018000 {
+			status = "ok";
+		};
+
+		uart3: uart@e0019000 {
+			status = "disabled";
+		};
+
+		uart4: uart@e001a000 {
+			status = "disabled";
+		};
+	};
+
+	rct@ed080000 {
+		usbphy: usbphy@ed080050 {
+			/* high will trigger the ocp interrupt */
+			amb,ocp-polarity = <0>;
+			pinctrl-names = "default";
+			status = "ok";
+		};
+	};
+
+	ambalink {
+		compatible = "simple-bus";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		aipc_mutex: ambarella-ipc-mutex {
+			compatible = "ambarella,ipc-mutex";
+			interrupts = <0 96 0x4>;
+			amb,scr-regmap = <&scratchpad_syscon>;
+		};
+
+		/* must be consistent with ambalink_cfg.h */
+		rproc0: ambarella-rproc {
+			compatible = "ambarella,rproc";
+			interrupts = <0 91 0x4>,	/* rvq_rx_irq, get rvq kick from rtos */
+				     <0 92 0x4>;	/* svq_rx_irq, get svq ack from rtos */
+			amb,scr-regmap = <&scratchpad_syscon>;
+		};
+	};
+};

@@ -1,0 +1,19 @@
+
+menu "Player"
+config BUILD_COMSVC_PLAYER
+    depends on BUILD_COMMON_SERVICE_CODEC
+    bool "Build Player"
+    default y
+
+if BUILD_COMSVC_PLAYER
+config AMBA_PLAYER_MAX_NUM
+    hex "max player number"
+    default 0x1
+endif
+
+config BUILD_COMSVC_REFPLAYER
+    depends on BUILD_COMMON_SERVICE_CODEC
+    bool "Build Reference Player"
+    default n
+
+endmenu

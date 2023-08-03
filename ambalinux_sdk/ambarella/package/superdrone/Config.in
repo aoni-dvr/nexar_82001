@@ -1,0 +1,12 @@
+menuconfig BR2_PACKAGE_SUPERDRONE
+	bool "superdrone apps"
+	help
+	  This is the Apps for Amba superdrone.
+
+config BR2_PACKAGE_SUPERDRONE_STATUSUPDATE
+        bool "amba_example_statusupdate"
+        default y
+        depends on BR2_PACKAGE_SUPERDRONE
+        select BR2_PACKAGE_SUPERDRONE_LIB_TCP
+        help
+          This is the Example to share status with Linux for SSP.

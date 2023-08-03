@@ -1,0 +1,4 @@
+BEGIN_ddrc=0
+END_ddrc=0
+include 'quick_shmoo_2_lp4rdly.ttl'
+include 'quick_shmoo_2_lp4wdly.ttl'

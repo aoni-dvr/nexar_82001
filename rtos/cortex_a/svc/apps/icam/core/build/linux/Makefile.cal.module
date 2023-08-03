@@ -1,0 +1,14 @@
+
+CALM_O_PREFIX = ../../src/cal/module
+CALM_INC_PREFIX = $(src)/$(CALM_O_PREFIX)
+DRV_INC_PREFIX = $(src)/../../src/driver
+
+ccflags-y += -I$(CALM_INC_PREFIX)/inc   
+ccflags-y += -I$(DRV_INC_PREFIX)/inc    
+ccflags-y += -I$(srctree)/svc/comsvc/camera_module/inc
+
+ccflags-$(CONFIG_BUILD_FOSS_LZ4) += -I$(srctree)/vendors/foss/lz4
+
+libsvc_icamcore-objs += $(CALM_O_PREFIX)/SvcCalibModMgr.o
+libsvc_icamcore-objs += $(CALM_O_PREFIX)/SvcCalibModBpc.o
+

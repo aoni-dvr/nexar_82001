@@ -1,0 +1,102 @@
+
+DAG Calc_Avg_Disparity =
+{
+	arg=
+	{
+		$top_pos=0,
+		$bottom_pos=0,
+		$disparity=0,
+		$disparity_width=0,
+		$disparity_height=0,
+		$invalid_disp_mask=0,
+
+		$avg_disparity=0,
+	};
+
+	// generate mask, the mask = 1 when following conditions are all satisfied
+	// its position >= top_pos
+	// its position <= bottom_pos
+	// its disparity value != $invalid_disparity
+	VP_index(
+    	VP_tensor(column_index, uint16_t, vector(1, 1, $disparity_height, $disparity_width)),
+    	w = $disparity_width,
+    	h = $disparity_height,
+    	d = 1,
+    	p = 1,
+    	dim_coordinate = 0
+    );
+
+	VP_reshape(
+		$top_pos,
+		VP_tensor(top_pos_reshaped, uint16_t, vector(1, 1, $disparity_height, 1)),
+		w = 1, h = $disparity_height, d = 1, p = 1
+	);
+
+	VP_reshape(
+		$bottom_pos,
+		VP_tensor(bottom_pos_reshaped, uint16_t, vector(1, 1, $disparity_height, 1)),
+		w = 1, h = $disparity_height, d = 1, p = 1
+	);
+
+	VP_gteb(
+		column_index,
+		top_pos_reshaped,
+		VP_tensor(pos_gte_top_mask, uint8_t, vector(1, 1, $disparity_height, $disparity_width), bitvector = 1)
+	);
+
+	VP_lteb(
+		column_index,
+		bottom_pos_reshaped,
+		VP_tensor(pos_lte_bottom_mask, uint8_t, vector(1, 1, $disparity_height, $disparity_width), bitvector = 1)
+	);
+
+	VP_bwand(
+		pos_gte_top_mask,
+		pos_lte_bottom_mask,
+		VP_tensor(stixel_pos_mask, uint8_t, vector(1, 1, $disparity_height, $disparity_width), bitvector = 1)
+	);
+
+	VP_bwnot(
+		$invalid_disp_mask,
+		VP_tensor(valid_disp_mask, uint8_t, vector(1, 1, $disparity_height, $disparity_width), bitvector = 1)
+	);
+
+	VP_bwand(
+		stixel_pos_mask,
+		valid_disp_mask,
+		VP_tensor(count_mask, uint8_t, vector(1, 1, $disparity_height, $disparity_width), bitvector = 1)
+	);
+
+	// each row has category index (ith row) in its valid region, otherwise it's 0xFFFF
+	VP_index(
+    	VP_tensor(row_index, uint16_t, vector(1, 1, $disparity_height, $disparity_width)),
+    	w = $disparity_width,
+    	h = $disparity_height,
+    	d = 1,
+    	p = 1,
+    	dim_coordinate = 1
+    );
+
+	VP_muxb(
+		row_index, 
+		VP_const_tensor("FF FF", uint16_t, vector(1)), 
+		count_mask,
+		VP_tensor(count_category, uint16_t, vector(1, 1, $disparity_height, $disparity_width))
+	);
+
+	VP_stats(
+		count_category,
+		$disparity,
+		VP_tensor(avg_disparity_tmp, uint16_t, vector($disparity_height, 1, 1, 1)),
+		average = 1,
+		out_h = 1,
+		out_d = 1,
+		out_p = $disparity_height
+	);
+
+	VP_reshape(
+		avg_disparity_tmp,
+		VP_tensor($avg_disparity, uint16_t, vector(1, 1, 1, $disparity_height)),
+		w = $disparity_height, h = 1, d = 1, p = 1
+	);
+}

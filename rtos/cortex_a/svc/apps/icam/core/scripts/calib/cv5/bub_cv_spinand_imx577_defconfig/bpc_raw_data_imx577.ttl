@@ -1,0 +1,118 @@
+; -----------------------------------------------------
+;                  TERA TERM GLOBAL SETTING
+; -----------------------------------------------------
+timeout = 30
+
+; -----------------------------------------------------
+;
+;                   iCam Calibration Module
+;                        (2019.12.03)
+;
+; -----------------------------------------------------
+
+; -----------------------------------------------------
+;                      SCRIPT PARAMETER
+; -----------------------------------------------------
+; └─ calibration channel setting ( It is necessary )
+     VinID = 0
+     SensorID = 1
+     VinSelectBits = 1
+     SensorSelectBits = 3
+
+    waitstr = ''
+     
+; └─ BPC calibration setting
+     iCamCalib_Bpc_On = 1
+     iCamCalib_Bpc_table_id = 0
+     iCamCalib_Bpc_sensor_mode_bits = '0x1DC'     ; The BPC table support follow sensor mode     
+                                               ; IMX577_3840_2160_60P           2U   /* RAW10, Normal, 1.6Gbps */
+                                               ; IMX577_3840_2160_30P           3U   /* RAW10, Normal, 1.6Gbps */
+                                               ; IMX577_3840_2160_30P_HDR       4U   /* DOL 2-frame 30fps */
+                                               ; IMX577_1920_1080_A30P          6U   /* RAW10, Normal, 1.5Gbps */
+                                               ; IMX577_3840_2160_A30P          7U   /* RAW10, Normal, 1.6Gbps */
+                                               ; IMX577_3840_2160_A60P          8U   /* RAW10, Normal, 1.6Gbps */
+          
+     iCamCalib_Bpc_data_type = '0 0'             ; not compress
+     iCamCalib_Bpc_dbg_msg = 1
+     iCamCalib_Bpc_ctuner = 'c:\calib_sd_card\bpc_tuner.txt'
+               
+; -----------------------------------------------------
+;                      SCRIPT BEGIN
+; -----------------------------------------------------
+
+    ; Reboot to standby mode before calibration    
+    sprintf 'svc_app standby'
+    sprintf2 waitstr 'This is Command mode'
+    call _SUB_FUNC_CMD_PROC
+    pause 1
+
+if iCamCalib_Bpc_On=1 then
+
+    ; Enable bpc debug message    
+    sprintf 'svc_cal bpc cfg_dbg_msg %d' iCamCalib_Bpc_dbg_msg
+    sprintf2 waitstr 'Calibration BPC Debug Msg On/Off'
+    call _SUB_FUNC_CMD_PROC
+    pause 1    
+    
+    ; Initial bpc calib item
+    sprintf 'svc_cal mgr item init 4'
+    sprintf2 waitstr 'Initial calib item done 4'
+    call _SUB_FUNC_CMD_PROC
+    pause 1
+
+    ; Configure the calib channel to calib bad pixel module and reset the setting as default
+    sprintf 'svc_cal bpc cfg_calib_chan %d %d %d %d %s' VinID SensorID VinSelectBits SensorSelectBits iCamCalib_Bpc_sensor_mode_bits
+    sprintf2 waitstr 'Calibration BPC Channel'
+    call _SUB_FUNC_CMD_PROC
+    pause 1
+    
+    ; Configure the calib bad pixel nand table index
+    sprintf 'svc_cal bpc cfg_table_id %d' iCamCalib_Bpc_table_id
+    sprintf2 waitstr 'Calibration BPC Table Index'
+    call _SUB_FUNC_CMD_PROC
+    pause 1
+    
+    ; Configure the calib bad pixel data compression type
+    sprintf 'svc_cal bpc cfg_data_type %s' iCamCalib_Bpc_data_type
+    sprintf2 waitstr 'Calibration BPC Data Type'
+    call _SUB_FUNC_CMD_PROC
+    pause 2
+    
+    ; Generate calib bad pixel table by Ctuner and compress the result, then save to nand
+    sprintf 'svc_cal bpc gen_table %s' iCamCalib_Bpc_ctuner
+    sprintf2 waitstr 'Successful to save data. calib(4)'
+    call _SUB_FUNC_CMD_PROC
+    pause 1
+
+endif
+    
+; -----------------------------------------------------
+;                       SCRIPT END
+; -----------------------------------------------------
+
+exit
+
+:_SUB_FUNC_CMD_PROC
+    strlen inputstr
+    
+    if result>0 then
+        sendln ''
+        sendln ''
+        sendln inputstr
+        
+        strlen waitstr
+        if result>0 then
+            wait waitstr
+            if result=0 goto _ERROR_process_cmd_fail
+            waitstr = ''
+        endif
+    endif
+    
+return
+
+:_ERROR_process_cmd_fail
+    sprintf 'Failure to process command - %s' inputstr
+    
+    dispstr inputstr
+exit
+

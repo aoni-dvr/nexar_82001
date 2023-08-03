@@ -1,0 +1,28 @@
+system.calib_mode CA
+system.chip_rev A9AQ
+system.output_prefix CA
+lens.expect_table 0.0000 0.7485 1.3065 1.8164 1.9680 2.1233 2.2830 2.4483 2.6206 2.8020 2.9957 3.2071 3.4462 3.7365
+lens.ca_line_r_table 0.0000 -0.0036 -0.0062 -0.0096 -0.0106 -0.0120 -0.0146 -0.0154 -0.0084 -0.0096 -0.0140 -0.0171 -0.0193 -0.0283
+lens.ca_line_b_table 0.0000 0.0028 0.0051 0.0076 0.0125 0.0144 0.0165 0.0214 0.0220 0.0240 0.0252 0.0280 0.0288 0.0294 
+lens.table_length 14
+sensor.cell_size 0.003
+sensor.start_x 0
+sensor.start_y 0
+sensor.width 1920
+sensor.height 1080
+optical_center.x 960
+optical_center.y 540
+vin.start_x 48
+vin.start_y 81
+vin.width 1920
+vin.height 1080
+vin.h_subsample_factor_num 1
+vin.h_subsample_factor_den 1
+vin.v_subsample_factor_num 1
+vin.v_subsample_factor_den 1
+tile_size.width 64
+tile_size.height 64
+adjust.ratio 100
+adjust.compensate 100
+adjust.method 1
+adjust.zoom_step 0

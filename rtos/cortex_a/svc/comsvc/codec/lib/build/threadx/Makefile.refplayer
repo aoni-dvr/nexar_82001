@@ -1,0 +1,9 @@
+# refplayer function
+ifeq ($(CONFIG_BUILD_COMSVC_REFPLAYER), y)
+
+COMAMBA_CODEC_REFPLAYER_SRC = lib/src/common/refplayer
+
+libcomsvc_codec-objs += $(COMAMBA_CODEC_REFPLAYER_SRC)/RefCmptDemuxer.o
+libcomsvc_codec-objs += $(COMAMBA_CODEC_REFPLAYER_SRC)/RefCmptPlayer.o
+
+endif

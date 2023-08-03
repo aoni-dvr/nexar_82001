@@ -1,0 +1,317 @@
+# ---------------------------------------------------------------------------
+# Install path
+#      Here export default AMBA_LIB_FOLDER and AMBA_O_LIB,
+#      but then override if module declare install-path
+#      AMBA_LIB_FOLDER:
+#              default folder to put released libraries (or new compiled libraries)
+#      AMBA_O_LIB:
+#              With O=<somepath>, new compiled libraries will be put at <somepath>/lib
+#              Release libraries will also be copied to this folder.
+# ---------------------------------------------------------------------------
+
+AMBA_LIB_FOLDER := $(srctree)/vendors/ambarella/lib64
+export AMBA_LIB_FOLDER
+
+AMBA_CHIP_ID:=$(subst $\",,$(CONFIG_SOC_NAME))
+export AMBA_CHIP_ID
+
+AMBA_BSP_NAME := $(subst ",,$(CONFIG_BSP_NAME))
+export AMBA_BSP_NAME
+
+ifneq ($(O),)
+AMBA_O_LIB := $(objtree)/lib
+export AMBA_O_LIB
+endif
+
+# ---------------------------------------------------------------------------
+# Link flags for targets
+# ---------------------------------------------------------------------------
+KBUILD_CFLAGS += -DAMBA_FWPROG
+AMBA_FWPROG := y
+export AMBA_FWPROG
+
+# Amba Target out dir
+ifeq ("$(origin T)", "command line")
+  KBUILD_AMBA_OUT_DIR := $(T)
+endif
+ifndef KBUILD_AMBA_OUT_DIR
+# KBUILD_AMBA_OUT_DIR is a relative path to $(objtree).
+  KBUILD_AMBA_OUT_DIR := out
+endif
+export KBUILD_AMBA_OUT_DIR
+
+ifneq ($(KBUILD_AMBA_OUT_DIR),)
+# KBUILD_AMBA_FWPROG_OUT_DIR is a relative path to $(objtree).
+export KBUILD_AMBA_FWPROG_OUT_DIR := $(KBUILD_AMBA_OUT_DIR)/fwprog
+endif
+
+# ---------------------------------------------------------------------------
+# Externally visible symbols (used by link-amba.sh)
+# ---------------------------------------------------------------------------
+export LINK_AMBA_BST_SH	:= $(srctree)/bsp/link-amba_bst.sh
+export AMBA_BST_LDS		:= bsp/amba_bst.lds
+
+export LINK_AMBA_BLD_SH	:= $(srctree)/bsp/link-amba_bld.sh
+export AMBA_BLD_LDS		:= bsp/amba_bld.lds
+
+export LINK_SH_amba_fwprog := $(srctree)/fwprog/link-amba_fwprog.sh
+export LINK_SH_secure_tool := $(srctree)/tools/hostutils/security_tool.sh
+
+# ---------------------------------------------------------------------------
+# FW programmer symbols (used by gen_amba_fwlist.sh)
+# ---------------------------------------------------------------------------
+# Define host utilities.
+export AMBA_HOST_CRC       := $(srctree)/fwprog/hostutils/exec/lnx/host_crc32
+export AMBA_HOST_ROMFS     := $(abspath $(srctree)/fwprog/hostutils/exec/lnx/host_romfs_gen)
+export AMBA_HOST_PERMUTATE := $(srctree)/fwprog/hostutils/exec/lnx/host_permutate
+export AMBA_HOST_SDFW_GEN  := $(srctree)/fwprog/hostutils/exec/lnx/host_sdfw_gen
+export AMBA_HOST_PTB_GEN  := $(srctree)/fwprog/hostutils/exec/lnx/host_ptb_gen
+
+#Amboot Address
+ifneq ($(CONFIG_ATF_BL33_BLD_BASE),)
+export FIRM_MEM_ADDR   := $(CONFIG_ATF_BL33_BLD_BASE)
+else ifneq ($(CONFIG_FWPROG_BLD2_LOADADDR),)
+export FIRM_MEM_ADDR   := $(CONFIG_FWPROG_BLD2_LOADADDR)
+else
+export FIRM_MEM_ADDR   := $(CONFIG_FWPROG_BLD_LOADADDR)
+endif
+
+BST     :=      $(shell echo $(CONFIG_FWPROG_BST))
+BLD     :=      $(shell echo $(CONFIG_FWPROG_BLD))
+PBA     :=      $(shell echo $(CONFIG_FWPROG_PBA))
+ATF     :=      $(shell echo $(CONFIG_FWPROG_ATF))
+IPL     :=      $(shell echo $(CONFIG_FWPROG_IPL))
+BLD2    :=      $(shell echo $(CONFIG_FWPROG_BLD2))
+SYS     :=      $(shell echo $(CONFIG_FWPROG_SYS))
+DSP     :=      $(shell echo $(CONFIG_FWPROG_DSP))
+ROM     :=      $(shell echo $(CONFIG_FWPROG_ROM))
+R52SYS  :=      $(shell echo $(CONFIG_FWPROG_R52SYS))
+XEN     :=      $(shell echo $(CONFIG_FWPROG_XEN))
+XTB     :=      $(shell echo $(CONFIG_FWPROG_XTB))
+
+LNX     :=      $(shell echo $(CONFIG_FWPROG_LNX))
+RFS     :=      $(shell echo $(CONFIG_FWPROG_RFS))
+
+ifeq ($(or $(CONFIG_SOC_CV2FS),$(CONFIG_SOC_CV22FS)),y)
+AMBA_BST_BL :=
+else
+AMBA_BST_BL := amba_bst
+endif
+
+export HOST_PERMUTATE_ARG   := bst
+
+ifneq ($(BLD),)
+	HOST_PERMUTATE_ARG      += bld
+endif
+
+ifneq ($(PBA),)
+	HOST_PERMUTATE_ARG      += pba
+endif
+
+ifneq ($(ATF),)
+	HOST_PERMUTATE_ARG      += atf
+endif
+
+ifneq ($(IPL),)
+	HOST_PERMUTATE_ARG      += ipl
+endif
+
+ifneq ($(BLD2),)
+    HOST_PERMUTATE_ARG      += bld2
+endif
+
+ifneq ($(SYS),)
+	HOST_PERMUTATE_ARG      += sys
+endif
+
+ifneq ($(R52SYS),)
+	HOST_PERMUTATE_ARG      += r52sys
+endif
+
+ifneq ($(XEN),)
+	HOST_PERMUTATE_ARG	+= xen
+endif
+
+ifneq ($(XTB),)
+	HOST_PERMUTATE_ARG	+= xtb
+endif
+
+ifneq ($(DSP),)
+	HOST_PERMUTATE_ARG      += sec
+endif
+
+ifneq ($(ROM),)
+	HOST_PERMUTATE_ARG      += rom
+endif
+
+export HOST_PERMUTATE_LNX_ARG  := $(HOST_PERMUTATE_ARG)
+ifneq ($(LNX),)
+        HOST_PERMUTATE_LNX_ARG  += lnx
+endif
+
+ifneq ($(RFS),)
+        HOST_PERMUTATE_LNX_ARG  += rfs
+endif
+
+# ---------------------------------------------------------------------------
+# Dirs for targets
+# ---------------------------------------------------------------------------
+if_exist = $(if $(wildcard $(srctree)/$(1)), $(1))
+if_mk_exist = $(if $(wildcard $(srctree)/$(1)/Makefile), $(1))
+
+
+# ---- Common ---------------------------------------------------------------
+bsp_common_dirs		:= $(call if_mk_exist,bsp)
+
+rtos_common_dirs	:=
+rtos_common_dirs	+= $(call if_mk_exist,vendors/ambarella/wrapper/kal/threadx)
+rtos_common_dirs	+= $(call if_mk_exist,vendors/ambarella/wrapper/fs/threadx)
+rtos_common_dirs	+= $(call if_mk_exist,vendors/ambarella/wrapper/usb)
+rtos_common_dirs	+= $(call if_mk_exist,svc/comsvc/print)
+rtos_common_dirs	+= $(call if_mk_exist,svc/comsvc/shell)
+rtos_common_dirs	+= $(call if_mk_exist,svc/comsvc/misc)
+rtos_common_dirs	+= $(call if_mk_exist,svc/comsvc/eis/inc)
+
+# ---------------------------------------------------------------------------
+amba_bst_dirs		:=
+amba_bst_dirs		+= $(call if_exist,boot/$(AMBA_CHIP_ID)/secure/bootstrap)
+
+amba_bld_dirs		:=
+amba_bld_dirs		+= $(call if_exist,boot/$(AMBA_CHIP_ID)/secure/bootloader)
+amba_bld_dirs		+= $(call if_exist,soc/io/build/threadx)
+amba_bld_dirs		+= $(call if_exist,vendors/ambarella/wrapper/std)
+amba_bld_dirs		+= $(call if_exist,comsvc)
+ifeq ($(CONFIG_BUILD_FOSS_MBEDTLS),y)
+amba_bld_dirs       += $(call if_exist,vendors/foss/mbedtls/build/threadx)
+endif
+ifeq ($(CONFIG_BUILD_FOSS_LIBFDT),y)
+amba_bld_dirs		+= $(call if_exist,vendors/foss/libfdt)
+amba_bld_dirs		+= $(call if_exist,vendors/foss/libwrapc)
+endif
+ifeq ($(CONFIG_FASTBOOT_LZ4),y)
+amba_bld_dirs		+= $(call if_mk_exist,vendors/foss/lz4/build/amboot)
+endif
+
+amba_atf_dirs		:= $(call if_exist,vendors/arm/arm-trusted-firmware)
+
+amba_fwupdate_dirs	:= $(call if_exist,fwprog)
+
+# ---------------------------------------------------------------------------
+amba_bst-alldirs	:= $(sort $(amba_bst_dirs))
+amba_bld-alldirs	:= $(sort $(amba_bld_dirs))
+amba_atf-alldirs	:= $(sort $(amba_atf_dirs))
+
+# Handle descending into subdirectories listed in $(amba-dirs)
+# Preset locale variables to speed up the build process. Limit locale
+# tweaks to this spot to avoid wrong language settings when running
+# make menuconfig etc.
+# Error messages still appears in the original language
+
+# BSP #################################################
+PHONY += $(bsp_common_dirs)
+$(bsp_common_dirs): prepare build/scripts
+	$(Q)$(MAKE) $(build)=$@
+
+# BST #################################################
+PHONY += $(amba_bst-alldirs) amba_bst
+$(amba_bst-alldirs): prepare build/scripts
+	$(Q)$(MAKE) $(build)=$@
+
+$(objtree)/$(KBUILD_AMBA_OUT_DIR)/amba_bst.elf: $(bsp_common_dirs) $(LINK_SH) $(amba_bst-alldirs) FORCE
+	$(Q)chmod 711 $(LINK_AMBA_BST_SH)
+	$(Q)$(LINK_AMBA_BST_SH) $@
+
+amba_bst: $(objtree)/$(KBUILD_AMBA_OUT_DIR)/amba_bst.elf
+	@echo "Built: amba_bst.elf"
+
+# BLD #################################################
+PHONY += $(amba_bld-alldirs) amba_bld
+$(amba_bld-alldirs): prepare build/scripts
+	$(Q)$(MAKE) $(build)=$@
+
+$(objtree)/$(KBUILD_AMBA_OUT_DIR)/amba_bld.elf: $(bsp_common_dirs) $(LINK_SH) $(amba_bld-alldirs) FORCE
+	$(Q)chmod 711 $(LINK_AMBA_BLD_SH)
+	$(Q)$(LINK_AMBA_BLD_SH) $@
+
+amba_bld: $(objtree)/$(KBUILD_AMBA_OUT_DIR)/amba_bld.elf
+	@echo "Built: amba_bld.elf"
+
+ifneq ($(CONFIG_DEVICE_TREE_SUPPORT),)
+DTS_FILE = $(shell echo $(CONFIG_DTS))
+DTB_FILE = $(shell echo $(CONFIG_FWPROG_XTB))
+DTSI_DIR = $(shell echo $(srctree)/bsp/$(CONFIG_SOC_NAME))
+
+
+$(DTB_FILE): $(DTS_FILE) FORCE
+ifeq ($(CONFIG_XEN_SUPPORT),)
+	$(Q)mkdir -p $(objtree)/$(KBUILD_AMBA_OUT_DIR)
+	$(Q)dtc -I dts -O dtb -p 2048 -o $@ -i $(DTSI_DIR) $(DTS_FILE) 2>/dev/null
+	$(Q)${srctree}/tools/hostutils/memory_layout.sh $(srctree) $(objtree) $(DTB_FILE)
+endif # ($(CONFIG_XEN_SUPPORT),)
+
+PHONY += amba_xtb
+amba_xtb: $(DTB_FILE)
+
+endif #CONFIG_DEVICE_TREE_SUPPORT
+
+# FWPROG #################################################
+PHONY += $(amba_fwupdate_dirs) amba_fwprog
+$(amba_fwupdate_dirs): prepare build/scripts amba_boot
+#ifeq ($(CONFIG_ENABLE_SECURITY),y)
+#ifeq ($(CONFIG_ATF_FIP_RTOS),)
+#	$(Q)$(LINK_SH_secure_tool) securebin_gen -k $(CONFIG_RSA_PRIVATE_KEY_PATH) -i $(objtree)/$(CONFIG_FWPROG_SYS) -a align_256
+#endif
+#ifeq ($(CONFIG_ATF_SPD_OPTEE),)
+#ifeq ($(CONFIG_FWPROG_ATF_ENABLE),y)
+#ifneq ($(CONFIG_FWPROG_ATF),"")
+#	$(Q)$(LINK_SH_secure_tool) securebin_gen -k $(CONFIG_RSA_PRIVATE_KEY_PATH) -i $(objtree)/$(CONFIG_FWPROG_ATF) -a align_256
+#endif
+#endif
+#ifneq ($(CONFIG_SECURE_LNX_SRC_PATH),"")
+#	$(Q)$(LINK_SH_secure_tool) securebin_gen -k $(CONFIG_RSA_PRIVATE_KEY_PATH) -i $(CONFIG_SECURE_LNX_SRC_PATH) -o $(CONFIG_FWPROG_LNX) -a align_256
+#endif
+#ifeq ($(CONFIG_BUILD_QNX_IPL),y)
+#	$(Q)$(LINK_SH_secure_tool) securebin_gen -k $(CONFIG_RSA_PRIVATE_KEY_PATH) -i $(CONFIG_FWPROG_IPL) -a align_256
+#endif
+#endif # $(CONFIG_ATF_SPD_OPTEE)
+#endif # $(CONFIG_ENABLE_SECURITY)
+	$(Q)chmod 711 $(srctree)/fwprog/gen_amba_fwlist.sh
+	$(Q)$(srctree)/fwprog/gen_amba_fwlist.sh "${AMBA_CHIP_ID}" "${AMBA_BSP_NAME}"
+	$(Q)$(MAKE) $(build)=$@
+
+ifneq ($(CONFIG_DEVICE_TREE_SUPPORT),)
+amba_fwprog: amba_xtb $(amba_fwupdate_dirs)
+	$(Q)chmod 711 $(LINK_SH_amba_fwprog)
+	$(Q)$(LINK_SH_amba_fwprog) $@
+	@echo "Done !!"
+else
+amba_fwprog: $(amba_fwupdate_dirs)
+	$(Q)chmod 711 $(LINK_SH_amba_fwprog)
+	$(Q)$(LINK_SH_amba_fwprog) $@
+	@echo "Done !!"
+endif
+
+# ATF ####################################################
+PHONY += $(amba_atf-alldirs) amba_atf
+$(amba_atf-alldirs): prepare build/scripts amba_bld
+	$(Q)$(MAKE) $(build)=$@
+
+amba_atf: $(amba_atf-alldirs)
+	@:
+
+# BOOT: BST + BLD + ATF #################################################
+PHONY += amba_boot
+amba_boot: $(AMBA_BST_BL) amba_bld amba_atf FORCE
+	@:
+
+# ALL #################################################
+PHONY += amba_all
+amba_all:
+	@echo "Done !"
+
+# Customized clean-rule here.
+PHONY += amba_clean
+amba_clean:
+	@echo "Clean 64"
+	@:
+

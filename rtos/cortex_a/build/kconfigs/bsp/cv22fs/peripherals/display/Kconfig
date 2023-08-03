@@ -1,0 +1,47 @@
+menu "FPD Driver"
+
+config FPD_Y85006
+    bool "DZXtech Y85006"
+    default n
+
+config FPD_Y85183
+    bool "DZXtech Y85183"
+    default n
+
+config FPD_C101EAN01_0
+    bool "AUO C101EAN01.0"
+    default n
+
+config FPD_ZS095BH3001A8H3
+    bool "Shenzhen Zhongshen Optoelectronics Co. Ltd ZS095BH3001A8H3"
+    default n
+
+config FPD_ZS095BH3001A8H3_BII
+    bool "Shenzhen Zhongshen Optoelectronics Co. Ltd ZS095BH3001A8H3_BII"
+    default n
+
+config FPD_MAXIM_TFT1280768
+    bool "MAXIM TFT1280768"
+    default n
+
+config FPD_MAXIM_ZS095BH3001A8H3_BII
+    bool "ZS095BH3001A8H3 via Maxim 96755/96752 DSI Serializer"
+    default n
+	
+config FPD_MAXIM_ZS095_MAX96789
+    bool "ZS095BH3001A8H3 via Maxim 96789/96752 DSI Serializer"
+    default n
+
+config FPD_MAXIM_AUOB101UAN02
+    bool "MAXIM AUOB101UAN02"
+    default n
+
+config FPD_LT9611UXC
+    bool "LT9611UXC"
+    default n
+
+config FPD_HXY500HD10IIN0
+    bool "HXY500HD10IIN0"
+    default n
+
+endmenu

@@ -1,0 +1,8 @@
+# playback
+ifeq ($(CONFIG_ICAM_PLAYBACK_USED),y)
+SRCS += SvcPbkCtrl.c
+SRCS += SvcPbkPictDisp.c
+SRCS += SvcPbkStillDec.c
+SRCS += SvcPbkStillDisp.c
+SRCS += SvcPbkThmDisp.c
+endif

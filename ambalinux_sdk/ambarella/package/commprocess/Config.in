@@ -1,0 +1,5 @@
+
+config BR2_PACKAGE_COMMPROCESS
+	bool "commprocess"
+	help
+	  CV1 Communication Process

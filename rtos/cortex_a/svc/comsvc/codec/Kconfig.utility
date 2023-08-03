@@ -1,0 +1,24 @@
+
+menu "Utility"
+
+config BUILD_COMAMBA_CODEC_COMMON
+    depends on BUILD_COMMON_SERVICE_CODEC
+    bool "Build Codec Utility"
+    default y
+
+if BUILD_COMAMBA_CODEC_COMMON
+config AMBA_VFS_ASYNC_MAX_NUM
+    hex "max number of async files"
+    default 0x00000004
+config AMBA_VFS_BANK_PER_FILE
+    hex "num of banks per file"
+    default 0x00000004
+config AMBA_VFS_BANK_SIZE
+    hex "bank size"
+    default 0x00080000
+config AMBA_VFS_GDMA_USED
+    bool "use GDMA for buffer copy"
+    default y
+endif
+
+endmenu

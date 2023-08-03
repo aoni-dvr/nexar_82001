@@ -1,0 +1,16 @@
+menu "Audio codec Driver"
+
+config AUDIO_AK4951EN
+	bool "AKM AK4951EN"
+	default y
+
+config AUDIO_TITLV320AIC3007
+	bool "TI tlv320aic3007"
+	default y
+
+config AUDIO_NAU8822
+	bool "Nuvoton NAU8822"
+	default n
+
+endmenu
+

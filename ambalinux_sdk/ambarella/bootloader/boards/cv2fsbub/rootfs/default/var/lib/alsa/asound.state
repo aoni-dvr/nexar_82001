@@ -1,0 +1,36 @@
+state.AMBEVK {
+  control.1 {
+    iface MIXER
+    name amba-capture
+    value.0 127
+    value.1 127
+    comment {
+      access 'read write user'
+      type INTEGER
+      count 2
+      range '0 - 255'
+      tlv '0000000100000008fffff8300000000f'
+      dbmin -2000
+      dbmax 1825
+      dbvalue.0 -95
+      dbvalue.1 -95
+    }
+  }
+  control.2 {
+    iface MIXER
+    name amba-playback
+    value.0 127
+    value.1 127
+    comment {
+      access 'read write user'
+      type INTEGER
+      count 2
+      range '0 - 255'
+      tlv '0000000100000008fffff8300000000f'
+      dbmin -2000
+      dbmax 1825
+      dbvalue.0 -95
+      dbvalue.1 -95
+    }
+  }
+}

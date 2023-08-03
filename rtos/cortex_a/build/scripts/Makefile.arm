@@ -1,0 +1,135 @@
+
+-include include/config/auto.conf
+
+
+ifneq ($(CONFIG_CPU_ARMV7),)
+KBUILD_CFLAGS	+= -mlittle-endian
+
+ifeq ($(CONFIG_EXE_THUMB),y)
+KBUILD_CFLAGS	+= -mthumb -Wa,-mimplicit-it=always -Wa,-mno-warn-deprecated
+KBUILD_AFLAGS	+= -mthumb -Wa,-mimplicit-it=always -Wa,-mno-warn-deprecated -Wa,-mthumb
+# Work around buggy relocation from gas if requested:
+ifeq ($(CONFIG_THUMB2_AVOID_R_ARM_THM_JUMP11),y)
+KBUILD_AFLAGS	+=-fno-optimize-sibling-calls
+endif
+else
+KBUILD_CFLAGS	+= -marm
+KBUILD_AFLAGS	+= -marm
+endif
+
+KBUILD_CFLAGS	+= -march=armv7-a -mcpu=cortex-a9
+KBUILD_AFLAGS	+= -march=armv7-a -mcpu=cortex-a9
+
+ifeq ($(CONFIG_AEABI),y)
+KBUILD_CFLAGS	+= -mabi=aapcs-linux -mno-thumb-interwork
+else
+KBUILD_CFLAGS	+= -mabi=apcs-gnu -mno-thumb-interwork
+endif
+
+ifeq ($(CONFIG_VFP_V3),y)
+KBUILD_CFLAGS	+= -mfloat-abi=hard -mfpu=vfpv3
+KBUILD_AFLAGS	+= -mfloat-abi=hard -mfpu=vfpv3
+endif
+
+# Never generate .eh_frame
+KBUILD_CFLAGS	+= -fno-dwarf2-cfi-asm
+
+# The Scalar Replacement of Aggregates (SRA) optimization pass in GCC 4.9 and
+# later may result in code being generated that handles signed short and signed
+# char struct members incorrectly. So disable it.
+# (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65932)
+#
+KBUILD_CFLAGS	+= -fno-ipa-sra
+
+
+else # CONFIG_CPU_ARMV8 ##################################################################
+
+KBUILD_CFLAGS	+= -mlittle-endian
+
+ifneq ($(CONFIG_ARM32),)
+KBUILD_CFLAGS	+= -marm
+#KBUILD_AFLAGS	+= -marm
+endif
+
+ifneq ($(CONFIG_ARM32),)
+KBUILD_CFLAGS	+= -mabi=aapcs-linux -mno-thumb-interwork
+else
+KBUILD_CFLAGS	+= -mabi=lp64
+endif
+
+ifneq ($(CONFIG_ARM32),)
+KBUILD_CFLAGS	+= -march=armv8-a+crc -mcpu=cortex-a53
+KBUILD_AFLAGS	+= -march=armv8-a+crc -mcpu=cortex-a53
+
+KBUILD_CFLAGS	+= -mfloat-abi=hard -mfpu=crypto-neon-fp-armv8
+KBUILD_AFLAGS	+= -mfloat-abi=hard -mfpu=crypto-neon-fp-armv8
+#KBUILD_CFLAGS	+= -mfloat-abi=hard -mfpu=fp-armv8
+#KBUILD_AFLAGS	+= -mfloat-abi=hard -mfpu=fp-armv8
+
+else # ARM64
+
+ifneq ($(CONFIG_CPU_CORTEX_A76),)
+#reference from https://gcc.gnu.org/onlinedocs/gcc/AArch64-Options.html#aarch64-feature-modifiers
+KBUILD_CFLAGS	+= -march=armv8.2-a+crc+crypto+simd -mcpu=cortex-a76
+KBUILD_AFLAGS	+= -march=armv8.2-a+crc+crypto+simd -mcpu=cortex-a76
+
+else
+KBUILD_CFLAGS	+= -march=armv8-a+crc+crypto+simd -mcpu=cortex-a53
+KBUILD_AFLAGS	+= -march=armv8-a+crc+crypto+simd -mcpu=cortex-a53
+KBUILD_CFLAGS	+= -mfix-cortex-a53-835769
+KBUILD_CFLAGS	+= -mfix-cortex-a53-843419
+
+KBUILD_AFLAGS	+= -mfix-cortex-a53-835769
+KBUILD_AFLAGS	+= -mfix-cortex-a53-843419
+endif # ($(CONFIG_CPU_CORTEX_A76),)
+
+endif # ifneq ($(CONFIG_ARM32),)
+
+# Generate code which uses only the general registers.
+#KBUILD_CFLAGS	+= -mgeneral-regs-only
+
+endif # ARMV7/ARMV8
+
+ifeq ($(CONFIG_ATT_8GB),y)
+ifeq ($(shell expr $(CONFIG_DDR_SIZE) \>= 0x100000000), 1)
+KBUILD_CFLAGS	+= -mcmodel=large
+endif
+endif
+
+ifeq ($(CONFIG_FRAME_POINTER),y)
+KBUILD_CFLAGS	+= -fno-omit-frame-pointer -mapcs -mno-sched-prolog
+KBUILD_CFLAGS	+= -fno-optimize-sibling-calls
+endif
+
+# Using DWARF v3 for debugger
+#x KBUILD_CFLAGS	+= -gdwarf-3
+#x KBUILD_AFLAGS	+= -gdwarf-3
+
+#ifeq ($(CONFIG_CC_CXX_SUPPORT),y)
+#KBUILD_CFLAGS	+=-funwind-tables
+#endif
+#KBUILD_CFLAGS	+= -fno-asynchronous-unwind-tables
+
+# For Garbage collection
+KBUILD_CFLAGS	+= -ffunction-sections -fdata-sections
+KBUILD_AFLAGS	+= -ffunction-sections -fdata-sections
+
+KBUILD_CFLAGS	+= -D__DYNAMIC_REENT__
+
+
+# Link little-endian objects
+KBUILD_AFLAGS	+= -Wa,-EL
+
+KBUILD_AFLAGS	+= -D__DYNAMIC_REENT__
+
+
+# Link little-endian objects
+KBUILD_LDFLAGS	+= -EL
+# --no-undefined, Report unresolved symbol references from regular object files.
+KBUILD_LDFLAGS	+= --no-undefined
+# --pic-veneer,
+# makes the linker use PIC sequences for ARM/Thumb interworking veneers,
+# even if the rest of the binary is not PIC
+#KBUILD_LDFLAGS	+= --pic-veneer
+
+

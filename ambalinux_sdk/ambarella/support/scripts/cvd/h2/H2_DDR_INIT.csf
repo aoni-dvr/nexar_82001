@@ -1,0 +1,15 @@
+; Amba:LogLevel 3
+; Amba:MemMap 0xEC000000 0x01000000 IO
+; Amba:Aarch  64
+
+;WinCloseAll
+;wait.100ms
+; tetttt
+
+; init JTAG interface
+execute H2_JTAG_core0.csf
+break
+
+; init Memory controler
+execute H2_lpddr3_good.csf
+

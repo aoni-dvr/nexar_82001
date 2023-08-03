@@ -1,0 +1,26 @@
+<!------------------------------------------------------------------------------------------------------------- ->
+<!- @FileName       :: audio.list                                                                                 ->
+<!-                                                                                                             ->
+<!- @Copyright      :: Copyright (C) 2018 Ambarella Corporation. All rights reserved.                           ->
+<!-                                                                                                             ->
+<!-                    No part of this file may be reproduced, stored in a retrieval system,                    ->
+<!-                    or transmitted, in any form, or by any means, electronic, mechanical, photocopying,      ->
+<!-                    recording, or otherwise, without the prior consent of Ambarella Corporation.             ->
+<!-                                                                                                             ->
+<!- @Description    :: the file list for rom file system                                                        ->
+<!------------------------------------------------------------------------------------------------------------- ->
+
+<romfs>
+    <!- Relative path from the top directory of the build ->
+    <top>svc/apps/icam/main/rom/audio/</top>
+    <!- audio data ->
+    <file>nexar_power_on.pcm<alias>power_on.pcm</alias></file>
+    <file>nexar_power_off.pcm<alias>power_off.pcm</alias></file>
+	<file>nexar_reset.pcm<alias>reset.pcm</alias></file>
+    <file>piv.pcm<alias>piv.pcm</alias></file>
+    <file>event_record.pcm<alias>event_record.pcm</alias></file>
+    <file>button_press.pcm<alias>button_press.pcm</alias></file>
+    <file>1k.pcm<alias>1k.pcm</alias></file>
+    <file>sample.aac<alias>sample.aac</alias></file>
+    <file>dump_log.pcm<alias>dump_log.pcm</alias></file>
+</romfs>

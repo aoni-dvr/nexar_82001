@@ -1,0 +1,107 @@
+/*
+ * board level device tree source
+ */
+
+/dts-v1/;
+
+/include/ "cv5.510.dtsi"
+
+/ {
+	model = "Ambarella CV5BUB Board";
+	compatible = "ambarella,cv5bub", "ambarella,cv5";
+
+	chosen {
+		bootargs = "ubi.mtd=5 root=ubi0:linux rootfstype=ubifs console=ttyS0 nosmp maxcpus=0";
+	};
+
+	memory {
+		device_type = "memory";
+		reg = <0x0 0x200000 0x0 0x7fe00000>;
+	};
+
+	ddr-controller@1000004000 {
+		burst-size = <0x40>;
+	};
+
+	apb@20e4000000 {
+
+	};
+
+	ahb@20e0000000 {
+		nand@e0002000 {
+			amb,timing = <0x303320c 0x5050505 0x71464 0x0 0x0 0x0>;
+		};
+	};
+};
+
+&uart1 {
+	status = "ok";
+};
+
+&i2c0 {
+	clock-frequency = <400000>;
+	status = "ok";
+};
+
+&i2c1 {
+	clock-frequency = <400000>;
+	pinctrl-0 = <&i2c1_pins_a>;
+	status = "ok";
+};
+
+&i2c2 {
+	clock-frequency = <400000>;
+	pinctrl-0 = <&i2c2_pins_a>;
+	status = "ok";
+};
+
+&spi4 {
+	pinctrl-0 = <&spi4_pins_b>;
+};
+
+&spi5 {
+	pinctrl-0 = <&spi5_pins_b>;
+};
+
+&sdmmc0 {
+	/*pwr-gpios = <&gpio 91 0x1>;*/
+	/*v18-gpios = <&gpio 129 0x1>;*/
+	/*amb,fixed-cd = <1>;*/
+	status = "ok";
+};
+
+&sdmmc1 {
+	/*pwr-gpios = <&gpio 100 0x1>;*/
+	/*v18-gpios = <&gpio 130 0x1>;*/
+	status = "ok";
+};
+
+&sdmmc2 {
+	pwr-gpios = <&gpio 109 0x1>;
+	v18-gpios = <&gpio 132 0x1>;
+	/delete-property/pinctrl-0;
+	status = "ok";
+};
+
+&mac0 {
+	amb,tx-clk-invert;
+
+	phy@0 {
+		reg = <0>;
+	};
+};
+
+&mac1 {
+	amb,tx-clk-invert;
+
+	phy@0 {
+		reg = <0>;
+	};
+};
+
+&usbphy {
+	/* high will trigger the ocp interrupt */
+	amb,ocp-polarity = <0>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&usb_host0_pins_f>;
+};

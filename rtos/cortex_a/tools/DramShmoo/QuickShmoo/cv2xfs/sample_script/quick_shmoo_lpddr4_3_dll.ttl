@@ -1,0 +1,3 @@
+include 'quick_shmoo_3_read.ttl'
+include 'quick_shmoo_3_write.ttl'
+include 'quick_shmoo_3_sync.ttl'

@@ -1,0 +1,10 @@
+config BR2_PACKAGE_AVDECC_CMD
+	bool "avdecc-cmd"
+	select BR2_PACKAGE_JDKSAVDECC_C
+	select BR2_PACKAGE_LIBPCAP
+	help
+	  Source code for simple command line tools for generating and
+	  sending arbitrary AVDECC commands.
+
+	  https://github.com/jdkoftinoff/avdecc-cmd
+

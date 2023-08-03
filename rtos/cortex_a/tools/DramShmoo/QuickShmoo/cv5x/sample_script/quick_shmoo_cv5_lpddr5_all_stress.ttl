@@ -1,0 +1,4 @@
+include 'quick_shmoo_cv5_lpddr5_1_vref_stress.ttl'
+include 'quick_shmoo_cv5_lpddr5_2_delay_stress.ttl'
+include 'quick_shmoo_cv5_lpddr5_3_dll_stress.ttl'
+

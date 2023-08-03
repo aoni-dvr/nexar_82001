@@ -1,0 +1,58 @@
+#include "vp_vas.h"
+
+#define IN_CHANNEL          4
+#define IN_WIDTH            640
+#define IN_HEIGHT           480
+//BGRA -> RGB
+#define OUT_CHANNEL             3
+#define OUT_CHAN0_SRC_IDX       2
+#define OUT_CHAN1_SRC_IDX       1
+#define OUT_CHAN2_SRC_IDX       0
+
+DAG mix_channels = {
+	VP_input(input, uint8_t, vector(1, 1, 1, IN_CHANNEL*IN_HEIGHT*IN_WIDTH));
+
+	VP_reshape(
+		input,
+		VP_tensor(input_reshape, uint8_t),
+		w = IN_CHANNEL,
+		h = IN_WIDTH,
+		d = IN_HEIGHT,
+		p = 1
+		);
+	VP_crop(
+		input_reshape,
+		VP_tensor(chan0, uint8_t),
+		w=1, h=IN_WIDTH, d=IN_HEIGHT, p=1,
+		start_w = OUT_CHAN0_SRC_IDX, start_h = 0, start_d = 0, start_p = 0,
+		zr=1
+		);
+	VP_crop(
+		input_reshape,
+		VP_tensor(chan1, uint8_t),
+		w=1, h=IN_WIDTH, d=IN_HEIGHT, p=1,
+		start_w = OUT_CHAN1_SRC_IDX, start_h = 0, start_d = 0, start_p = 0,
+		zr=1
+		);
+	VP_crop(
+		input_reshape,
+		VP_tensor(chan2, uint8_t),
+		w=1, h=IN_WIDTH, d=IN_HEIGHT, p=1,
+		start_w = OUT_CHAN2_SRC_IDX, start_h = 0, start_d = 0, start_p = 0,
+		zr=1
+		);
+	VP_mergew(
+		chan0,chan1,
+		VP_tensor(merge_output, uint8_t),
+		v2_descriptor = chan2
+		);
+	VP_reshape(
+		merge_output,
+		VP_tensor(merge_output_reshape, uint8_t),
+		w = IN_HEIGHT*IN_WIDTH*OUT_CHANNEL,
+		h = 1,
+		d = 1,
+		p = 1
+		);
+	VP_output(output, merge_output_reshape);
+}

@@ -1,0 +1,398 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+  Version="10.0"
+  VendorName="SlickEdit"
+  TemplateName="GNU C/C++"
+  WorkingDir="."
+  BuildSystem="vsbuild">
+  <Config
+    Name="Debug"
+    Type="gnuc"
+    DebugCallbackName="gdb"
+    Version="1"
+    OutputFile="%bdorc_framework.exe"
+    CompilerConfigName="Latest Version">
+    <Menu>
+      <Target
+        Name="Compile"
+        MenuCaption="&amp;Compile"
+        Dialog="_gnuc_options_form Compile"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        OutputExts="*.o"
+        SaveOption="SaveCurrent"
+        RunFromDir="%rw">
+        <Exec CmdLine='g++ -c %xup  %defd -g -o "%bd%n%oe" %i "%f"'/>
+      </Target>
+      <Target
+        Name="Link"
+        MenuCaption="&amp;Link"
+        ShowOnMenu="Never"
+        Dialog="_gnuc_options_form Link"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        SaveOption="SaveCurrent"
+        RunFromDir="%rw">
+        <Exec CmdLine='g++ %xup -g -o "%o" %f %libs'/>
+      </Target>
+      <Target
+        Name="Build"
+        MenuCaption="&amp;Build"
+        Dialog="_gnuc_options_form Compile"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        SaveOption="SaveWorkspaceFiles"
+        RunFromDir="%rw">
+        <Exec CmdLine='"%(VSLICKBIN1)vsbuild" "%w" "%r" -t build'/>
+      </Target>
+      <Target
+        Name="Rebuild"
+        MenuCaption="&amp;Rebuild"
+        Dialog="_gnuc_options_form Compile"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        SaveOption="SaveWorkspaceFiles"
+        RunFromDir="%rw">
+        <Exec CmdLine='"%(VSLICKBIN1)vsbuild" "%w" "%r" -t rebuild'/>
+      </Target>
+      <Target
+        Name="Debug"
+        MenuCaption="&amp;Debug"
+        Dialog="_gnuc_options_form Run/Debug"
+        BuildFirst="1"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        SaveOption="SaveNone"
+        RunFromDir="%rw">
+        <Exec CmdLine='vsdebugio -prog "%o"'/>
+      </Target>
+      <Target
+        Name="Execute"
+        MenuCaption="E&amp;xecute"
+        Dialog="_gnuc_options_form Run/Debug"
+        BuildFirst="1"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        SaveOption="SaveWorkspaceFiles"
+        RunFromDir="%rw">
+        <Exec CmdLine='"%o"'/>
+      </Target>
+      <Target
+        Name="dash"
+        MenuCaption="-"
+        Deletable="0">
+        <Exec/>
+      </Target>
+      <Target
+        Name="GNU C Options"
+        MenuCaption="GNU C &amp;Options..."
+        ShowOnMenu="HideIfNoCmdLine"
+        Deletable="0"
+        SaveOption="SaveNone">
+        <Exec
+          CmdLine="gnucoptions"
+          Type="Slick-C"/>
+      </Target>
+    </Menu>
+    <List Name="GNUC Options">
+      <Item
+        Name="LinkerOutputType"
+        Value="Executable"/>
+    </List>
+  </Config>
+  <Config
+    Name="Release"
+    Type="gnuc"
+    DebugCallbackName="gdb"
+    Version="1"
+    OutputFile="%bdorc_framework.exe"
+    CompilerConfigName="Latest Version">
+    <Menu>
+      <Target
+        Name="Compile"
+        MenuCaption="&amp;Compile"
+        Dialog="_gnuc_options_form Compile"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        OutputExts="*.o"
+        SaveOption="SaveCurrent"
+        RunFromDir="%rw">
+        <Exec CmdLine='g++ -c %xup %defd -o "%bd%n%oe" %i "%f"'/>
+      </Target>
+      <Target
+        Name="Link"
+        MenuCaption="&amp;Link"
+        ShowOnMenu="Never"
+        Dialog="_gnuc_options_form Link"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        SaveOption="SaveCurrent"
+        RunFromDir="%rw">
+        <Exec CmdLine='g++ %xup -o "%o" %f %libs'/>
+      </Target>
+      <Target
+        Name="Build"
+        MenuCaption="&amp;Build"
+        Dialog="_gnuc_options_form Compile"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        SaveOption="SaveWorkspaceFiles"
+        RunFromDir="%rw">
+        <Exec CmdLine='"%(VSLICKBIN1)vsbuild" "%w" "%r" -t build'/>
+      </Target>
+      <Target
+        Name="Rebuild"
+        MenuCaption="&amp;Rebuild"
+        Dialog="_gnuc_options_form Compile"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        SaveOption="SaveWorkspaceFiles"
+        RunFromDir="%rw">
+        <Exec CmdLine='"%(VSLICKBIN1)vsbuild" "%w" "%r" -t rebuild'/>
+      </Target>
+      <Target
+        Name="Debug"
+        MenuCaption="&amp;Debug"
+        Dialog="_gnuc_options_form Run/Debug"
+        BuildFirst="1"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        SaveOption="SaveNone"
+        RunFromDir="%rw">
+        <Exec CmdLine='vsdebugio -prog "%o"'/>
+      </Target>
+      <Target
+        Name="Execute"
+        MenuCaption="E&amp;xecute"
+        Dialog="_gnuc_options_form Run/Debug"
+        BuildFirst="1"
+        CaptureOutputWith="ProcessBuffer"
+        Deletable="0"
+        SaveOption="SaveWorkspaceFiles"
+        RunFromDir="%rw">
+        <Exec CmdLine='"%o"'/>
+      </Target>
+      <Target
+        Name="dash"
+        MenuCaption="-"
+        Deletable="0">
+        <Exec/>
+      </Target>
+      <Target
+        Name="GNU C Options"
+        MenuCaption="GNU C &amp;Options..."
+        ShowOnMenu="HideIfNoCmdLine"
+        Deletable="0"
+        SaveOption="SaveNone">
+        <Exec
+          CmdLine="gnucoptions"
+          Type="Slick-C"/>
+      </Target>
+    </Menu>
+    <List Name="GNUC Options">
+      <Item
+        Name="LinkerOutputType"
+        Value="Executable"/>
+    </List>
+  </Config>
+  <Files>
+    <Folder
+      Name="common"
+      Filters="">
+      <Folder
+        Name="include_common"
+        Filters="">
+        <F N="common/include/bdoor_io.h"/>
+        <F N="common/include/cv1-def.h"/>
+        <F N="common/include/cvtable_interface.h"/>
+        <F N="common/include/cvtask_interface.h"/>
+        <F N="common/include/cvtask_scheduler_support.h"/>
+        <F N="common/include/dsp_types.h"/>
+        <F N="common/include/orc_counters.h"/>
+        <F N="common/include/orc_memory.h"/>
+        <F N="common/include/orc_spr.h"/>
+        <F N="common/include/orc_wait.h"/>
+        <F N="common/include/static_counters.h"/>
+        <F N="common/include/ucode_base.h"/>
+        <F N="common/include/ucode_debug.h"/>
+        <F N="common/include/vis_coproc.h"/>
+        <F N="common/include/vp_common.h"/>
+      </Folder>
+      <Folder
+        Name="ldscripts"
+        Filters="">
+        <F N="common/ldscripts/orcsod.ld"/>
+        <F N="common/ldscripts/orcvp.ld"/>
+        <F N="common/ldscripts/visorc_cv6.ld"/>
+        <F N="common/ldscripts/visorc_standalone_slot0.ld"/>
+        <F N="common/ldscripts/visorc_standalone_slotx.ld"/>
+      </Folder>
+      <Folder
+        Name="utest_include"
+        Filters="">
+        <Folder
+          Name="include_utest"
+          Filters="">
+          <F N="common/utest_include/include/diag_stack.h"/>
+          <F N="common/utest_include/include/vp_common.h"/>
+        </Folder>
+        <Folder
+          Name="utils"
+          Filters="">
+          <F N="common/utest_include/utils/vp_common.c"/>
+        </Folder>
+        <Folder
+          Name="utils_cv6"
+          Filters="">
+          <F N="common/utest_include/utils_cv6/vp_common.c"/>
+        </Folder>
+      </Folder>
+      <Folder
+        Name="cvapi"
+        Filters="">
+        <F N="../cv_common/inc/cvapi/cvapi_adas_box_ctrl.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_auto_calib_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_auto_calib_interface_internal.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_automotive_hlt_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_cavalry.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_cnn_handwriting_detection_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_common.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_drone_ess_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_drone_f2ft_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_drone_hlt_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_drone_landmarkhighlevel_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_drone_landmarkmanager_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_drone_localization_interface_internal.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_drone_msg_common.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_drone_od_cartesian_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_drone_od_mapping_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_drone_od_spherical_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_drone_od_stitching_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_drone_st_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_drone_vhe_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_error_handler.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_error_handler_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_fast_od_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_fast_od_interface_internal.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_flexidag.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_fma_object_tracking_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_fma_rotation_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_fma_visual_odometry_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_fma_visual_odometry_interface_internal.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_freespace_detect_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_gyro_debias_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_gyro_debias_interface_internal.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_high_level_object_detection_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_hl_barriers_curbs_detection_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_hl_object_tracking_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_hl_particle_filtering_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_idsp_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_idsp_interface_internal.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_idspfeeder_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_joint_od_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_joint_od_interface_internal.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_ld_build_lut_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_ll_barriers_curbs_detection_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_ll_lane_detection_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_localization_interface_internal.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_localization_update_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_logger_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_metadata_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_metadata_interface_internal.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_object_detection_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_object_detection_interface_internal.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_profiler_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_roi.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_roicontroller_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_roicontroller_interface_internal.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_stereo_processing_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_stereo_processing_interface_internal.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_super_task_pr_interface_internal.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_terrain_mapping_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_terrain_mapping_nl_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_terrain_mapping_sr_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_terrain_mapping_sr_interface_internal.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_throttler_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_time_interface_internal.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_tmod_sr_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_tracker_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_tsd_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_tsd_interface_internal.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_vehicle_status.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_visual_odometry_interface.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_visual_odometry_interface_internal.h"/>
+        <F N="../cv_common/inc/cvapi/cvapi_wps.h"/>
+      </Folder>
+      <Folder
+        Name="cv_common"
+        Filters="">
+        <F N="../cv_common/inc/ambacv_ioctl.h"/>
+        <F N="common/include/build_version.h"/>
+        <F N="../cv_common/inc/cmd_msg_idsp_cv1.h"/>
+        <F N="../cv_common/inc/cmd_msg_idsp_cv2.h"/>
+        <F N="../cv_common/inc/cmd_msg_idsp_cv22.h"/>
+        <F N="../cv_common/inc/cvsched_drv_errno.h"/>
+        <F N="../cv_common/inc/cvsched_errno.h"/>
+        <F N="../cv_common/inc/cvtask_api.h"/>
+        <F N="../cv_common/inc/cvtask_coredef.h"/>
+        <F N="../cv_common/inc/cvtask_errno.h"/>
+        <F N="../cv_common/inc/cvtask_ossrv.h"/>
+        <F N="../cv_common/inc/dsp_types.h"/>
+        <F N="../cv_common/inc/idsp_vis_msg.h"/>
+        <F N="../cv_common/inc/schdr_api.h"/>
+        <F N="../cv_common/inc/schdr_util.h"/>
+      </Folder>
+      <Folder
+        Name="src_common"
+        Filters="">
+        <F N="common/src/cvtask_hotlink_jumptable.vasm"/>
+        <F N="common/src/visorc_hwinterface.vasm"/>
+        <F N="common/src/visorc_hwsupport.c"/>
+      </Folder>
+    </Folder>
+    <Folder
+      Name="cvtask"
+      Filters="">
+      <F N="cvtask/include.mk.in"/>
+    </Folder>
+    <Folder
+      Name="installer"
+      Filters="">
+      <F N="installer/configure.ac"/>
+      <F
+        N="installer/Makefile.in"
+        Type="Makefile"/>
+    </Folder>
+    <Folder
+      Name="flexidag"
+      Filters="">
+      <Folder
+        Name="util_flexipatch"
+        Filters=""/>
+      <F N="flexidag/configure.ac"/>
+      <F N="flexidag/include.mk.in"/>
+    </Folder>
+    <Folder
+      Name="util_crcexpand"
+      Filters="">
+      <F N="util/crcexpand/crcexpand.c"/>
+      <F
+        N="util/crcexpand/include.mk"
+        Type="Makefile"/>
+    </Folder>
+    <Folder
+      Name="util_fmtreloc"
+      Filters="">
+      <F N="util/fmtreloc/fmtreloc.c"/>
+      <F
+        N="util/fmtreloc/include.mk"
+        Type="Makefile"/>
+    </Folder>
+    <F N="configure.ac"/>
+    <F
+      N="Makefile.in"
+      Type="Makefile"/>
+    <F N="Makefile.real.in"/>
+    <F N="UcodeConfig.pm.in"/>
+  </Files>
+</Project>

@@ -1,0 +1,18 @@
+Rval = 0x00000000, AmbaDSP_Image3aStatistic.c, AmbaIK_TransferCFAAaaStatData(), ID = 0, description : OK case in ik_ctest_aaa.c
+Rval = 0x00000000, AmbaDSP_Image3aStatistic.c, AmbaIK_TransferPGAaaStatData(), ID = 1, description : OK case in ik_ctest_aaa.c
+Rval = 0x00000000, AmbaDSP_Image3aStatistic.c, AmbaIK_TransCFAHistStatData(), ID = 2, description : OK case in ik_ctest_aaa.c
+Rval = 0x00000000, AmbaDSP_Image3aStatistic.c, AmbaIK_TransferCFAAaaStatData dummy 1x2(), ID = 3, description : OK case in ik_ctest_aaa.c
+Rval = 0x00000000, AmbaDSP_Image3aStatistic.c, AmbaIK_TransferPGAaaStatData dummy 1x2(), ID = 4, description : OK case in ik_ctest_aaa.c
+Rval = 0x00000000, AmbaDSP_Image3aStatistic.c, AmbaIK_TransCFAHistStatData dummy 1x2(), ID = 5, description : OK case in ik_ctest_aaa.c
+Rval = 0x01100005, AmbaDSP_Image3aStatistic.c, AmbaIK_TransCFAHistStatData(), ID = 6, description : null-ptr fail case in ik_ctest_aaa.c
+Rval = 0x01100005, AmbaDSP_Image3aStatistic.c, AmbaIK_TransCFAHistStatData(), ID = 7, description : null-ptr fail case in ik_ctest_aaa.c
+Rval = 0x01100103, AmbaDSP_Image3aStatistic.c, AmbaIK_TransCFAHistStatData(), ID = 8, description : parameter fail case in ik_ctest_aaa.c
+Rval = 0x01100005, AmbaDSP_Image3aStatistic.c, AmbaIK_TransferPGAaaStatData(), ID = 9, description : null-ptr fail case in ik_ctest_aaa.c
+Rval = 0x01100005, AmbaDSP_Image3aStatistic.c, AmbaIK_TransferPGAaaStatData(), ID = 10, description : null-ptr fail case in ik_ctest_aaa.c
+Rval = 0x01100103, AmbaDSP_Image3aStatistic.c, AmbaIK_TransferPGAaaStatData(), ID = 11, description : parameter fail case in ik_ctest_aaa.c
+Rval = 0x01100005, AmbaDSP_Image3aStatistic.c, AmbaIK_TransCFAHistStatData(), ID = 12, description : null-ptr fail case in ik_ctest_aaa.c
+Rval = 0x01100005, AmbaDSP_Image3aStatistic.c, AmbaIK_TransCFAHistStatData(), ID = 13, description : null-ptr fail case in ik_ctest_aaa.c
+Rval = 0x01100103, AmbaDSP_Image3aStatistic.c, AmbaIK_TransCFAHistStatData(), ID = 14, description : parameter fail case in ik_ctest_aaa.c
+Rval = 0x01100103, AmbaDSP_Image3aStatistic.c, AmbaIK_TransCFAHistStatData(), ID = 15, description : source header fail case in ik_ctest_aaa.c
+Rval = 0x01100103, AmbaDSP_Image3aStatistic.c, AmbaIK_TransferPGAaaStatData(), ID = 16, description : source header fail case in ik_ctest_aaa.c
+Rval = 0x01100103, AmbaDSP_Image3aStatistic.c, AmbaIK_TransCFAHistStatData(), ID = 17, description : source header fail case in ik_ctest_aaa.c

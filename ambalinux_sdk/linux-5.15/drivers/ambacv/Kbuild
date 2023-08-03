@@ -1,0 +1,97 @@
+##
+## Kbuild
+##
+## History:
+##    2017/05/23 - [Zhikan Yang] Create
+##
+## Copyright (c) 2017 Ambarella, Inc.
+##
+## This program is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License
+## as published by the Free Software Foundation; either version 2
+## of the License, or (at your option) any later version.
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+
+ifeq ($(PROJECT),h32)
+# Do not build in h32 chip
+else
+ifeq ($(PROJECT),cv1)
+# Do not build in cv1 chip
+else
+ifeq ($(PROJECT),)
+# Do not build if no PROJECT
+else
+ifeq ($(AMB_TOPDIR),)
+AMBACV_DIR := $(srctree)/drivers/ambacv
+else
+AMBACV_DIR := $(AMB_TOPDIR)/kernel/private/drivers/ambacv
+endif
+
+BUILD_SHA1 := $(shell cd $(AMBACV_DIR) && git describe --match $$PROJECT"_*" --abbrev=5 HEAD 2> /dev/null || git describe --dirty)
+BUILD_USER := $(shell whoami)@$(shell hostname)
+BUILD_TIME := $(shell date)
+ifeq ($(AMB_TOPDIR),)
+CVCHIP_ID  := $(shell echo $(PROJECT) | tr 'a-z' 'A-Z')
+else
+CVCHIP_ID  := $(shell echo $(AMBARELLA_ARCH) | tr 'a-z' 'A-Z')
+endif
+
+EXTRA_CFLAGS            += -DBUILD_SHA1="\"$(BUILD_SHA1)\""
+EXTRA_CFLAGS            += -DBUILD_USER="\"$(BUILD_USER)\""
+EXTRA_CFLAGS            += -DBUILD_TIME="\"$(BUILD_TIME)\""
+EXTRA_CFLAGS            += -DCHIP_$(CVCHIP_ID)=1
+ifeq ($(AMB_TOPDIR),)
+EXTRA_CFLAGS            += -I$(AMBARELLA_PKG_DIR)/ambacv/cv_common/inc/cavalry
+EXTRA_CFLAGS            += -I$(AMBARELLA_PKG_DIR)/ambacv/cv_common/inc/cvapi
+EXTRA_CFLAGS            += -I$(AMBARELLA_PKG_DIR)/ambacv/cv_common/inc/cvsched_common
+EXTRA_CFLAGS            += -I$(AMBARELLA_PKG_DIR)/ambacv/cv_common/inc
+else
+EXTRA_CFLAGS            += -I$(AMB_TOPDIR)/include/cavalry
+EXTRA_CFLAGS            += -I$(AMB_TOPDIR)/cv/cv_common/inc/cvapi
+EXTRA_CFLAGS            += -I$(AMB_TOPDIR)/cv/cv_common/inc/cvsched_common
+EXTRA_CFLAGS            += -I$(AMB_TOPDIR)/cv/cv_common/inc
+endif
+
+ifeq ($(CVCHIP_ID),CV2A)
+EXTRA_CFLAGS            += -DASIL_COMPLIANCE
+endif
+
+ifeq ($(CVCHIP_ID),CV2FS)
+EXTRA_CFLAGS            += -DASIL_COMPLIANCE
+endif
+
+ifeq ($(CVCHIP_ID),CV22A)
+EXTRA_CFLAGS            += -DASIL_COMPLIANCE
+endif
+
+ifeq ($(CVCHIP_ID),CV22FS)
+EXTRA_CFLAGS            += -DASIL_COMPLIANCE
+endif
+
+EXTRA_CFLAGS		+= $(AMBARELLA_DRV_CFLAGS)
+EXTRA_AFLAGS		+= $(AMBARELLA_DRV_AFLAGS)
+EXTRA_LDFLAGS		+= $(AMBARELLA_DRV_LDFLAGS)
+
+obj-m := ambacv.o
+ambacv-y := ambacv_dev.o        \
+	    ambacv_visorc.o     \
+	    ambacv_idsporc.o    \
+	    ambacv_vinorc.o     \
+	    schdrmsg_kernel.o   \
+	    flexidag_ioctl.o    \
+	    cavalry_ioctl.o     \
+	    cavalry_log.o       \
+	    cavalry_mem.o       \
+	    cavalry_misc.o      \
+	    cavalry_cma.o       \
+	    cavalry_stats.o     \
+	    cavalry_visorc.o    \
+	    cache.o             \
+	    util.o
+endif
+endif
+endif

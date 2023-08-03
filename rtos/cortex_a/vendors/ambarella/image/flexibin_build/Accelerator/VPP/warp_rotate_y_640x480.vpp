@@ -1,0 +1,44 @@
+/******************************************************************************/
+/*                                                                            */
+/*  DAG: IDSP_Top                                                             */
+/*                                                                            */
+/*      Implements IDSP-like DAG.                                             */
+/*                                                                            */
+/*  Used as tutorial in Vector Processor User Guide.                          */
+/*                                                                            */
+/*  Copyright 2017 Ambarella Inc.                                             */
+/******************************************************************************/
+#include "vp_vas.h"
+#include "idsp_top_globals.h"
+
+/*subDAGs */
+
+/******************************************************************************/
+/* Main DAG                                                                   */
+/******************************************************************************/
+DAG IDSP_Top = {
+
+    extern = {
+    };
+
+    /**************************************************************************/
+    /* Primary Inputs                                                         */
+    /**************************************************************************/
+    /* Input Yimage */    
+    VP_input(y_in, uint8_t, vector(1, 1, IN_IMG_HEIGHT, IN_IMG_WIDTH), vfull_vector=1);
+
+    /* Resize Warp field */
+    VP_input(warp_field_rotate_y, sfixed16_4_t, vector(2,1,9,6));
+
+    VP_warp(
+        y_in, warp_field_rotate_y,
+        VP_tensor(y_temp, uint8_t, vector(1, 1, OUT_Y_HEIGHT ,OUT_Y_WIDTH)),
+        out_w = OUT_Y_WIDTH,
+        out_h = OUT_Y_HEIGHT,
+        horizontal_grid_spacing_log2 = 7,
+        vertical_grid_spacing_log2 = 6,
+		zr = 0
+        );
+
+    VP_output(y_out, y_temp);
+}

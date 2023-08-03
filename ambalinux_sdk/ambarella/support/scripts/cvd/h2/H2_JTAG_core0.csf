@@ -1,0 +1,51 @@
+; For Ambarella H2 JTAG configuration
+; 
+;    11/16/2015: [Joey Li] create file
+;    11/17/2015: [Joey Li] set little endian
+;                          disalbe "UNDEF" vector-catch
+;    11/26/2015: [Joey Li] add ambarella proprietary configurations
+;                          add MapBusWidth for 32-bit access
+;    11/30/2015: [Joey Li] adapation for H2
+;
+;
+
+; Ambarella configuration, DONOT delete
+; Amba:LogLevel 3
+; Amba:MemMap 0xEC000000 0x01000000 IO
+; Amba:Aarch  64
+
+CPUTYPE CORTEXA53
+OPTION.JTAGCLOCK      10.000000Mhz
+
+MULtiCore.DEBUGACCESSPORT 0.
+MULtiCore.IRPOST      0.
+MULtiCore.DRPost      0.
+MULtiCore.IRPRE       0.
+MULtiCore.DRPre       0.
+MULtiCore.DAPIRPOST   0.
+MULtiCore.DAPDRPOST   0.
+MULtiCore.DAPIRPRE    0.
+MULtiCore.DAPDRPRE    0.
+MULtiCore.COREBASE    0x80010000
+MULticore.CTIBASE     0x80020000
+
+SYStem.OPTION EnReset       ON
+SYStem.OPTION TRST          OFF
+SYStem.OPTION ResBreak      OFF
+SYStem.OPTION PCZero        OFF
+SYStem.OPTION RegisterInit  OFF
+SYStem.OPTION BigEndian     OFF
+
+VectorCatch.RESET           OFF
+VectorCatch.PABORT          OFF
+VectorCatch.DABORT          OFF
+VectorCatch.UNDEF           OFF
+
+MapBusWidth32 0x00000000++0xFFFFFFFF
+option.SpeedUp on
+connectAttach
+wait 100.ms
+
+break
+
+ENDEXE

@@ -1,0 +1,38 @@
+#include "vp_vas.h"
+
+DAG reduce_sum_h_u8_1280x720 = {
+	VP_input(input0, uint8_t, vector(1, 1, 720, 1280));
+
+//==============================================================
+
+	//transpose for width reduce
+	VP_transposewh(input0, VP_tensor(input_t, uint8_t));
+
+	//crop since HW cannot process 32 bit limitation
+	VP_crop(
+		input_t,
+		VP_tensor(cropped1, uint8_t),
+		w = 240, h = 1280, d = 1, p = 1,
+		start_w = 0, zr = 1
+		);
+	VP_crop(
+		input_t,
+		VP_tensor(cropped2, uint8_t),
+		w = 240, h = 1280, d = 1, p = 1,
+		start_w = 240, zr = 1
+		);
+	VP_crop(
+		input_t,
+		VP_tensor(cropped3, uint8_t),
+		w = 240, h = 1280, d = 1, p = 1,
+		start_w = 480, zr = 1
+		);
+	VP_sumrw(cropped1, VP_tensor(data1, uint16_t));
+	VP_sumrw(cropped2, VP_tensor(data2, uint16_t));
+	VP_sumrw(cropped3, VP_tensor(data3, uint16_t));
+	VP_add(data1, data2, VP_tensor(added1, int32_t));
+	VP_add(added1, data3, VP_tensor(added2, int32_t));
+
+//==============================================================
+	VP_output(reduce_output, added2);
+}

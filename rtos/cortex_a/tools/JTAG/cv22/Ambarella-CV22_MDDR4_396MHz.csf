@@ -1,0 +1,851 @@
+// startup macro (DDR Controller initialization) for cv2s Bring Up Board
+
+
+execute Ambarella-CV22.def
+
+
+
+// dram pll setting (TO BE EDITED AS NEEDED)
+MWriteS32 PLL_DDR_CTRL_REG      0x12100000
+MWriteS32 PLL_DDR_CTRL2_REG     0x30520000
+//MWriteS32 PLL_DDR_CTRL3_REG     0x00088004
+MWriteS32 PLL_DDR_CTRL3_REG     0x00068302
+MWriteS32 PLL_DDR_CTRL_REG      0x12100001
+MWriteS32 PLL_DDR_CTRL_REG      0x12100000
+
+// setup DDRIO dll Control settings (TO BE EDITED AS NEEDED)
+MWriteS32 DDRIO_DLL0_DDRC0              0x022600
+MWriteS32 DDRIO_DLL1_DDRC0              0x022600
+MWriteS32 DDRIO_DLL2_DDRC0              0x022600
+MWriteS32 DDRIO_DLL3_DDRC0              0x022600
+MWriteS32 DDRIO_DLL_CTRL_MISC_DDRC0              0x400000
+MWriteS32 DDRIO_DLL_CTRL_SEL0_DDRC0              0x41b9b1
+MWriteS32 DDRIO_DLL_CTRL_SEL1_DDRC0              0x41b9b1
+MWriteS32 DDRIO_DLL_CTRL_SEL2_DDRC0              0x41b9b1
+MWriteS32 DDRIO_DLL_CTRL_SEL3_DDRC0              0x41b9b1
+MWriteS32 DDRIO_DLL_SYNC_CTRL_SEL0_DDRC0              0xb0041
+MWriteS32 DDRIO_DLL_SYNC_CTRL_SEL1_DDRC0              0xb0041
+MWriteS32 DDRIO_DLL_SYNC_CTRL_SEL2_DDRC0              0xb0041
+MWriteS32 DDRIO_DLL_SYNC_CTRL_SEL3_DDRC0              0xb0041
+Wait 2.ms
+
+// Running Version: /cv2s/tools2/tv2/release/DramInit/cv2s.2
+// DRAM programming Generated on 2018-03-27 17:10:42.023829
+// config=1x4096x32xMDDR4x4x9x396
+// seed : 0
+// tb : bub
+// Nb of DDRC lanes : 1
+// sg=1066
+//  ## DRAM INFO ##
+// bus_width_str   :      x32
+// col_bits        :       12
+// intlv_bdry      :       64
+// num_mem         :        1
+// num_ddrc        :        1
+// row_bits        :       14
+// dram_type_str   :    MDDR4
+// page_size       :        2
+// 32B_intlv_bdry  :        0
+// bus_width       :        0
+// page_size_die   :        2
+// bank_bits       :        3
+// TCK             :     2525
+// burst_mode      :        1
+// dram_size       :        4
+// freq            :      396
+// nb_banks        :        1
+// dram_type       :        6
+// size            :     4096
+// 
+
+
+// 
+
+
+// ## INFO ##: 
+//  CL=10 tRRD=4 tRCD=8 tRP=9 tRTP=8
+// tWR=8  tWTR=8 tCK=2525, odt=0
+// DRAMTYPE=MDDR4, BUSMODE=0, DRAMSIZE=4 PAGESZ=4096,
+// 
+ 
+
+//  ## DDRC REGISTERS ## 
+//  ### @ 0x0 : DRAM_CONTROL 
+// DRAM_EN                   : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DRAM_AUTO_REF_EN          : wid:    1, pos:    1, val: 0x0001 (0x0001), offset:    0, scale:    1 (native range: [0 : 1]
+// DRAM_CKE                  : wid:    1, pos:    2, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DRAM_RESET                : wid:    1, pos:    3, val: 0x0001 (0x0001), offset:    0, scale:    1 (native range: [0 : 1]
+// IDDQ_TST_EN               : wid:    1, pos:    4, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DEEP_PD_ENABLE            : wid:    1, pos:    5, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// CS_EN                     : wid:    1, pos:    6, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// HIGHSKEW_EN               : wid:    1, pos:    7, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// HIGHSKEW_CNT              : wid:    2, pos:    8, val: 0x0002 (0x0002), offset:    0, scale:    1 (native range: [0 : 3]
+// SR_CNT                    : wid:    4, pos:   10, val: 0x0003 (0x0001), offset:    0, scale:    2 (native range: [0 : 30]
+// DDR3_ODT                  : wid:    1, pos:   14, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// MDDR3_ODT_ON              : wid:    3, pos:   15, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// MDDR3_ODT_OFF             : wid:    3, pos:   18, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// MDDR3_POD                 : wid:    1, pos:   21, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// LPDDR4_R2W_ADJ            : wid:    6, pos:   22, val: 0x-005 (0x003b), offset:    0, scale:    1 (native range: [-32 : 31]
+// CS_CNTRL                  : wid:    2, pos:   29, val: 0x0003 (0x0003), offset:    0, scale:    1 (native range: [0 : 3]
+// LPDDR4_TRAIN_CHB          : wid:    1, pos:   31, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// 
+//  ### @ 0x4 : DRAM_CONFIG 
+// PAGE_SIZE                 : wid:    2, pos:    2, val: 0x0002 (0x0002), offset:    0, scale:    1 (native range: [0 : 3]
+// BANK_SIZE                 : wid:    1, pos:    4, val: 0x0001 (0x0001), offset:    0, scale:    1 (native range: [0 : 1]
+// DRAM_SIZE                 : wid:    3, pos:    5, val: 0x0004 (0x0004), offset:    0, scale:    1 (native range: [0 : 7]
+// BUS_MODE                  : wid:    1, pos:    8, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// BURST_MODE                : wid:    1, pos:    9, val: 0x0001 (0x0001), offset:    0, scale:    1 (native range: [0 : 1]
+// CTLR_ODT_CFG              : wid:    3, pos:   10, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DQS_IEN_EN                : wid:    1, pos:   13, val: 0x0001 (0x0001), offset:    0, scale:    1 (native range: [0 : 1]
+// AMASK_MODE                : wid:    1, pos:   14, val: 0x0001 (0x0001), offset:    0, scale:    1 (native range: [0 : 1]
+// SERIAL_MODE               : wid:    1, pos:   15, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// AR_CREDIT_MAX             : wid:    4, pos:   16, val: 0x0008 (0x0008), offset:    0, scale:    1 (native range: [0 : 15]
+// AR_CREDIT_MIN             : wid:    4, pos:   20, val: 0x0002 (0x0002), offset:    0, scale:    1 (native range: [0 : 15]
+// DDR_PLUS_EN               : wid:    1, pos:   24, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// SW_PAD_ZQ_CTL             : wid:    1, pos:   25, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DRAM_TYPE                 : wid:    3, pos:   27, val: 0x0006 (0x0006), offset:    0, scale:    1 (native range: [0 : 7]
+// SR_CKEN                   : wid:    1, pos:   30, val: 0x0001 (0x0001), offset:    0, scale:    1 (native range: [0 : 1]
+// 
+//  ### @ 0x8 : DRAM_TIMING1 
+// T_RRD                     : wid:    5, pos:    0, val: 0x0004 (0x0002), offset:    2, scale:    1 (native range: [2 : 33]
+// T_RCD                     : wid:    6, pos:    5, val: 0x0008 (0x0006), offset:    2, scale:    1 (native range: [2 : 65]
+// T_RP                      : wid:    6, pos:   11, val: 0x0009 (0x0007), offset:    2, scale:    1 (native range: [2 : 65]
+// T_RC                      : wid:    8, pos:   17, val: 0x0019 (0x0017), offset:    2, scale:    1 (native range: [2 : 257]
+// T_RAS                     : wid:    7, pos:   25, val: 0x0011 (0x0011), offset:    0, scale:    1 (native range: [0 : 127]
+// 
+//  ### @ 0xc : DRAM_TIMING2 
+// T_RTP                     : wid:    4, pos:    0, val: 0x0008 (0x0006), offset:    2, scale:    1 (native range: [2 : 17]
+// T_WR                      : wid:    6, pos:    4, val: 0x0008 (0x0006), offset:    2, scale:    1 (native range: [2 : 65]
+// T_RFC                     : wid:    9, pos:   10, val: 0x0048 (0x0024), offset:    0, scale:    2 (native range: [0 : 1022]
+// T_CL                      : wid:    6, pos:   19, val: 0x000a (0x000a), offset:    0, scale:    1 (native range: [0 : 63]
+// T_WL                      : wid:    6, pos:   25, val: 0x0008 (0x0008), offset:    0, scale:    1 (native range: [0 : 63]
+// 
+//  ### @ 0x10 : DRAM_TIMING3 
+// T_REFI                    : wid:   12, pos:    0, val: 0x060b (0x0060), offset:    0, scale:   16 (native range: [0 : 65520]
+// T_DPD                     : wid:   17, pos:   12, val: 0x0002 (0x0000), offset:    0, scale:    4 (native range: [0 : 524284]
+// T_DQS                     : wid:    1, pos:   29, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// 
+//  ### @ 0x14 : DRAM_TIMING4 
+// T_FAW                     : wid:    7, pos:    0, val: 0x0010 (0x000e), offset:    2, scale:    1 (native range: [2 : 129]
+// T_XSR                     : wid:   10, pos:    7, val: 0x004b (0x0049), offset:    2, scale:    1 (native range: [2 : 1025]
+// T_WTR                     : wid:    5, pos:   17, val: 0x0008 (0x0006), offset:    2, scale:    1 (native range: [2 : 33]
+// PWR_UP_CNT                : wid:    5, pos:   22, val: 0x0003 (0x0003), offset:    0, scale:    1 (native range: [0 : 31]
+// T_OSCO                    : wid:    2, pos:   27, val: 0x0002 (0x0002), offset:    0, scale:    1 (native range: [0 : 3]
+// HIGHSPEED_MODE            : wid:    1, pos:   29, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// 
+//  ### @ 0x18 : DRAM_INIT_CTL 
+// PRE_ALL_EN                : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// IMM_REF_EN                : wid:    1, pos:    1, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// GET_RTT_EN                : wid:    1, pos:    2, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DLL_RST_EN                : wid:    1, pos:    3, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// ZQ_CLB_EN                 : wid:    1, pos:    4, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// PAD_CLB_SHORT_EN          : wid:    1, pos:    5, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// PAD_CLB_LONG_EN           : wid:    1, pos:    6, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// 
+//  ### @ 0x1c : DRAM_MODE_REG 
+// MR_DATA                   : wid:   16, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// MR_ADDR                   : wid:    8, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 255]
+// MR_WRITE                  : wid:    1, pos:   24, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// MR_DSEL                   : wid:    1, pos:   25, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// MR_CSEL                   : wid:    1, pos:   26, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// MR_BUSY                   : wid:    1, pos:   31, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// 
+//  ### @ 0x20 : DRAM_SELF_REFRESH 
+// SREF_AUTO_ACTIVE_DLY      : wid:   10, pos:    0, val: 0x0064 (0x0001), offset:    0, scale:   64 (native range: [0 : 65472]
+// SREF_AUTO_CALIB_THRSH     : wid:    6, pos:   10, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 63]
+// PWC_SR_EN                 : wid:    1, pos:   27, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// SREF_ACTIVE               : wid:    1, pos:   28, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// SREF_AUTO_CALIB_EN        : wid:    1, pos:   29, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// SREF_AUTO_ACTIVE_EN       : wid:    1, pos:   30, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// SREF_FORCE_ACTIVE_EN      : wid:    1, pos:   31, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// 
+//  ### @ 0x24 : DRAM_DQS_SYNC 
+// SW_DQS_SYNC_EN            : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// SW_DQS_SYNC_CTL           : wid:    4, pos:    1, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 15]
+// AUTO_DQS_SYNC_CFG         : wid:    3, pos:    5, val: 0x0002 (0x0002), offset:    0, scale:    1 (native range: [0 : 7]
+// SYNC_TRACKING_SEL         : wid:    1, pos:    8, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// LONG_RTT                  : wid:    1, pos:    9, val: 0x0001 (0x0001), offset:    0, scale:    1 (native range: [0 : 1]
+// SYNC_TRACKING_WAIT        : wid:    4, pos:   10, val: 0x0007 (0x0007), offset:    0, scale:    1 (native range: [0 : 15]
+// 
+//  ### @ 0x28 : DRAM_PAD_TERM 
+// PADS_NOTERM               : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// PADS_GDDR3                : wid:    1, pos:    1, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// PADS_DDS                  : wid:    3, pos:    2, val: 0x0005 (0x0005), offset:    0, scale:    1 (native range: [0 : 7]
+// PADS_TERM                 : wid:    3, pos:    5, val: 0x0002 (0x0002), offset:    0, scale:    1 (native range: [0 : 7]
+// PADS_FORCE_IMPN           : wid:    3, pos:    8, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// PADS_FORCE_IMPP           : wid:    3, pos:   11, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// PADS_FORCE                : wid:    1, pos:   14, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// PADS_REQ_SHORT            : wid:    1, pos:   15, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// PADS_REQ_LONG             : wid:    1, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// PADS_RESET                : wid:    1, pos:   17, val: 0x0001 (0x0001), offset:    0, scale:    1 (native range: [0 : 1]
+// 
+//  ### @ 0x2c : DRAM_ZQ_CALIB 
+// PAD_ZQ_CLB_EN             : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DDR_ZQ_CLB_EN             : wid:    1, pos:    1, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DDR_ZQCS_SEL              : wid:    1, pos:    2, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// ZQ_CLBR_CFG               : wid:    5, pos:    3, val: 0x000c (0x000c), offset:    0, scale:    1 (native range: [0 : 31]
+// T_ZQC_SEL                 : wid:    2, pos:    8, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// T_ZQC_SEL_POR_MDDR4       : wid:    3, pos:   10, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// 
+//  ### @ 0x30 : DRAM_RSVD_SPACE 
+// RSVD_SPACE                : wid:   32, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 4294967295]
+// 
+//  ### @ 0x34 : DRAM_BYTE_MAP 
+// DDRIO_BYTE                : wid:    8, pos:    0, val: 0x00e4 (0x00e4), offset:    0, scale:    1 (native range: [0 : 255]
+// 
+//  ### @ 0x38 : DRAM_POWER_DOWN 
+// PWR_DWN_EN                : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// PWR_DWN_DLY               : wid:   28, pos:    4, val: 0x0032 (0x0003), offset:    0, scale:   16 (native range: [0 : 4294967280]
+// 
+//  ### @ 0x3c : DRAM_DLL_CALIB 
+// DLL_CLBR_EN               : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DLL_CLBR_CFG              : wid:    5, pos:    1, val: 0x0002 (0x0002), offset:    0, scale:    1 (native range: [0 : 31]
+// T_DLL_COUNT               : wid:    8, pos:    6, val: 0x00c8 (0x00c8), offset:    0, scale:    1 (native range: [0 : 255]
+// T_DLL_POST_COUNT          : wid:   12, pos:   14, val: 0x0078 (0x0078), offset:    0, scale:    1 (native range: [0 : 4095]
+// 
+//  ### @ 0x44 : DRAM_TIMING5_LP4TRAIN 
+// T_WTR_L                   : wid:    4, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 15]
+// T_CCD_L                   : wid:    4, pos:    4, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 15]
+// DBI_EN                    : wid:    1, pos:    8, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// T_CCD_S                   : wid:    4, pos:   10, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 15]
+// T_CKE_CNT                 : wid:    5, pos:   15, val: 0x0011 (0x0011), offset:    0, scale:    1 (native range: [0 : 31]
+// DELAY_OFFSET              : wid:    4, pos:   20, val: 0x0005 (0x0005), offset:    0, scale:    1 (native range: [0 : 15]
+// LPDDR4_TRAINING_MODE      : wid:    1, pos:   24, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// LPDDR4_TRAINING_SET       : wid:    1, pos:   25, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// LPDDR4_TDHTRAIN           : wid:    3, pos:   26, val: 0x0001 (0x0001), offset:    0, scale:    1 (native range: [0 : 7]
+// LPDDR4_TDSTRAIN           : wid:    3, pos:   29, val: 0x0001 (0x0001), offset:    0, scale:    1 (native range: [0 : 7]
+// 
+//  ### @ 0x48 : DRAM_PAD_TERM2 
+// PADS_ADDR_DDS             : wid:    3, pos:    0, val: 0x0005 (0x0005), offset:    0, scale:    1 (native range: [0 : 7]
+// PADS_ADDR_NOTERM          : wid:    1, pos:    3, val: 0x0001 (0x0001), offset:    0, scale:    1 (native range: [0 : 1]
+// PADS_ADDR_GDDR3           : wid:    1, pos:    4, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// PADS_ADDR_TERM            : wid:    3, pos:    5, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// PADS_PDDS                 : wid:    3, pos:    8, val: 0x0005 (0x0005), offset:    0, scale:    1 (native range: [0 : 7]
+// PADS_LP4                  : wid:    1, pos:   11, val: 0x0001 (0x0001), offset:    0, scale:    1 (native range: [0 : 1]
+// PADS_ADDR_PDDS            : wid:    3, pos:   12, val: 0x0005 (0x0005), offset:    0, scale:    1 (native range: [0 : 7]
+// PADS_ADDR_LP4             : wid:    1, pos:   15, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// PADS_CA_A_DDS             : wid:    3, pos:   16, val: 0x0005 (0x0005), offset:    0, scale:    1 (native range: [0 : 7]
+// PADS_CA_A_NOTERM          : wid:    1, pos:   19, val: 0x0001 (0x0001), offset:    0, scale:    1 (native range: [0 : 1]
+// PADS_CA_A_GDDR3           : wid:    1, pos:   20, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// PADS_CA_A_TERM            : wid:    3, pos:   21, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// PADS_CA_A_PDDS            : wid:    3, pos:   24, val: 0x0005 (0x0005), offset:    0, scale:    1 (native range: [0 : 7]
+// PADS_CA_A_LP4             : wid:    1, pos:   27, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// 
+//  ### @ 0x4c : DRAM_PAD_TERM3 
+// PADS_DQ_DDS               : wid:    3, pos:   12, val: 0x0005 (0x0005), offset:    0, scale:    1 (native range: [0 : 7]
+// PADS_DQ_NOTERM            : wid:    1, pos:   15, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// PADS_DQ_GDDR3             : wid:    1, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// PADS_DQ_TERM              : wid:    3, pos:   17, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// PADS_DQ_PDDS              : wid:    3, pos:   20, val: 0x0005 (0x0005), offset:    0, scale:    1 (native range: [0 : 7]
+// PADS_DQ_LP4               : wid:    1, pos:   23, val: 0x0001 (0x0001), offset:    0, scale:    1 (native range: [0 : 1]
+// PADS_IBIAS_CTL_EN         : wid:    1, pos:   24, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// PADS_IBIAS_CTL            : wid:    2, pos:   25, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// 
+//  ### @ 0x50 : LPDDR4_MPC_WDATA0 
+// MPC_WDATA0                : wid:   16, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// MPC_WDATA1                : wid:   16, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// 
+//  ### @ 0x54 : LPDDR4_MPC_WDATA1 
+// MPC_WDATA2                : wid:   16, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// MPC_WDATA3                : wid:   16, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// 
+//  ### @ 0x58 : LPDDR4_MPC_WDATA2 
+// MPC_WDATA4                : wid:   16, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// MPC_WDATA5                : wid:   16, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// 
+//  ### @ 0x5c : LPDDR4_MPC_WDATA3 
+// MPC_WDATA6                : wid:   16, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// MPC_WDATA7                : wid:   16, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// 
+//  ### @ 0x60 : LPDDR4_MPC_WDATA4 
+// MPC_WDATA8                : wid:   16, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// MPC_WDATA9                : wid:   16, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// 
+//  ### @ 0x64 : LPDDR4_MPC_WDATA5 
+// MPC_WDATA10               : wid:   16, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// MPC_WDATA11               : wid:   16, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// 
+//  ### @ 0x68 : LPDDR4_MPC_WDATA6 
+// MPC_WDATA12               : wid:   16, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// MPC_WDATA13               : wid:   16, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// 
+//  ### @ 0x6c : LPDDR4_MPC_WDATA7 
+// MPC_WDATA14               : wid:   16, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// MPC_WDATA15               : wid:   16, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// 
+//  ### @ 0x70 : LPDDR4_MPC_RDATA0 
+// MPC_RDATA0                : wid:   16, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// MPC_RDATA1                : wid:   16, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// 
+//  ### @ 0x74 : LPDDR4_MPC_RDATA1 
+// MPC_RDATA2                : wid:   16, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// MPC_RDATA3                : wid:   16, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// 
+//  ### @ 0x78 : LPDDR4_MPC_RDATA2 
+// MPC_RDATA4                : wid:   16, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// MPC_RDATA5                : wid:   16, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// 
+//  ### @ 0x7c : LPDDR4_MPC_RDATA3 
+// MPC_RDATA6                : wid:   16, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// MPC_RDATA7                : wid:   16, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// 
+//  ### @ 0x80 : LPDDR4_MPC_RDATA4 
+// MPC_RDATA8                : wid:   16, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// MPC_RDATA9                : wid:   16, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// 
+//  ### @ 0x84 : LPDDR4_MPC_RDATA5 
+// MPC_RDATA10               : wid:   16, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// MPC_RDATA11               : wid:   16, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// 
+//  ### @ 0x88 : LPDDR4_MPC_RDATA6 
+// MPC_RDATA12               : wid:   16, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// MPC_RDATA13               : wid:   16, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// 
+//  ### @ 0x8c : LPDDR4_MPC_RDATA7 
+// MPC_RDATA14               : wid:   16, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// MPC_RDATA15               : wid:   16, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// 
+//  ### @ 0x90 : LPDDR4_UINSTRUCTION 
+// IMM_DATA                  : wid:   14, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 16383]
+// OPCODE                    : wid:    4, pos:   28, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 15]
+// 
+//  ### @ 0x94 : LPDDR4_TRAINING_WMASK 
+// TRAINING_WMASK            : wid:   32, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 4294967295]
+// 
+//  ### @ 0xc4 : LPDDR4_TRAINING_RMASK 
+// TRAINING_RMASK            : wid:   32, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 4294967295]
+// 
+//  ### @ 0x9c : LPDDR4_TRAINING_CMD_BUSY 
+// TRAINING_CMD_BUSY         : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// 
+//  ### @ 0xa0 : LPDDR4_TRAINING_RAW_DQ 
+// RAW_DQ_CAPTURE            : wid:    7, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 127]
+// 
+//  ### @ 0x98 : LPDDR4_DQS_OSCILATOR 
+// END_OSC_CNT               : wid:   16, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// START_OSC_CNT             : wid:   16, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 65535]
+// 
+//  ### @ 0xbc : LPDDR4_DQS_OSCILATOR_TIMER 
+// OSC_TIMER                 : wid:   10, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1023]
+// 
+//  ### @ 0xa4 : LPDDR4_DQ_WRITE_DLY 
+// LPDDR4_DQ_DLY_CTRL0       : wid:    7, pos:    0, val: 0x0015 (0x0015), offset:    0, scale:    1 (native range: [0 : 127]
+// LPDDR4_DQ_DLY_CTRL1       : wid:    7, pos:    7, val: 0x0015 (0x0015), offset:    0, scale:    1 (native range: [0 : 127]
+// LPDDR4_DQ_DLY_CTRL2       : wid:    7, pos:   14, val: 0x0015 (0x0015), offset:    0, scale:    1 (native range: [0 : 127]
+// LPDDR4_DQ_DLY_CTRL3       : wid:    7, pos:   21, val: 0x0015 (0x0015), offset:    0, scale:    1 (native range: [0 : 127]
+// LPDDR4_DQ_PATH_EN         : wid:    1, pos:   30, val: 0x0001 (0x0001), offset:    0, scale:    1 (native range: [0 : 1]
+// LPDDR4_IO_SEL             : wid:    1, pos:   31, val: 0x0001 (0x0001), offset:    0, scale:    1 (native range: [0 : 1]
+// 
+//  ### @ 0xa8 : LPDDR4_DQ_READ_DLY 
+// LPDDR4_DQ_RD_DLY_EN0      : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// LPDDR4_DQ_RD_DLY_CTRL0    : wid:    4, pos:    1, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 15]
+// LPDDR4_DQ_RD_DLY_EN1      : wid:    1, pos:    5, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// LPDDR4_DQ_RD_DLY_CTRL1    : wid:    4, pos:    6, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 15]
+// LPDDR4_DQ_RD_DLY_EN2      : wid:    1, pos:   10, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// LPDDR4_DQ_RD_DLY_CTRL2    : wid:    4, pos:   11, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 15]
+// LPDDR4_DQ_RD_DLY_EN3      : wid:    1, pos:   15, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// LPDDR4_DQ_RD_DLY_CTRL3    : wid:    4, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 15]
+// 
+//  ### @ 0xac : LPDDR4_DQS_WRITE_DLY 
+// LPDDR4_DQS_DLY_EN0        : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// LPDDR4_DQS_DLY_CTRL0      : wid:    4, pos:    1, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 15]
+// LPDDR4_DQS_DLY_EN1        : wid:    1, pos:    5, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// LPDDR4_DQS_DLY_CTRL1      : wid:    4, pos:    6, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 15]
+// LPDDR4_DQS_DLY_EN2        : wid:    1, pos:   10, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// LPDDR4_DQS_DLY_CTRL2      : wid:    4, pos:   11, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 15]
+// LPDDR4_DQS_DLY_EN3        : wid:    1, pos:   15, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// LPDDR4_DQS_DLY_CTRL3      : wid:    4, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 15]
+// 
+//  ### @ 0xb0 : LPDDR4_CA_CK_DLY 
+// LPDDR4_CK_DLY_EN0         : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// LPDDR4_CK_DLY_CTRL0       : wid:    4, pos:    1, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 15]
+// LPDDR4_CK_DLY_EN1         : wid:    1, pos:    5, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// LPDDR4_CK_DLY_CTRL1       : wid:    4, pos:    6, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 15]
+// LPDDR4_CA_DLY_EN0         : wid:    1, pos:   10, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// LPDDR4_CA_DLY_CTRL0       : wid:    7, pos:   11, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 127]
+// LPDDR4_CA_DLY_EN1         : wid:    1, pos:   18, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// LPDDR4_CA_DLY_CTRL1       : wid:    7, pos:   19, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 127]
+// 
+//  ### @ 0xb4 : LPDDR4_DQ_CA_VREF 
+// LPDDR4_CA_VREF_A          : wid:    7, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 127]
+// LPDDR4_DQ_VREF_A          : wid:    7, pos:    7, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 127]
+// LPDDR4_CA_VREF_B          : wid:    7, pos:   14, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 127]
+// LPDDR4_DQ_VREF_B          : wid:    7, pos:   21, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 127]
+// 
+//  ### @ 0xc0 : LPDDR4_VREF_CTRL 
+// LPDDR4_FSBST_DQ_B         : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// LPDDR4_VSEL_DQ_B          : wid:    1, pos:    1, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// LPDDR4_FSBST_CA_B         : wid:    1, pos:    2, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// LPDDR4_VSEL_CA_B          : wid:    1, pos:    3, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// LPDDR4_FSBST_DQ_A         : wid:    1, pos:    4, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// LPDDR4_VSEL_DQ_A          : wid:    1, pos:    5, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// LPDDR4_FSBST_CA_A         : wid:    1, pos:    6, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// LPDDR4_VSEL_CA_A          : wid:    1, pos:    7, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// 
+//  ### @ 0xb8 : LPDDR4_SW_DEFINED 
+// LPDDR4_SW_DEFINED         : wid:   32, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 4294967295]
+// 
+//  ### @ 0xc8 : LPDDR4_TRAIN_MR_RDATA 
+// TRAIN_MR_RDATA            : wid:    8, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 255]
+// 
+//  ### @ 0xcc : LPDDR4_TRAIN_MPC_RDLY 
+// TRAIN_MPC_RDLY            : wid:    6, pos:    0, val: 0x0022 (0x0022), offset:    0, scale:    1 (native range: [0 : 63]
+// 
+//  ### @ 0x100 : DDRIO_DLL0 
+// DLL0_SEL0                 : wid:    8, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 255]
+// DLL0_SEL1                 : wid:    8, pos:    8, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 255]
+// DLL0_SEL2                 : wid:    8, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 255]
+// 
+//  ### @ 0x104 : DDRIO_DLL1 
+// DLL1_SEL0                 : wid:    8, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 255]
+// DLL1_SEL1                 : wid:    8, pos:    8, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 255]
+// DLL1_SEL2                 : wid:    8, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 255]
+// DLL1_SEL3                 : wid:    8, pos:   24, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 255]
+// 
+//  ### @ 0x108 : DDRIO_DLL2 
+// DLL2_SEL0                 : wid:    8, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 255]
+// DLL2_SEL1                 : wid:    8, pos:    8, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 255]
+// DLL2_SEL2                 : wid:    8, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 255]
+// 
+//  ### @ 0x10c : DDRIO_DLL3 
+// DLL3_SEL0                 : wid:    8, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 255]
+// DLL3_SEL1                 : wid:    8, pos:    8, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 255]
+// DLL3_SEL2                 : wid:    8, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 255]
+// 
+//  ### @ 0x110 : DDRIO_DLL_CTRL_MISC 
+// DDRIO_SINGLE_END          : wid:    1, pos:   15, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DDRIO_PUE_DQ              : wid:    1, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DDRIO_PDE_DQ              : wid:    1, pos:   17, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DDRIO_NPUE_DQS            : wid:    1, pos:   18, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DDRIO_NPDE_DQS            : wid:    1, pos:   19, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DDRIO_PPDE_DQS            : wid:    1, pos:   20, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DDRIO_PPUE_DQS            : wid:    1, pos:   21, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DDRIO_CMOSRCV             : wid:    1, pos:   22, val: 0x0001 (0x0001), offset:    0, scale:    1 (native range: [0 : 1]
+// DDRIO_PUE_CMD             : wid:    1, pos:   23, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DDRIO_PDE_CMD             : wid:    1, pos:   24, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DDRIO_NPUE_CK             : wid:    1, pos:   25, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DDRIO_NPDE_CK             : wid:    1, pos:   26, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DDRIO_PPDE_CK             : wid:    1, pos:   27, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DDRIO_PPUE_CK             : wid:    1, pos:   28, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DDRIO_PVT_CTRL            : wid:    1, pos:   29, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// 
+//  ### @ 0x120 : DDRIO_DLL_CTRL_SEL0 
+// DLL_SBC0                  : wid:   24, pos:    0, val: 0x41b9b1 (0x41b9b1), offset:    0, scale:    1 (native range: [0 : 16777215]
+// 
+//  ### @ 0x124 : DDRIO_DLL_CTRL_SEL1 
+// DLL_SBC1                  : wid:   24, pos:    0, val: 0x41b9b1 (0x41b9b1), offset:    0, scale:    1 (native range: [0 : 16777215]
+// 
+//  ### @ 0x128 : DDRIO_DLL_CTRL_SEL2 
+// DLL_SBC2                  : wid:   24, pos:    0, val: 0x41b9b1 (0x41b9b1), offset:    0, scale:    1 (native range: [0 : 16777215]
+// 
+//  ### @ 0x12c : DDRIO_DLL_CTRL_SEL3 
+// DLL_SBC3                  : wid:   24, pos:    0, val: 0x41b9b1 (0x41b9b1), offset:    0, scale:    1 (native range: [0 : 16777215]
+// 
+//  ### @ 0x140 : DDRIO_DLL_SYNC_CTRL_SEL0 
+// DLL_SYNC_SBC0             : wid:   24, pos:    0, val: 0xb0041 (0xb0041), offset:    0, scale:    1 (native range: [0 : 16777215]
+// 
+//  ### @ 0x144 : DDRIO_DLL_SYNC_CTRL_SEL1 
+// DLL_SYNC_SBC1             : wid:   24, pos:    0, val: 0xb0041 (0xb0041), offset:    0, scale:    1 (native range: [0 : 16777215]
+// 
+//  ### @ 0x148 : DDRIO_DLL_SYNC_CTRL_SEL2 
+// DLL_SYNC_SBC2             : wid:   24, pos:    0, val: 0xb0041 (0xb0041), offset:    0, scale:    1 (native range: [0 : 16777215]
+// 
+//  ### @ 0x14c : DDRIO_DLL_SYNC_CTRL_SEL3 
+// DLL_SYNC_SBC3             : wid:   24, pos:    0, val: 0xb0041 (0xb0041), offset:    0, scale:    1 (native range: [0 : 16777215]
+// 
+//  ### @ 0x160 : DDRIO_DUTY_CTRL_DQ0 
+// DUTY_CTRL_DQ0_EN          : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DUTY_CTRL_DQ0_N           : wid:    3, pos:    4, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_CTRL_DQ0_P           : wid:    3, pos:    7, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// PRE_EMP_EN_DQ0            : wid:    1, pos:   10, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DUTY_Y_CTRL_DQ0_EN        : wid:    1, pos:   11, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DUTY_Y_CTRL_DQ0_N         : wid:    3, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_Y_CTRL_DQ0_P         : wid:    3, pos:   19, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// EQ_CAP_CTRL0_DQ0          : wid:    2, pos:   22, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_CAP_CTRL1_DQ0          : wid:    2, pos:   24, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_EN0_DQ0                : wid:    1, pos:   26, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// EQ_EN1_DQ0                : wid:    1, pos:   27, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// EQ_RES_CTRL0_DQ0          : wid:    2, pos:   28, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_RES_CTRL1_DQ0          : wid:    2, pos:   30, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// 
+//  ### @ 0x164 : DDRIO_DUTY_CTRL_DQ1 
+// DUTY_CTRL_DQ1_EN          : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DUTY_CTRL_DQ1_N           : wid:    3, pos:    4, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_CTRL_DQ1_P           : wid:    3, pos:    7, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// PRE_EMP_EN_DQ1            : wid:    1, pos:   10, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DUTY_Y_CTRL_DQ1_EN        : wid:    1, pos:   11, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DUTY_Y_CTRL_DQ1_N         : wid:    3, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_Y_CTRL_DQ1_P         : wid:    3, pos:   19, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// EQ_CAP_CTRL0_DQ1          : wid:    2, pos:   22, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_CAP_CTRL1_DQ1          : wid:    2, pos:   24, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_EN0_DQ1                : wid:    1, pos:   26, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// EQ_EN1_DQ1                : wid:    1, pos:   27, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// EQ_RES_CTRL0_DQ1          : wid:    2, pos:   28, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_RES_CTRL1_DQ1          : wid:    2, pos:   30, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// 
+//  ### @ 0x168 : DDRIO_DUTY_CTRL_DQ2 
+// DUTY_CTRL_DQ2_EN          : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DUTY_CTRL_DQ2_N           : wid:    3, pos:    4, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_CTRL_DQ2_P           : wid:    3, pos:    7, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// PRE_EMP_EN_DQ2            : wid:    1, pos:   10, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DUTY_Y_CTRL_DQ2_EN        : wid:    1, pos:   11, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DUTY_Y_CTRL_DQ2_N         : wid:    3, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_Y_CTRL_DQ2_P         : wid:    3, pos:   19, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// EQ_CAP_CTRL0_DQ2          : wid:    2, pos:   22, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_CAP_CTRL1_DQ2          : wid:    2, pos:   24, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_EN0_DQ2                : wid:    1, pos:   26, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// EQ_EN1_DQ2                : wid:    1, pos:   27, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// EQ_RES_CTRL0_DQ2          : wid:    2, pos:   28, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_RES_CTRL1_DQ2          : wid:    2, pos:   30, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// 
+//  ### @ 0x16c : DDRIO_DUTY_CTRL_DQ3 
+// DUTY_CTRL_DQ3_EN          : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DUTY_CTRL_DQ3_N           : wid:    3, pos:    4, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_CTRL_DQ3_P           : wid:    3, pos:    7, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// PRE_EMP_EN_DQ3            : wid:    1, pos:   10, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DUTY_Y_CTRL_DQ3_EN        : wid:    1, pos:   11, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DUTY_Y_CTRL_DQ3_N         : wid:    3, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_Y_CTRL_DQ3_P         : wid:    3, pos:   19, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// EQ_CAP_CTRL0_DQ3          : wid:    2, pos:   22, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_CAP_CTRL1_DQ3          : wid:    2, pos:   24, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_EN0_DQ3                : wid:    1, pos:   26, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// EQ_EN1_DQ3                : wid:    1, pos:   27, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// EQ_RES_CTRL0_DQ3          : wid:    2, pos:   28, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_RES_CTRL1_DQ3          : wid:    2, pos:   30, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// 
+//  ### @ 0x170 : DDRIO_DUTY_CTRL_DQS0 
+// DUTY_CTRL_DQS0_EN         : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DUTY_CTRL_DQS0_N          : wid:    3, pos:    4, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_CTRL_DQS0_P          : wid:    3, pos:    8, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_Y_CTRL_DQS0_EN       : wid:    1, pos:   11, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// TESTIRCV_DQS0             : wid:    4, pos:   12, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 15]
+// DUTY_Y_CTRL_DQS0_N        : wid:    3, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_Y_CTRL_DQS0_P        : wid:    3, pos:   19, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// EQ_CAP_CTRL0_DQS0         : wid:    2, pos:   22, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_CAP_CTRL1_DQS0         : wid:    2, pos:   24, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_EN0_DQS0               : wid:    1, pos:   26, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// EQ_EN1_DQS0               : wid:    1, pos:   27, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// EQ_RES_CTRL0_DQS0         : wid:    2, pos:   28, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_RES_CTRL1_DQS0         : wid:    2, pos:   30, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// 
+//  ### @ 0x174 : DDRIO_DUTY_CTRL_DQS1 
+// DUTY_CTRL_DQS1_EN         : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DUTY_CTRL_DQS1_N          : wid:    3, pos:    4, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_CTRL_DQS1_P          : wid:    3, pos:    8, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_Y_CTRL_DQS1_EN       : wid:    1, pos:   11, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// TESTIRCV_DQS1             : wid:    4, pos:   12, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 15]
+// DUTY_Y_CTRL_DQS1_N        : wid:    3, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_Y_CTRL_DQS1_P        : wid:    3, pos:   19, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// EQ_CAP_CTRL0_DQS1         : wid:    2, pos:   22, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_CAP_CTRL1_DQS1         : wid:    2, pos:   24, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_EN0_DQS1               : wid:    1, pos:   26, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// EQ_EN1_DQS1               : wid:    1, pos:   27, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// EQ_RES_CTRL0_DQS1         : wid:    2, pos:   28, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_RES_CTRL1_DQS1         : wid:    2, pos:   30, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// 
+//  ### @ 0x178 : DDRIO_DUTY_CTRL_DQS2 
+// DUTY_CTRL_DQS2_EN         : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DUTY_CTRL_DQS2_N          : wid:    3, pos:    4, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_CTRL_DQS2_P          : wid:    3, pos:    8, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_Y_CTRL_DQS2_EN       : wid:    1, pos:   11, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// TESTIRCV_DQS2             : wid:    4, pos:   12, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 15]
+// DUTY_Y_CTRL_DQS2_N        : wid:    3, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_Y_CTRL_DQS2_P        : wid:    3, pos:   19, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// EQ_CAP_CTRL0_DQS2         : wid:    2, pos:   22, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_CAP_CTRL1_DQS2         : wid:    2, pos:   24, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_EN0_DQS2               : wid:    1, pos:   26, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// EQ_EN1_DQS2               : wid:    1, pos:   27, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// EQ_RES_CTRL0_DQS2         : wid:    2, pos:   28, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_RES_CTRL1_DQS2         : wid:    2, pos:   30, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// 
+//  ### @ 0x17c : DDRIO_DUTY_CTRL_DQS3 
+// DUTY_CTRL_DQS3_EN         : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DUTY_CTRL_DQS3_N          : wid:    3, pos:    4, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_CTRL_DQS3_P          : wid:    3, pos:    8, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_Y_CTRL_DQS3_EN       : wid:    1, pos:   11, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// TESTIRCV_DQS3             : wid:    4, pos:   12, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 15]
+// DUTY_Y_CTRL_DQS3_N        : wid:    3, pos:   16, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_Y_CTRL_DQS3_P        : wid:    3, pos:   19, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// EQ_CAP_CTRL0_DQS3         : wid:    2, pos:   22, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_CAP_CTRL1_DQS3         : wid:    2, pos:   24, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_EN0_DQS3               : wid:    1, pos:   26, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// EQ_EN1_DQS3               : wid:    1, pos:   27, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// EQ_RES_CTRL0_DQS3         : wid:    2, pos:   28, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// EQ_RES_CTRL1_DQS3         : wid:    2, pos:   30, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 3]
+// 
+//  ### @ 0x180 : DDRIO_DUTY_CTRL_CA_A 
+// DUTY_CTRL_CA_A_EN         : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DUTY_CTRL_CA_A_N          : wid:    3, pos:    4, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_CTRL_CA_A_P          : wid:    3, pos:    8, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// 
+//  ### @ 0x184 : DDRIO_DUTY_CTRL_CA_B 
+// DUTY_CTRL_CA_B_EN         : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DUTY_CTRL_CA_B_N          : wid:    3, pos:    4, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_CTRL_CA_B_P          : wid:    3, pos:    8, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// 
+//  ### @ 0x188 : DDRIO_DUTY_CTRL_CK_A 
+// DUTY_CTRL_CK_A_EN         : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DUTY_CTRL_CK_A_N          : wid:    3, pos:    4, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_CTRL_CK_A_P          : wid:    3, pos:    8, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// TESTIRCV_CK_A             : wid:    4, pos:   12, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 15]
+// 
+//  ### @ 0x18c : DDRIO_DUTY_CTRL_CK_B 
+// DUTY_CTRL_CK_B_EN         : wid:    1, pos:    0, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 1]
+// DUTY_CTRL_CK_B_N          : wid:    3, pos:    4, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// DUTY_CTRL_CK_B_P          : wid:    3, pos:    8, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 7]
+// TESTIRCV_CK_B             : wid:    4, pos:   12, val: 0x0000 (0x0000), offset:    0, scale:    1 (native range: [0 : 15]
+// 
+// initial delay of 300000 ps
+Wait 1.ms
+
+// 
+
+// wait for clean clock 200 us 
+Wait 1.ms
+
+// ---------------------------------------------------------------------
+// Starting Initialization sequence for DDRC lane 0 (base Addr = 0xdffe0800) 
+// ----------------------------------------------------------------------
+// Reset Dram 
+MWriteS32 DRAM_CONTROL_DDRC0          0x6ec00600
+
+// issue DLL RST command in order to lock on the slow clock
+MWriteS32 DRAM_INIT_CTL_DDRC0         0x00000008
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_INIT_CTL_DDRC0)&0x8)!=0x0)
+(
+)
+
+// program DRAM_RSVD_SPACE
+MWriteS32 DRAM_RSVD_SPACE_DDRC0       0x00000000
+
+// disable DQS SYNC initially
+MWriteS32 DRAM_DQS_SYNC_DDRC0         0x00001ea0
+
+// write to DRAM_CFG reg 
+//MWriteS32 DRAM_CONFIG_DDRC0           0x70286298
+MWriteS32 DRAM_CONFIG_DDRC0           0x702822d8
+
+// write to DRAM_TIMING reg 
+MWriteS32 DRAM_TIMING1_DDRC0          0x222e38c2
+
+// write to DRAM_TIMING2 reg
+MWriteS32 DRAM_TIMING2_DDRC0          0x10509066
+
+// write to DRAM_TIMING3 reg
+MWriteS32 DRAM_TIMING3_DDRC0          0x00000060
+
+// write to DRAM_TIMING4 reg
+MWriteS32 DRAM_TIMING4_DDRC0          0x10cc248e
+
+// write to DRAM_TIMING5_LP4TRAIN
+MWriteS32 DRAM_TIMING5_LP4TRAIN_DDRC0   0x24588000
+
+// write to PAD TERM
+MWriteS32 DRAM_PAD_TERM_DDRC0         0x0002001c
+
+// write to DRAM_PAD_TERM2
+MWriteS32 DRAM_PAD_TERM2_DDRC0        0x050d5d0d
+
+// write to DRAM_PAD_TERM3
+MWriteS32 DRAM_PAD_TERM3_DDRC0        0x00d05000
+
+// write to DRAM_BYTE_MAP
+MWriteS32 DRAM_BYTE_MAP_DDRC0         0x000000e4
+
+// write to LPDDR4_DQ_WRITE_DLY
+//MWriteS32 LPDDR4_DQ_WRITE_DLY_DDRC0   0xc2a54a95
+MWriteS32 LPDDR4_DQ_WRITE_DLY_DDRC0   0xc2a54a95
+//011010
+MWriteS32 LPDDR4_DQ_WRITE_DLY_DDRC0   0xc6ad5ab5
+
+// write to LPDDR4_DQS_WRITE_DLY
+MWriteS32 LPDDR4_DQS_WRITE_DLY_DDRC0   0x00000000
+
+// write DRAM_ZQ_CALIB config to set T_ZQC_SEL_POR_MDDR4 for DDR ZQ Calibration 
+MWriteS32 DRAM_ZQ_CALIB_DDRC0         0x00000060
+
+// write to LPDDR4_TRAIN_MPC_RDLY
+MWriteS32 LPDDR4_TRAIN_MPC_RDLY_DDRC0   0x00000022
+
+// wait 10 ns to allow RESET/CKE PAD to start driving after DDS is set to non-0 value
+Wait 1.ms
+
+//  Disbale DRAM Reset - disable AUTO REFRESH
+MWriteS32 DRAM_CONTROL_DDRC0          0x6ec00608
+
+// wait 2 ms (tINIT3)
+Wait 1.ms
+
+//  Set CKE  
+MWriteS32 DRAM_CONTROL_DDRC0          0x6ec0060c
+
+// wait 2 us (tINIT5)
+Wait 1.ms
+
+//  **** SET MODE REGISTERS FOR FSP0 *** 
+//  Program MR13 -- set FS_WR to 0
+MWriteS32 DRAM_MODE_REG_DDRC0         0x010d0000
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_MODE_REG_DDRC0)&0x80000000)!=0x0)
+(
+)
+
+//  Program MR3 
+MWriteS32 DRAM_MODE_REG_DDRC0         0x01030031
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_MODE_REG_DDRC0)&0x80000000)!=0x0)
+(
+)
+
+//  Program MR2 
+MWriteS32 DRAM_MODE_REG_DDRC0         0x01020049
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_MODE_REG_DDRC0)&0x80000000)!=0x0)
+(
+)
+
+//  Program MR1 
+MWriteS32 DRAM_MODE_REG_DDRC0         0x01010094
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_MODE_REG_DDRC0)&0x80000000)!=0x0)
+(
+)
+
+//  Program MR11 
+MWriteS32 DRAM_MODE_REG_DDRC0         0x010b0000
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_MODE_REG_DDRC0)&0x80000000)!=0x0)
+(
+)
+
+//  **** SET MODE REGISTERS FOR FSP1 *** 
+//  Program MR13 -- set FS_WR to 1
+MWriteS32 DRAM_MODE_REG_DDRC0         0x010d0040
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_MODE_REG_DDRC0)&0x80000000)!=0x0)
+(
+)
+
+//  Program MR3 
+MWriteS32 DRAM_MODE_REG_DDRC0         0x01030031
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_MODE_REG_DDRC0)&0x80000000)!=0x0)
+(
+)
+
+//  Program MR2 
+MWriteS32 DRAM_MODE_REG_DDRC0         0x01020049
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_MODE_REG_DDRC0)&0x80000000)!=0x0)
+(
+)
+
+//  Program MR1 
+MWriteS32 DRAM_MODE_REG_DDRC0         0x01010094
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_MODE_REG_DDRC0)&0x80000000)!=0x0)
+(
+)
+
+//  Program MR11 
+MWriteS32 DRAM_MODE_REG_DDRC0         0x010b0000
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_MODE_REG_DDRC0)&0x80000000)!=0x0)
+(
+)
+
+// Set CS_CNTRL to Select die 0 only
+MWriteS32 DRAM_CONTROL_DDRC0          0x2ec0060c
+
+// issue Manual DDR ZQ CALIB command
+MWriteS32 DRAM_INIT_CTL_DDRC0         0x00000010
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_INIT_CTL_DDRC0)&0x10)!=0x0)
+(
+)
+
+// Set CS_CNTRL to Select die 1 only
+MWriteS32 DRAM_CONTROL_DDRC0          0x4ec0060c
+
+// issue Manual DDR ZQ CALIB command
+MWriteS32 DRAM_INIT_CTL_DDRC0         0x00000010
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_INIT_CTL_DDRC0)&0x10)!=0x0)
+(
+)
+
+// Set CS_MODE back to default
+MWriteS32 DRAM_CONTROL_DDRC0          0x6ec0060c
+
+// wait 30 ns (tZQLAT)
+Wait 1.ms
+
+// issue SHORT PAD CALIB command
+MWriteS32 DRAM_INIT_CTL_DDRC0         0x00000020
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_INIT_CTL_DDRC0)&0x20)!=0x0)
+(
+)
+
+// issue GET_RTT_EN command
+MWriteS32 DRAM_INIT_CTL_DDRC0         0x00000004
+
+Wait 1.ms
+
+while ((MRead("S32L", DRAM_INIT_CTL_DDRC0)&0x4)!=0x0)
+(
+)
+
+// write DRAM_DQS_SYNC config
+MWriteS32 DRAM_DQS_SYNC_DDRC0         0x00001e40
+
+// write  DRAM_ZQ_CALIB config
+MWriteS32 DRAM_ZQ_CALIB_DDRC0         0x00000060
+
+// write DRAM_DLL_CALIB config
+MWriteS32 DRAM_DLL_CALIB_DDRC0        0x001e3204
+
+// write to selfRefresh register
+MWriteS32 DRAM_SELF_REFRESH_DDRC0     0x00000001
+
+// write to AUTO power down register
+MWriteS32 DRAM_POWER_DOWN_DDRC0       0x00000030
+
+// Enable AUTO Refresh and set DRAM_ENABLE
+MWriteS32 DRAM_CONTROL_DDRC0          0x6ec0060f
+
+// Initialization Done
+// Let DDRC building up AR credit before sending requests (AR_CREDIT_MAX * tRFC)
+Wait 1.ms
+
+print "Memory initialized"
+ENDEXE

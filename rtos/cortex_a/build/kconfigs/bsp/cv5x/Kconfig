@@ -1,0 +1,166 @@
+if SOC_CV5
+
+source build/kconfigs/bsp/cv5x/peripherals/Kconfig
+
+comment "Board Configuration"
+choice CV5_BSP_SELECTION
+	prompt "BSP"
+	default BSP_CV5BUB_OPTION_A_V100
+
+config BSP_CV5BUB_OPTION_A_V100
+	bool "CV5 Bringup Board Option-A V100"
+config BSP_CV5BUB_OPTION_B_V100
+	bool "CV5 Bringup Board Option-B V100"
+config BSP_CV5DK_OPTION_A_V100
+	bool "CV5 DK Board Option-A V100"
+endchoice
+
+choice CV5_DRAM_SELECTION
+	prompt "Dram"
+	default CV5_LPDDR5_2016MHZ
+
+config CV5_LPDDR5_2880MHZ_085V
+	bool "LPDDR5 2880MHZ 0.85v"
+config CV5_LPDDR5_2880MHZ
+	bool "LPDDR5 2880MHZ"
+config CV5_LPDDR5_2496MHZ
+	bool "LPDDR5 2496MHZ"
+config CV5_LPDDR5_2496MHZ_070V
+	bool "LPDDR5 2496MHZ 0.70v"
+config CV5_LPDDR5_2016MHZ_085V
+	bool "LPDDR5 2016MHZ 0.85v"
+config CV5_LPDDR5_2016MHZ
+	bool "LPDDR5 2016MHZ"
+config CV5_LPDDR5_1200MHZ
+	bool "LPDDR5 1200MHZ"
+config CV5_LPDDR4_MT53D512M32D2DS_540MHZ
+    bool "MT53D512M32D2DS 540MHz"
+config CV5_LPDDR4_MT53D512M32D2DS_1824MHZ
+    bool "MT53D512M32D2DS 1824MHz"
+config CV5_LPDDR4_MT53D512M32D2DS_2112MHZ
+    bool "MT53D512M32D2DS 2112MHz"
+config CV5_LPDDR4_MT53E2G32D4DE_1800MHZ
+    bool "MT53E2G32D4DE 1800MHz"
+endchoice
+
+endif
+
+if SOC_CV52
+
+source build/kconfigs/bsp/cv5x/peripherals/Kconfig
+
+comment "Board Configuration"
+choice CV52_BSP_SELECTION
+	prompt "BSP"
+	default BSP_CV52NDK_OPTION_A_V100
+
+config BSP_CV52NDK_OPTION_A_V100
+	bool "CV52N DK Board Option-A V100"
+
+config BSP_CV52NDK_OPTION_B_V100
+	bool "CV52N DK Board Option-B V100"
+endchoice
+
+choice CV52_DRAM_SELECTION
+	prompt "Dram"
+	default CV52_LPDDR4_MT53E1G32D2FW_1824MHZ
+config CV52_LPDDR5_1992MHZ
+	bool "LPDDR5 1992MHZ"
+config CV52_LPDDR5_2496MHZ
+	bool "LPDDR5 2496MHZ"
+config CV52_LPDDR4_MT53E1G32D2FW_1824MHZ
+    bool "LPDDR4 MT53E1G32D2FW 1824MHz"
+config CV52_LPDDR4_MT53E1G32D2FW_2112MHZ
+    bool "LPDDR4 MT53E1G32D2FW 2112MHz"
+endchoice
+
+endif
+
+
+if SOC_CV5 || SOC_CV52
+
+choice CV5_WDT_PIN_SELECTION
+	prompt "Wdt External Function Pin"
+	default WDT_PIN_NON
+
+config WDT_PIN_GPIO_0
+	bool "WDT_PIN_GPIO_0"
+config WDT_PIN_GPIO_5
+	bool "WDT_PIN_GPIO_5"
+config WDT_PIN_GPIO_19
+	bool "WDT_PIN_GPIO_19"
+config WDT_PIN_GPIO_36
+	bool "WDT_PIN_GPIO_36"
+config WDT_PIN_GPIO_116
+	bool "WDT_PIN_GPIO_116"
+config WDT_PIN_GPIO_119
+	bool "WDT_PIN_GPIO_119"
+config WDT_PIN_GPIO_138
+	bool "WDT_PIN_GPIO_138"
+config WDT_PIN_NON
+	bool "WDT_PIN_NON"
+
+endchoice
+
+config ATT_8GB
+	bool "User ATT 8GB map"
+	default n
+	help
+		User ATT 8GB map.
+
+config ATT_MAP
+	string "Att Map File Name"
+	default "AmbaUserMemProt_8GB" if ATT_8GB
+	default "AmbaUserMemProt"
+	help
+		File name of the Att Map file (remove '.c')
+
+config ENABLE_ONE_DDRC_HOST
+	bool "Enable only one ddrc host"
+	default y if SOC_CV52
+	default n
+	help
+		Enable only one ddrc host.
+
+config RESTORE_TRAINING_RESULT
+	bool "Enable restore dram training result in BST"
+	default y
+	help
+		Enable restore dram training result in BST.
+
+	if RESTORE_TRAINING_RESULT && DRAM_TYPE_LPDDR5
+	choice RESTORE_WDELAY_SELECTION
+		prompt "Write Delay update in BST"
+		default BST_WDELAY_UPDATE_DRIFT if BST_DRAM_TRAINING
+		default BST_WDELAY_UPDATE_NONE
+
+	config BST_WDELAY_UPDATE_NONE
+		bool "no change and use restored value"
+	config BST_WDELAY_UPDATE_DRIFT
+		bool "calculate by drift"
+		select BST_LARGE_SIZE
+	config BST_WDELAY_UPDATE_RETRAIN
+		bool "retrain always"
+		depends on BST_DRAM_TRAINING
+	endchoice
+	endif
+
+config TEST_DRAM_SAVE_RESTORE
+	bool "Enable DRAM SAVE/RESTORE parameters test in BLD"
+	default n
+	help
+		Enable DRAM SAVE/RESTORE parameters test in BLD. (Don't enable if you have BL2)
+
+config ENABLE_DRAM_TRAINING_EVERY_BOOT
+	bool "Enable DRAM re-training every time in BLD"
+	default n
+	help
+		Enable DRAM re-training every time in BLD.
+
+config BST_LARGE_SIZE
+	bool "Enable large size BST which use ScratchPad"
+	default n
+	help
+		Enable large size BST which use ScratchPad.
+
+endif

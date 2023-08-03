@@ -1,0 +1,3 @@
+source "drivers/rpmsg/ambarella/common/echo/Kconfig"
+#source "drivers/rpmsg/ambarella/common/rsh/Kconfig"
+source "drivers/rpmsg/ambarella/common/veth/Kconfig"

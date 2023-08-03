@@ -1,0 +1,24 @@
+
+platform_name=$(shell cat ${CARDV_MODULES_ROOT_PATH}/../platform_name.txt)
+
+ifdef CONFIG_APP_FLOW_AONI_DQA_TEST_UART_MODULE
+cardv_module_src += $(CARDV_MODULES_PREFIX_PATH)/modules/dqa_test_uart/dqa_test_uart.o
+cardv_module_src += $(CARDV_MODULES_PREFIX_PATH)/modules/dqa_test_uart/dqa_test_uart_$(platform_name)_handler.o
+endif
+
+ifdef CONFIG_APP_FLOW_AONI_DQA_TEST_SCRIPT_MODULE
+cardv_module_src += $(CARDV_MODULES_PREFIX_PATH)/modules/dqa_test_script/dqa_test_script.o
+cardv_module_src += $(CARDV_MODULES_PREFIX_PATH)/modules/dqa_test_script/dqa_test_script_$(platform_name)_handler.o
+endif
+
+ifdef CONFIG_APP_FLOW_AONI_PRODUCT_LINE_MODULE
+cardv_module_src += $(CARDV_MODULES_PREFIX_PATH)/modules/product_line/product_line.o
+cardv_module_src += $(CARDV_MODULES_PREFIX_PATH)/modules/product_line/product_line_$(platform_name)_handler.o
+endif
+
+ifdef CONFIG_APP_FLOW_AONI_GNSS_MODULE
+cardv_module_src += $(CARDV_MODULES_PREFIX_PATH)/modules/gnss/gnss_parser.o
+cardv_module_src += $(CARDV_MODULES_PREFIX_PATH)/modules/gnss/gnss_setting.o
+endif
+
+$(shell "$(CARDV_MODULES_ROOT_PATH)/gen-build-info.sh" "$(CARDV_MODULES_ROOT_PATH)")

@@ -1,0 +1,79 @@
+
+//#include "vp_emulate.h"
+#include <vp_vas.h>
+//#include "../include/fields.h"
+
+#define INPUT_DISP_WIDTH		(1920)
+#define INPUT_DISP_HEIGHT		(768)
+
+#define STIXEL_WIDTH			(6)
+#define DISP_POOLING_WIDTH		(INPUT_DISP_WIDTH/STIXEL_WIDTH)
+
+// 4095
+#define INVALID_DISPARITY		"FF 0F"
+
+DAG STIXEL_PREPROCESS = {
+
+	// ------------------------- Load input ---------------------------- // 
+	
+	// -- fusion diparity with 12.4 format
+	VP_input
+	(
+		disparity_in, data_format(0, 1, 4, 0), 
+		vector(1, 1, INPUT_DISP_HEIGHT, INPUT_DISP_WIDTH)
+	);
+
+	// ---------------------------- Start ------------------------------- // 
+
+	// replace default invalid value by zero
+	VP_eqib(
+	    disparity_in,
+	    VP_const_tensor(INVALID_DISPARITY, data_format(0, 1, 4, 0), vector(1)),
+	    VP_tensor(invalid_dispairty_mask, uint8_t, vector(1, 1, INPUT_DISP_HEIGHT, INPUT_DISP_WIDTH), bitvector = 1)
+	);
+
+	VP_muxb(		
+		VP_const_tensor("00 00", data_format(0, 1, 4, 0), vector(1)),
+		disparity_in,
+		invalid_dispairty_mask,
+		VP_tensor(hacked_dispairty, data_format(0, 1, 4, 0), vector(1, 1, INPUT_DISP_HEIGHT, INPUT_DISP_WIDTH))
+	);
+
+	// pick the largest disparity within each window 
+	VP_mmwnd(
+		hacked_dispairty,
+		VP_tensor(maxpooling_hacked_dispairty, data_format(0, 1, 4, 0), vector(1, 1, INPUT_DISP_HEIGHT, DISP_POOLING_WIDTH)),		
+		op = 1, //max
+		window_w = STIXEL_WIDTH,
+		window_h = 1,
+		stride_w = STIXEL_WIDTH,
+		stride_h = 1,
+		out_w = DISP_POOLING_WIDTH,
+		out_h = INPUT_DISP_HEIGHT
+	);
+
+	// recover zero to default invalid disparity
+	VP_eqib(
+	    maxpooling_hacked_dispairty,
+	    VP_const_tensor("00 00", data_format(0, 1, 4, 0), vector(1)),
+	    VP_tensor(invalid_maxpooling_hacked_dispairty_mask, uint8_t, vector(1, 1, INPUT_DISP_HEIGHT, DISP_POOLING_WIDTH), bitvector = 1)
+	);
+
+	VP_muxb(		
+		VP_const_tensor(INVALID_DISPARITY, data_format(0, 1, 4, 0), vector(1)),
+		maxpooling_hacked_dispairty,
+		invalid_maxpooling_hacked_dispairty_mask,
+		VP_tensor(maxpooling_dispairty, data_format(0, 1, 4, 0), vector(1, 1, INPUT_DISP_HEIGHT, DISP_POOLING_WIDTH))
+	);
+
+	VP_transpose(maxpooling_dispairty, 
+		VP_tensor(transposed_maxpooling_dispairty, data_format(0, 1, 4, 0), vector(1, 1, DISP_POOLING_WIDTH, INPUT_DISP_HEIGHT)),
+		to_w = 1,
+		to_h = 0,
+		to_d = 2,
+		to_p = 3
+  	);
+
+	VP_output(transposed_maxpooling_dispairty_out, transposed_maxpooling_dispairty);  	
+
+}

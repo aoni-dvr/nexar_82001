@@ -1,0 +1,2 @@
+shmoo_per_byte=2
+include 'quick_shmoo_cv5_1_lp5mr15.ttl'

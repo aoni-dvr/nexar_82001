@@ -1,0 +1,14 @@
+
+menuconfig BUILD_COMSVC_DATAFLOW
+    depends on BUILD_COMMON_SERVICE_CODEC
+    bool "Build Data Flow"
+    default y
+
+if BUILD_COMSVC_DATAFLOW
+source svc/comsvc/codec/lib/src/common/dataflow/Kconfig
+endif
+
+source svc/comsvc/codec/Kconfig.recorder
+source svc/comsvc/codec/Kconfig.player
+source svc/comsvc/codec/Kconfig.audio
+source svc/comsvc/codec/Kconfig.utility

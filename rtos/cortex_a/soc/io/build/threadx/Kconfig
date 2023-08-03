@@ -1,0 +1,60 @@
+if ARM32
+
+config MMU_USE_SHORT_DESCRIPTOR
+	bool "MMU uses Short Descriptor Translation Table format"
+	default y
+	help
+		Configure MMU to use Short Descriptor Translation Table format.
+
+endif
+
+if ARM64
+
+choice
+	prompt "Address translation granule size"
+	default TRANSLATION_GRANULE_4KB
+	help
+	  Select virtual memory translation granule size.
+
+config TRANSLATION_GRANULE_4KB
+	bool "4KB"
+
+config TRANSLATION_GRANULE_16KB
+	bool "16KB"
+
+config TRANSLATION_GRANULE_64KB
+	bool "64KB"
+
+endchoice
+
+endif
+
+config BUILD_SSP_ENET
+	bool "Build Ethernet driver"
+	default n
+	help
+
+if BUILD_SSP_ENET
+config BUILD_SSP_ENET_MTU
+	bool "Change MTU Size"
+	default n
+if BUILD_SSP_ENET_MTU
+config ETH_FRAMES_SIZE
+	int "Valid range 1514~3840"
+	range 1514 3840
+	default 1514
+endif
+endif
+
+##############################################################
+# USB part
+##############################################################
+
+config BUILD_SSP_USB_LIBRARY
+	bool "Build Universal Serial Bus (USB) subsystem library"
+	default y
+	help
+
+if BUILD_SSP_USB_LIBRARY
+source vendors/ambarella/wrapper/usb/Kconfig
+endif

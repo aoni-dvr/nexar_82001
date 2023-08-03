@@ -1,0 +1,11 @@
+
+config BUT_VCAST
+	bool "Utilities for VectorCAST testing"
+	default n
+	help
+	  Build utilities for VectorCAST testing.
+
+# Do not use standard library. CC_USESTD and reent.h will make VCAST abnormal.
+config THREADX
+	def_bool y
+

@@ -1,0 +1,194 @@
+/*
+ * board level device tree source
+ */
+
+/dts-v1/;
+
+/include/ "cv25.dtsi"
+
+/ {
+	model = "Ambarella CV25BUB Board";
+	compatible = "ambarella,cv25bub", "ambarella,cv25";
+
+	chosen {
+		stdout-path = &uart0;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		xen,xen-bootargs = "dom0_mem=256M bootscrub=0 dom0_max_vcpus=1 dom0_vcpus_pin timer_slop=0";
+		module@0 {
+			 compatible = "xen,linux-zimage", "xen,multiboot-module";
+			 reg = <0x0 0x0>;
+			 bootargs = "root=/dev/mtdblock21 rootfstype=squashfs rdinit=/sbin/init console=hvc0 earlycon=xenboot quiet";
+		};
+
+		domu_tx {
+			#address-cells = <1>;
+			#size-cells = <1>;
+			compatible = "xen,domain";
+			memory = <0x0 0x0>;
+			cpus = <1>;
+
+			module@0 {
+				compatible = "multiboot,kernel", "multiboot,module";
+				reg = <0x0 0x0>;
+			};
+		};
+
+	};
+
+	n_apb@e4000000 {
+		i2c0: i2c@e4008000 {
+			status = "ok";
+		};
+
+		i2c1: i2c@e4009000 {
+			status = "ok";
+			pinctrl-0 = <&i2c1_pins_b>;
+		};
+
+		i2c2: i2c@e400a000 {
+			status = "ok";
+		};
+
+		i2c3: i2c@e400b000 {
+			status = "ok";
+			ak4951: codec@12 {
+				compatible = "ambarella,ak4951";
+				#sound-dai-cells = <0>;
+				reg = <0x12>;
+			};
+		};
+
+		i2cs: i2cs@e4007000 {
+			/delete-property/pinctrl-0;
+			status = "ok";
+			slave-24c02@62{
+				compatible = "slave-24c02";
+				reg = <0x40000062>;
+			};
+		};
+	};
+
+	n_ahb@e0000000 {
+		uart1: uart@e0017000 {
+			/delete-property/amb,txdma-used;
+			/delete-property/amb,rxdma-used;
+			/delete-property/dmas;
+			/delete-property/dma-names;
+			status = "ok";
+		};
+
+		nand0: nand@e0002000 {
+			status = "ok";
+		};
+
+		sdmmc0: sdmmc0@e0004000 {
+			pwr-gpios = <&gpio 81 0x1>;
+			v18-gpios = <&gpio 105 0x1>;
+			/*amb,fixed-cd = <1>;*/
+		};
+
+		sdmmc2: sdmmc2@e0016000 { /* SDIO1 */
+			/delete-property/pinctrl-0;
+		};
+
+		mac0: ethernet@e000e000 {
+			amb,tx-clk-invert;
+			phy@0 {
+				reg = <0>;
+			};
+		};
+		spi_slave@e0010000 {
+			status = "ok";
+			/* GPIO16 is shared between SPI3 (LCD) chip-selcet & SPI Slave SSI EN */
+			/delete-property/pinctrl-0;
+		};
+		spi0: spi@e0011000 {
+			status = "ok";
+			cs-gpios = <&gpio 7 0>;
+
+			spidev@0 {
+					compatible = "ambarella,spidev";
+					spi-max-frequency = <20000000>;
+					reg = <0>;
+					/*spi-cpha;*/
+					/*spi-cpol;*/
+			};
+		};
+		spi3: spi@e0014000 {
+				status = "ok";
+				cs-gpios = <&gpio 16 0>;
+
+				spidev@0 {
+						compatible = "ambarella,spidev";
+						spi-max-frequency = <20000000>;
+						reg = <0>;
+						/*spi-cpha;*/
+						/*spi-cpol;*/
+				};
+		};
+		i2s0: i2s@e001d000 {
+			status = "ok";
+		};
+		dmic: dmic@e0015000 {
+			status = "ok";
+		};
+	};
+
+	rct@ed080000 {
+		usbphy: usbphy@ed080050 {
+			/* high will trigger the ocp interrupt */
+			amb,ocp-polarity = <0>;
+			pinctrl-names = "default";
+			pinctrl-0 = <&usb_host0_pins_d>;
+		};
+	};
+
+	sound {
+		compatible = "ambarella,audio-board";
+		simple-audio-card,name = "ak4951 @ AMBEVK";
+		simple-audio-card,mclk-fs = <256>;
+		simple-audio-card,widgets =
+		"Speaker", "Speaker",
+		"Headphone", "HP Jack",
+		"Line", "Line In",
+		"Line", "Line Out",
+		"Microphone", "Mic Internal",
+		"Microphone", "Mic External";
+		simple-audio-card,routing =
+		"LIN2", "Mic Bias",
+		"RIN2", "Mic Bias",
+		"Mic Bias", "Mic Internal",
+		"LIN3", "Line In",
+		"RIN3", "Line In",
+		"Line Out", "SPKLO",
+		"HP Jack", "HPL",
+		"HP Jack", "HPR",
+		"Speaker", "SPKLO";
+
+		simple-audio-card,dai-link@0 {
+			format = "i2s";
+
+			cpu {
+				sound-dai = <&i2s0>;
+			};
+
+			codec {
+				sound-dai = <&ak4951>;
+			};
+		};
+
+		simple-audio-card,dai-link@1 {
+			format = "i2s";
+
+			cpu {
+				sound-dai = <&i2s0>;
+			};
+
+			codec {
+				sound-dai = <&dmic>;
+			};
+		};
+
+	};
+};

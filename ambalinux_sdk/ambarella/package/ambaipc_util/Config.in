@@ -1,0 +1,3 @@
+menuconfig BR2_PACKAGE_AMBAIPC_UTIL
+	bool "Ambarella IPC utility framework"
+	default y

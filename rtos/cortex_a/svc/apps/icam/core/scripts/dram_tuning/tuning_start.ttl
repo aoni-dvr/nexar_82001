@@ -1,0 +1,109 @@
+; -----------------------------------------------------
+;
+;                    iCam Dram Tuning
+;                        (2021.05.03)
+;
+; -----------------------------------------------------
+
+
+; -----------------------------------------------------
+;                   SCRIPT PARAMETER
+; -----------------------------------------------------
+WLoop      = 1
+GoOn       = 0
+format_id  = 0
+
+; -----------------------------------------------------
+;                   SEARCH FORMAT_ID
+; -----------------------------------------------------
+
+timeout    = 0
+mtimeout   = 100
+
+sendln 'svc_app format_id'
+waitln 'FormatId list:'
+if result > 0 then
+	GoOn = 1
+else
+	GoOn = 0
+endif
+
+if GoOn > 0 then
+	GoOn = 0
+	do
+		waitregex '\[(\S+)\]\[(\S+)\] (\d+)'
+		if result > 0 then
+			str2int format_id groupmatchstr3
+			waitregex '\[(\S+)\]\[(\S+)\] (\S+) (\S+) (\S+)'
+			if result > 0 then
+				CmpStr = groupmatchstr5
+				strmatch CmpStr 'BITSCMP'
+				if result > 0 then
+					GoOn = 1
+					WLoop = 0
+				endif
+			else
+				WLoop = 0
+			endif
+		else
+			WLoop = 0
+		endif
+	loop while WLoop > 0
+endif
+
+
+; -----------------------------------------------------
+;               SWITCH TO LIVEVIEW MODE
+; -----------------------------------------------------
+timeout  = 10
+mtimeout = 0
+
+if GoOn > 0 then
+	int2str format_id_str format_id
+	sendln 'svc_app format_id ' format_id_str
+
+	waitregex 'This is (\S+) mode'
+	if result > 0 then
+		Mode = groupmatchstr1
+		strmatch Mode 'Liveview'
+		if result = 0 then
+			sendln 'svc_flow liveview'
+		endif
+	else
+		GoOn = 0
+	endif
+endif
+
+
+; -----------------------------------------------------
+;         START RECORD AND BITSTREAM COMPARISON
+; -----------------------------------------------------
+timeout  = 10
+mtimeout = 0
+
+if GoOn > 0 then
+	waitln 'Current Operation Mode = 1'
+	pause 2
+	if result > 0 then
+		sendln 'imgfrw load'
+		mpause 100
+		sendln 'imgfrw system load'
+		mpause 100
+		sendln 'imgfrw sensor load'
+		mpause 100
+		sendln 'imgfrw app load'
+		mpause 100
+		sendln 'imgfrw app stat_mask 0'
+		mpause 100
+		sendln 'imgfrw app sync_en 0 0'
+		mpause 100
+
+		sendln 'svc_app rec load'
+		pause 1
+		sendln 'svc_rec bitscmp 3'
+		pause 1
+		sendln 'svc_rec start 3'
+	endif
+
+	waitln 'record start successfully(3)'
+endif

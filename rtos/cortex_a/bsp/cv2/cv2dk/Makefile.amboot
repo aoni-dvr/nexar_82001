@@ -1,0 +1,32 @@
+# For bootstrap
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaBST_UserConfig.o     \
+                                $(BSP_PATH)/AmbaBST_NAND_Generic.o
+
+
+ifdef CONFIG_CV2_LPDDR4_MT53D512M32D2DS_1800MHZ
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaLPDDR4_MT53D512M32D2DS_1800Mhz.o
+else
+ifdef CONFIG_CV2_LPDDR4_MT53D512M32D2DS_1680MHZ
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaLPDDR4_MT53D512M32D2DS_1680Mhz.o
+else
+ifdef CONFIG_CV2_LPDDR4_MT53D512M32D2DS_1608MHZ
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaLPDDR4_MT53D512M32D2DS_1608Mhz.o
+else
+ifdef CONFIG_CV2_LPDDR4_MT53D512M32D2DS_1560MHZ
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaLPDDR4_MT53D512M32D2DS_1560Mhz.o
+else
+#All others apply Auto-Grade setting
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaLPDDR4_MT53D512M32D2DS_1392MHz_CPU_756MHz_normal.o
+endif
+endif
+endif
+endif
+
+# For bootloader
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaUserGpioConfig.o             \
+                                $(BSP_PATH)/AmbaUserDefinedPreBoot.o         \
+                                $(BSP_PATH)/AmbaNAND_MT29F4G08ABADAH4.o
+
+ifeq ($(CONFIG_SVC_APPS_ICAM),)
+libbsp_$(AMBA_BSP_NAME)-objs += $(BSP_PATH)/AmbaUserNandPartition.o
+endif

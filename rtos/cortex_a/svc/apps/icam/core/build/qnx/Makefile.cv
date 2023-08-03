@@ -1,0 +1,85 @@
+# cv
+ifeq ($(CONFIG_BUILD_CV),y)
+
+EXTRA_SRCVPATH += $(ICAM_CORE_SRC)/cv/cvflow
+EXTRA_SRCVPATH += $(ICAM_CORE_SRC)/cv/transfer
+
+SRCS += SvcCvFlow.c
+SRCS += SvcCvFlowProfile.c
+SRCS += SvcCvFlowUtil.c
+SRCS += SvcCvFlowAlgoUtil.c
+SRCS += SvcCvFlow_Shared.c
+SRCS += SvcImgFeeder.c
+SRCS += SvcImgFIFO.c
+
+ifeq ($(CONFIG_ICAM_CV_FLEXIDAG),y)
+SRCS += SvcCvFlow_AmbaOD.c
+SRCS += SvcCvFlow_AmbaODTable.c
+SRCS += SvcCvFlow_AmbaSeg.c
+SRCS += SvcCvFlow_AmbaSegTable.c
+SRCS += SvcCvFlow_AppTest.c
+SRCS += SvcCvFlow_AppTestTable.c
+SRCS += SvcCvFlow_RefOD.c
+SRCS += SvcCvFlow_RefODTable.c
+SRCS += SvcCvFlow_RefOD_SharedFD.c
+SRCS += SvcCvFlow_RefODTable_SharedFD.c
+SRCS += SvcCvFlow_RefSeg.c
+SRCS += SvcCvFlow_RefSegTable.c
+endif
+ifeq ($(CONFIG_ICAM_PROJECT_CNNTESTBED),y)
+SRCS += SvcCvFlow_CnnTestbed.c
+SRCS += SvcCvFlow_CnnTestbedTable.c
+SRCS += SvcCvFlow_CnnTestbedIpc.c
+SRCS += SvcCvFlow_CnnTestbedIpcTable.c
+endif
+ifeq ($(CONFIG_ICAM_CV_STEREO),y)
+SRCS += SvcCvFlow_Stereo.c
+SRCS += SvcCvFlow_StereoTable.c
+endif
+ifeq ($(CONFIG_ICAM_CV_STEREO_AUTO_CALIB),y)
+SRCS += SvcCvFlow_StereoAC.c
+SRCS += SvcCvFlow_StereoACTable.c
+endif
+ifeq ($(CONFIG_ICAM_CV_LOGGER),y)
+SRCS += SvcCvLogger.c
+endif
+ifeq ($(CONFIG_AMBALINK_BOOT_OS),y)
+SRCS += SvcCvFlexidagIO.c
+endif
+endif
+# dirt detection
+ifeq ($(CONFIG_ICAM_USE_AMBA_DIRTDETECT),y)
+ifneq ($(wildcard $(srctree)/vendors/ambarella/inc/adas/AmbaDirtDetect.h),)
+SRCS += SvcDirtDetect.c
+endif
+endif
+
+# cv
+ifeq ($(CONFIG_BUILD_CV),y)
+CT_CVALGO_PREFIX = $(srctree)/svc/comsvc/cv/arm_framework/app
+
+EXTRA_INCVPATH += $(srctree)/vendors/ambarella/inc/vision
+EXTRA_INCVPATH += $(srctree)/svc/comsvc/adas/refflow/inc
+EXTRA_INCVPATH += $(srctree)/svc/comsvc/cv/cv_common/inc/cvapi
+EXTRA_INCVPATH += $(srctree)/svc/comsvc/cv/cv_common/inc/svccvalgo
+EXTRA_INCVPATH += $(srctree)/svc/comsvc/cv/cv_common/inc/svccvalgo/qnx
+EXTRA_INCVPATH += $(srctree)/svc/comsvc/flexidagio/inc
+EXTRA_INCVPATH += $(srctree)/soc/vision/cv_common/inc
+EXTRA_INCVPATH += $(srctree)/soc/vision/cv_common/inc/cvapi
+EXTRA_INCVPATH += $(CT_CVALGO_PREFIX)/CtUtils/inc
+EXTRA_INCVPATH += $(CT_CVALGO_PREFIX)/CtSingleFD/inc
+EXTRA_INCVPATH += $(CT_CVALGO_PREFIX)/CtSSD/inc
+EXTRA_INCVPATH += $(CT_CVALGO_PREFIX)/CtDetCls/inc
+EXTRA_INCVPATH += $(CT_CVALGO_PREFIX)/CtSingleFDHeader/inc
+endif
+# dirt detection
+ifeq ($(CONFIG_ICAM_USE_AMBA_DIRTDETECT),y)
+ifneq ($(wildcard $(srctree)/vendors/ambarella/inc/adas/AmbaDirtDetect.h),)
+EXTRA_INCVPATH += $(srctree)/vendors/ambarella/inc/adas
+endif
+endif
+ifeq ($(CONFIG_ICAM_CV_STEREO_AUTO_CALIB),y)
+EXTRA_INCVPATH += $(srctree)/svc/comsvc/stereoutility/inc/common
+EXTRA_INCVPATH += $(srctree)/svc/comsvc/stereoutility/refflow/inc/ac
+endif
+

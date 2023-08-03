@@ -1,0 +1,9 @@
+menu "Peripheral Drivers"
+
+source build/kconfigs/bsp/cv22fs/peripherals/audio/Kconfig
+source build/kconfigs/bsp/cv22fs/peripherals/display/Kconfig
+source build/kconfigs/bsp/cv22fs/peripherals/sensor/Kconfig
+source build/kconfigs/bsp/cv22fs/peripherals/yuvinput/Kconfig
+source build/kconfigs/bsp/cv22fs/peripherals/bridge/Kconfig
+
+endmenu

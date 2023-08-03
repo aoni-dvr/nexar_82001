@@ -1,0 +1,4 @@
+config BR2_PACKAGE_LIVE_MEDIA
+	bool "live_media"
+	help
+	  This is the live media lib.

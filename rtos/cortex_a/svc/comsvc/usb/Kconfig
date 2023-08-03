@@ -1,0 +1,8 @@
+
+if BUILD_COMMON_SERVICE_USB
+
+config USB_AMAGE_USED
+    bool "Use USB Amage features"
+    default y
+
+endif

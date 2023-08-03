@@ -1,0 +1,6 @@
+menu "IMU Driver"
+
+menuconfig IMU_MPU6500
+    bool "MPU6500"
+    default n
+endmenu

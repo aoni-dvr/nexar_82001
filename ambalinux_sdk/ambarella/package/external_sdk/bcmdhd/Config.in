@@ -1,0 +1,136 @@
+config BR2_PACKAGE_BCMDHD
+	tristate "Broadcom DHD"
+	select BR2_PACKAGE_WPA_SUPPLICANT
+	select BR2_PACKAGE_WPA_SUPPLICANT_NL80211
+	select BR2_PACKAGE_WPA_SUPPLICANT_AP_SUPPORT
+	select BR2_PACKAGE_WPA_SUPPLICANT_EAP
+	select BR2_PACKAGE_WPA_SUPPLICANT_HOTSPOT
+	select BR2_PACKAGE_WPA_SUPPLICANT_DEBUG_SYSLOG
+	select BR2_PACKAGE_WPA_SUPPLICANT_WPS
+	select BR2_PACKAGE_WPA_SUPPLICANT_CLI
+	help
+		Broadcom SDK.
+
+if BR2_PACKAGE_BCMDHD
+
+choice
+	prompt "Select type"
+	help
+	  Choose chip
+
+#config BR2_PACKAGE_BCMDHD_43340
+#	tristate "bcm43340"
+#	help
+#		Broadcom BCM43340
+#
+#config BR2_PACKAGE_BCMDHD_43438
+#	tristate "bcm43438"
+#	help
+#		Broadcom BCM43438
+#
+#config BR2_PACKAGE_BCMDHD_43436
+#	tristate "bcm43436"
+#	help
+#		Broadcom BCM43436
+
+config BR2_PACKAGE_BCMDHD_43455
+	tristate "bcm43455"
+	help
+		Broadcom BCM43455
+		
+config BR2_PACKAGE_BCMDHD_43456
+	tristate "bcm43456"
+	help
+		Broadcom BCM43456
+
+#config BR2_PACKAGE_BCMDHD_43596
+#	tristate "bcm43596"
+#	help
+#		Broadcom BCM43596
+
+#config BR2_PACKAGE_BCMDHD_43362
+#	tristate "bcm43362"
+#	help
+#		Broadcom BCM43362
+#		(No P2P supported.)
+
+endchoice
+
+choice
+	prompt "Select vendor/maker"
+	help
+	  Choose vendor/maker
+
+#config BR2_PACKAGE_BCMDHD_AW
+#	bool "AzureWave"
+#	depends on BR2_PACKAGE_BCMDHD_43340 || BR2_PACKAGE_BCMDHD_43362 || \
+#		BR2_PACKAGE_BCMDHD_43438 || BR2_PACKAGE_BCMDHD_43455
+#	help
+#	  AzureWave
+#	  AW-AH640 (bcm43340), AW-AH650 (bcm43362), AW-NB197SM (bcm43438)
+
+config BR2_PACKAGE_BCMDHD_AMPAK
+	bool "Ampak"
+	depends on BR2_PACKAGE_BCMDHD_43340 || BR2_PACKAGE_BCMDHD_43362 || \
+		BR2_PACKAGE_BCMDHD_43438 || BR2_PACKAGE_BCMDHD_43455 || \
+		BR2_PACKAGE_BCMDHD_43596 || BR2_PACKAGE_BCMDHD_43456
+	help
+	  Ampak
+	  AP6234, AP6210
+	  bcm43596: AP6359H
+
+#config BR2_PACKAGE_BCMDHD_USI
+#	bool "USI"
+#	depends on BR2_PACKAGE_BCMDHD_4334 || BR2_PACKAGE_BCMDHD_43438
+#	help
+#	  USI
+#	  WM-BN-BM-26_A_EVB (bcm43438)
+
+endchoice
+
+if BR2_PACKAGE_BCMDHD_43438
+
+choice
+	prompt "Select version of bcm43438"
+
+config BR2_PACKAGE_BCMDHD_43438_A0
+	bool "bcm43438 A0"
+	depends on BR2_PACKAGE_BCMDHD_AW || BR2_PACKAGE_BCMDHD_AMPAK
+	help
+	  bcm43438 A0
+
+config BR2_PACKAGE_BCMDHD_43438_A1
+	bool "bcm43438 A1"
+	depends on BR2_PACKAGE_BCMDHD_USI || BR2_PACKAGE_BCMDHD_AMPAK
+	help
+	  bcm43438 A1
+
+config BR2_PACKAGE_BCMDHD_43438_A1_WOT
+	bool "bcm43438 A1 w/ wider operating temperature"
+	depends on BR2_PACKAGE_BCMDHD_AMPAK
+	help
+	  AP6212SD (bcm43438-A1)
+
+config BR2_PACKAGE_BCMDHD_43438_A1_GPS
+	bool "bcm43438 A1 w/ GPS (bcm4774)"
+	depends on BR2_PACKAGE_BCMDHD_AMPAK
+	help
+	  AP6474 (bcm43438-A1 + bcm4774)
+
+endchoice
+
+endif
+
+#config BR2_PACKAGE_BCMDHD_AUTOFW
+#	bool "Auto select FW"
+#	default y
+#	depends on BR2_PACKAGE_BCMDHD_43340 || \
+#		BR2_PACKAGE_BCMDHD_43438_A1 || \
+#		BR2_PACKAGE_BCMDHD_43438_A1_WOT || \
+#		BR2_PACKAGE_BCMDHD_43438_A1_GPS || \
+#		BR2_PACKAGE_BCMDHD_43455
+#	help
+#	  Select firmware/nvram by chip-ID.
+
+endif
+

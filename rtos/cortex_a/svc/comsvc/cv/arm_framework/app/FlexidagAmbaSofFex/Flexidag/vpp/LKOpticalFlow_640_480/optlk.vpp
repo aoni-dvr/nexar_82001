@@ -1,0 +1,384 @@
+#include <vp_vas.h>
+
+#define max_in_width                640
+#define max_in_height               480
+#define default_resp_threshold      3 // >> 15
+#define default_k                   0.06
+#define window_size                 11
+
+
+#define max_in_bit_height           64
+#define max_in_bit_width            max_in_width*max_in_height/max_in_bit_height
+
+DAG Optlk_prim = {
+
+  //----------------------- input ----------------------- 
+  VP_input(img0, data_format(0,0,8,0), vector(1, 1, max_in_height, max_in_width));
+  VP_input(img1, data_format(0,0,8,0), vector(1, 1, max_in_height, max_in_width));
+
+  VP_scalar(in_resp_threshold, data_format(0,1,0,0), default_resp_threshold);
+  VP_typecast(
+      in_resp_threshold,
+      VP_tensor(resp_threshold, data_format(0,1,15,0), vector(1, 1, 1, 1))
+  );
+
+  //----------------------- start ----------------------- 
+  VP_conv2i(
+    img0, 
+    VP_const_tensor_using_file("./smooth.bin", data_format(0,0,8,0), vector(1, 1, 5, 5)), 
+    VP_tensor(smimg0, data_format(0,0,8,0), vector(1, 1, max_in_height, max_in_width)),
+    start_w = 0,
+    start_h = 0,
+    stride_w = 1,
+    stride_h = 1,
+    out_w = max_in_width,
+    out_h = max_in_height,
+    zr = 0,
+    disable_reserved = 1,
+    strong_zero = 1
+  );  
+
+  VP_conv2i(
+    img1, 
+    VP_const_tensor_using_file("./smooth.bin", data_format(0,0,8,0), vector(1, 1, 5, 5)), 
+    VP_tensor(smimg1, data_format(0,0,8,0), vector(1, 1, max_in_height, max_in_width)),
+    start_w = 0,
+    start_h = 0,
+    stride_w = 1,
+    stride_h = 1,
+    out_w = max_in_width,
+    out_h = max_in_height,
+    zr = 0,
+    disable_reserved = 1,
+    strong_zero = 1
+  );  
+
+  VP_conv2i(
+    smimg0, 
+    VP_const_tensor_using_file("./grad.bin", data_format(1,0,7,0), vector(1, 1, 1, 3)), 
+    VP_tensor(Ix, data_format(1,1,8,0), vector(1, 1, max_in_height, max_in_width)),
+    start_w = 0,
+    start_h = 0,
+    stride_w = 1,
+    stride_h = 1,
+    out_w = max_in_width,
+    out_h = max_in_height,
+    zr = 0,
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_conv2i(
+    smimg0, 
+    VP_const_tensor_using_file("./grad.bin", data_format(1,0,7,0), vector(1, 1, 3, 1)), 
+    VP_tensor(Iy, data_format(1,1,8,0), vector(1, 1, max_in_height, max_in_width)),
+    start_w = 0,
+    start_h = 0,
+    stride_w = 1,
+    stride_h = 1,
+    out_w = max_in_width,
+    out_h = max_in_height,
+    zr = 0,
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+  
+  VP_sub(
+    smimg0, smimg1, 
+    VP_tensor(It, data_format(1,1,8,0), vector(1, 1, max_in_height, max_in_width)),
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_mul(
+    Ix, Iy, 
+    VP_tensor(Ixy, data_format(1,1,14,0), vector(1, 1, max_in_height, max_in_width)),
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_mul(
+    Ix, Ix, 
+    VP_tensor(Ixx, data_format(1,1,14,0), vector(1, 1, max_in_height, max_in_width)),
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_mul(
+    Iy, Iy, 
+    VP_tensor(Iyy, data_format(1,1,14,0), vector(1, 1, max_in_height, max_in_width)),
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_mul(
+    Ix, It, 
+    VP_tensor(Ixt, data_format(1,1,14,0), vector(1, 1, max_in_height, max_in_width)),
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_mul(
+    Iy, It, 
+    VP_tensor(Iyt, data_format(1,1,14,0), vector(1, 1, max_in_height, max_in_width)),
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_conv2i(
+    Ixt, 
+    VP_const_tensor_using_file("./w11.bin", data_format(0,0,7,0), vector(1, 1, window_size, window_size)), 
+    VP_tensor(Mxt, data_format(1,1,10,0), vector(1, 1, max_in_height, max_in_width)),
+    start_w = 0,
+    start_h = 0,
+    stride_w = 1,
+    stride_h = 1,
+    out_w = max_in_width,
+    out_h = max_in_height,
+    zr = 1,
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_conv2i(
+    Iyt, 
+    VP_const_tensor_using_file("./w11.bin", data_format(0,0,7,0), vector(1, 1, window_size, window_size)), 
+    VP_tensor(Myt, data_format(1,1,10,0), vector(1, 1, max_in_height, max_in_width)),
+    start_w = 0,
+    start_h = 0,
+    stride_w = 1,
+    stride_h = 1,
+    out_w = max_in_width,
+    out_h = max_in_height,
+    zr = 1,
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_conv2i(
+    Ixx, 
+    VP_const_tensor_using_file("./w11.bin", data_format(0,0,7,0), vector(1, 1, window_size, window_size)), 
+    VP_tensor(Mxx, data_format(0,1,10,0), vector(1, 1, max_in_height, max_in_width)),
+    start_w = 0,
+    start_h = 0,
+    stride_w = 1,
+    stride_h = 1,
+    out_w = max_in_width,
+    out_h = max_in_height,
+    zr = 1,
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_conv2i(
+    Iyy, 
+    VP_const_tensor_using_file("./w11.bin", data_format(0,0,7,0), vector(1, 1, window_size, window_size)), 
+    VP_tensor(Myy, data_format(0,1,10,0), vector(1, 1, max_in_height, max_in_width)),
+    start_w = 0,
+    start_h = 0,
+    stride_w = 1,
+    stride_h = 1,
+    out_w = max_in_width,
+    out_h = max_in_height,
+    zr = 1,
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_conv2i(
+    Ixy, 
+    VP_const_tensor_using_file("./w11.bin", data_format(0,0,7,0), vector(1, 1, window_size, window_size)), 
+    VP_tensor(Mxy, data_format(1,1,10,0), vector(1, 1, max_in_height, max_in_width)),
+    start_w = 0,
+    start_h = 0,
+    stride_w = 1,
+    stride_h = 1,
+    out_w = max_in_width,
+    out_h = max_in_height,
+    zr = 1,
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_mul(
+    Mxx, Myy, 
+    VP_tensor(trace, float16_t, vector(1, 1, max_in_height, max_in_width)),
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_mul(
+    Mxy, Mxy, 
+    VP_tensor(cross, float16_t, vector(1, 1, max_in_height, max_in_width)),
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_sub(
+    trace, cross, 
+    VP_tensor(Det, float16_t, vector(1, 1, max_in_height, max_in_width)),
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_add(
+    Mxx, Myy, 
+    VP_tensor(trace_sum, float16_t, vector(1, 1, max_in_height, max_in_width)),
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_mul(
+    trace_sum, trace_sum, 
+    VP_tensor(trace_square, float16_t, vector(1, 1, max_in_height, max_in_width)),
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_mul(
+    trace_square, default_k, 
+    VP_tensor(trace_square_with_k, float16_t, vector(1, 1, max_in_height, max_in_width)),
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_sub(
+    Det, trace_square_with_k, 
+    VP_tensor(resp, float16_t, vector(1, 1, max_in_height, max_in_width)),
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_mmrwh(
+    resp,
+    VP_tensor(peak_fp16, float16_t, vector(1)),
+    VP_auto_tensor(peak_fp16_position),
+    op = 1 //max
+  );  
+  
+  VP_mul(
+    Mxt, Myy, 
+    VP_tensor(dxm1, float16_t, vector(1, 1, max_in_height, max_in_width)),
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_mul(
+    Myt, Mxy, 
+    VP_tensor(dxm2, float16_t, vector(1, 1, max_in_height, max_in_width)),
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_mul(
+    Mxy, Mxt, 
+    VP_tensor(dym1, float16_t, vector(1, 1, max_in_height, max_in_width)),
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_mul(
+    Mxx, Myt, 
+    VP_tensor(dym2, float16_t, vector(1, 1, max_in_height, max_in_width)),
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_recip(
+    Det,
+    VP_tensor(divDet, float16_t, vector(1, 1, max_in_height, max_in_width)),
+  );
+
+  VP_sub(
+    dxm1, dxm2, 
+    VP_tensor(dxm1_m_dxm2, float16_t, vector(1, 1, max_in_height, max_in_width)),
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_mul(
+    dxm1_m_dxm2, divDet, 
+    VP_tensor(dx, data_format(1,0,3,0), vector(1, 1, max_in_height, max_in_width)),
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_sub(
+    dym2, dym1, 
+    VP_tensor(dym2_m_dym1, float16_t, vector(1, 1, max_in_height, max_in_width)),
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_mul(
+    dym2_m_dym1, divDet, 
+    VP_tensor(dy, data_format(1,0,3,0), vector(1, 1, max_in_height, max_in_width)),
+    disable_reserved = 1,
+    strong_zero = 1
+  );
+
+  VP_gtb(
+    resp,
+    resp_threshold,
+    VP_tensor(selectout, uint8_t, vector(1, 1, max_in_height, max_in_width), bitvector = 1)
+  );
+
+  VP_muxb(
+      dx,
+      VP_const_tensor("FF", data_format(1,0,3,0), vector(1, 1, 1, 1)),
+      selectout,
+      VP_tensor(th_dx, data_format(1,0,3,0), vector(1, 1, max_in_height, max_in_width))
+  );
+
+  VP_muxb(
+      dy,
+      VP_const_tensor("FF", data_format(1,0,3,0), vector(1, 1, 1, 1)),
+      selectout,
+      VP_tensor(th_dy, data_format(1,0,3,0), vector(1, 1, max_in_height, max_in_width))
+  );
+
+  VP_merged(th_dx, th_dy, VP_tensor(th_dx_dy_tmp, data_format(1,0,3,0), vector(1, 2, max_in_height, max_in_width)));
+
+  // Transfer to x,y interleaved format
+  VP_transpose(th_dx_dy_tmp, 
+      VP_tensor(th_dx_dy, data_format(1,0,3,0), vector(1, max_in_height, max_in_width, 2)),
+      to_w = 2,
+      to_h = 0,
+      to_d = 1,
+      to_p = 3
+  );
+
+  VP_reshape(
+      th_dx_dy,
+      VP_tensor(th_dx_dy_reshape, data_format(1,0,3,0), vector(1, 1, max_in_height*2, max_in_width)),
+      w = max_in_width,
+      h = max_in_height*2,
+      d = 1,
+      p = 1,
+  );
+
+  VP_bwnot(
+    selectout,
+    VP_tensor(selectout_not, uint8_t, vector(1, 1, max_in_height, max_in_width), bitvector = 1)
+  );
+
+  // Split selectout_not into smaller chunk, because VP_bitcntrwhd support up to uint16_t
+  VP_reshape(
+      selectout_not,
+      VP_tensor(selectout_not_reshape, uint8_t, vector(max_in_bit_height, 1, 1, max_in_bit_width), bitvector = 1),
+      w = max_in_bit_width,
+      h = 1,
+      d = 1,
+      p = max_in_bit_height,
+  );
+
+  VP_bitcntrwhd(
+    selectout_not_reshape,
+    VP_tensor(invalid_count, uint16_t, vector(max_in_bit_height))
+  );
+
+  VP_output(th_dx_dy_reshape_out, th_dx_dy_reshape); 
+  VP_output(invalid_count_out, invalid_count);   
+
+}
+

@@ -1,0 +1,121 @@
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2020 Ambarella International LP
+////////////////////////////////////////////////////////////////////////////////
+// This file and its contents ("Software") are protected by intellectual
+// property rights including, without limitation, U.S. and/or foreign
+// copyrights. This Software is also the confidential and proprietary
+// information of Ambarella International LP and its licensors. You may not use,
+// reproduce, disclose, distribute, modify, or otherwise prepare derivative
+// works of this Software or any portion thereof except pursuant to a signed
+// license agreement or nondisclosure agreement with Ambarella International LP
+// or its authorized affiliates. In the absence of such an agreement, you agree
+// to promptly notify and return this Software to Ambarella International LP.
+//
+// THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT,
+// MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+// IN NO EVENT SHALL AMBARELLA INTERNATIONAL LP OR ITS AFFILIATES BE LIABLE
+// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+// SERVICES; LOSS OF USE, DATA, OR PROFITS; COMPUTER FAILURE OR MALFUNCTION;
+// OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+// ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+////////////////////////////////////////////////////////////////////////////////
+
+=====================
+     vas summary     
+=====================
+DAG name: 'pre_split7_flexidag_openseg_prim_split_0'
+vas command: /opt/amba/cv28/tv2/release/Vas/cv28.qa.2020-09-02.773/bin/vas1 -auto -no-split-dag -recompile -no-pre-split -fs pre_split7_flexidag_openseg_split_0.vas /tmp/vascppJP8Ykf.vii -max-name-id 160100000 -comp2-id-range 160100000~160110000 -info "(ARCH cv28 VERSION 77 CVTOOLS_RELEASE 2.2.0) run at 'Tue Sep  8 10:30:16 2020'"
+source op primitives:          0
+final operators:              10
+final descriptors:            20
+DAG code num bytes:          756
+vmem num bytes:           509276(497 K)
+dcb num bytes:            131040(127 K)
+dcb:         2
+vcb:         4  full:    0
+hmb:         2  full:    0  const:    0
+smb:         9              const:    8
+scalar:      0
+subspace:    3
+subspace parent:    1
+total hmb input dram size: 3932160 bytes
+total hmb output dram size: 5242880 bytes
+total const data + dagbin size: 9056 bytes
+total dvi size: 9056 bytes
+total ddi size:    0 bytes
+
+total write traffic:
+    dcb:         1310720 bytes
+    vcb:         3276800 bytes
+    hmb:         5242880 bytes
+    smb:             768 bytes
+
+total read traffic
+    dcb:         1310720 bytes
+    vcb:         4587520 bytes
+    hmb:         7864320 bytes
+    smb:            8252 bytes
+    scalar:            0 bytes
+
+VMEM usage >= 4K bytes:
+
+======================
+       VMEM map       
+======================
+vmem_base = 0x1000
+
+0x00000000      --------------------------------------
+                  -- nil -- (4096 bytes)
+0x00001000      --------------------------------------
+                  __vas_created_terminate__v0(software_managed) (96 bytes)
+0x00001060      --------------------------------------
+                  PeleeNet__stage_1_dense_block_2__conv_right_1__Conv2D___BatchNorm__FusedBatchNorm___Relu(vmem_chaining) (16320 bytes)
+0x00005020      --------------------------------------
+                  PeleeNet__stage_1_dense_block_2__conv_left_0__Relu(vmem_chaining) (21376 bytes)
+0x0000a3a0      --------------------------------------
+                  PeleeNet__stage_1_dense_block_2__conv_right_0__Relu(vmem_chaining) (21376 bytes)
+0x0000f720      --------------------------------------
+                  PeleeNet__stage_1_dense_block_2__conv_left_0__Conv2D___BatchNorm__FusedBatchNorm___right_0__Conv2D___BatchNorm__FusedBatchNorm___muli___451___2(vmem_chaining) (30720 bytes)
+0x00016f20      --------------------------------------
+                  PeleeNet__stage_1_dense_block_2__concat(hardware_managed) (163840 bytes)
+0x0003ef20      --------------------------------------
+                  PeleeNet__stage_1_dense_block_1__concat______muli___450(hardware_managed) (247296 bytes)
+0x0007b520      --------------------------------------
+                  __pvcn_631_(software_managed) (2408 bytes)
+0x0007be88      --------------------------------------
+                  __pvcn_642_(software_managed) (1808 bytes)
+0x0007c598      --------------------------------------
+                  __pvcn_638_(software_managed) (1804 bytes)
+0x0007cca4      --------------------------------------
+                  __pvcn_635_(software_managed) (1784 bytes)
+0x0007d39c      --------------------------------------
+                  __pvcn_632_(software_managed) (160 bytes)
+0x0007d43c      --------------------------------------
+                  __pvcn_643_(software_managed) (96 bytes)
+0x0007d49c      --------------------------------------
+                  __pvcn_639_(software_managed) (96 bytes)
+0x0007d4fc      --------------------------------------
+                  __pvcn_636_(software_managed) (96 bytes)
+0x0007d55c      --------------------------------------
+                  dag binary (804 bytes)
+0x0007d880      --------------------------------------
+                  -- nil -- (10112 bytes)
+0x00080000      --------------- (end) ----------------
+
+Mac count summary: 
+  total normalized mac count:        255836160
+    - Ice mac count:                               249282560
+      - ice true mac count:          249282560
+      - ice normalized mac count:    249282560
+    - Arithmetic normalized mac count:               1310720
+    - Transfer normalized mac count:                 5242880
+
+Estimated ICE cycle count: 1954560
+
+total vas running time: 0.76 seconds
+
+

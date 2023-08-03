@@ -1,0 +1,12 @@
+
+
+# For a description of the syntax of this configuration file,
+# see build/scripts/Documentation/kbuild/kconfig-language.txt.
+#
+mainmenu "Ambarella SDK Configuration"
+
+source build/kconfigs/Kconfig.arch
+source build/kconfigs/Kconfig.toolchain
+
+source build/buildsystem_ut/kconfig/Kconfig.but
+

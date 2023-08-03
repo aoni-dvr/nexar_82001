@@ -1,0 +1,26 @@
+
+# svc dsp function
+DIAG_INC_PREFIX  = ../../src/cmd/diag/inc
+DIAG_O_PREFIX    = ../../src/cmd/diag
+DIAG_O_OS_PREFIX = ../../src/cmd/diag/threadx
+
+ccflags-y += -I$(src)/$(DIAG_INC_PREFIX)
+ccflags-y += -I$(src)/$(DIAG_INC_PREFIX)/$(AMBA_CHIP_ID)
+ccflags-y += -I$(srctree)/soc/io/src/$(AMBA_CHIP_ID)/inc/csl
+ccflags-y += -I$(srctree)/soc/io/src/$(AMBA_CHIP_ID)/inc/reg
+ccflags-y += -I$(srctree)/soc/io/src/common/inc/csl
+ccflags-y += -I$(srctree)/soc/io/src/common/inc/reg
+
+libsvc_icam-objs += $(DIAG_O_PREFIX)/SvcCmdDiag.o
+libsvc_icam-objs += $(DIAG_O_PREFIX)/SvcDiagGPIO.o
+libsvc_icam-objs += $(DIAG_O_OS_PREFIX)/SvcDiagI2C.o
+#libsvc_icam-objs += $(DIAG_O_OS_PREFIX)/SvcDiagDRAM.o
+ifeq ($(CONFIG_SOC_CV5)$(CONFIG_SOC_CV52),y)
+libsvc_icam-objs += $(DIAG_O_OS_PREFIX)/$(AMBA_CHIP_ID)/SvcDiagDDR.o
+else ifeq ($(CONFIG_SOC_CV2FS)$(CONFIG_SOC_CV22FS),y)
+else
+libsvc_icam-objs += $(DIAG_O_OS_PREFIX)/SvcDiagDDR.o
+endif
+ifeq ($(CONFIG_ICAM_CVBS_EXIST),y)
+libsvc_icam-objs += $(DIAG_O_OS_PREFIX)/SvcDiagCVBS.o
+endif

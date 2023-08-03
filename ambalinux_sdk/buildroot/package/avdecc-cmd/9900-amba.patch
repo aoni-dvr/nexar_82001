@@ -1,0 +1,21 @@
+--- a/common.cmake.orig	2017-04-06 14:47:38.309237753 +0800
++++ a/common.cmake	2017-04-07 10:24:32.856929108 +0800
+@@ -3,7 +3,7 @@
+ enable_testing()
+ 
+ option(TODO "Enable TODO items that are in progress" OFF)
+-option(TESTS "Enable building of extended test code in library" ON)
++option(TESTS "Enable building of extended test code in library" OFF)
+ option(EXAMPLES "Enable building of example programs" ON)
+ option(TOOLS "Enable building of tools" ON)
+ option(TOOLS_DEV "Enable building of tools-dev" ON)
+@@ -21,6 +21,9 @@
+ 
+ 
+ set(LIBS ${LIBS} ${CHECK_LIBRARIES} ${PROJECT})
++if(TESTS MATCHES "OFF")
++   set(LIBS ${LIBS} jdksavdecc-c)
++endif()
+ 
+ include_directories( include ${ADDITIONAL_INCLUDE_DIRECTORIES} )
+ 

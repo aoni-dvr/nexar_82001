@@ -1,0 +1,3 @@
+.section .cvtasklist_entry
+.align 4
+	.long _imgproc_cvtask_register

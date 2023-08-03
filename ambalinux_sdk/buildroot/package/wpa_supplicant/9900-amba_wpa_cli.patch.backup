@@ -1,0 +1,104 @@
+From 7fa78b922f7ded99f3024ef3253ebdd6181dc5e4 Mon Sep 17 00:00:00 2001
+From: "Sam Ho (chho)" <chho@ambarella.com>
+Date: Thu, 21 Jan 2021 16:37:22 +0800
+Subject: [PATCH] 9900
+
+---
+ wpa_supplicant/wpa_cli.c | 30 ++++++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
+
+diff --git a/wpa_supplicant/wpa_cli.c b/wpa_supplicant/wpa_cli.c
+index 43ac427..e7ee653 100644
+--- a/wpa_supplicant/wpa_cli.c
++++ b/wpa_supplicant/wpa_cli.c
+@@ -54,6 +54,7 @@ static const char *pid_file = NULL;
+ static const char *action_file = NULL;
+ static int ping_interval = 5;
+ static int interactive = 0;
++static int scan_autoquit = 0;
+ static char *ifname_prefix = NULL;
+ 
+ static DEFINE_DL_LIST(bsses); /* struct cli_txt_entry */
+@@ -91,6 +92,7 @@ static void usage(void)
+ 	       "  -a = run in daemon mode executing the action file based on "
+ 	       "events from\n"
+ 	       "       wpa_supplicant\n"
++	       "  -A = stop action file after finish scan"
+ 	       "  -B = run a daemon in the background\n"
+ 	       "  default path: " CONFIG_CTRL_IFACE_DIR "\n"
+ 	       "  default interface: first interface found in socket path\n");
+@@ -3991,6 +3993,9 @@ static void wpa_cli_action_process(const char *msg)
+ 		wpa_cli_exec(action_file, ctrl_ifname, pos);
+ 	} else if (str_starts(pos, MESH_PEER_DISCONNECTED)) {
+ 		wpa_cli_exec(action_file, ctrl_ifname, pos);
++	} else if (str_starts(pos, "P2P")) {
++		/* Added by Ambarella for hook all P2P commands. */
++		wpa_cli_exec(action_file, ifname, pos);
+ 	} else if (str_starts(pos, P2P_EVENT_GROUP_STARTED)) {
+ 		wpa_cli_exec(action_file, ifname, pos);
+ 	} else if (str_starts(pos, P2P_EVENT_GROUP_REMOVED)) {
+@@ -4040,6 +4045,8 @@ static void wpa_cli_action_process(const char *msg)
+ 	} else if (str_starts(pos, WPA_EVENT_TERMINATING)) {
+ 		printf("wpa_supplicant is terminating - stop monitoring\n");
+ 		wpa_cli_quit = 1;
++	} else {
++		syslog(0, "%s:%s", __func__, pos);
+ 	}
+ }
+ 
+@@ -4209,8 +4216,13 @@ static void wpa_cli_recv_pending(struct wpa_ctrl *ctrl, int action_monitor)
+ 		size_t len = sizeof(buf) - 1;
+ 		if (wpa_ctrl_recv(ctrl, buf, &len) == 0) {
+ 			buf[len] = '\0';
+-			if (action_monitor)
++			if (action_monitor) {
++				if (scan_autoquit && (NULL != strstr(buf, WPA_EVENT_SCAN_RESULTS))) {
++					syslog(0, "%s %s", __func__, buf);
++					eloop_terminate();
++				}
+ 				wpa_cli_action_process(buf);
++			}
+ 			else {
+ 				cli_event(buf);
+ 				if (wpa_cli_show_event(buf)) {
+@@ -4655,10 +4667,14 @@ int main(int argc, char *argv[])
+ 		return -1;
+ 
+ 	for (;;) {
+-		c = getopt(argc, argv, "a:Bg:G:hi:p:P:s:v");
++		c = getopt(argc, argv, "A:a:Bg:G:hi:p:P:s:v");
+ 		if (c < 0)
+ 			break;
+ 		switch (c) {
++		case 'A':
++			scan_autoquit = 1;
++			action_file = optarg;
++			break;
+ 		case 'a':
+ 			action_file = optarg;
+ 			break;
+@@ -4737,11 +4753,21 @@ int main(int argc, char *argv[])
+ 		if (daemonize && os_daemonize(pid_file) && eloop_sock_requeue())
+ 			return -1;
+ 
++		if (scan_autoquit) {
++			char *scan_arg[] = { "scan" };
++			ret = wpa_request(ctrl_conn, 1, &scan_arg[0]);
++		}
++
+ 		if (action_file)
+ 			wpa_cli_action(ctrl_conn);
+ 		else
+ 			ret = wpa_request(ctrl_conn, argc - optind,
+ 					  &argv[optind]);
++
++		if (scan_autoquit) {
++			char *scan_arg[] = { "scan_r" };
++			ret = wpa_request(ctrl_conn, 1, &scan_arg[0]);
++		}
+ 	}
+ 
+ 	os_free(ctrl_ifname);
+-- 
+2.7.4
+

@@ -1,0 +1,119 @@
+<!------------------------------------------------------------------------------------------------------------- ->
+<!- @FileName       :: gui.list                                                                                 ->
+<!-                                                                                                             ->
+<!- @Copyright      :: Copyright (C) 2018 Ambarella Corporation. All rights reserved.                           ->
+<!-                                                                                                             ->
+<!-                    No part of this file may be reproduced, stored in a retrieval system,                    ->
+<!-                    or transmitted, in any form, or by any means, electronic, mechanical, photocopying,      ->
+<!-                    recording, or otherwise, without the prior consent of Ambarella Corporation.             ->
+<!-                                                                                                             ->
+<!- @Description    :: the file list for rom file system                                                        ->
+<!------------------------------------------------------------------------------------------------------------- ->
+
+<romfs>
+    <!- Relative path from the top directory of the build ->
+    <top>svc/apps/icam/main/rom/bmp/</top>
+    <!- font data ->
+    <file>fonts.bin<alias>fonts.bin</alias></file>
+    <!- menu data ->
+    <!- record ->
+    <file>icon_liveview_0.bmp<alias>icon_liveview_0.bmp</alias></file>
+    <file>icon_liveview_1.bmp<alias>icon_liveview_1.bmp</alias></file>
+    <file>icon_record.bmp<alias>icon_record.bmp</alias></file>
+    <file>icon_record_0.bmp<alias>icon_record_0.bmp</alias></file>
+    <file>icon_record_1.bmp<alias>icon_record_1.bmp</alias></file>
+    <file>icon_pan_0.bmp<alias>icon_pan_0.bmp</alias></file>
+    <file>icon_pan_1.bmp<alias>icon_pan_1.bmp</alias></file>
+    <file>icon_tilt_0.bmp<alias>icon_tilt_0.bmp</alias></file>
+    <file>icon_tilt_1.bmp<alias>icon_tilt_1.bmp</alias></file>
+    <file>icon_rotate_0.bmp<alias>icon_rotate_0.bmp</alias></file>
+    <file>icon_rotate_1.bmp<alias>icon_rotate_1.bmp</alias></file>
+    <file>icon_dim_0.bmp<alias>icon_dim_0.bmp</alias></file>
+    <file>icon_dim_1.bmp<alias>icon_dim_1.bmp</alias></file>
+    <file>icon_bsd_0.bmp<alias>icon_bsd_0.bmp</alias></file>
+    <file>icon_bsd_1.bmp<alias>icon_bsd_1.bmp</alias></file>
+    <file>icon_bsd_on.bmp<alias>icon_bsd_on.bmp</alias></file>
+    <file>icon_fcws_0.bmp<alias>icon_fcws_0.bmp</alias></file>
+    <file>icon_fcws_1.bmp<alias>icon_fcws_1.bmp</alias></file>
+    <file>icon_fcmd_0.bmp<alias>icon_fcmd_0.bmp</alias></file>
+    <file>icon_fcmd_1.bmp<alias>icon_fcmd_1.bmp</alias></file>
+    <file>icon_ldws_0.bmp<alias>icon_ldws_0.bmp</alias></file>
+    <file>icon_ldws_1.bmp<alias>icon_ldws_1.bmp</alias></file>
+    <file>icon_dms_0.bmp<alias>icon_dms_0.bmp</alias></file>
+    <file>icon_dms_1.bmp<alias>icon_dms_1.bmp</alias></file>
+    <file>icon_wifi_0.bmp<alias>icon_wifi_0.bmp</alias></file>
+    <file>icon_wifi_1.bmp<alias>icon_wifi_1.bmp</alias></file>
+    <file>icon_od_0.bmp<alias>icon_od_0.bmp</alias></file>
+    <file>icon_od_1.bmp<alias>icon_od_1.bmp</alias></file>
+    <file>icon_format_0.bmp<alias>icon_format_0.bmp</alias></file>
+    <file>icon_format_1.bmp<alias>icon_format_1.bmp</alias></file>
+    <file>icon_emr2_0.bmp<alias>icon_emr2_0.bmp</alias></file>
+    <file>icon_emr2_1.bmp<alias>icon_emr2_1.bmp</alias></file>
+    <file>icon_defog_0.bmp<alias>icon_defog_0.bmp</alias></file>
+    <file>icon_defog_1.bmp<alias>icon_defog_1.bmp</alias></file>
+    <file>icon_dirt_detection_0.bmp<alias>icon_dirt_detection_0.bmp</alias></file>
+    <file>icon_dirt_detection_1.bmp<alias>icon_dirt_detection_1.bmp</alias></file>
+    <file>icon_layout_0.bmp<alias>icon_layout_0.bmp</alias></file>
+    <file>icon_layout_1.bmp<alias>icon_layout_1.bmp</alias></file>
+    <!- playback ->
+    <file>icon_playback_0.bmp<alias>icon_playback_0.bmp</alias></file>
+    <file>icon_playback_1.bmp<alias>icon_playback_1.bmp</alias></file>
+    <file>icon_play_0.bmp<alias>icon_play_0.bmp</alias></file>
+    <file>icon_play_1.bmp<alias>icon_play_1.bmp</alias></file>
+    <file>icon_stop_0.bmp<alias>icon_stop_0.bmp</alias></file>
+    <file>icon_stop_1.bmp<alias>icon_stop_1.bmp</alias></file>
+    <file>icon_next_0.bmp<alias>icon_next_0.bmp</alias></file>
+    <file>icon_next_1.bmp<alias>icon_next_1.bmp</alias></file>
+    <file>icon_prev_0.bmp<alias>icon_prev_0.bmp</alias></file>
+    <file>icon_prev_1.bmp<alias>icon_prev_1.bmp</alias></file>
+    <file>icon_backward_0.bmp<alias>icon_backward_0.bmp</alias></file>
+    <file>icon_backward_1.bmp<alias>icon_backward_1.bmp</alias></file>
+    <file>icon_forward_0.bmp<alias>icon_forward_0.bmp</alias></file>
+    <file>icon_forward_1.bmp<alias>icon_forward_1.bmp</alias></file>
+    <!- warning icon ->
+    <file>icon_bsd_warn.bmp<alias>icon_bsd_warn.bmp</alias></file>
+    <file>icon_bsd_r1_warn.bmp<alias>icon_bsd_r1_warn.bmp</alias></file>
+    <file>icon_fcmd_0_warning_0.bmp<alias>icon_fcmd_0_warning_0.bmp</alias></file>
+    <file>icon_fcmd_0_warning_1.bmp<alias>icon_fcmd_0_warning_1.bmp</alias></file>
+    <file>icon_fcmd_0_warning_2.bmp<alias>icon_fcmd_0_warning_2.bmp</alias></file>
+    <file>icon_fcmd_0_warning_3.bmp<alias>icon_fcmd_0_warning_3.bmp</alias></file>
+    <file>icon_fcmd_0_warning_4.bmp<alias>icon_fcmd_0_warning_4.bmp</alias></file>
+    <file>icon_fcmd_0_warning_5.bmp<alias>icon_fcmd_0_warning_5.bmp</alias></file>
+    <file>icon_fcws_0_warning_0.bmp<alias>icon_fcws_0_warning_0.bmp</alias></file>
+    <file>icon_fcws_0_warning_1.bmp<alias>icon_fcws_0_warning_1.bmp</alias></file>
+    <file>icon_fcws_0_warning_2.bmp<alias>icon_fcws_0_warning_2.bmp</alias></file>
+    <file>icon_fcws_0_warning_3.bmp<alias>icon_fcws_0_warning_3.bmp</alias></file>
+    <file>icon_fcws_0_warning_4.bmp<alias>icon_fcws_0_warning_4.bmp</alias></file>
+    <file>icon_fcws_1_warning_0.bmp<alias>icon_fcws_1_warning_0.bmp</alias></file>
+    <file>icon_fcws_1_warning_1.bmp<alias>icon_fcws_1_warning_1.bmp</alias></file>
+    <file>icon_fcws_1_warning_2.bmp<alias>icon_fcws_1_warning_2.bmp</alias></file>
+    <file>icon_fcws_1_warning_3.bmp<alias>icon_fcws_1_warning_3.bmp</alias></file>
+    <file>icon_fcws_1_warning_4.bmp<alias>icon_fcws_1_warning_4.bmp</alias></file>
+    <file>icon_ldws_0_warning_right.bmp<alias>icon_ldws_0_warning_right.bmp</alias></file>
+    <file>icon_ldws_0_warning_left.bmp<alias>icon_ldws_0_warning_left.bmp</alias></file>
+    <file>icon_directional_light_left.bmp<alias>icon_directional_light_left.bmp</alias></file>
+    <file>icon_directional_light_right.bmp<alias>icon_directional_light_right.bmp</alias></file>
+    <file>icon_gear_r_left.bmp<alias>icon_gear_r_left.bmp</alias></file>
+    <file>icon_gear_r_right.bmp<alias>icon_gear_r_right.bmp</alias></file>
+    <file>icon_ows_0.bmp<alias>icon_ows_0.bmp</alias></file>
+    <file>icon_ows_1.bmp<alias>icon_ows_1.bmp</alias></file>
+    <file>icon_psd_0.bmp<alias>icon_psd_0.bmp</alias></file>
+    <file>icon_psd_1.bmp<alias>icon_psd_1.bmp</alias></file>
+    <file>icon_rcta_0.bmp<alias>icon_rcta_0.bmp</alias></file>
+    <file>icon_rcta_1.bmp<alias>icon_rcta_1.bmp</alias></file>
+	
+    <!- diagbox ->
+    <file>icon_fwupdate.bmp<alias>icon_fwupdate.bmp</alias></file>
+    <file>diagbox.bmp<alias>diagbox.bmp</alias></file>
+
+    <!- blend table ->
+    <file>Bld_Tbl_Left.bmp<alias>Bld_Tbl_Left.bmp</alias></file>
+    <file>Bld_Tbl_Right.bmp<alias>Bld_Tbl_Right.bmp</alias></file>
+    <file>Bld_Tbl_Left_BSD.bmp<alias>Bld_Tbl_Left_BSD.bmp</alias></file>
+    <file>Bld_Tbl_Right_BSD.bmp<alias>Bld_Tbl_Right_BSD.bmp</alias></file>
+    <! logo ->
+    <file>../logo_nexar_x2.yuv<alias>logo_nexar_x2.yuv</alias></file>
+    <file>../logo_nexar_x2.bin<alias>logo_nexar_x2.bin</alias></file>
+    <file>../logo_nexar_x3.yuv<alias>logo_nexar_x3.yuv</alias></file>
+    <file>../logo_nexar_x3.bin<alias>logo_nexar_x3.bin</alias></file>
+</romfs>

@@ -1,0 +1,120 @@
+#
+# Copyright (c) 2018-2022 Ambarella International LP
+#
+# This file and its contents ("Software") are protected by intellectual property
+# rights including, without limitation, U.S. and/or foreign copyrights. This
+# Software is also the confidential and proprietary information of Ambarella
+# International LP and its licensors. You may not use, reproduce, disclose,
+# distribute, modify, or otherwise prepare derivative works of this Software or
+# any portion thereof except pursuant to a signed license agreement or
+# nondisclosure agreement with Ambarella International LP or its authorized
+# affiliates. In the absence of such an agreement, you agree to promptly notify
+# and return this Software to Ambarella International LP.
+#
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+# INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT,
+# MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL AMBARELLA INTERNATIONAL LP OR ITS AFFILIATES BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; COMPUTER FAILURE OR MALFUNCTION; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+
+SRCDIR        = @srcdir@
+BINDIR        = @abs_top_builddir@
+
+# determine the runtime environment we are building for
+ifeq (@amalgam_diag@, 0)
+APP_TYPE      = linux
+else
+APP_TYPE      = pace
+endif
+
+ARM_APP       = amba_vision_flexi
+LIB_BUILDDIR  = @lib_root@/arm/$(APP_TYPE)
+ARM_BUILDDIR  = @abs_top_builddir@/$(APP_TYPE)
+
+ifndef VERBOSE_MAKE
+.SILENT:
+endif
+
+.PHONY: default all build build_sdag data code_orc code_arm \
+	copy_apps sysflow cvtable run_sim \
+	cleancode cleanrun cleandata clean
+
+###############################################################################
+# primary targets
+###############################################################################
+
+all: clean build
+
+default: build
+
+build: code
+
+###############################################################################
+# make code
+###############################################################################
+
+bin_link:
+	mkdir -p bin bin/flexibin
+	ln -sf ../$(APP_TYPE)/bin/app/$(ARM_APP) bin/
+	ln -sf ../../flexidag0/flexibin0.bin bin/flexibin
+	ln -sf ../../flexidag0/build/pdf bin/flexibin
+	ln -sf ../../../../../pkg/ambacv/tests/flexidag_openod_extern/golden_data bin/
+	ln -sf ../../../../../pkg/ambacv/tests/flexidag_openod_extern/bub_input bin/
+
+code_arm:
+	mkdir -p $(ARM_BUILDDIR)
+	APP_TYPE=$(APP_TYPE) BUILDDIR=$(ARM_BUILDDIR) APP_NAME=$(ARM_APP) \
+	$(MAKE) -C $(SRCDIR)/arm -f $(SRCDIR)/../common_arm.mk all;
+
+code_orc:
+	$(MAKE) -C orc code
+
+
+APP_CVTABLE = $(notdir $(basename $(wildcard $(BINDIR)/arm/*.mnft)))
+
+APP_TBAR =
+ifneq ($(ARM_APP),)
+APP_TBAR := $(BINDIR)/bin/$(ARM_APP)/$(APP_CVTABLE).tbar
+endif
+
+APP_TBAR_SFB := 1
+
+flexibin0:
+	$(MAKE) -C flexidag0 code
+	$(MAKE) -C flexidag0 data
+	$(MAKE) -C flexidag0 flexibin APP_TBAR=$(APP_TBAR) APP_TBAR_SFB=$(APP_TBAR_SFB)
+
+code: bin_link code_arm flexibin0
+
+###############################################################################
+# make data
+###############################################################################
+
+data:
+	$(MAKE) -C orc data
+
+###############################################################################
+# make clean
+###############################################################################
+
+cleancode:
+	$(MAKE) -C orc cleancode
+	rm -rf $(APP_TYPE)
+
+cleanrun:
+	$(MAKE) -C orc cleanrun
+
+cleandata:
+	$(MAKE) -C orc cleanrun
+	@rm -f *.tbar
+	@rm -f *.sfb
+	@rm -f *.pdf
+
+clean: cleancode cleanrun cleandata

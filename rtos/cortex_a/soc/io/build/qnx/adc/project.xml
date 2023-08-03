@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<module name="adc-ambarella">
+  <classification>Driver</classification>
+  <description>
+    <short>ambarella adc Driver</short>
+    <abstract><![CDATA[
+	                The gpio driver for the Ambarella BSP.
+	        ]]></abstract>
+  </description>
+  <supports>
+    <availability>
+      <cpu isa="aarch64">
+        <byteOrder>le</byteOrder>
+      </cpu>
+    </availability>
+  </supports>
+  <contents>
+    <component id="ambarella" generated="true">
+      <location basedir="aarch64/le">adc-ambarella</location>
+    </component>
+  </contents>
+  <requires>
+    <part build="false" location="lib/adc"/>
+  </requires>
+</module>

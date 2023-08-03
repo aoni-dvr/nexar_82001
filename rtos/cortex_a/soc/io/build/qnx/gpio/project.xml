@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<module name="gpio-ambarella">
+  <classification>Driver</classification>
+  <description>
+    <short>ambarella gpio Driver</short>
+    <abstract><![CDATA[
+	                The gpio driver for the Ambarella BSP.
+	        ]]></abstract>
+  </description>
+  <supports>
+    <availability>
+      <cpu isa="aarch64">
+        <byteOrder>le</byteOrder>
+      </cpu>
+    </availability>
+  </supports>
+  <contents>
+    <component id="ambarella" generated="true">
+      <location basedir="aarch64/le">gpio-ambarella</location>
+    </component>
+  </contents>
+  <requires>
+    <part build="false" location="lib/gpio"/>
+  </requires>
+</module>

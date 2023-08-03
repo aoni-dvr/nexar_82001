@@ -1,0 +1,80 @@
+# Kconfig.hypervisor
+
+menu "XEN Hypervisor"
+
+config XEN_SUPPORT
+	bool "Enable support for XEN hypervisor"
+	default n
+
+if XEN_SUPPORT
+
+config XEN_DTS
+	string "Flattened Device Tree Sourece File"
+	default ""
+
+choice
+	prompt "dom0"
+	default XEN_DOM0_LX
+	help
+	  Select domain-0.
+
+#config XEN_DOM0_TX
+#	bool "ThreadX"
+#	help
+#	  ThreadX as domain-0
+
+config XEN_DOM0_LX
+	bool "Linux"
+	help
+	  Linux as domain-0
+
+endchoice # DOM0
+
+config XEN_DOM0_MEM_SIZE
+	hex "Memory size of dom0 in KB, hex format"
+	default 0x20000
+	help
+	  Memory size of dom0 in KB, hex format.
+
+config XEN_HAVE_DOMU
+	bool "Have domU booted by Xen (dom0less)"
+	default y
+
+if XEN_HAVE_DOMU
+
+choice
+	prompt "domU"
+	default XEN_DOMU_TX
+	help
+	  Select domain-U.
+
+config XEN_DOMU_TX
+	bool "ThreadX"
+	help
+	  ThreadX as domain-U
+
+#config XEN_DOMU_LX
+#	bool "Linux"
+#	help
+#	  Linux as domain-U
+
+endchoice # DOMU
+
+config XEN_DOMU_MEM_SIZE
+	hex "Memory size of dom0 in KB, hex format"
+	default 0x20000
+	help
+	  Memory size of domU in KB, hex format.
+
+endif # XEN_HAVE_DOMU
+
+
+#config XEN_SUPPORT_QNX
+#	depends on XEN_SUPPORT
+#	bool "Enable XEN Support for QNX Image"
+#	default n
+
+endif # XEN_SUPPORT
+
+endmenu
+

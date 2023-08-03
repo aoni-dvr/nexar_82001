@@ -1,0 +1,4 @@
+menuconfig BR2_PACKAGE_LIBEVENTNOTIFIER
+	bool "libeventnotifier"
+	help
+	  This is the LIBEVENTNOTIFIER implementation.

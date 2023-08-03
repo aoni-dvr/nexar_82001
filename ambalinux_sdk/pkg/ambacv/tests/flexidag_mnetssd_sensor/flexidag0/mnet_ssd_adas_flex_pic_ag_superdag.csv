@@ -1,0 +1,5 @@
+instance,algorithm,step,cvtask,chan_id,num_inputs,num_feedback,init_freq,uuid,dbglvl,extrabuf_input,extrabuf_feedback,flag2,config[0],config[1],config[2],config[3],config[4],config[5],config[6],config[7],deadline,deadline_fail,input[0],input[1],input[2],input[3],input[4],input[5],input[6],input[7],input[8],input[9],input[10],input[11],input[12],input[13],input[14],input[15],feedback[0],feedback[1],feedback[2],feedback[3],engine_name,timeout_warning,timeout_error,timeout_panic1,timeout_panic2,timeout_cvtask
+INPUT,0,IDSP_PICINFO,$##FLEXIDAG,0,0,0,1,0,0,0,0,0,,,,,,,,,0,0,,,,,,,,,,,,,,,,,,,,,,0,0,0,0,0
+MNET_SSD_ADAS_FLEX_PIC_AG_SUPER,mnet_ssd_adas_flex_pic_ag,mnet_ssd_adas_flex_pic_ag_orc,mnet_ssd_adas_flex_pic_ag,0,1,0,1,2,5,0,0,0,1,9999,9999,0,,,,,0,0,0,,,,,,,,,,,,,,,,,,,,,0,0,0,0,0
+MNET_SSD_ADAS_FLEX_PIC_AG_SUPER,HighLevel,highlevel,HL_MNETSSD_MEMIO,0,2,0,1,4,5,0,0,0,,,,,,,,,0,0,2,2,,,,,,,,,,,,,,,,,,,,0,0,0,0,0
+OUTPUT,0,DATA_SINK_INPUT_0,$##FLEXIDAG,0,1,0,1,6,0,0,0,0,,,,,,,,,0,0,4,,,,,,,,,,,,,,,,,,,,,0,0,0,0,0

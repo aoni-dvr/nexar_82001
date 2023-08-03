@@ -1,0 +1,34 @@
+if SOC_CV28
+
+source build/kconfigs/bsp/cv28/peripherals/Kconfig
+
+comment "Board Configuration"
+choice CV28_BSP_SELECTION
+	prompt "BSP"
+	default BSP_CV28BUB_OPTION_A_V100
+
+config BSP_CV28BUB_OPTION_A_V100
+	bool "CV28 Bringup Board Option-A V100"
+config BSP_CV28DK_8LAYER_A_V100
+	bool "CV28 Development Kit 8-layer Option-A V100"
+config BSP_CV28DK_OPTION_B_V100
+	bool "CV28 Development Kit Option-B V100"
+endchoice
+
+choice CV28_DRAM_SELECTION
+	prompt "Dram"
+	default CV28_LPDDR4_MT53D512M16D1DS_1200MHZ
+
+config CV28_LPDDR4_MT53D512M16D1DS_1200MHZ
+	bool "MT53D512M16D1DS 1200MHz"
+config CV28_LPDDR4_MT53D512M16D1DS_1596MHZ
+	bool "MT53D512M16D1DS 1596MHz"
+endchoice
+
+config ATT_MAP
+	string "Att Map File Name"
+	default "AmbaUserMemProt"
+	help
+		File name of the Att Map file (remove '.c')
+
+endif

@@ -1,0 +1,58 @@
+DAG Calc_World_Y =
+{
+	arg=
+	{
+		$disparity=0,
+		$col_index=0,
+		$sin_pitch=0,
+		$cos_pitch=0,
+		$focal_length=0,
+		$camera_v0=0,
+		$base_line=0,
+				
+		$world_y_out=0,
+	};
+
+	// World Y = (BaseLine/disparity) * ((VPos - camera.v0) * cosTilt + camera.fv * sinTilt)
+
+	VP_sub(
+		$col_index,
+		$camera_v0,
+		VP_auto(col_index_m_v0, float16_t)
+	);
+
+	VP_mul(
+		col_index_m_v0,
+		$cos_pitch,
+		VP_auto(tmp1, float16_t)
+	);
+
+	VP_mul(
+		$focal_length,
+		$sin_pitch,
+		VP_auto(tmp2, float16_t)
+	);
+
+	VP_add(
+		tmp1,
+		tmp2,
+		VP_auto(tmp3, float16_t)
+	);
+
+	VP_recip(
+		$disparity,
+		VP_auto(inv_disparity, float16_t)
+	);
+
+	VP_mul(
+		$base_line,
+		inv_disparity,
+		VP_auto(base_line_div_disp, float16_t)
+	);
+
+	VP_mul(
+		base_line_div_disp,
+		tmp3,
+		VP_auto($world_y_out, float16_t)
+	);
+}

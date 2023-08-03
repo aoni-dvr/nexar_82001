@@ -1,0 +1,147 @@
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2020 Ambarella International LP
+////////////////////////////////////////////////////////////////////////////////
+// This file and its contents ("Software") are protected by intellectual
+// property rights including, without limitation, U.S. and/or foreign
+// copyrights. This Software is also the confidential and proprietary
+// information of Ambarella International LP and its licensors. You may not use,
+// reproduce, disclose, distribute, modify, or otherwise prepare derivative
+// works of this Software or any portion thereof except pursuant to a signed
+// license agreement or nondisclosure agreement with Ambarella International LP
+// or its authorized affiliates. In the absence of such an agreement, you agree
+// to promptly notify and return this Software to Ambarella International LP.
+//
+// THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT,
+// MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+// IN NO EVENT SHALL AMBARELLA INTERNATIONAL LP OR ITS AFFILIATES BE LIABLE
+// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+// SERVICES; LOSS OF USE, DATA, OR PROFITS; COMPUTER FAILURE OR MALFUNCTION;
+// OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+// ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+////////////////////////////////////////////////////////////////////////////////
+
+=====================
+     vas summary     
+=====================
+DAG name: 'pre_split0_mnet_ssd_adas_flex_pic_prim_split_0'
+vas command: /opt/amba/cv28/tv2/release/Vas/cv28.qa.2020-09-02.773/bin/vas1 -auto -no-split-dag -recompile -no-pre-split -fs pre_split0_mnet_ssd_adas_flex_pic_split_0.vas /tmp/vascppFIlhhe.vii -max-name-id 20100000 -comp2-id-range 20100000~20110000 -info "(ARCH cv28 VERSION 77 CVTOOLS_RELEASE 2.2.0) run at 'Tue Sep  8 10:26:13 2020'"
+source op primitives:          0
+final operators:              18
+final descriptors:            40
+DAG code num bytes:         1440
+vmem num bytes:           509076(497 K)
+dcb num bytes:            126688(123 K)
+dcb:         6
+vcb:         9  full:    0
+hmb:         3  full:    0  const:    0
+smb:        15              const:   14
+scalar:      5
+subspace:    2
+subspace parent:    1
+total hmb input dram size: 144000 bytes
+total hmb output dram size: 1459200 bytes
+total const data + dagbin size: 4968 bytes
+total dvi size: 4968 bytes
+total ddi size:    0 bytes
+
+total write traffic:
+    dcb:         4500000 bytes
+    vcb:         8190000 bytes
+    hmb:         1440000 bytes
+    smb:             768 bytes
+
+total read traffic
+    dcb:         4500000 bytes
+    vcb:         9630000 bytes
+    hmb:          135000 bytes
+    smb:            3477 bytes
+    scalar:            8 bytes
+
+VMEM usage >= 4K bytes:
+
+======================
+       VMEM map       
+======================
+vmem_base = 0x1000
+
+0x00000000      --------------------------------------
+                  -- nil -- (4096 bytes)
+0x00001000      --------------------------------------
+                  __vas_created_terminate__v0(software_managed) (96 bytes)
+0x00001060      --------------------------------------
+                  data(hardware_managed) (4864 bytes)
+0x00002360      --------------------------------------
+                  data_uv(hardware_managed) (5124 bytes)
+0x00003764      --------------------------------------
+                  data_uv_yuv444_rgb___conv2i___4(vmem_chaining) (7296 bytes)
+0x000053e4      --------------------------------------
+                  data_conv(vmem_chaining) (7320 bytes)
+0x0000707c      --------------------------------------
+                  data_uv_yuv444_rgb(vmem_chaining) (7344 bytes)
+0x00008d2c      --------------------------------------
+                  data_uv_yuv444_rgb___merged___3(vmem_chaining) (9792 bytes)
+0x0000b36c      --------------------------------------
+                  data_bias(vmem_chaining) (22800 bytes)
+0x00010c7c      --------------------------------------
+                  conv2_1__dw_____bn_conv2_1__dw__scale_mul___muli___11_____bn_conv2_1__dw__scale_mul_____scale___muli___335(vmem_chaining) (29184 bytes)
+0x00017e7c      --------------------------------------
+                  conv2_1__sep_____bn_conv2_1__sep__scale_mul___muli___14_____bn_conv2_1__sep__scale_mul_____scale___muli___336(hardware_managed) (39424 bytes)
+0x0002187c      --------------------------------------
+                  conv2_1__dw_____bn_conv2_1__dw__scale_mul___muli___11_____bn_conv2_1__dw__scale_mul_____scale___relu2_1__dw(vmem_chaining) (58368 bytes)
+0x0002fc7c      --------------------------------------
+                  __pvcn_320_(vmem_chaining) (116736 bytes)
+0x0004c47c      --------------------------------------
+                  conv1_____bn_conv1__scale_mul___muli___8_____bn_conv1__scale_mul_____scale___relu1(vmem_chaining) (197248 bytes)
+0x0007c6fc      --------------------------------------
+                  __pvcn_318_(software_managed) (1436 bytes)
+0x0007cc98      --------------------------------------
+                  __pvcn_291_(software_managed) (604 bytes)
+0x0007cef4      --------------------------------------
+                  __pvcn_319_(software_managed) (576 bytes)
+0x0007d134      --------------------------------------
+                  __pvcn_292_(software_managed) (228 bytes)
+0x0007d218      --------------------------------------
+                  __pvcn_312_(software_managed) (168 bytes)
+0x0007d2c0      --------------------------------------
+                  __pvcn_304_(software_managed) (152 bytes)
+0x0007d358      --------------------------------------
+                  __pvcn_313_(software_managed) (112 bytes)
+0x0007d3c8      --------------------------------------
+                  __pvcn_305_(software_managed) (112 bytes)
+0x0007d438      --------------------------------------
+                  __pvcn_287_(software_managed) (24 bytes)
+0x0007d450      --------------------------------------
+                  __pvcn_283_(software_managed) (24 bytes)
+0x0007d468      --------------------------------------
+                  __pvcn_275_(software_managed) (16 bytes)
+0x0007d478      --------------------------------------
+                  __pvcn_286_(software_managed) (12 bytes)
+0x0007d484      --------------------------------------
+                  __pvcn_282_(software_managed) (12 bytes)
+0x0007d490      --------------------------------------
+                  data_uv_yuv444_rgb___constant___2(software_managed) (4 bytes)
+0x0007d494      --------------------------------------
+                  dag binary (1488 bytes)
+0x0007da64      --------------------------------------
+                  -- nil -- (9628 bytes)
+0x00080000      --------------- (end) ----------------
+
+Mac count summary: 
+  total normalized mac count:         92385000
+    - Ice mac count:                                82830000
+      - ice true mac count:           53325000
+      - ice normalized mac count:     82395000
+    - Arithmetic normalized mac count:               7740000
+    - Logical normalized mac count:                   540000
+    - Resampler normalized mac count:                 180000
+    - Transfer normalized mac count:                 1530000
+
+Estimated ICE cycle count: 1369600
+
+total vas running time: 2.95 seconds
+
+

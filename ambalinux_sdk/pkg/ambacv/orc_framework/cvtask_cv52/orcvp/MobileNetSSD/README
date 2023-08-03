@@ -1,0 +1,12 @@
+1. ADK to generate cvtask
+	Modify Makefile.in: 
+		USR_HL_DISPLAY_NAME           = HL_MNETSSD
+		USR_NETWORK                   = mnet_ssd_adas_flex_pic
+
+	make cvtask_gen CV_DIAGS=tools/ADK/sample_nn_diag/diags/picinfo/01000_mnet_ssd_adas_cf_pic
+
+2. Manually modify cvtask name and dag path.
+  - cvtask name
+	include.mk.in
+  - Using relative dag path in mnft
+	mnet_ssd_adas_pic_ag_cvtask.mnft

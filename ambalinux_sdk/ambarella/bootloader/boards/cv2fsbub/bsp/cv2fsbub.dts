@@ -1,0 +1,113 @@
+/*
+ * Copyright (C) 2013 Ambarella,Inc. - http://www.ambarella.com/
+ * Author: Cao Rongrong <rrcao@ambarella.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+/dts-v1/;
+
+/include/ "ambarella-cv2fs.dtsi"
+#include "partition/partition.dtsi"
+#include "config.h"
+#include "bsp.h"
+
+/ {
+	model = "Ambarella CV2FSBUB Board";
+	compatible = "ambarella,cv2fsbub", "ambarella,cv2fs";
+
+	chosen {
+		bootargs = "console=ttyS0 ubi.mtd=lnx root=ubi0:rootfs rw rootfstype=ubifs init=/linuxrc";
+	};
+
+	apb@e4000000 {
+		i2c2: i2c@e400a000 {
+			status = "ok";
+
+			ambvin0@01 {
+				compatible = "ambarella,ambvin";
+				reg = <0x01>;	/* fake address, will be overwritten in runtime */
+			};
+		};
+
+		i2c4: i2c@e4019000 {
+			status = "ok";
+
+			fan: amc6821@1a {
+				compatible = "ti,amc6821";
+				#cooling-cells = <2>;
+				reg = <0x1a>;
+			};
+		};
+	};
+
+	ahb@e0000000 {
+		sdmmc0: sdmmc0@e0004000 {
+			pwr-gpios = <&gpio 35 0x1>;
+			v18-gpios = <&gpio 102 0x1>;
+#if defined(CONFIG_BOOT_MEDIA_EMMC)
+			amb,fixed-cd = <1>;
+#endif
+		};
+
+		sdmmc1: sdmmc1@e0005000 {
+			pwr-gpios = <&gpio 56 0x1>;
+			v18-gpios = <&gpio 0 0x1>;
+		};
+
+		mac0: ethernet@e000e000 {
+			amb,tx-clk-invert;
+
+			phy@0 {
+				reg = <0>;
+			};
+		};
+
+		mac1: ethernet@e0032000 {
+			amb,tx-clk-invert;
+
+			phy@0 {
+				reg = <0>;
+			};
+		};
+
+		spi0: spi@e0011000 {
+			status = "ok";
+			cs-gpios = <&gpio 6 0>, <&gpio 7 0>;
+
+			ambvin0@0 {
+				compatible = "ambarella,ambvin";
+				reg = <0>;
+				spi-max-frequency = <1000000>;
+				spi-cpha;
+				spi-cpol;
+			};
+
+			ambvin1@0 {
+				compatible = "ambarella,ambvin";
+				reg = <1>;
+				spi-max-frequency = <1000000>;
+				spi-cpha;
+				spi-cpol;
+			};
+		};
+	};
+
+	rct@ed080000 {
+		usbphy: usbphy@ed080050 {
+			/* high will trigger the ocp interrupt */
+			amb,ocp-polarity = <0>;
+			pinctrl-names = "default";
+			pinctrl-0 = <&usb_host0_pins_a>;
+		};
+	};
+
+	iav {
+		/* node for vin controller */
+		vinc0 {
+			vinrst-gpios = <&gpio 87 0>;
+			/* vinpwr-gpios = <>; */
+		};
+	};
+};

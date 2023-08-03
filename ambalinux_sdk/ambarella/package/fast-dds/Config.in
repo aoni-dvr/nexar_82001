@@ -1,0 +1,14 @@
+config BR2_PACKAGE_FAST_DDS
+	bool "Fast-DDS"
+	default n
+	select BR2_PACKAGE_ASIO
+	select BR2_PACKAGE_TINYXML2
+	select BR2_PACKAGE_FAST_CDR
+	select BR2_PACKAGE_FOONATHAN_MEMORY
+	help
+	  Fast-DDS
+	  eprosima Fast DDS (formerly Fast RTPS) is a C++ implementation of the DDS
+	  (Data Distribution Service) standard of the OMG (Object Management Group).
+
+
+

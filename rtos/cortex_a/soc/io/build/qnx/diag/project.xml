@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<module name="diag-ambarella">
+  <classification>Driver</classification>
+  <description>
+    <short>Ambarella diag Driver</short>
+    <abstract><![CDATA[
+	                This diag commnad is for AMBA drivers.
+	        ]]></abstract>
+  </description>
+  <supports>
+    <availability>
+      <cpu isa="aarch64">
+        <byteOrder>le</byteOrder>
+      </cpu>
+    </availability>
+  </supports>
+  <contents>
+    <component id="ambarella" generated="true">
+      <location basedir="aarch64/le">diag-ambarella</location>
+    </component>
+  </contents>
+  <requires>
+    <part build="false" location="lib/diag"/>
+  </requires>
+</module>

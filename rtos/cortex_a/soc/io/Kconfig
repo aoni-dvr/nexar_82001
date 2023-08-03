@@ -1,0 +1,109 @@
+if ARM32
+
+config MMU_USE_SHORT_DESCRIPTOR
+	bool "MMU uses Short Descriptor Translation Table format"
+	default y
+	help
+		Configure MMU to use Short Descriptor Translation Table format.
+
+endif
+
+if ARM64
+
+choice
+	prompt "Address translation granule size"
+	default TRANSLATION_GRANULE_4KB
+	help
+	  Select virtual memory translation granule size.
+
+config TRANSLATION_GRANULE_4KB
+	bool "4KB"
+
+config TRANSLATION_GRANULE_16KB
+	bool "16KB"
+
+config TRANSLATION_GRANULE_64KB
+	bool "64KB"
+
+endchoice
+
+endif
+
+config BUILD_SSP_ENET
+	bool "Build Ethernet driver"
+	depends on !LINUX
+	default n
+	help
+
+if BUILD_SSP_ENET
+config BUILD_SSP_ENET_MTU
+	bool "Change MTU Size"
+	default n
+if BUILD_SSP_ENET_MTU
+config ETH_FRAMES_SIZE
+	int "Valid range 1514~3840"
+	range 1514 3840
+	default 1514
+endif
+endif
+
+config PIO_MEM_ALLOC
+	bool "Build Peripheral Memory Allocator"
+	default n
+	help
+
+if PIO_MEM_ALLOC
+config PIO_BASE
+	hex "Peripheral Memory Base"
+	default 0x7fa00000
+	help
+		The base address of Peripheral IO memory
+config PIO_SIZE
+	hex "Peripheral Memory Size"
+	default 0x600000
+	range 0x200000 0x100000000
+	help
+		The size of total Peripheral IO memory including both cached & non-cached
+if THREADX
+config PIO_NONCHED_SIZE
+	hex
+	default 0x100000
+	help
+		Cached Peripheral IO memory size, this is sub-part of PIO_SIZE
+endif
+endif
+
+config VIN_ASIL
+	bool "Build VIN ASIL driver"
+	depends on AMBALINK_RPMSG_ASIL
+	default y
+
+config VOUT_ASIL
+	bool "Build VOUT ASIL driver"
+	depends on AMBALINK_RPMSG_ASIL
+	default y
+
+config BUILD_SSP_OTP
+	bool "Build OTP driver"
+	default n
+	help
+
+##############################################################
+# USB part
+##############################################################
+
+menuconfig BUILD_SSP_USB_LIBRARY
+	bool "Build Universal Serial Bus (USB) subsystem library"
+	depends on !LINUX
+	default y
+	help
+
+if BUILD_SSP_USB_LIBRARY
+source vendors/ambarella/wrapper/usb/Kconfig
+endif
+
+config BUILD_SSP_PCIE_LIB
+	bool "Build PCIE driver"
+	depends on !LINUX
+	default n
+	help

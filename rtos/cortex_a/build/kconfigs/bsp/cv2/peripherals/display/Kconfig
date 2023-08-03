@@ -1,0 +1,151 @@
+menu "FPD Driver"
+
+config FPD_WDF9648W
+    bool "Wintek WDF9648W"
+    default n
+config FPD_WDF9648W_VOUT0
+    bool "Vout0"
+    depends on FPD_WDF9648W
+    default n
+config FPD_WDF9648W_VOUT1
+    bool "Vout1"
+    depends on FPD_WDF9648W
+    default n
+
+config FPD_T30P61
+    bool "Shenzhen RZW T30P61"
+    default n
+config FPD_T30P61_VOUT0
+    bool "Vout0"
+    depends on FPD_T30P61
+    default n
+config FPD_T30P61_VOUT1
+    bool "Vout1"
+    depends on FPD_T30P61
+    default n
+
+config FPD_Y85006
+    bool "DZXtech Y85006"
+    default n
+config FPD_Y85006_VOUT0
+    bool "Vout0"
+    depends on FPD_Y85006
+    default n
+config FPD_Y85006_VOUT1
+    bool "Vout1"
+    depends on FPD_Y85006
+    default n
+
+config FPD_Y85183
+    bool "DZXtech Y85183"
+    default n
+config FPD_Y85183_VOUT0
+    bool "Vout0"
+    depends on FPD_Y85183
+    default n
+config FPD_Y85183_VOUT1
+    bool "Vout1"
+    depends on FPD_Y85183
+    default n
+
+config FPD_C101EAN01_0
+    bool "AUO C101EAN01.0"
+    default n
+config FPD_C101EAN01_VOUT0
+    bool "Vout0"
+    depends on FPD_C101EAN01
+    default n
+config FPD_C101EAN01_VOUT1
+    bool "Vout1"
+    depends on FPD_C101EAN01
+    default n
+
+config FPD_ZS095BH3001A8H3
+    bool "Shenzhen Zhongshen Optoelectronics Co. Ltd ZS095BH3001A8H3"
+    default n
+config FPD_ZS095BH3001A8H3_VOUT0
+    bool "Vout0"
+    depends on FPD_ZS095BH3001A8H3
+    default n
+config FPD_ZS095BH3001A8H3_VOUT1
+    bool "Vout1"
+    depends on FPD_ZS095BH3001A8H3
+    default n
+
+config FPD_ZS095BH3001A8H3_BII
+    bool "Shenzhen Zhongshen Optoelectronics Co. Ltd ZS095BH3001A8H3_BII"
+    default n
+
+config FPD_MAXIM_DUAL_TFT1280768
+    bool "Dual Truly 1280x768 via Maxim 96751/96752 HDMI Serializer"
+    default n
+config FPD_MAXIM_DUAL_TRULY_VOUT0
+    bool "Vout0"
+    depends on FPD_MAXIM_DUAL_TFT1280768
+    default n
+config FPD_MAXIM_DUAL_TRULY_VOUT1
+    bool "Vout1"
+    depends on FPD_MAXIM_DUAL_TFT1280768
+    default n
+
+config FPD_MAXIM_DUAL_ZS095BH
+    bool "MAXIM DUAL ZS095BH"
+    default n
+
+config FPD_MAXIM_TFT1280768
+    bool "MAXIM TFT1280768"
+    default n
+config FPD_MAXIM_TRULY_VOUT0
+    bool "Vout0"
+    depends on FPD_MAXIM_TFT1280768
+    default n
+config FPD_MAXIM_TRULY_VOUT1
+    bool "Vout1"
+    depends on FPD_MAXIM_TFT1280768
+    default n
+
+config FPD_MAXIM_ZS095BH3001A8H3_BII
+    bool "ZS095BH3001A8H3 via Maxim 96755/96752 DSI Serializer"
+    default n
+config FPD_MAXIM_ZS095_VOUT0
+    bool "Vout0"
+    depends on FPD_MAXIM_ZS095BH3001A8H3_BII
+    default n
+config FPD_MAXIM_ZS095_VOUT1
+    bool "Vout1"
+    depends on FPD_MAXIM_ZS095BH3001A8H3_BII
+    default n
+
+config FPD_MAXIM_AUOB101UAN02
+    bool "MAXIM AUOB101UAN02"
+    default n
+
+config FPD_LT9611UXC
+    bool "LT9611UXC"
+    default n
+
+menuconfig VOUT0_DEVICE_NAME
+    string "VOUT0_DEVICE_NAME"
+    depends on FPD_WDF9648W_VOUT0 || FPD_T30P61_VOUT0 || FPD_Y85006_VOUT0 || FPD_Y85183_VOUT0 || FPD_C101EAN01_VOUT0 || FPD_ZS095BH3001A8H3_VOUT0 || FPD_MAXIM_ZS095_VOUT0 || FPD_MAXIM_TRULY_VOUT0
+    default "WdF9648w"          if FPD_WDF9648W_VOUT0
+    default "T30P61"            if FPD_T30P61_VOUT0
+    default "Y85006"            if FPD_Y85006_VOUT0
+    default "Y85183"            if FPD_Y85183_VOUT0
+    default "C101EAN01"         if FPD_C101EAN01_VOUT0
+    default "ZS095BH3001A8H3"   if FPD_ZS095BH3001A8H3_VOUT0
+    default "MAXIM_ZS095"       if FPD_MAXIM_ZS095_VOUT0
+    default "MAXIM_TFT128"      if FPD_MAXIM_TRULY_VOUT0
+
+menuconfig VOUT1_DEVICE_NAME
+    string "VOUT1_DEVICE_NAME"
+    depends on FPD_WDF9648W_VOUT1 || FPD_T30P61_VOUT1 || FPD_Y85006_VOUT1 || FPD_Y85183_VOUT1 || FPD_C101EAN01_VOUT1 || FPD_ZS095BH3001A8H3_VOUT1 || FPD_MAXIM_DUAL_TRULY_VOUT1 || FPD_MAXIM_TRULY_VOUT1
+    default "WdF9648w"          if FPD_WDF9648W_VOUT1
+    default "T30P61"            if FPD_T30P61_VOUT1
+    default "Y85006"            if FPD_Y85006_VOUT1
+    default "Y85183"            if FPD_Y85183_VOUT1
+    default "C101EAN01"         if FPD_C101EAN01_VOUT1
+    default "ZS095BH3001A8H3"   if FPD_ZS095BH3001A8H3_VOUT1
+    default "MAXIM_Dual_TFT128" if FPD_MAXIM_DUAL_TRULY_VOUT1
+    default "MAXIM_TFT128"      if FPD_MAXIM_TRULY_VOUT1
+
+endmenu

@@ -1,0 +1,27 @@
+diff -uprN bluez-5.50/Makefile.in bluez-5.50.new/Makefile.in
+--- bluez-5.50/Makefile.in	2018-06-01 16:38:19.000000000 +0800
++++ bluez-5.50.new/Makefile.in	2021-05-27 13:37:58.722440344 +0800
+@@ -2755,7 +2755,7 @@ unit_tests = $(am__append_52) unit/test-
+ @TOOLS_TRUE@						lib/libbluetooth-internal.la
+ 
+ @TOOLS_TRUE@tools_btgatt_server_SOURCES = tools/btgatt-server.c src/uuid-helper.c
+-@TOOLS_TRUE@tools_btgatt_server_LDADD = src/libshared-mainloop.la \
++@TOOLS_TRUE@tools_btgatt_server_LDADD = src/libshared-mainloop.la -lrtos_api -lambaipc \
+ @TOOLS_TRUE@						lib/libbluetooth-internal.la
+ 
+ @TOOLS_TRUE@tools_rctest_LDADD = lib/libbluetooth-internal.la
+diff -uprN bluez-5.50/src/main.c bluez-5.50.new/src/main.c
+--- bluez-5.50/src/main.c	2018-06-01 16:37:36.000000000 +0800
++++ bluez-5.50.new/src/main.c	2021-05-27 13:40:00.062717540 +0800
+@@ -778,6 +778,11 @@ int main(int argc, char *argv[])
+ 	} else
+ 		watchdog = 0;
+ 
++	if (daemon(0, 1)) {
++		error("Couldn't start daemon!\n");
++		exit(1);
++	}
++
+ 	g_main_loop_run(event_loop);
+ 
+ 	sd_notify(0, "STATUS=Quitting");

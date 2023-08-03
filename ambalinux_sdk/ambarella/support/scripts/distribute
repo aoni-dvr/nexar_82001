@@ -1,0 +1,370 @@
+#!/bin/bash
+#
+
+do_restore()
+{
+	# Restore
+	cd $CWD
+
+	if [ -e $AMBALINK_DIR/pkg/ambacv.orig ]; then
+		rm -rf $AMBALINK_DIR/pkg/ambacv
+		#mv $AMBALINK_DIR/pkg/ambacv $AMBALINK_DIR/pkg/ambacv.distribute
+		mv $AMBALINK_DIR/pkg/ambacv.orig $AMBALINK_DIR/pkg/ambacv
+	fi
+
+	if [ -e $AMBALINK_DIR/ambarella/configs.orig ]; then
+		rm -rf $AMBALINK_DIR/ambarella/configs
+		mv $AMBALINK_DIR/ambarella/configs.orig $AMBALINK_DIR/ambarella/configs
+	fi
+
+	if [ -e $AMBALINK_DIR/ambarella/Makefile.orig ]; then
+		cp $AMBALINK_DIR/ambarella/Makefile.orig $AMBALINK_DIR/ambarella/Makefile
+		rm -f $AMBALINK_DIR/ambarella/Makefile.orig
+	fi
+
+	for i in ${AMBALINK_LINUX_CONFIG_PATH_BAK}; do
+		if [ -e ${i}.orig ]; then
+			cp ${i}.orig ${i}
+			rm -f ${i}.orig
+		fi
+	done
+}
+
+clean_up()
+{
+	echo "distribute being terminated..."
+	do_restore
+	exit -1;
+}
+
+process_cv_orc_build_version()
+{
+	for src_file in `find ${CWD}/${AMBALINK_DIR}/output/${AMBA_OUT_TARGET}/diags/*/orc/ -name build_version.h`; do
+		if [ "`echo $src_file|grep scheduler`" != "" ]; then
+			#-diags/utadder/orc/build/scheduler/cv22_orcvp/build_version.h
+			#+orc_framework/scheduler/build_version.h
+			dst_file="orc_framework/scheduler/build_version.h"
+		else
+			#-diags/utadder/orc/build
+			#+orc_framework
+			dst_file=`echo ${src_file} | sed -e "s|.*build/|orc_framework/|g"`
+		fi
+
+		if [ "${src_file}" != "${dst_file}" ] && [ -e `dirname ${dst_file}` ]; then
+			cp -af $src_file $dst_file
+		fi
+	done
+}
+
+process_cv_arm_build_version()
+{
+	for src_file in `find ${CWD}/${AMBALINK_DIR}/output/${AMBA_OUT_TARGET}/diags/*/linux/ -name build_version.h`; do
+		#-diags/utadder/linux/output/
+		#+arm_framework/
+		dst_file=`echo ${src_file} | sed -e "s|.*output/|arm_framework/|g"`
+		if [ "${src_file}" != "${dst_file}" ] && [ -e `dirname ${dst_file}` ]; then
+			cp -af $src_file $dst_file
+		fi
+	done
+	for src_file in `find ${CWD}/${AMBALINK_DIR}/output/${AMBA_OUT_TARGET}/build/ambacv-1.0/build/output/ -name build_version.h`; do
+		#-build/ambacv-1.0/build/output/
+		#+arm_framework/
+		dst_file=`echo ${src_file} | sed -e "s|.*output/|arm_framework/|g"`
+		if [ "${src_file}" != "${dst_file}" ] && [ -e `dirname ${dst_file}` ]; then
+			cp -af $src_file $dst_file
+		fi
+	done
+}
+
+trap clean_up INT TERM HUP
+
+if [ $# != 2 ]; then
+    echo Usage: $0 [config] [target]
+    exit -1
+fi
+
+. $1
+
+if [ "$PATHS" = "" ]; then
+    echo "\$PATHS must be specified!"
+    exit -1
+fi
+
+if [ "$OUTPUT" = "" ]; then
+    echo "\$OUTPUT must be specified!"
+    exit -1
+fi
+
+CWD=$PWD
+OUTPUT_DIR=${CWD}/${AMBALINK_DIR}/distribute
+OUTPUT=${CWD}/${AMBALINK_DIR}/distribute/$OUTPUT
+mkdir -p $OUTPUT_DIR
+rm -f ${OUTPUT}
+rm -rf $OUTPUT_DIR/external_sdk
+
+# Prepare customer's Makefile
+cp $AMBALINK_DIR/ambarella/Makefile $AMBALINK_DIR/ambarella/Makefile.orig
+sed -i 's|)/../output$|)/../output.oem|g' $AMBALINK_DIR/ambarella/Makefile
+
+# Change BR2_HOST_DIR from host to host.oem (BR2_HOST_DIR="$(TOPDIR)/../host")
+cp -a $AMBALINK_DIR/ambarella/configs $AMBALINK_DIR/ambarella/configs.orig
+#CHIP_NAME=`grep BR2_TARGET_GENERIC_HOSTNAME $AMBALINK_DIR/output/$AMBALINK_TARGET/.config | awk -F "\"" '{print $2}'`
+#if [ "${ARM11}" == "yes" ]; then
+#	# ARM11 linux
+#	DEFCONFIGS="${CHIP_NAME}_ambalink_arm11_defconfig"
+#elif [ "${CHIP_NAME}" == "a9s" ] || [ "${CHIP_NAME}" == "h1" ]; then
+#	# Cortex boss linux
+#	DEFCONFIGS="${CHIP_NAME}_ambalink_boss_defconfig\|${CHIP_NAME}_ambalink_usb_eth_defconfig\|${CHIP_NAME}_purelinux_defconfig"
+#else
+#	# Cortex linux
+#	DEFCONFIGS="${CHIP_NAME}_ambalink_distribute_defconfig"
+#fi
+#
+#README="README.${CHIP_NAME}"
+#
+#if [ "${CUSTOMER_CONFIGS}" == "" ]; then
+#	RELEASE_CONFIGS="${DEFCONFIGS}\|${README}"
+#else
+#	RELEASE_CONFIGS="${DEFCONFIGS}\|${CUSTOMER_CONFIGS}\|${README}"
+#fi
+RELEASE_CONFIGS="${CUSTOMER_CONFIGS}"
+# echo ${RELEASE_CONFIGS}
+
+find $AMBALINK_DIR/ambarella/configs/* | grep ${RELEASE_CONFIGS} -v | xargs rm -f
+sed -i 's/BR2_PRIMARY_SITE=\"http:\/\/buildroot.ambarella.com\/2013.02\"/BR2_PRIMARY_SITE=\"\"/' $AMBALINK_DIR/ambarella/configs/*
+
+AMBALINK_LINUX_CONFIG_PATH_BAK=""
+RELEASE_CONFIG_PATHS=`find $AMBALINK_DIR/ambarella/configs/* | grep ${RELEASE_CONFIGS}`
+#for i in ${RELEASE_CONFIG_PATHS}; do
+#	AMBALINK_LINUX_CONFIG=`grep BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE ${i} | awk -F "\"" '{print $2}' | awk -F "/" '{print $5}'`
+#	#echo $AMBALINK_LINUX_CONFIG
+#	AMBALINK_LINUX_CONFIG_PATH=$AMBALINK_DIR/linux/arch/arm64/configs/${AMBALINK_LINUX_CONFIG}
+#	if [ ! -e ${AMBALINK_LINUX_CONFIG_PATH}.orig ]; then
+#		cp $AMBALINK_LINUX_CONFIG_PATH ${AMBALINK_LINUX_CONFIG_PATH}.orig
+#	fi
+#	AMBALINK_LINUX_CONFIG_PATH_BAK="${AMBALINK_LINUX_CONFIG_PATH} ${AMBALINK_LINUX_CONFIG_PATH_BAK}"
+#done
+#do_restore
+#echo "do_restore and exit" && exit -1
+
+EXPANDED_EXCLUDE="
+--exclude .git					\
+--exclude .gitignore				\
+--exclude MANIFEST.txt				\
+--exclude configs.orig				\
+--exclude $AMBALINK_DIR/ambarella/Makefile.orig	\
+--exclude $AMBALINK_DIR/ambarella/.config		\
+--exclude $AMBALINK_DIR/ambarella/.config.old	\
+--exclude $AMBALINK_DIR/ambarella/..config.tmp	\
+--exclude $AMBALINK_DIR/ambarella/.auto.deps	\
+"
+
+for i in ${EXCLUDE}; do
+    EXPANDED_EXCLUDE=${EXPANDED_EXCLUDE}"--exclude ${i} "
+done
+
+for i in ${AMBALINK_LINUX_CONFIG_PATH_BAK}; do
+    EXPANDED_EXCLUDE=${EXPANDED_EXCLUDE}"--exclude ${i}.orig "
+done
+
+##pkg/ambacv
+if [ -e ${CWD}/${AMBALINK_DIR}/pkg/ambacv ]; then
+	cd ${CWD}/${AMBALINK_DIR}/pkg/ambacv
+	if [ -e cv_common/lib_root/local_lib_root ]; then
+		cv1sequence=`cat cv_common/lib_root/local_lib_root`
+	elif [ -e cv_common/lib_root_${PROJECT}/local_lib_root ]; then
+		cv1sequence=`cat cv_common/lib_root_${PROJECT}/local_lib_root`
+	else
+		echo "cannot find cv_common/lib_root/local_lib_root"
+	fi
+	CV_PATH="${CV_API}"
+	for i in ${CV_DIR}; do
+		found_f=`find ${i} -maxdepth 1 -type f`
+		found_l=`find ${i} -maxdepth 1 -type l`
+		CV_PATH="${CV_PATH} ${found_f}  ${found_l}"
+	done
+
+	for i in ${CV_DIR_RECURSIVE}; do
+		found_f=`find ${i} -type f`
+		found_l=`find ${i} -type l`
+		CV_PATH="${CV_PATH} ${found_f}  ${found_l}"
+	done
+
+	cd ${CWD}/${AMBALINK_DIR}/
+	mv ${CWD}/${AMBALINK_DIR}/pkg/ambacv ${CWD}/${AMBALINK_DIR}/pkg/ambacv.orig
+	mkdir ${CWD}/${AMBALINK_DIR}/pkg/ambacv
+	cd ${CWD}/${AMBALINK_DIR}/pkg/ambacv
+
+	#clone ambacv
+	for i in ${CV_PATH}; do
+		mkdir -p `dirname ${i}`
+		cp -a ${CWD}/${AMBALINK_DIR}/pkg/ambacv.orig/${i} ${i}
+	done
+
+	#collect build_version.h
+	echo "exit 0" > cv_common/build/create_build_version.sh
+	chmod a+x cv_common/build/create_build_version.sh
+	process_cv_orc_build_version
+	process_cv_arm_build_version
+
+	#collect cv_common/libs/
+	ARM_BIN=${CWD}/${AMBALINK_DIR}/output/${AMBA_OUT_TARGET}/host/usr/bin/aarch64-linux-gnu
+	for i in ${CV_ARM_LOCAL_BUILD_LIBS}; do
+		filename="${i##*/}"
+		if [ -e ${CWD}/${AMBALINK_DIR}/output/${AMBA_OUT_TARGET}/diags/installer/ ]; then
+			found=`find ${CWD}/${AMBALINK_DIR}/output/${AMBA_OUT_TARGET}/diags/installer -name ${filename}|tail -n 1`
+		else
+			found=""
+		fi
+		if [ "${found}" == "" ]; then
+			found=`find ${CWD}/${AMBALINK_DIR}/output/${AMBA_OUT_TARGET}/diags -name ${filename}|tail -n 1`
+		fi
+		if [ "${found}" == "" ]; then
+			found=`find ${CWD}/${AMBALINK_DIR}/output/${AMBA_OUT_TARGET}/build/ambacv-1.0/build/bin -name ${filename}|tail -n 1`
+		fi
+		if [ "${found}" == "" ]; then
+			found=`find -L ${cv1sequence} -name ${filename}|tail -n 1`
+		fi
+		if [ "${found}" == "" ]; then
+			echo -e "\e[1;31m cannot find ${filename} \e[0m"
+		else
+			mkdir -p `dirname ${i}`
+			cp ${found} ${i}
+			if [ "${found#*.}" == "a" ]; then
+				${ARM_BIN}-strip --strip-debug ${i}
+			fi
+		fi
+	done
+
+	for i in ${CV_ORC_LOCAL_BUILD_LIBS}; do
+		filename="${i##*/}"
+		if [ -e ${CWD}/${AMBALINK_DIR}/output/${AMBA_OUT_TARGET}/diags/installer/ ]; then
+			found=`find ${CWD}/${AMBALINK_DIR}/output/${AMBA_OUT_TARGET}/diags/installer -name ${filename}|tail -n 1`
+		else
+			found=""
+		fi
+		if [ "${found}" == "" ]; then
+			found=`find ${CWD}/${AMBALINK_DIR}/output/${AMBA_OUT_TARGET}/diags -name ${filename}|tail -n 1`
+		fi
+		if [ "${found}" == "" ]; then
+			found=`find -L ${cv1sequence} -name ${filename}|tail -n 1`
+		fi
+		if [ "${found}" == "" ]; then
+			echo -e "\e[1;31m cannot find ${filename} \e[0m"
+		else
+			mkdir -p `dirname ${i}`
+			cp ${found} ${i}
+			if [ "${found#*.}" == "a" ]; then
+				vis-strip --strip-debug ${i}
+			fi
+		fi
+	done
+
+	#collect cv_common/bin/
+	for i in ${CV_ARM_LOCAL_BUILD_BIN} ${CV_ORC_LOCAL_BUILD_BIN}; do
+		filename="${i##*/}"
+		found=`find ${CWD}/${AMBALINK_DIR}/output/${AMBA_OUT_TARGET}/build/ambacv-1.0/build/bin -name ${filename}|tail -n 1`
+		if [ "${found}" == "" ]; then
+			found=`find -L ${cv1sequence} -name ${filename}|tail -n 1`
+		fi
+		if [ "${found}" == "" ]; then
+			echo -e "\e[1;31m cannot find ${filename} \e[0m"
+		else
+			mkdir -p `dirname ${i}`
+			cp ${found} ${i}
+			if [ "${found#*.}" == "a" ]; then
+				vis-strip --strip-debug ${i}
+			fi
+		fi
+	done
+
+	#collect test_sequence/utadder/
+	if [ ! -e /cv1/sequence/test_sequence/utadder/ ]; then
+		echo -e "\e[1;31m cannot find /cv1/sequence/test_sequence/utadder/ \e[0m"
+		clean_up
+	fi
+	mkdir -p test_sequence/utadder/
+	cp -a /cv1/sequence/test_sequence/utadder/utadder_input.bin \
+		/cv1/sequence/test_sequence/utadder/utadder_msg0.bin \
+		test_sequence/utadder/
+
+	##configure
+	#-diag_vp_cvtasks
+	#+vp_cvtask_libs
+	sed -i -e 's|lib_root="/cv1/sequence/test_sequence/release_lib/stable"|lib_root="$cv_common_dir/libs"|g' `find . -name configure.ac`
+	sed -i -e 's|lib_root="/cv1/sequence/test_sequence/cv22_release_lib/latest"|lib_root="$cv_common_dir/libs"|g' `find . -name configure.ac`
+	sed -i -e 's|lib_root="/cv1/sequence/test_sequence/cv2_release_lib/latest"|lib_root="$cv_common_dir/libs"|g' `find . -name configure.ac`
+	sed -i -e 's|PREBUILDDIR := $(shell cat $(CMNDIR)/.release_lib_root)/arm/$(APP_TYPE)|PREBUILDDIR := $(CMNDIR)/libs/arm/$(APP_TYPE)|g' tests/common_arm.mk
+	sed -i -e 's|PREBUILDDIR := $(shell cat $(CMNDIR)/.release_lib_root)/arm/linux|PREBUILDDIR := $(CMNDIR)/libs/arm/linux|g' arm_framework/linux.mk
+	sed -i -e 's|$(BUILDDIR)/bin/lib/libambadag.a|$(CMNDIR)/libs/arm/$(APP_TYPE)/libambadag.a|g' arm_framework/linux.mk
+
+	#utadder
+	sed -i -e 's|diag_vp_cvtasks="SimulationSupport"|diag_vp_cvtasks=""|g' tests/utadder*/configure.ac
+	sed -i -e 's|vp_cvtask_libs=""|vp_cvtask_libs="SimulationSupport"|g' tests/utadder*/configure.ac
+
+	#vpstatus
+	sed -i -e 's|$(BINDIR)/$(APP_NAME): $(VPSTATUS_OBJ) $(APP_LSR)|$(BINDIR)/$(APP_NAME):|g' arm_framework/app/vputils*/Makefile
+	sed -i -e 's|$(CC) -o $@ $(VPSTATUS_OBJ) -T $(APP_LSR) $(LFLAGS)|install -m 755 -D -t $(BINDIR) $(LMKDIR)/$(APP_NAME)|g' arm_framework/app/vputils*/Makefile
+
+	#flexidag_app/flexidag_protection
+	sed -i -e 's|$(CC) -o $@ -T $(APP_LSR) $(APP_OBJS) $(CVTASK_LIBS_FLAGS) $(LFLAGS)|install -m 755 -D -t $(BINDIR) $(LMKDIR)/$(APP)|g' arm_framework/app/flexidag_app/flexidag_protection/makefile
+
+	#orc_framework/Makefile.real.in
+	sed -i -e 's|$(PPP) -M -deps|$(PPP) -perl ambperl -M -deps|g' orc_framework/Makefile.real.in
+	sed -i -e 's|$(PPP) $(PPP_INCS) -o $@ $<|$(PPP) -perl ambperl $(PPP_INCS) -o $@ $<|g' orc_framework/Makefile.real.in
+
+	#orc_framework/UcodeConfig.pm.in
+	sed -i -e 's|-\*- perl -\*-|-\*- ambperl -\*-|g' orc_framework/UcodeConfig.pm.in
+
+	#orc_framework/orcvp.mk
+	sed -i -e 's|ambacv/tests/orc_scheduler|ambacv/cv_common/libs/orc|g' orc_framework/orcvp.mk
+	sed -i -e 's|cd $(BUILDDIR) && rm -rf orc_scheduler && $(MAKE) orc_scheduler-init && $(MAKE) orc_scheduler-build||g' orc_framework/orcvp.mk
+	sed -i -e 's|$(BUILDDIR_ORCVP)/orcvp.bin|$(DIAG_DIR)/scheduler/$(PROJECT)_orcvp/orcvp.bin|g' orc_framework/orcvp.mk
+
+	#orc_framework/flexidag/util/include.mk
+	sed -i -e 's|flexidag/util/create_flexipatch.c|$(ORC_COMMON_DIR)/../flexidag/util/create_flexipatch|g' orc_framework/flexidag/util/include.mk
+	sed -i -e 's|gcc -m32 -I./ -I$(CV_COMMON_DIR)/inc -I$(CV_COMMON_DIR)/inc/cvapi -o $@ $(filter %.c,$^)|cp $(FLEXIPATCH_SOURCES) $(FLEXIPATCH_TOOL)|g' orc_framework/flexidag/util/include.mk
+
+	#cv_common/util/flexibin/include.mk
+	sed -i -e 's|$(addprefix $(CV_COMMON_DIR)/$(FBC_DIR)/,$(my_SOURCES))|$(CV_COMMON_DIR)/$(FBC_DIR)/$(PROJECT)/flexibin_create|g' cv_common/util/flexibin/include.mk
+	sed -i -e 's|gcc -o $@ $(filter %.c,$^) -I$(CV_COMMON_DIR)/inc -I$(CV_COMMON_DIR)/inc/cvapi -D$(CVCHIP)|cp $(FBC_SOURCES) $(FBC_TOOL)|g' cv_common/util/flexibin/include.mk
+
+	cd $CWD
+fi
+
+echo Generating distribution package \'${OUTPUT}\' ...
+OUTPUT_TAR=${OUTPUT%.*}
+#clean_up
+#exit 1
+
+for i in ${PATHS};do
+    tar --append --file=${OUTPUT_TAR} ${i} ${EXPANDED_EXCLUDE}
+done
+
+echo Generating external_sdk distribution package \'${OUTPUT_DIR}/external_sdk\' ...
+mkdir -p ${OUTPUT_DIR}/external_sdk
+for i in `ls ${AMBALINK_DIR}/external_sdk/`; do
+	EXPANDED_PATH=`ls ${AMBALINK_DIR}/external_sdk/${i}`
+	cd ${AMBALINK_DIR}/external_sdk/
+	for j in ${EXPANDED_PATH}; do
+		tar -zcf "${OUTPUT_DIR}/external_sdk/${j}.tar.gz" "${i}/${j}";
+	done
+	cd $CWD
+done
+cd $CWD
+
+gzip ${OUTPUT_TAR}
+
+md5sum ${OUTPUT} > ${OUTPUT}.md5sum
+echo Unarchiving distribution package \'${OUTPUT}\' ...
+cd $OUTPUT_DIR
+tar xfz ${OUTPUT}
+
+do_restore
+
+echo Done
+echo "Your files are ready:"
+echo "   ${OUTPUT}"
+echo "   ${OUTPUT}.md5sum"
+echo "Please double check its contents before actual distribution!"
+echo "Good-day!"

@@ -1,0 +1,46 @@
+# For a description of the syntax of this configuration file,
+# see build/scripts/Documentation/kbuild/kconfig-language.txt.
+#
+mainmenu "Ambarella SDK Configuration"
+
+# OS (SDK platform)
+source build/kconfigs/Kconfig.threadx
+
+# boot
+source boot/Kconfig
+
+# BSP
+source bsp/Kconfig
+
+# For architecture and building system
+source build/kconfigs/Kconfig.arch
+source build/kconfigs/Kconfig.toolchain
+
+# For BLD
+source build/kconfigs/Kconfig.bld
+
+# SSP
+source svc/Kconfig.ssp
+
+# Flash Partitions
+source build/kconfigs/Kconfig.fwprog
+
+# Hypervisor
+source build/kconfigs/Kconfig.hypervisor
+
+# Ambalink
+source svc/comsvc/ambalink/Kconfig
+
+# CV
+source soc/vision/Kconfig
+
+# Common Service
+source svc/comsvc/Kconfig
+
+# foss
+source build/kconfigs/Kconfig.foss
+
+source vendors/arm/arm-trusted-firmware/Kconfig
+
+# App
+source svc/apps/Kconfig

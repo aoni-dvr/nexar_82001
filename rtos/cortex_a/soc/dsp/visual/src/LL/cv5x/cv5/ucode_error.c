@@ -1,0 +1,726 @@
+/* CV5 DSP error code c file
+Commit: 866f87a68201ebaf124b7b0b3c0c277a4bc392e9
+Last Changed Commit: 2b2291a9a73be11b398a68c6ca18a390a0845d6b
+Last Changed Date: 2022-12-26 19:03:38 -0800
+*/
+/**
+ *  @file ucode_error.c
+ *
+ *  Copyright (c) 2021 Ambarella International LP
+ *
+ *  This file and its contents ("Software") are protected by intellectual
+ *  property rights including, without limitation, U.S. and/or foreign
+ *  copyrights. This Software is also the confidential and proprietary
+ *  information of Ambarella International LP and its licensors. You may not use, reproduce,
+ *  disclose, distribute, modify, or otherwise prepare derivative works of this
+ *  Software or any portion thereof except pursuant to a signed license agreement
+ *  or nondisclosure agreement with Ambarella International LP or its authorized affiliates.
+ *  In the absence of such an agreement, you agree to promptly notify and return
+ *  this Software to Ambarella International LP.
+ *
+ *  THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ *  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT,
+ *  MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ *  IN NO EVENT SHALL AMBARELLA INTERNATIONAL LP OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT,
+ *  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ *  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; COMPUTER FAILURE OR MALFUNCTION; OR BUSINESS
+ *  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ *  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ *  POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+/****************************************************************************/
+
+#include <ucode_error.h>
+
+/* module_idx 0 ERR_CODE_MOD_MM */
+const char* const mm_err_code[] =
+{
+  MM_ERR_UNKNOWN_MSG,                /* 0x00000u */
+  MM_ERR_TILED_FMT_MSG,              /* 0x00001u */
+  MM_ERR_INVALID_FB_ID_MSG,          /* 0x00002u */
+  MM_ERR_REQ_FB_FATAL_0_MSG,         /* 0x00003u */
+  MM_ERR_REQ_FB_FATAL_1_MSG,         /* 0x00004u */
+  MM_ERR_REQ_FB_FATAL_2_MSG,         /* 0x00005u */
+  MM_ERR_REQ_FB_FATAL_3_MSG,         /* 0x00006u */
+  MM_ERR_REG_FB_FATAL_MSG,           /* 0x00007u */
+  MM_ERR_REL_FB_FATAL_0_MSG,         /* 0x00008u */
+  MM_ERR_REL_FB_FATAL_1_MSG,         /* 0x00009u */
+  MM_ERR_INC_FB_FATAL_MSG,           /* 0x0000au */
+  MM_ERR_DEC_FB_FATAL_MSG,           /* 0x0000bu */
+  MM_ERR_REQ_FB_INVALID_FB_TYPE_MSG, /* 0x0000cu */
+  MM_ERR_REG_FB_INVALID_FB_TYPE_MSG, /* 0x0000du */
+  MM_ERR_REL_FB_INVALID_FB_TYPE_MSG, /* 0x0000eu */
+  MM_ERR_GET_FB_INVALID_FB_TYPE_MSG, /* 0x0000fu */
+  MM_ERR_SET_FB_EXT_FAILED_MSG,      /* 0x00010u */
+  MM_ERR_SET_FB_EXT_YUV_Y_MSG,       /* 0x00011u */
+  MM_ERR_SET_FB_EXT_YUV_UV_MSG,      /* 0x00012u */
+  MM_ERR_FB_ID_NOT_A_FRAME_MSG,      /* 0x00013u */
+  MM_ERR_GET_FB_AUX_FAILED_MSG,      /* 0x00014u */
+  MM_ERR_INVALID_FBP_TYPE_MSG,       /* 0x00015u */
+  MM_ERR_INVALID_FBP_INDEX_MSG,      /* 0x00016u */
+  MM_ERR_INVALID_MFBP_TYPE_MSG,      /* 0x00017u */
+  MM_ERR_INVALID_MFBP_INDEX_MSG,     /* 0x00018u */
+  MM_ERR_INVALID_IF_EXT_MSG,         /* 0x00019u */
+  MM_ERR_INVALID_IF_TILED_MSG,       /* 0x0001au */
+  MM_ERR_FBP_USED_MSG,               /* 0x0001bu */
+  MM_ERR_FBP_INF_MSG,                /* 0x0001cu */
+  MM_ERR_FBUF_USED_MSG,              /* 0x0001du */
+  MM_ERR_FRM_NUM_MAX_MSG,            /* 0x0001eu */
+  MM_ERR_INVALID_MEM_PAR_ID_MSG,     /* 0x0001fu */
+  MM_ERR_INVALID_FRM_BLK_SIZE_MSG,   /* 0x00020u */
+  MM_ERR_INVALID_CHROMA_FORMAT_MSG,  /* 0x00021u */
+  MM_ERR_INVALID_FB_NUM_TOTAL_MSG,   /* 0x00022u */
+  MM_ERR_INVALID_BUF_WIDTH_MSG,      /* 0x00023u */
+  MM_ERR_INVALID_BUF_HEIGHT_MSG,     /* 0x00024u */
+  MM_ERR_INVALID_IMG_INF_IDX_MSG,    /* 0x00025u */
+  MM_ERR_MFBP_USED_MSG,              /* 0x00026u */
+  MM_ERR_MFBP_INF_MSG,               /* 0x00027u */
+  MM_ERR_MFBUF_USED_MSG,             /* 0x00028u */
+  MM_ERR_MFRM_BLK_SIZE_MSG,          /* 0x00029u */
+  MM_ERR_INVALID_MCB_NUM_MSG,        /* 0x0002au */
+  MM_ERR_INVALID_MCB_USED_MSG,       /* 0x0002bu */
+  MM_ERR_INVALID_MCB_USED_NUM_MSG,   /* 0x0002cu */
+  MM_ERR_INVALID_MCBL_SIZE_MSG,      /* 0x0002du */
+  MM_ERR_POP_MCB_FAILED_MSG,         /* 0x0002eu */
+  MM_ERR_PUSH_MCB_FAILED_MSG,        /* 0x0002fu */
+  MM_ERR_INVALID_MCBL_ID_MSG,        /* 0x00030u */
+  MM_ERR_INVALID_MCB_ID_TO_FREE_MSG, /* 0x00031u */
+  MM_ERR_INVALID_MEM_PAR_TYPE_MSG,   /* 0x00032u */
+  MM_ERR_INVALID_ALIGNMENT_MSG,      /* 0x00033u */
+  MM_ERR_INVALID_SIZE_MSG,           /* 0x00034u */
+  MM_ERR_TOO_MANY_PAR_MSG,           /* 0x00035u */
+  MM_ERR_NO_MORE_SMEM_MSG,           /* 0x00036u */
+  MM_ERR_NO_MORE_DRAM_MSG,           /* 0x00037u */
+  MM_ERR_INVALID_MEM_PAR_MSG,        /* 0x00038u */
+  MM_ERR_INVALID_SUP_SUB_PAR_MSG,    /* 0x00039u */
+  MM_ERR_UNKNOWN_PAR_LEVEL_MSG,      /* 0x0003au */
+  MM_ERR_TOO_MANY_SUP_PAR_MSG,       /* 0x0003bu */
+  MM_ERR_TOO_MANY_SUB_PAR_MSG,       /* 0x0003cu */
+  MM_ERR_TOO_MANY_SUP_SUB_PAR_MSG,   /* 0x0003du */
+  MM_ERR_INVALID_SUP_PAR_ID_MSG,     /* 0x0003eu */
+  MM_ERR_SUB_PAR_OVER_LIMIT_MSG,     /* 0x0003fu */
+  MM_ERR_INVALID_MEM_PAR_LEVEL_MSG,  /* 0x00040u */
+  MM_ERR_SUB_PAR_SIZE_MSG,           /* 0x00041u */
+  MM_ERR_INVALID_WIDTH_PITCH_MSG,    /* 0x00042u */
+  MM_ERR_INVALID_DBP_USED_MSG,       /* 0x00043u */
+  MM_ERR_INVALID_DBUF_PITCH_MSG,     /* 0x00044u */
+  MM_ERR_INVALID_DBUF_WIDTH_MSG,     /* 0x00045u */
+  MM_ERR_INVALID_CBUF_USED_MSG,      /* 0x00046u */
+  MM_ERR_INVALID_CBUF_SIZE_MSG,      /* 0x00047u */
+  MM_ERR_INVALID_READER_USED_MSG,    /* 0x00048u */
+  MM_ERR_INVALID_READER_ID_MSG,      /* 0x00049u */
+  MM_ERR_CBUF_RD_NUM_BYTES_MSG,      /* 0x0004au */
+  MM_ERR_INVALID_BDT_USED_MSG,       /* 0x0004bu */
+  MM_ERR_INVALID_BD_NUM_MSG,         /* 0x0004cu */
+  MM_ERR_INVALID_PADDED_WIDTH_MSG,   /* 0x0004du */
+  MM_ERR_INVALID_HEAP_SIZE_MSG,      /* 0x0004eu */
+  MM_ERR_UNDEFINED_AES_SYMBOL_MSG,   /* 0x0004fu */
+  MM_ERR_AES_FAILED_EXIT_MSG,        /* 0x00050u */
+  MM_ERR_AES_LEN_ALIGN_MSG,          /* 0x00051u */
+  MM_ERR_STACK_OVERFLOW_MSG,         /* 0x00052u */
+  MM_ERR_UTEST_MSG,                  /* 0x00053u */
+  MM_ERR_SMEM_2_DRAM_ALIGN_MSG,      /* 0x00054u */
+  MM_ERR_BAD_BDT_ID_MSG,             /* 0x00055u */
+  MM_ERR_WRITE_DRAM_OUTOF_RANGE_MSG, /* 0x00056u */
+};
+
+/* module_idx 1 ERR_CODE_MOD_API */
+const char* const api_err_code[] =
+{
+  API_ERR_UNKNOWN_MSG,              /* 0x10000u */
+  API_ERR_INTER_MSG_HOLD_MODE_MSG,  /* 0x10001u */
+  API_ERR_DSP_INIT_DATA_MSG,        /* 0x10002u */
+  API_ERR_INVALID_DSP_FP_TYPE_MSG,  /* 0x10003u */
+  API_ERR_WITHOUT_MUTEX_MSG,        /* 0x10004u */
+  API_ERR_INVALID_MSG_INFO_TBL_MSG, /* 0x10005u */
+  API_ERR_INVALID_CMD_API_ID_MSG,   /* 0x10006u */
+  API_ERR_INVALID_CMD_INFO_TBL_MSG, /* 0x10007u */
+  API_ERR_MSG_QUEUE_FULL_MSG,       /* 0x10008u */
+  API_ERR_INVALID_MSG_API_ID_MSG,   /* 0x10009u */
+  API_ERR_INVALID_CNT_VAL_MSG,      /* 0x1000au */
+  API_ERR_TIME_OUT_MSG,             /* 0x1000bu */
+  API_ERR_HEADER_CMD_CODE_MSG,      /* 0x1000cu */
+  API_ERR_INVALID_CMD_SEQ_MSG,      /* 0x1000du */
+  API_ERR_TOO_MANY_ENTRIES_MSG,     /* 0x1000eu */
+  API_ERR_INVALID_DSP_CMD_CODE_MSG, /* 0x1000fu */
+  API_ERR_BAD_ECHO_CMD_PIDX_MSG     /* 0x10010u */
+};
+
+/* module_idx 2 ERR_CODE_MOD_MSG */
+const char* const msg_err_code[] =
+{
+  MSG_ERR_UNKNOWN_MSG,           /* 0x20000u */
+  MSG_ERR_INVALID_ORC_ALL_MSG,   /* 0x20001u */
+  MSG_ERR_Q_TYPE_ORC_ALL_MSG,    /* 0x20002u */
+  MSG_ERR_Q_TYPE_ENTRY_SIZE_MSG, /* 0x20003u */
+  MSG_ERR_NO_MORE_QUEUES_MSG,    /* 0x20004u */
+  MSG_ERR_INVALID_MSG_Q_IDX_MSG, /* 0x20005u */
+  MSG_ERR_QUEUE_IS_FULL_MSG      /* 0x20006u */
+};
+
+/* module_idx 3 ERR_CODE_MOD_BOOT */
+const char* const boot_err_code[] =
+{
+  BOOT_ERR_UNKNOWN_MSG,           /* 0x30000u */
+  BOOT_ERR_DSP_DEBUG_DSIZE_MSG,   /* 0x30001u */
+  BOOT_ERR_CHIP_ID_DADDR_MSG,     /* 0x30002u */
+  BOOT_ERR_DELTA_AUDIO_TICKS_MSG, /* 0x30003u */
+  BOOT_ERR_DSP_PROF_ID_MSG,       /* 0x30004u */
+  BOOT_ERR_FIRST_DEF_CMD_MSG,     /* 0x30005u */
+  BOOT_ERR_ORC_MSG_T_SIZE_MSG,    /* 0x30006u */
+  BOOT_ERR_CALC_SBLK_FAILED_MSG,  /* 0x30007u */
+  BOOT_ERR_UNKNOWN_VALUES_MSG,    /* 0x30008u */
+  BOOT_ERR_INVALID_IN_IDX_MSG,    /* 0x30009u */
+  BOOT_ERR_INVALID_OUT_IDX_MSG    /* 0x3000au */
+};
+
+/* module_idx 4 ERR_CODE_MOD_IENG */
+const char * const ieng_err_code[] =
+{
+  IENG_ERR_UNKNOWN_MSG,            /* 0x40000u */
+  IENG_ERR_ADV_IDSP_JOB_Q_MSG,     /* 0x40001u */
+  IENG_ERR_IENG_INIT_MSG,          /* 0x40002u */
+  IENG_ERR_CHK_STAT_DEFS_MSG,      /* 0x40003u */
+  IENG_ERR_GET_SYNC_CNT_MSG,       /* 0x40004u */
+  IENG_ERR_PROC_JOB_SECT_MSG,      /* 0x40005u */
+  IENG_ERR_PROC_JOB_SECT_PEND_MSG, /* 0x40006u */
+  IENG_ERR_SET_SYNC_CNT_MSG,       /* 0x40007u */
+  IENG_ERR_SMEM_ADDR_MSG,          /* 0x40008u */
+  IENG_ERR_DIRECT_DRAM_SMEM_MSG,   /* 0x40009u */
+  IENG_ERR_FLY_JOB_MSG,            /* 0x4000au */
+  IENG_ERR_NULL_POINTER_MSG,       /* 0x4000bu */
+  IENG_ERR_INIT_SREG_MSG,          /* 0x4000cu */
+  IENG_ERR_SEC_CMD_MSG,            /* 0x4000du */
+  IENG_ERR_BAD_VALUE_MSG,          /* 0x4000eu */
+  IENG_ERR_IDSP_LD_STR_MSG         /* 0x4000fu */
+};
+
+
+/* module_idx 5 ERR_CODE_MOD_VPROC */
+const char * const vproc_err_code[] =
+{
+  VPROC_ERR_UNKNOWN_MSG,         /* 0x50000u */
+  VPROC_ERR_CHAN_ID_MSG,         /* 0x50001u */
+  VPROC_ERR_OP_Q_TYPE_MSG,       /* 0x50002u */
+  VPROC_ERR_OP_Q_MODE_MSG,       /* 0x50003u */
+  VPROC_ERR_UPDATE_DATA_MSG,     /* 0x50004u */
+  VPROC_ERR_INPUT_FID_MSG,       /* 0x50005u */
+  VPROC_ERR_RAW_SIZE_MSG,        /* 0x50006u */
+  VPROC_ERR_1EXP_SIZE_MSG,       /* 0x50007u */
+  VPROC_ERR_CE_SIZE_MSG,         /* 0x50008u */
+  VPROC_ERR_WH0_SIZE_MSG,        /* 0x50009u */
+  VPROC_ERR_PRE_WARP_SIZE_MSG,   /* 0x5000au */
+  VPROC_ERR_NOT_ENOUGH_SMEM_MSG, /* 0x5000bu */
+  VPROC_ERR_NOT_ENOUGH_DRAM_MSG, /* 0x5000cu */
+  VPROC_ERR_MAIN_SIZE_MSG,       /* 0x5000du */
+  VPROC_ERR_OUT_PIN_MSG,         /* 0x5000eu */
+  VPROC_ERR_IN_Q_ID_MSG,         /* 0x5000fu */
+  VPROC_ERR_REQ_EXT_BUF_MSG,     /* 0x50010u */
+  VPROC_ERR_DZ_ZOOM_FAC_MSG,     /* 0x50011u */
+  VPROC_ERR_DZ_DUMMY_WIN_MSG,    /* 0x50012u */
+  VPROC_ERR_PIN_OUT_DECI_MSG,    /* 0x50013u */
+  VPROC_ERR_GRP_INFO_MSG,        /* 0x50014u */
+  VPROC_ERR_JID_Y2Y_CBS_MSG,     /* 0x50015u */
+  VPROC_ERR_JID_Y2Y_LDCBS_MSG,   /* 0x50016u */
+  VPROC_ERR_JID_Y2Y_LDLCBS_MSG,  /* 0x50017u */
+  VPROC_ERR_JID_Y2Y_CBI_MSG,     /* 0x50018u */
+  VPROC_ERR_JID_Y2Y_CBF_MSG,     /* 0x50019u */
+  VPROC_ERR_TILEIDX_Y2Y_MSG,     /* 0x5001au */
+  VPROC_ERR_DQ_FULL_MSG,         /* 0x5001bu */
+  VPROC_ERR_MAX_TILENUM_Y2Y_MSG, /* 0x5001cu */
+  VPROC_ERR_Y2Y_DQ_EMPTY_MSG,    /* 0x5001du */
+  VPROC_ERR_Y2Y_PPL_TYPE_MSG,    /* 0x5001eu */
+  VPROC_ERR_TS_Q_EMPTY_MSG,      /* 0x5001fu */
+  VPROC_ERR_PRC_JQ_EMPTY_MSG,    /* 0x50020u */
+  VPROC_ERR_MAIN_ME_FBID_MSG,    /* 0x50021u */
+  VPROC_ERR_MAIN_OUT_DRAM_MSG,   /* 0x50022u */
+  VPROC_ERR_VEMAIN_STR_FBID_MSG, /* 0x50023u */
+  VPROC_ERR_MAIN_STR_VOUT0_MSG,  /* 0x50024u */
+  VPROC_ERR_MAIN_STR_VOUT1_MSG,  /* 0x50025u */
+  VPROC_ERR_Y2YS5_FBID_MSG,      /* 0x50026u */
+  VPROC_ERR_Y2YS6_FBID_MSG,      /* 0x50027u */
+  VPROC_ERR_Y2YS7_FBID_MSG,      /* 0x50028u */
+  VPROC_ERR_Y2YS17_Y_OVF_MSG,    /* 0x50029u */
+  VPROC_ERR_Y2YS17_UV_OVF_MSG,   /* 0x5002au */
+  VPROC_ERR_VEPIP_STR_FBID_MSG,  /* 0x5002bu */
+  VPROC_ERR_PIP_STR_VOUT0_MSG,   /* 0x5002cu */
+  VPROC_ERR_PIP_STR_VOUT1_MSG,   /* 0x5002du */
+  VPROC_ERR_VE3RD_STR_FBID_MSG,  /* 0x5002eu */
+  VPROC_ERR_3RD_STR_PIN_MSG,     /* 0x5002fu */
+  VPROC_ERR_3RD_STR_VOUT0_MSG,   /* 0x50030u */
+  VPROC_ERR_VE4TH_STR_FBID_MSG,  /* 0x50031u */
+  VPROC_ERR_4TH_STR_PIN_MSG,     /* 0x50032u */
+  VPROC_ERR_4TH_STR_VOUT1_MSG,   /* 0x50033u */
+  VPROC_ERR_MAX_TILE_NUM_MSG,    /* 0x50034u */
+  VPROC_ERR_GROUP_NUM_MSG,       /* 0x50035u */
+  VPROC_ERR_UNHANDLED_CMD_MSG,   /* 0x50036u */
+  VPROC_ERR_INPUT_FORMAT_MSG,    /* 0x50037u */
+  VPROC_ERR_PROC_IDX_MSG,        /* 0x50038u */
+  VPROC_ERR_Y2Y_FIRST_FLOW_MSG,  /* 0x50039u */
+  VPROC_ERR_IDSP_JOB_Q_C2Y_V_MSG,/* 0x5003au */
+  VPROC_ERR_C2Y_JOB_CNT_MSG,     /* 0x5003bu */
+  VPROC_ERR_IDSP_JOB_Q_FIN_V_MSG,/* 0x5003cu */
+  VPROC_ERR_JOB_CNT_MSG,         /* 0x5003du */
+  VPROC_ERR_ORC_MSG_CHAN_ID_MSG, /* 0x5003eu */
+  VPROC_ERR_ORC_MSG_SRC_ID_MSG,  /* 0x5003fu */
+  VPROC_ERR_ORC_MSG_PASS_ID_MSG, /* 0x50040u */
+  VPROC_ERR_ORC_MSG_ID_MSG,      /* 0x50041u */
+  VPROC_ERR_VP_MSG_Q_MSG,        /* 0x50042u */
+  VPROC_ERR_VP_MSG_SYNC_MSG,     /* 0x50043u */
+  VPROC_ERR_VP_MSG_TS_Q_MSG,     /* 0x50044u */
+
+  VPROC_ERR_VE_COPY_FBP_MSG,     /* 0x50045u */
+  VPROC_ERR_VE_COPY_CR_FID_MSG,  /* 0x50046u */
+  VPROC_ERR_VE_COPY_IN_DQ_MSG,   /* 0x50047u */
+  VPROC_ERR_VE_COPY_DATA_MSG,    /* 0x50048u */
+  VPROC_ERR_VE_COPY_DQ_MSG,      /* 0x50049u */
+  VPROC_ERR_VE_COPY_DTYPE_MSG,   /* 0x5004au */
+  VPROC_ERR_VE_BLEND_FBP_MSG,    /* 0x5004bu */
+  VPROC_ERR_VE_BLEND_IN_DQ_MSG,  /* 0x5004cu */
+  VPROC_ERR_VE_BLEND_FID_MSG,    /* 0x5004du */
+  VPROC_ERR_VE_BLEND_DATA_MSG,   /* 0x5004eu */
+  VPROC_ERR_VE_BLEND_DQ_MSG,     /* 0x5004fu */
+  VPROC_ERR_VE_BLEND_DTYPE_MSG,  /* 0x50050u */
+  VPROC_ERR_SEND_BLEND_WAIT_MSG, /* 0x50051u */
+  VPROC_ERR_SEND_BLEND_IENG_MSG, /* 0x50052u */
+  VPROC_ERR_SEND_COPY_WAIT_MSG,  /* 0x50053u */
+  VPROC_ERR_SEND_COPY_IENG_MSG,  /* 0x50054u */
+  VPROC_ERR_PROC_COPY_Q_MSG,     /* 0x50055u */
+  VPROC_ERR_PROC_COPY_DTYPE_MSG, /* 0x50056u */
+  VPROC_ERR_PROC_BLEND_Q_MSG,    /* 0x50057u */
+  VPROC_ERR_PROC_BLEND_DTYPE_MSG,/* 0x50058u */
+  VPROC_ERR_PROC_BLEND_FIDS_MSG, /* 0x50059u */
+  VPROC_ERR_PROC_BLEND_FID_MSG,  /* 0x5005au */
+  VPROC_ERR_VE_3RD_OUT_DEST_MSG, /* 0x5005bu */
+  VPROC_ERR_VE_4TH_OUT_DEST_MSG, /* 0x5005cu */
+
+  VPROC_ERR_PREV_INS_FID_MSG,     /* 0x5005du */
+  VPROC_ERR_PREV_INS_DISP_FID_MSG,/* 0x5005eu */
+  VPROC_ERR_PREV_INS_VOUT_ID_MSG,/* 0x5005fu */
+  VPROC_ERR_PREV_SETUP_SRC_MSG,  /* 0x50060u */
+  VPROC_ERR_PREV_STOP_SRC_MSG,   /* 0x50061u */
+  VPROC_ERR_PREV_PREP_SRC_MSG,   /* 0x50062u */
+  VPROC_ERR_PREV_MODE_MSG,       /* 0x50063u */
+  VPROC_ERR_PREV_STOP_FID_MSG,   /* 0x50064u */
+  VPROC_ERR_PREV_NEXT_FID_MSG,   /* 0x50065u */
+
+  VPROC_ERR_VE_STRM_ID_MSG,      /* 0x50066u */
+  VPROC_ERR_VE_WR_IO_FBQ_MSG,    /* 0x50067u */
+  VPROC_ERR_VE_PRIM_FBP_MSG,     /* 0x50068u */
+  VPROC_ERR_VE_SUB_FBP_MSG,      /* 0x50069u */
+  VPROC_ERR_VE_PRIM_WORK_FBP_MSG,/* 0x5006au */
+  VPROC_ERR_VE_SUB_WORK_FBP_MSG, /* 0x5006bu */
+  VPROC_ERR_VE_STAGING_FID_MSG,  /* 0x5006cu */
+  VPROC_ERR_VE_BUF_IDX_MSG,      /* 0x5006du */
+  VPROC_ERR_VE_COPY_SIZE_MSG,    /* 0x5006eu */
+  VPROC_ERR_VE_MAIN_SIZE_MSG,    /* 0x5006fu */
+
+  VPROC_ERR_C2Y_DATA_Q_MSG,      /* 0x50070u */
+  VPROC_ERR_C2Y_PREP_JOB_DQ_MSG, /* 0x50071u */
+  VPROC_ERR_C2Y_PROC_JOB_DQ_MSG, /* 0x50072u */
+  VPROC_ERR_C2Y_TS_Q_FULL_MSG,   /* 0x50073u */
+
+  VPROC_ERR_CMD_CHAN_ID_MSG,     /* 0x50074u */
+  VPROC_ERR_CMD_EXP_NUM_MSG,     /* 0x50075u */
+  VPROC_ERR_PREV_A_SZ_MSG,       /* 0x50076u */
+  VPROC_ERR_PREV_A_SZ_MAX_MSG,   /* 0x50077u */
+  VPROC_ERR_PREV_B_SZ_MSG,       /* 0x50078u */
+  VPROC_ERR_PREV_B_SZ_MAX_MSG,   /* 0x50079u */
+  VPROC_ERR_PREV_C_SZ_MSG,       /* 0x5007au */
+  VPROC_ERR_PREV_C_SZ_MAX_MSG,   /* 0x5007bu */
+  VPROC_ERR_PREV_D_SZ_MSG,       /* 0x5007cu */
+  VPROC_ERR_PREV_D_SZ_MAX_MSG,   /* 0x5007du */
+  VPROC_ERR_HIER_SZ_MSG,         /* 0x5007eu */
+  VPROC_ERR_HIER_SZ_MAX_MSG,     /* 0x5007fu */
+
+  VPROC_ERR_LDELAY_C2Y_MSG,      /* 0x50080u */
+  VPROC_ERR_LDELAY_MCTF_MSG,     /* 0x50081u */
+  VPROC_ERR_C2Y_TILE_NUM_MSG,    /* 0x50082u */
+  VPROC_ERR_Y2Y_TILE_NUM_MSG,    /* 0x50083u */
+  VPROC_ERR_ROI_TAG_NUM_MSG,     /* 0x50084u */
+  VPROC_ERR_GRP_CMD_NUM_MSG,     /* 0x50085u */
+  VPROC_ERR_GRP_CMD_SYS_MSG,     /* 0x50086u */
+  VPROC_ERR_GRP_CMD_CHAN_MSG,    /* 0x50087u */
+  VPROC_ERR_ROI_START_COL_MSG,   /* 0x50088u */
+  VPROC_ERR_ROI_START_ROW_MSG,   /* 0x50089u */
+  VPROC_ERR_PREV_ID_MSG,         /* 0x5008au */
+  VPROC_ERR_PIN_OUT_DECI_M_MSG,  /* 0x5008bu */
+  VPROC_ERR_PIN_OUT_DECI_N_MSG,  /* 0x5008cu */
+
+  VPROC_ERR_EXT_MEM_TYPE_MSG,    /* 0x5008du */
+  VPROC_ERR_EXT_BUF_ADDR_MSG,    /* 0x5008eu */
+
+  VPROC_ERR_VE_GRP_ID_MSG,       /* 0x5008fu */
+  VPROC_ERR_VE_FINAL_BUF_ID_MSG, /* 0x50090u */
+  VPROC_ERR_VE_INPUT_NUMS_MSG,   /* 0x50091u */
+  VPROC_ERR_VE_STRM_ID_MIS_MSG,  /* 0x50092u */
+  VPROC_ERR_VE_OUT_BUF_ID_MSG,   /* 0x50093u */
+  VPROC_ERR_VE_CHAN_ID_MSG,      /* 0x50094u */
+  VPROC_ERR_VE_CH_STRM_ID_MSG,   /* 0x50095u */
+  VPROC_ERR_VE_CHROMA_FMT_MSG,   /* 0x50096u */
+  VPROC_ERR_VE_PRIM_FBP_ID_MSG,  /* 0x50097u */
+
+
+  VPROC_ERR_GRP_CH_NUM_MSG,      /* 0x50098u */
+  VPROC_ERR_GRP_NUM_MSG,         /* 0x50099u */
+  VPROC_ERR_GRPING_CH_NUM_MSG,   /* 0x5009au */
+
+  VPROC_ERR_BAT_PROC_ORDER_MSG,  /* 0x5009bu */
+  VPROC_ERR_BAT_PROC_GRPING_MSG, /* 0x5009cu */
+
+  VPROC_ERR_SMEM_WIN_WIDTH_MSG,  /* 0x5009du */
+
+  VPROC_ERR_VE_BLEND_CR_FID_MSG, /* 0x5009eu */
+  VPROC_ERR_BAD_VALUE_MSG,       /* 0x5009fu */
+  VPROC_ERR_NULL_IK_ADDR_MSG,    /* 0x500a0u */
+  VPROC_ERR_INVALID_FB_ID_MSG,   /* 0x500a1u */
+  VPROC_ERR_ABNORMAL_TILE_MSG,   /* 0x500a2u */
+  VPROC_ERR_SETUP_CMD_MSG,       /* 0x500a3u */
+
+  VPROC_ERR_GRP_CH_RT_CHG_MSG,   /* 0x500a4u */
+  VPROC_ERR_GRP_CH_TIMEOUT_MSG,  /* 0x500a5u */
+  VPROC_ERR_IDSP_TIMEOUT_MSG,    /* 0x500a6u */
+  VPROC_ERR_FLOW_MAX_CFG_MSG,    /* 0x500a7u */
+  VPROC_ERR_OSD_BLEND_CMD_MSG,   /* 0x500a8u */
+  VPROC_ERR_MISMATCH_IK_IF_VER_MSG, /* 0x500a9u */
+  VPROC_ERR_OSD_INSERT_CMD_MSG,  /* 0x500aau */
+  VPROC_ERR_IDSP_FLOW_INFO_MSG,  /* 0x500abu */
+  VPROC_ERR_BOUNDING_CHECK_MSG,  /* 0x500acu */
+  VPROC_ERR_INVALID_REGION_MSG,  /* 0x500adu */
+  VPROC_ERR_STA_BUF_CFG_NUM_MSG,   /* 0x500aeu */
+  VPROC_ERR_BLUR_PM_MSG,         /* 0x500afu */
+};
+
+/* module_idx 6 ERR_CODE_MOD_IDSPDRV */
+const char * const idspdrv_err_code[] =
+{
+  IDSPDRV_ERR_MSG_UNKNOWN,
+  IDSPDRV_ERR_MSG_PARAM_OUT_OF_RANGE,
+  IDSPDRV_ERR_MSG_INVALID_ALIGNMENT,
+  IDSPDRV_ERR_MSG_CFG_BUF_TOO_SMALL,
+  IDSPDRV_ERR_MSG_INCONSISTENT_SEC_ID,
+  IDSPDRV_ERR_MSG_NULL_ADDR,
+  IDSPDRV_ERR_MSG_OUTPUT_TOO_WIDE,
+  IDSPDRV_ERR_MSG_UNSUPPORTED_FEATURE,
+  IDSPDRV_ERR_MSG_WARP_ACTWIN_WIDE,
+  IDSPDRV_ERR_MSG_WARP_ACTWIN_TALL,
+  IDSPDRV_ERR_MSG_WARP_ACTWIN_START_LATE,
+  IDSPDRV_ERR_MSG_TRANSFER_SIZE_TOO_BIG
+};
+
+/* module_idx 7 ERR_CODE_MOD_VIN */
+const char * const vin_err_code[] =
+{
+  VIN_ERR_UNKNOWN_MSG,                  /* 0x70000u */
+  EM_VIN_API,                           /* 0x70001u */
+  EM_VIN_BAD_VIN_THREAD_ID,             /* 0x70002u */
+  EM_VIN_NULL_CMD_INFO_TBL,             /* 0x70003u */
+  EM_VIN_ASSERT_CHECK_AES,              /* 0x70004u */
+  EM_VIN_SC_CHECK_FAIL,                 /* 0x70005u */
+  EM_VIN_MISMATCH_VIN_ID,               /* 0x70006u */
+  EM_VIN_BAD_YUV_ENC_FBP_ID,            /* 0x70007u */
+  EM_VIN_BAD_DEFAULT_RAW_FB_ID,         /* 0x70008u */
+  EM_VIN_BAD_DEFAULT_CE_FB_ID,          /* 0x70009u */
+  EM_VIN_BAD_SDBD_INFO_FOV_ID,          /* 0x7000au */
+  EM_VIN_NULL_CMD_CHAN_DADDR,           /* 0x7000bu */
+  EM_VIN_SHORT_OF_DRAM,                 /* 0x7000cu */
+  EM_VIN_SHORT_OF_SMEM,                 /* 0x7000du */
+  EM_VIN_CAP_RM_INIT_NOT_SET,           /* 0x7000eu */
+  EM_VIN_BAD_FB,                        /* 0x7000fu */
+
+  EM_VIN_OP_FAIL,                       /* 0x70010u */
+  EM_VIN_YUV422_OUT_NOT_EN,             /* 0x70011u */
+  EM_VIN_SHORT_OF_DATA_SMEM,            /* 0x70012u */
+  EM_VIN_CAP_RM_INIT_FLAG,              /* 0x70013u */
+  EM_VIN_MISMATCH_IDSP_STR_ID,          /* 0x70014u */
+  EM_VIN_NULL_FOV_FBP_IDS,              /* 0x70015u */
+  EM_VIN_BAD_VIN_FOV_FB_ID,             /* 0x70016u */
+  EM_VIN_SEND_RAW_STATUS_VP_Q,          /* 0x70017u */
+  EM_VIN_BAD_LUMA_OUT_FB,               /* 0x70018u */
+  EM_VIN_BAD_CHROMA_OUT_FB,             /* 0x70019u */
+  EM_VIN_BAD_CE_OUT_FB,                 /* 0x7001au */
+  EM_VIN_BAD_AUX_OUT_FB,                /* 0x7001bu */
+  EM_VIN_WRONG_PIC_STRM,                /* 0x7001cu */
+  EM_VIN_BAD_INT_OUT_FB,                /* 0x7001du */
+  EM_VIN_NON_ZERO_RESET_CNT,            /* 0x7001eu */
+  EM_VIN_BAD_PREV_RAW_IMG_FB_ID,        /* 0x7001fu */
+
+  EM_VIN_BAD_PREV_CE_IMG_FB_ID,         /* 0x70020u */
+  EM_VIN_NULL_DATA_Q_OUT,               /* 0x70021u */
+  EM_VIN_MISMATCH_BATCH_ADDR,           /* 0x70022u */
+  EM_VIN_MISMATCH_BATCH_ID,             /* 0x70023u */
+  EM_VIN_MISMATCH_BATCH_SZ,             /* 0x70024u */
+  EM_VIN_BAD_PIC_REPEAT_CNT,            /* 0x70025u */
+  EM_VIN_BAD_SRC_FP_NUM,                /* 0x70026u */
+  EM_VIN_BAD_VPROC_BINDING_NUM,         /* 0x70027u */
+  EM_VIN_BAD_ENC_BINDING_NUM,           /* 0x70028u */
+  EM_VIN_BAD_ENC_BIND_SRC_CH_NUM,       /* 0x70029u */
+  EM_VIN_BAD_DST_FP_TYPE,               /* 0x7002au */
+  EM_VIN_BAD_BIND_MSG,                  /* 0x7002bu */
+  EM_VIN_BAD_BIND_SRC_CH_NUM,           /* 0x7002cu */
+  EM_VIN_NULL_CE_FOV_FBP_IDS,           /* 0x7002du */
+  EM_VIN_BAD_ENC_YUV_OUT_FB_ID,         /* 0x7002eu */
+  EM_VIN_BAD_ENC_ME_OUT_FB_ID,          /* 0x7002fu */
+
+  EM_VIN_RUN_OUT_EXT_YUV_FB,            /* 0x70030u */
+  EM_VIN_WRONG_DRAM,                    /* 0x70031u */
+
+};
+
+
+/* module_idx 8 ERR_CODE_MOD_PREV */
+const char * const prev_err_code[] =
+{
+  PREV_ERR_UNKNOWN_MSG
+};
+
+
+/* module_idx 9 ERR_CODE_MOD_PROC_HL */
+const char * const hl_proc_err_code[] =
+{
+  HLP_ERRM_UNKNOWN                , /* 0x90000u */
+  HLP_ERRM_STR_DMA_PADDR_NULL     , /* 0x90001u */
+  HLP_ERRM_WRONG_DMA_WH           , /* 0x90002u */
+  HLP_ERRM_BLENDSBUF_TARIN_ROT    , /* 0x90003u */
+  HLP_ERRM_BLENDSBUF_REFIN_ROT    , /* 0x90004u */
+  HLP_ERRM_INVALID_SEC_ID         , /* 0x90005u */
+  HLP_ERRM_NS_MCTF_TAR_SBUF       , /* 0x90006u */
+  HLP_ERRM_MAXITEMS_POWER2        , /* 0x90007u */
+  HLP_ERRM_INVALID_LWQ_STORAGE    , /* 0x90008u */
+  HLP_ERRM_LWQ_FULL               , /* 0x90009u */
+  HLP_ERRM_WRITEQ_LWQ_FULL        , /* 0x9000au */
+  HLP_ERRM_WRITEQ_STORAGE_TYPE    , /* 0x9000bu */
+  HLP_ERRM_PEEKQ_STORAGE_TYPE     , /* 0x9000cu */
+  HLP_ERRM_PEEKPROCQ_STORAGE_T    , /* 0x9000du */
+  HLP_ERRM_READQ_STORAGE_T        , /* 0x9000eu */
+  HLP_ERRM_PROCQ_STARGE_T         , /* 0x9000fu */
+  HLP_ERRM_UPDATEQ_STORAGE_T      , /* 0x90010u */
+  HLP_ERRM_REQEXT_RUNOUTFB        , /* 0x90011u */
+  HLP_ERRM_OUTOF_MFB              , /* 0x90012u */
+  HLP_ERRM_SETEXTM_BUFPITCH       , /* 0x90013u */
+  HLP_ERRM_SETEXTM_MAX_BUFS       , /* 0x90014u */
+  HLP_ERRM_SETEXTM_INVALID_FBP    , /* 0x90015u */
+  HLP_ERRM_SETEXTM_APPEND_FBS     , /* 0x90016u */
+  HLP_ERRM_SETEXTM_NS_ALLOCMODE   , /* 0x90017u */
+  HLP_ERRM_SETEXTM_NS_ALLOCTYPE   , /* 0x90018u */
+  HLP_ERRM_NOIMP_SBUF             , /* 0x90019u */
+  HLP_ERRM_MISMATCH_MEM_SZ        , /* 0x9001au */
+  HLP_ERRM_DIAG_CHECK             , /* 0x9001bu */
+  HLP_ERRM_INVALID_CR_BASE        , /* 0x9001cu */
+  HLP_ERRM_OUTPUT_RATIO             /* 0x9001du */
+};
+
+
+/* module_idx 10 ERR_CODE_MOD_VOUT */
+const char* const vout_err_code[] =
+{
+  VOUT_EM_UNKNOWN,                 /* 0xa0000u */
+  VOUT_EM_VOUTA_DISP_NOT_IDLE,     /* 0xa0001u */
+  VOUT_EM_VOUTA_NG_SETUP_DISP_VAL, /* 0xa0002u */
+  VOUT_EM_VOUTA_NG_DEF_IMG_Y_ADDR, /* 0xa0003u */
+  VOUT_EM_VOUT_SRC_WHEN_SETUP,     /* 0xa0004u */
+  VOUT_EM_INVALID_PREV_VOUTA_SRC,  /* 0xa0005u */
+  VOUT_EM_INVALID_NEW_VOUTA_SRC,   /* 0xa0006u */
+  VOUT_EM_VOUT_SRC_WHEN_PREP,      /* 0xa0007u */
+  VOUT_EM_WRONG_CURRENT_VOUT_ID,   /* 0xa0008u */
+  VOUT_EM_WRONG_NEXT_VOUT_ID,      /* 0xa0009u */
+  VOUT_EM_WRONG_COUNTER_VAL,       /* 0xa000au */
+  VOUT_EM_NEXT_FRM_A_TOO_LARGE,    /* 0xa000bu */
+  VOUT_EM_NEXT_FRM_B_TOO_LARGE,    /* 0xa000cu */
+  VOUT_EM_VOUTB_DISP_NOT_IDLE,     /* 0xa000du */
+  VOUT_EM_VOUTB_NG_SETUP_DISP_VAL, /* 0xa000eu */
+  VOUT_EM_VOUTB_NG_DEF_IMG_Y_ADDR, /* 0xa000fu */
+  VOUT_EM_VOUTB_SRC_WHEN_SETUP,    /* 0xa0010u */
+  VOUT_EM_INVALID_PREV_VOUTB_SRC,  /* 0xa0011u */
+  VOUT_EM_INVALID_NEW_VOUTB_SRC,   /* 0xa0012u */
+  VOUT_EM_VOUTB_SRC_WHEN_PREP,     /* 0xa0013u */
+  VOUT_EM_WRITE_CMD_Q_SBASE_NULL,  /* 0xa0014u */
+  VOUT_EM_READ_CMD_Q_SBASE_NULL,   /* 0xa0015u */
+  VOUT_EM_INVALID_VOUT_ID_IN_CMD,  /* 0xa0016u */
+  VOUT_EM_MIXER_CMD_VID_NG,        /* 0xa0017u */
+  VOUT_EM_VIDEO_CMD_VID_NG,        /* 0xa0018u */
+  VOUT_EM_OSD_CMD_VID_NG,          /* 0xa0019u */
+  VOUT_EM_OSD_BUF_CMD_VID_NG,      /* 0xa001au */
+  VOUT_EM_OSD_CLUT_CMD_VID_NG,     /* 0xa001bu */
+  VOUT_EM_DISP_CMD_VID_NG,         /* 0xa001cu */
+  VOUT_EM_RESET_CMD_VID_NG,        /* 0xa001du */
+  VOUT_EM_CSC_CMD_VID_NG,          /* 0xa001eu */
+  VOUT_EM_OUTPUT_MODE_CMD_VID_NG,  /* 0xa001fu */
+  VOUT_EM_GAMMA_SETUP_CMD_VID_NG,  /* 0xa0020u */
+  VOUT_EM_VOUTA_NG_CSC_TYPE,       /* 0xa0021u */
+  VOUT_EM_VOUTB_NG_CSC_TYPE,       /* 0xa0022u */
+  VOUT_EM_NG_CMD_FROM_VOUT_CMD,    /* 0xa0023u */
+  VOUT_EM_NG_NUM_CMDS_IN_BUF,      /* 0xa0024u */
+  VOUT_EM_NG_CMD_FROM_PIC_INFO,    /* 0xa0025u */
+  VOUT_EM_PREV_INS_FID,            /* 0xa0026u */
+  VOUT_EM_PREV_INS_DISP_FID,       /* 0xa0027u */
+  VOUT_EM_PREV_INS_VOUT_ID,        /* 0xa0028u */
+  VOUT_EM_PREV_SETUP_SRC,          /* 0xa0029u */
+  VOUT_EM_PREV_STOP_SRC,           /* 0xa002au */
+  VOUT_EM_PREV_PREP_SRC,           /* 0xa002bu */
+  VOUT_EM_PREV_MODE,               /* 0xa002cu */
+  VOUT_EM_PREV_STOP_FID,           /* 0xa002du */
+  VOUT_EM_PREV_NEXT_FID,           /* 0xa002eu */
+  VOUT_EM_CH_ID_EXCEED_LMT,        /* 0xa002fu */
+  VOUT_EM_NOT_ENOUGH_DRAM,         /* 0xa0030u */
+  VOUT_EM_DISP_CMD_DISPLAY_C,      /* 0xa0031u */
+  VOUT_EM_NOT_ENOUGH_SMEM,         /* 0xa0032u */
+  VOUT_EM_WRONG_VOUT_BIT_MASK,     /* 0xa0033u */
+  VOUT_EM_NG_SELECT_CHAN,          /* 0xa0034u */
+  VOUT_EM_QUEUE_EMPTY,             /* 0xa0035u */
+  VOUT_EM_QUEUE_FULL,              /* 0xa0036u */
+  VOUT_EM_ACTIVATE_CHAN            /* 0xa0037u */
+};
+
+/* module_idx 11 ERR_CODE_MOD_ENC */
+const char * const enc_err_code[] =
+{
+  ENC_ERRM_ENC_CFG_DADDR_INVALID,
+  ENC_ERRM_MAX_NUM_ENC_INVALID,
+  ENC_ERRM_BDTMGR_POOL_SIZE_INVALID,
+  ENC_ERRM_SMEM_BUF_OVERFLOW,
+  ENC_ERRM_IN_Q_CHAN_NUM_INVALID,
+  ENC_ERRM_OUT_Q_CHAN_NUM_INVALID,
+  ENC_ERRM_OUT_Q_BIND_TYPE_INVALID,
+  ENC_ERRM_CMD_Q_CHAN_NUM_INVALID,
+  ENC_ERRM_SBUF_DESC_IDX_INVALID,
+  ENC_ERRM_ENC_CMEM_GP_OVERFLOW,
+  ENC_ERRM_ENC_CMEM_POS_NOT_ZERO,
+  ENC_ERRM_MEMCOPY_SIZE_INVALID,
+  ENC_ERRM_SET_DBUF_DESC_TYPE_INVALID,
+  ENC_ERRM_SET_DBUF_DESC_DPITCH_INVALID,
+  ENC_ERRM_UNKNOWN_CODING_TYPE,
+  ENC_ERRM_INCORRECT_PROXY_CABAC_STATE,
+  ENC_ERRM_BDTNOTE_INVALID,
+  ENC_ERRM_NOT_SUPPORT_B_LT,
+  ENC_ERRM_HIERB_GOP_INVALID,
+  ENC_ERRM_HIERP_GOP_INVALID,
+  ENC_ERRM_FAST_SEEK_LTR_INVALID,
+  ENC_ERRM_POC_FALLBACK_INVALID,
+  ENC_ERRM_UNKNOWN_ENC_STATE,
+  ENC_ERRM_FBN_FULL,
+  ENC_ERRM_FBN_FB_ID_INVALID,
+  ENC_ERRM_FBN_FREE_NODE_INVALID,
+  ENC_ERRM_FBN_LTR_MMCO6_INVALID,
+  ENC_ERRM_FBN_COUNT_OVER_DBP,
+  ENC_ERRM_FBN_COUNT_INVALID,
+  ENC_ERRM_DBP_FULL,
+  ENC_ERRM_RECON_FB_ID_INVALID,
+  ENC_ERRM_MMCO_PHASE_INVALID,
+  ENC_ERRM_UNKNOWN_PIC_TYPE,
+  ENC_ERRM_UNSUPPORT_CODING_TYPE,
+  ENC_ERRM_REF_NUM_INVALID,
+  ENC_ERRM_DBUF_DESC_IDX_INVALID,
+  ENC_ERRM_PP_SMEM_SIZE_INVALID,
+  ENC_ERRM_RPLR_LTR_0,
+  ENC_ERRM_RPLR_LTR_1,
+  ENC_ERRM_RPLR_LTR_2,
+  ENC_ERRM_RPLR_LTR_3,
+  ENC_ERRM_RPLR_PIC_DIFF_INVALID,
+  ENC_ERRM_RPLR_REORDER_CNT_INVALID,
+  ENC_ERRM_AVC_SH_PIC_DIFF_INVALID,
+  ENC_ERRM_DBP_REF_NUM_INVALID,
+  ENC_ERRM_API_0,
+  ENC_ERRM_API_1,
+  ENC_ERRM_API_2,
+  ENC_ERRM_API_3,
+  ENC_ERRM_API_4,
+  ENC_ERRM_API_5,
+  ENC_ERRM_API_6,
+  ENC_ERRM_API_7,
+  ENC_ERRM_API_8,
+  ENC_ERRM_API_9,
+  ENC_ERRM_API_10,
+  ENC_ERRM_API_11,
+  ENC_ERRM_API_12,
+  ENC_ERRM_API_13,
+  ENC_ERRM_API_14,
+  ENC_ERRM_API_15,
+  ENC_ERRM_RC_0,
+  ENC_ERRM_RC_1,
+  ENC_ERRM_RC_2,
+  ENC_ERRM_RC_3,
+  ENC_ERRM_RC_4,
+  ENC_ERRM_RC_5,
+  ENC_ERRM_RC_6,
+  ENC_ERRM_RC_7,
+  ENC_ERRM_RC_8,
+  ENC_ERRM_RC_9,
+  ENC_ERRM_RC_10,
+  ENC_ERRM_RC_11,
+  ENC_ERRM_RC_12,
+  ENC_ERRM_RC_13,
+  ENC_ERRM_RC_14,
+  ENC_ERRM_INVALID_CHIP_ID,
+  ENC_ERRM_VDSP_BOUNDING_CHECK,
+  ENC_ERRM_INVALID_AU_TYPE,
+  ENC_ERRM_INVALID_STREAM_DUMMY_LATENCY,
+  ENC_ERRM_INVALID_ENC_SYNC_CMD_ADDR
+};
+
+/* module_idx 12 ERR_CODE_MOD_ENG0 */
+const char * const eng0_err_code[] =
+{
+  ENG0_ERRM_UNKNOWN,                          /* 0xc0000u */
+  ENG0_ERRM_NULL_PTR,                         /* 0xc0001u */
+  ENG0_ERRM_NOT_SUPPORTED,                    /* 0xc0002u */
+  ENG0_ERRM_RPLR_MAX_ELE,                     /* 0xc0003u */
+  ENG0_ERRM_MMCO_MAX_ELE,                     /* 0xc0004u */
+  ENG0_ERRM_CMEM_GP_SIZE,                     /* 0xc0005u */
+  ENG0_ERRM_NAL_REF_IDC,                      /* 0xc0006u */
+  ENG0_ERRM_NAL_UNIT_TYPE,                    /* 0xc0007u */
+  ENG0_ERRM_MAX_RBSP_SIZE,                    /* 0xc0008u */
+  ENG0_ERRM_FORBIDDEN_BIT,                    /* 0xc0009u */
+  ENG0_ERRM_START_CODE_PREF_LEN,              /* 0xc000au */
+  ENG0_ERRM_ENC_ERROR,                        /* 0xc000bu */
+  ENG0_ERRM_DEC_ERROR,                        /* 0xc000cu */
+  ENG0_ERRM_Q_EMPTY,                          /* 0xc000du */
+  ENG0_ERRM_Q_FULL,                           /* 0xc000eu */
+  ENG0_ERRM_FRM_JOB_IDX,                      /* 0xc000fu */
+  ENG0_ERRM_SINGLE_CODEC_TYPE,                /* 0xc0010u */
+  ENG0_ERRM_DIFF_CODEC_GROUP,                 /* 0xc0011u */
+  ENG0_ERRM_HANDLE_CODEC_SWITCH,              /* 0xc0012u */
+  ENG0_ERRM_INVALID_FP_NUM,                   /* 0xc0013u */
+  ENG0_ERRM_INVALID_CH_NUM,                   /* 0xc0014u */
+  ENG0_ERRM_INVALID_STR_NUM,                  /* 0xc0015u */
+  ENG0_ERRM_NO_DATA_Q_IN,                     /* 0xc0016u */
+  ENG0_ERRM_INVALID_DHT_DQT_ADDR,             /* 0xc0017u */
+  ENG0_ERRM_NOT_ENOUGH_SMEM,                  /* 0xc0018u */
+  ENG0_ERRM_BITS_INFO_SIZE,                   /* 0xc0019u */
+  ENG0_ERRM_SUFFIX_LEN,                       /* 0xc001au */
+  ENG0_ERRM_SE_LEN,                           /* 0xc001bu */
+  ENG0_ERRM_SLICE_HEIGHT,                     /* 0xc001cu */
+  ENG0_ERRM_BITSTREAM_ENCODING,               /* 0xc001du */
+  ENG0_ERRM_ENC_TYPE_NOT_MATCH,               /* 0xc001eu */
+  ENG0_ERRM_ILLEGAL_START_END_SLICE_IDX       /* 0xc001fu */
+};
+
+/* module_idx 13 ERR_CODE_MOD_PROXY */
+const char * const proxy_err_code[] =
+{
+  PROXY_ERRM_BOOT_0,
+  PROXY_ERRM_ENC_0,
+  PROXY_ERRM_ENC_1,
+  PROXY_ERRM_ENC_2,
+  PROXY_ERRM_ENC_3,
+  PROXY_ERRM_ENC_4,
+  PROXY_ERRM_ENC_5,
+  PROXY_ERRM_ENC_6,
+  PROXY_ERRM_ENC_7,
+  PROXY_ERRM_ENC_8,
+  PROXY_ERRM_ENC_9,
+  PROXY_ERRM_ENC_10,
+  PROXY_ERRM_ENC_11,
+  PROXY_ERRM_ENC_12,
+  PROXY_ERRM_ENC_13
+};
+
+/* module_idx 14 ERR_CODE_MOD_DEC */
+const char * const dec_err_code[] =
+{
+  DEC_ERR_UNKNOWN_MSG
+};
+
