@@ -337,6 +337,21 @@ typedef struct _color_s_ {
     unsigned char B;
 } color_s;
 
+typedef enum _imu_accel_range_e_ {
+    IMU_ACCEL_RANGE_2G = 0x3,
+    IMU_ACCEL_RANGE_4G = 0x5,
+    IMU_ACCEL_RANGE_8G = 0x8,
+    IMU_ACCEL_RANGE_16G = 0xc
+} imu_accel_range_e;
+
+typedef enum _imu_gyro_range_e_ {
+    IMU_GYRO_RANGE_125DPS = 0x4,
+    IMU_GYRO_RANGE_250DPS = 0x3,
+    IMU_GYRO_RANGE_500DPS = 0x2,
+    IMU_GYRO_RANGE_1000DPS = 0x1,
+    IMU_GYRO_RANGE_2000DPS = 0x0,
+} imu_gyro_range_e;
+
 int rtos_api_lib_reboot(void);
 int rtos_api_lib_format_disk(unsigned int sd_disk);
 int rtos_api_lib_default_setting(void);

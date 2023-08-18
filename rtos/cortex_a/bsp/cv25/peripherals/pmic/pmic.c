@@ -1,6 +1,7 @@
 #include <pmic.h>
 #include "AmbaGPIO_Def.h"
 #include "AmbaGPIO.h"
+#include "AmbaSYS.h"
 #include "bsp.h"
 
 static PMIC_OBJECT_s *pmic_object = NULL;
@@ -35,7 +36,9 @@ int Pmic_Init(void)
 
 int Pmic_DoPowerOff(int param)
 {
+#if !defined(CONFIG_BSP_H32_NEXAR_D081)
     i2c_write_reg(LED_I2C_CHANNEL, LED_I2C_SLAVE_ADDR, 0x00, 0x55);//reset led
+#endif
     Pmic_SetBootFailTimes(0);
     CHECK_PMIC_OBJECT;
     if (pmic_object->power_off != NULL) {
@@ -75,6 +78,8 @@ int Pmic_SetBootFailTimes(int times)
     return 0;
 }
 
+//bit5: fwupdate flag
+//bit4: api factory reset
 //bit 2-3: boot fail times
 //bit 1: factory reset
 //bit 0: hard_reset
@@ -101,23 +106,29 @@ int Pmic_GetSramRegister(void)
 int Pmic_NormalSoftReset(void)
 {
     Pmic_SetBootFailTimes(0);
+#if !defined(CONFIG_BSP_H32_NEXAR_D081)
     i2c_write_reg(LED_I2C_CHANNEL, LED_I2C_SLAVE_ADDR, 0x00, 0x55);//reset led
+#endif
     if (pmic_object != NULL && pmic_object->set_softreset_flag != NULL) {
         pmic_object->set_softreset_flag();
     }
     if (pmic_object != NULL && pmic_object->reset != NULL) {
         pmic_object->reset();
     }
+    AmbaSYS_Reboot();
 
     return 0;
 }
 
 int Pmic_SoftReset(void)
 {
+#if !defined(CONFIG_BSP_H32_NEXAR_D081)
     i2c_write_reg(LED_I2C_CHANNEL, LED_I2C_SLAVE_ADDR, 0x00, 0x55);//reset led
+#endif
     if (pmic_object != NULL && pmic_object->reset != NULL) {
         pmic_object->reset();
     }
+    AmbaSYS_Reboot();
 
     return 0;
 }

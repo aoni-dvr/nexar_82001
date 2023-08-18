@@ -7,8 +7,13 @@
 #include "AmbaSPI.h"
 #include "Icm426xxDriver_HL.h"
 #include "Icm426xxDriver_HL_apex.h"
+#include "bsp.h"
 
 #define DEBUG_TAG "[imu_62631]"
+
+#define USE_SPI
+
+#ifdef USE_SPI
 #define SPI_CTRL_TimeOut  1000U
 
 static AMBA_SPI_CONFIG_s spi_ctrl = {
@@ -24,10 +29,17 @@ typedef struct {
     UINT8 SpiSlaveID;
 } IMU_SPI_CTRL_SELECTs;
 
+#if defined(CONFIG_BSP_H32_NEXAR_D081)
+static IMU_SPI_CTRL_SELECTs spi_ctrl_select = {
+    .SpiChannel = AMBA_SPI_MASTER1,
+    .SpiSlaveID = 0x1U,
+};
+#else
 static IMU_SPI_CTRL_SELECTs spi_ctrl_select = {
     .SpiChannel = AMBA_SPI_MASTER2,
     .SpiSlaveID = 0x1U,
 };
+#endif
 
 static int imu_icm42631_read(unsigned char addr, unsigned char *data, int size)
 {
@@ -66,6 +78,27 @@ static int imu_icm42631_write(unsigned char addr, unsigned char data)
 
     return 0;
 }
+#else
+#define IMU_SLAVE_ADDR (0xd2)
+static int imu_icm42631_read(unsigned char addr, unsigned char *data, int size)
+{
+    if (i2c_read(IMU_I2C_CHANNEL, IMU_SLAVE_ADDR, addr, data, size) >= 0) {
+        return 0;
+    }
+
+    return 0;
+}
+
+static int imu_icm42631_write(unsigned char addr, unsigned char data)
+{
+    unsigned char tx_buf[2] = {0};
+
+    tx_buf[0] = (unsigned char)addr;
+    tx_buf[1] = (unsigned char)data;
+
+    return i2c_write(IMU_I2C_CHANNEL, IMU_SLAVE_ADDR, tx_buf, 2);
+}
+#endif
 
 static int imu_icm42631_modify(unsigned char Addr, unsigned char Mask, unsigned char Data)
 {
@@ -95,22 +128,38 @@ static int inv_io_hal_write_reg(struct inv_icm426xx_serif * serif, uint8_t reg, 
     return 0;
 }
 
+static unsigned int accel_range = ICM426XX_ACCEL_CONFIG0_FS_SEL_16g;
+static unsigned int gyro_range = ICM426XX_GYRO_CONFIG0_FS_SEL_2000dps;
+
 static int imu_icm42631_init(void)
 {
     unsigned char who_am_i = 0;
     struct inv_icm426xx_serif icm_serif;
     int rc = 0;
 
+#ifdef USE_SPI
+#ifdef CONFIG_SOC_H32
+    (void)AmbaGPIO_SetFuncAlt(GPIO_PIN_79_SPI1_SCLK);
+    (void)AmbaGPIO_SetFuncAlt(GPIO_PIN_80_SPI1_MOSI);
+    (void)AmbaGPIO_SetFuncAlt(GPIO_PIN_81_SPI1_MISO);
+    (void)AmbaGPIO_SetFuncAlt(GPIO_PIN_82_SPI1_SS0);
+#else
     (void)AmbaGPIO_SetFuncAlt(GPIO_PIN_9_SPI2_SCLK);
     (void)AmbaGPIO_SetFuncAlt(GPIO_PIN_10_SPI2_MOSI);
     (void)AmbaGPIO_SetFuncAlt(GPIO_PIN_11_SPI2_MISO);
     (void)AmbaGPIO_SetFuncAlt(GPIO_PIN_12_SPI2_SS0);
+#endif
+#endif
 	icm_serif.context   = 0;        /* no need */
 	icm_serif.read_reg  = inv_io_hal_read_reg;
 	icm_serif.write_reg = inv_io_hal_write_reg;
 	icm_serif.max_read  = 32;  /* maximum number of bytes allowed per serial read */
 	icm_serif.max_write = 32;  /* maximum number of bytes allowed per serial write */
+#ifdef USE_SPI
 	icm_serif.serif_type = ICM426XX_UI_SPI4;
+#else
+    icm_serif.serif_type = ICM426XX_UI_I2C;
+#endif
 	rc = inv_icm426xx_init(&icm_driver, &icm_serif, NULL);
 	if (rc != INV_ERROR_SUCCESS) {
 		debug_line(DEBUG_TAG"!!! ERROR : failed to initialize Icm426xx. rc=%d", rc);
@@ -139,12 +188,28 @@ static int imu_icm42631_init(void)
 static void ACCEL_CONVERT(unsigned short value, unsigned short *x, float *x_float)
 {
     int val = value;
-    float val_float = val * 2000 * 1.0;
+    float val_float = 0;
 
     if (value > 0x7fff) {
         val = -(0xffff - value);
     }
-    val_float = (val * 9.8) / (0x8000 / 16);
+    switch (accel_range) {
+    case ICM426XX_ACCEL_CONFIG0_FS_SEL_2g:
+        val_float = (val * 9.8) / (0x8000 / 2);
+        break;
+    case ICM426XX_ACCEL_CONFIG0_FS_SEL_4g:
+        val_float = (val * 9.8) / (0x8000 / 4);
+        break;
+    case ICM426XX_ACCEL_CONFIG0_FS_SEL_8g:
+        val_float = (val * 9.8) / (0x8000 / 8);
+        break;
+    case ICM426XX_ACCEL_CONFIG0_FS_SEL_16g:
+        val_float = (val * 9.8) / (0x8000 / 16);
+        break;
+    default:
+        val_float = (val * 9.8) / (0x8000 / 16);
+        break;
+    }
     if (x != NULL) *x = value;
     if (x_float != NULL) *x_float = val_float;
 }
@@ -152,12 +217,31 @@ static void ACCEL_CONVERT(unsigned short value, unsigned short *x, float *x_floa
 static void GYRO_CONVERT(unsigned short value, unsigned short *x, float *x_float)
 {
     int val = value;
-    float val_float = val * 2000 * 1.0;
+    float val_float = 0;
 
     if (value > 0x7fff) {
         val = -(0xffff - value);
     }
-    val_float = val * 2000 * 1.0 / 0x7fff;
+    switch (gyro_range) {
+    case ICM426XX_GYRO_CONFIG0_FS_SEL_2000dps:
+        val_float = val * 2000 * 1.0 / 0x7fff;
+        break;
+    case ICM426XX_GYRO_CONFIG0_FS_SEL_1000dps:
+        val_float = val * 1000 * 1.0 / 0x7fff;
+        break;
+    case ICM426XX_GYRO_CONFIG0_FS_SEL_500dps:
+        val_float = val * 500 * 1.0 / 0x7fff;
+        break;
+    case ICM426XX_GYRO_CONFIG0_FS_SEL_250dps:
+        val_float = val * 250 * 1.0 / 0x7fff;
+        break;
+    case ICM426XX_GYRO_CONFIG0_FS_SEL_125dps:
+        val_float = val * 125 * 1.0 / 0x7fff;
+        break;
+    default:
+        val_float = val * 2000 * 1.0 / 0x7fff;
+        break;
+    }
     if (x != NULL) *x = value;
     if (x_float != NULL) *x_float = val_float;
 }
@@ -288,6 +372,84 @@ static int imu_icm42631_set_enable(unsigned char enable)
     return 0;
 }
 
+static int imu_icm42631_set_accel_data(unsigned char para_id, unsigned char para)
+{
+    if (para_id == IMU_ACCEL_ODR) {
+        ICM426XX_ACCEL_CONFIG0_ODR_t odr;
+        if (para == 0x6) {
+            odr = ICM426XX_ACCEL_CONFIG0_ODR_25_HZ;
+        } else if (para == 0x7) {
+            odr = ICM426XX_ACCEL_CONFIG0_ODR_50_HZ;
+        } else if (para == 0x8) {
+            odr = ICM426XX_ACCEL_CONFIG0_ODR_100_HZ;
+        } else if (para == 0x9) {
+            odr = ICM426XX_ACCEL_CONFIG0_ODR_200_HZ;
+        } else {
+            return -1;
+        }
+        inv_icm426xx_set_accel_frequency(&icm_driver, odr);
+    } else if (para_id == IMU_ACCEL_RANGE) {
+        ICM426XX_ACCEL_CONFIG0_FS_SEL_t range;
+        if (para == 0x3) {
+            range = ICM426XX_ACCEL_CONFIG0_FS_SEL_2g;
+        } else if (para == 0x5) {
+            range = ICM426XX_ACCEL_CONFIG0_FS_SEL_4g;           
+        } else if (para == 0x8) {
+            range = ICM426XX_ACCEL_CONFIG0_FS_SEL_8g;
+        } else if (para == 0xc) {
+            range = ICM426XX_ACCEL_CONFIG0_FS_SEL_16g;
+        } else {
+            return -1;
+        }
+        inv_icm426xx_set_accel_fsr(&icm_driver, range);        
+        accel_range = range;
+    } else {
+        return -1;
+    }
+
+    return 0;
+}
+
+static int imu_icm42631_set_gyro_data(unsigned char para_id, unsigned char para)
+{
+    if (para_id == IMU_GYRO_ODR) {
+        ICM426XX_GYRO_CONFIG0_ODR_t odr;
+        if (para == 0x6) {
+            odr = ICM426XX_GYRO_CONFIG0_ODR_25_HZ;
+        } else if (para == 0x7) {
+            odr = ICM426XX_GYRO_CONFIG0_ODR_50_HZ;
+        } else if (para == 0x8) {
+            odr = ICM426XX_GYRO_CONFIG0_ODR_100_HZ;
+        } else if (para == 0x9) {
+            odr = ICM426XX_GYRO_CONFIG0_ODR_200_HZ;
+        } else {
+            return -1;
+        }
+        inv_icm426xx_set_gyro_frequency(&icm_driver, odr);
+    } else if(para_id == IMU_GYRO_RANGE) {
+        ICM426XX_GYRO_CONFIG0_FS_SEL_t range;
+        if (para == 0x0) {
+            range = ICM426XX_GYRO_CONFIG0_FS_SEL_2000dps;            
+        } else if (para == 0x1) {
+            range = ICM426XX_GYRO_CONFIG0_FS_SEL_1000dps;            
+        } else if (para == 0x2) {
+            range = ICM426XX_GYRO_CONFIG0_FS_SEL_500dps;            
+        } else if (para == 0x3) {
+            range = ICM426XX_GYRO_CONFIG0_FS_SEL_250dps;            
+        } else if (para == 0x4) {
+            range = ICM426XX_GYRO_CONFIG0_FS_SEL_125dps;            
+        } else {
+            return -1;
+        }
+        inv_icm426xx_set_gyro_fsr(&icm_driver, range);        
+        gyro_range = range;
+    } else {
+        return -1;
+    }
+
+    return 0;
+}
+
 IMU_OBJECT_s imu_icm42631_object = {
     .name = "icm42631",
     .init = imu_icm42631_init,
@@ -298,8 +460,8 @@ IMU_OBJECT_s imu_icm42631_object = {
     .get_mag_data = NULL,
     .get_temperature_data = imu_icm42631_get_temperature_data,
     .power_off = imu_icm42631_power_off,
-    .set_accel_data = NULL,
-    .set_gyro_data = NULL,
+    .set_accel_data = imu_icm42631_set_accel_data,
+    .set_gyro_data = imu_icm42631_set_gyro_data,
     .set_calibration = NULL,
     .set_axis_polarity = NULL,
     .enable_int = imu_icm42631_enable_int,

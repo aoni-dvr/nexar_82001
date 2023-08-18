@@ -74,6 +74,8 @@ static int rtos_api_usage(void)
     printf("\t gnss_power <on|off|reset>\n");
     printf("\t hw <wifi|bt|gnss|lte|logo_led|state_led|ir_led|charge|imu> <on|off>\n");
     printf("\t hw <road_camera|cabin_camera> off\n");
+    printf("\t imu accel range set 2g|4g|8g|16g\n");
+    printf("\t imu gyro range set 125|250|500|1000|2000\n");
 
     printf("\n");
 
@@ -735,9 +737,62 @@ int main(int argc, char **argv)
                 rtos_api_usage();
                 goto cleanup;
             }
+        } else if (strcmp(argv[1], "imu") == 0) {
+            if (strcmp(argv[2], "accel") == 0) {
+                if (strcmp(argv[3], "range") == 0) {
+                    if (strcmp(argv[4], "set") == 0) {
+                        if (strcmp(argv[5], "2g") == 0) {
+                            rtos_api_lib_set_accel_range(IMU_ACCEL_RANGE_2G);
+                        } else if (strcmp(argv[5], "4g") == 0) {
+                            rtos_api_lib_set_accel_range(IMU_ACCEL_RANGE_4G);
+                        } else if (strcmp(argv[5], "8g") == 0) {
+                            rtos_api_lib_set_accel_range(IMU_ACCEL_RANGE_8G);
+                        } else if (strcmp(argv[5], "16g") == 0) {
+                            rtos_api_lib_set_accel_range(IMU_ACCEL_RANGE_16G);
+                        } else {
+                            rtos_api_usage();
+                            goto cleanup;
+                        }
+                    } else {
+                        rtos_api_usage();
+                        goto cleanup;
+                    }
+                } else {
+                    rtos_api_usage();
+                    goto cleanup;
+                }
+            } else if (strcmp(argv[2], "gyro") == 0) {
+                if (strcmp(argv[3], "range") == 0) {
+                    if (strcmp(argv[4], "set") == 0) {
+                        if (strcmp(argv[5], "125") == 0) {
+                            rtos_api_lib_set_gyro_range(IMU_GYRO_RANGE_125DPS);
+                        } else if (strcmp(argv[5], "250") == 0) {
+                            rtos_api_lib_set_gyro_range(IMU_GYRO_RANGE_250DPS);
+                        } else if (strcmp(argv[5], "500") == 0) {
+                            rtos_api_lib_set_gyro_range(IMU_GYRO_RANGE_500DPS);
+                        } else if (strcmp(argv[5], "1000") == 0) {
+                            rtos_api_lib_set_gyro_range(IMU_GYRO_RANGE_1000DPS);
+                        } else if (strcmp(argv[5], "2000") == 0) {
+                            rtos_api_lib_set_gyro_range(IMU_GYRO_RANGE_2000DPS);
+                        } else {
+                            rtos_api_usage();
+                            goto cleanup;
+                        }
+                    } else {
+                        rtos_api_usage();
+                        goto cleanup;
+                    }
+                } else {
+                    rtos_api_usage();
+                    goto cleanup;
+                }
+            } else {
+                rtos_api_usage();
+                goto cleanup;
+            }
         } else {
-            printf("Unknown command: %s\n", argv[1]);
             rtos_api_usage();
+            goto cleanup;
         }
     } else {
         rtos_api_usage();
