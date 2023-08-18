@@ -256,7 +256,11 @@ static void FillRecBox(const SVC_REC_MAIN_INFO_s *pInfo, const SVC_RES_CFG_s *pC
                 pUsrCfg->MemSize = RbxSize;
                 MemBase += RbxSize;
 
-                pUsrCfg->VdCoding         = AMBA_RSC_VID_SUBTYPE_H264;
+                if (pRecCfg->RecSetting.MVInfoFlag) {
+                    pUsrCfg->VdCoding         = AMBA_RSC_VID_SUBTYPE_HEVC;
+                } else {
+                    pUsrCfg->VdCoding         = AMBA_RSC_VID_SUBTYPE_H264;
+                }
                 pUsrCfg->VdWidth          = pRecCfg->StrmCfg.Win.Width;
                 pUsrCfg->VdHeight         = pRecCfg->StrmCfg.Win.Height;
                 pUsrCfg->VdOrientation    = 0U;
@@ -387,7 +391,11 @@ static void FillRecDst(const SVC_REC_MAIN_INFO_s *pInfo, const SVC_RES_CFG_s *pC
                 pBoxCfg->IsTimeLapse = (0U < pRecCfg->RecSetting.TimeLapse) ? (UINT32)1U : (UINT32)0U;
                 pBoxCfg->MiaInfo     = pMainCfg->MiaInfo;
 
-                pBoxCfg->VdCoding         = AMBA_RSC_VID_SUBTYPE_H264;
+                if (pRecCfg->RecSetting.MVInfoFlag) {
+                    pBoxCfg->VdCoding         = AMBA_RSC_VID_SUBTYPE_HEVC;
+                } else {
+                    pBoxCfg->VdCoding         = AMBA_RSC_VID_SUBTYPE_H264;
+                }
                 pBoxCfg->VdWidth          = pRecCfg->StrmCfg.Win.Width;
                 pBoxCfg->VdHeight         = pRecCfg->StrmCfg.Win.Height;
                 pBoxCfg->VdOrientation    = 0U;
