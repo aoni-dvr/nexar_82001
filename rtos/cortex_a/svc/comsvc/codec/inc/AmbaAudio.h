@@ -71,7 +71,11 @@
 #define AIN_IO_NUM      (CONFIG_AENC_NUM)
 
 /* AENC Info */
+#if defined(CONFIG_APP_FLOW_CARDV_AONI)
+#define AENC_CH_NUM      1U
+#else
 #define AENC_CH_NUM      2U
+#endif
 #define AENC_FRAME_SIZE  1024U
 #define AENC_SAMPLE_FREQ 48000U
 #define AENC_IO_NUM      1U
