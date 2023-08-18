@@ -690,7 +690,7 @@ CONFIG_ICAM_IQ_ROMLIST="${srctree}/svc/apps/icam/main/rom/iq_gc4653_gc2053.list"
 CONFIG_ICAM_GUI_ROMLIST="${srctree}/svc/apps/icam/main/rom/gui.list"
 CONFIG_ICAM_AUDIO_ROMLIST="${srctree}/svc/apps/icam/main/rom/audio.list"
 CONFIG_ICAM_CV_ROMLIST=""
-CONFIG_ICAM_UCODE_ROMLIST="${srctree}/vendors/ambarella/ucode/${AMBA_CHIP_ID}/x99/ucode.list"
+CONFIG_ICAM_UCODE_ROMLIST="${srctree}/vendors/ambarella/ucode/${AMBA_CHIP_ID}/a75/ucode.list"
 
 #
 # Other
