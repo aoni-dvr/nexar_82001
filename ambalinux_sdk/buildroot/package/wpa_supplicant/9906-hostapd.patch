@@ -1,0 +1,12 @@
+diff --git a/src/ap/hostapd.c b/src/ap/hostapd.c
+--- a/src/ap/hostapd.c	2020-04-29 13:59:33.701178814 +0800
++++ b/src/ap/hostapd.c	2018-12-03 03:34:59.000000000 +0800
+@@ -434,7 +434,7 @@ static void hostapd_cleanup(struct hosta
+ 		   hapd->conf->iface);
+ 	if (hapd->iface->interfaces &&
+ 	    hapd->iface->interfaces->ctrl_iface_deinit) {
+-		wpa_msg(hapd->msg_ctx, MSG_INFO, WPA_EVENT_TERMINATING);
++		//wpa_msg(hapd->msg_ctx, MSG_INFO, WPA_EVENT_TERMINATING);
+ 		hapd->iface->interfaces->ctrl_iface_deinit(hapd);
+ 	}
+ 	hostapd_free_hapd_data(hapd);

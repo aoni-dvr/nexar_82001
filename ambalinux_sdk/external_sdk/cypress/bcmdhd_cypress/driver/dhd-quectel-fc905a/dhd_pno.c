@@ -2,7 +2,7 @@
  * Broadcom Dongle Host Driver (DHD)
  * Prefered Network Offload and Wi-Fi Location Service(WLS) code.
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *

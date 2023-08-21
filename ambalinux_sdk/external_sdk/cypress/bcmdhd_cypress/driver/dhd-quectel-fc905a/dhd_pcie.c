@@ -1,7 +1,7 @@
 /*
  * DHD Bus Module for PCIE
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *
@@ -682,8 +682,7 @@ dhdpcie_chip_support_msi(dhd_bus_t *bus)
 		si_chipid(bus->sih) == BCM4375_CHIP_ID ||
 		si_chipid(bus->sih) == BCM4362_CHIP_ID ||
 		si_chipid(bus->sih) == BCM43751_CHIP_ID ||
-		si_chipid(bus->sih) == BCM4361_CHIP_ID ||
-		si_chipid(bus->sih) == CYW55560_CHIP_ID) {
+		si_chipid(bus->sih) == BCM4361_CHIP_ID) {
 		return FALSE;
 	} else {
 		return TRUE;

@@ -1,7 +1,7 @@
 /*
  * Linux OS Independent Layer
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *
@@ -446,13 +446,20 @@ extern uint64 osl_systztime_us(void);
 
 /* map/unmap physical to virtual I/O */
 #if !defined(CONFIG_MMC_MSM7X00A)
+/* REG_MAP: Arguments type casted to 'unsigned long' for 32 bit variables.
+ * REG_MAP_XBIT: Arguments not type casted, because variables of type like
+ * phys_addr_t can be 32 or 64 bit depending on platform architecture.
+*/
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 6, 0))
 #define	REG_MAP(pa, size)	ioremap_nocache((unsigned long)(pa), (unsigned long)(size))
+#define	REG_MAP_XBIT(pa, size)	ioremap_nocache((pa), (size))
 #else
 #define REG_MAP(pa, size)	ioremap((unsigned long)(pa), (unsigned long)(size))
+#define REG_MAP_XBIT(pa, size)	ioremap((pa), (size))
 #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(5, 6, 0) */
 #else
 #define REG_MAP(pa, size)       (void *)(0)
+#define REG_MAP_XBIT(pa, size)	(void *)(0)
 #endif /* !defined(CONFIG_MMC_MSM7X00A */
 #define	REG_UNMAP(va)		iounmap((va))
 

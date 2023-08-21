@@ -3,7 +3,7 @@
  * Contents are wifi-specific, used by any kernel or app-level
  * software that might want wifi things as it grows.
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *

@@ -3,7 +3,7 @@
  *
  * Provides type definitions and function prototypes used to parse ip packet.
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *

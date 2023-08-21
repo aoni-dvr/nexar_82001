@@ -18,6 +18,12 @@ C_APN="internet"
 C_USER=""
 C_PASS=""
 
+if [ "`lsusb | grep 2c7c:6002`" != "" ]; then
+    at_dev="/dev/ttyUSB1"
+else
+    at_dev="/dev/ttyUSB3"
+fi
+
 send_at_cmd()
 {
     if [ -z "$1" ]; then
@@ -62,7 +68,9 @@ function check_pin()
 
 send_at_cmd "ATE0"
 #send_at_cmd "AT+QGPS=1"
-send_at_cmd 'AT+QCFG="band",0,42000000000000381A'
+if [ "`lsusb | grep 2c7c:6007`" != "" ]; then
+	send_at_cmd 'AT+QCFG="band",0,42000000000000381A'
+fi
 
 # load usb wifi driver
 #if [ ! -f /tmp/usb_wifi_loaded ]; then
@@ -85,14 +93,14 @@ send_at_cmd 'AT+QCFG="band",0,42000000000000381A'
 #send_at_cmd "AT+QCFG=\"urc/ri/ring\",\"pulse\",2000,1000,5000,\"off\",1"
 #send_at_cmd "AT+QCFG=\"urc/ri/other\",\"pulse\",2000"
 sleep 3
-echo -e 'AT+QSCLK=1\r' | microcom -s 115200 -t 1000 /dev/ttyUSB3 && \
-echo -e 'AT+QCFG="risignaltype","physical"\r' | microcom -s 115200 -t 1000 /dev/ttyUSB3 && \
-echo -e 'AT+QCFG="urc/ri/ring","pulse",2000,1000,5000,"off",1\r' | microcom -s 115200 -t 1000 /dev/ttyUSB3 && \
-echo -e 'AT+QCFG="urc/ri/other","pulse",2000\r' | microcom -s 115200 -t 1000 /dev/ttyUSB3 && \
-echo -e 'AT+CNMI=2,1\r' | microcom -s 115200 -t 1000 /dev/ttyUSB3 && \
-echo -e 'AT+CMGF=1\r' | microcom -s 115200 -t 1000 /dev/ttyUSB3 && \
-echo -e 'AT+QURCCFG="urcport","usbmodem"\r' | microcom -s 115200 -t 1000 /dev/ttyUSB3 && \
-echo -e 'AT+QCFG="urc/ri/smsincoming","pulse",2000,1\r' | microcom -s 115200 -t 1000 /dev/ttyUSB3
+echo -e 'AT+QSCLK=1\r' | microcom -s 115200 -t 1000 ${at_dev} && \
+echo -e 'AT+QCFG="risignaltype","physical"\r' | microcom -s 115200 -t 1000 ${at_dev} && \
+echo -e 'AT+QCFG="urc/ri/ring","pulse",2000,1000,5000,"off",1\r' | microcom -s 115200 -t 1000 ${at_dev} && \
+echo -e 'AT+QCFG="urc/ri/other","pulse",2000\r' | microcom -s 115200 -t 1000 ${at_dev} && \
+echo -e 'AT+CNMI=2,1\r' | microcom -s 115200 -t 1000 ${at_dev} && \
+echo -e 'AT+CMGF=1\r' | microcom -s 115200 -t 1000 ${at_dev} && \
+echo -e 'AT+QURCCFG="urcport","usbmodem"\r' | microcom -s 115200 -t 1000 ${at_dev} && \
+echo -e 'AT+QCFG="urc/ri/smsincoming","pulse",2000,1\r' | microcom -s 115200 -t 1000 ${at_dev}
 
 PIN_STATE=""
 check_pin && PIN_STATE="READY"

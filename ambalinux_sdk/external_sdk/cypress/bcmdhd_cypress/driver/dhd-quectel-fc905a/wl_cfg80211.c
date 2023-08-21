@@ -1,7 +1,7 @@
 /*
  * Linux cfg80211 driver
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *
@@ -126,6 +126,10 @@
 #ifdef DHD_BANDSTEER
 #include <dhd_bandsteer.h>
 #endif /* DHD_BANDSTEER */
+
+#ifdef WL11AX
+#include "wl_twt.h"
+#endif /* WL11AX */
 
 #ifdef BCMWAPI_WPI
 /* these items should evetually go into wireless.h of the linux system headfile dir */
@@ -613,6 +617,10 @@ static s32 wl_cfg80211_get_station(struct wiphy *wiphy,
 #if defined(WL_6E) || (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0))
 static int wl_cfg80211_set_bitrate(struct wiphy *wiphy,
                                struct net_device *dev,
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 19, 2)) || \
+	defined(DHD_ANDROID_KERNEL5_15_SUPPORT)
+                               unsigned int link_id,
+#endif // endif
                                const u8 *addr,
                                const struct cfg80211_bitrate_mask *mask);
 #endif /* WL_6E || (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0)) */
@@ -733,7 +741,11 @@ s32 wl_cfg80211_interface_ops(struct bcm_cfg80211 *cfg,
 s32 wl_cfg80211_add_del_bss(struct bcm_cfg80211 *cfg,
 	struct net_device *ndev, s32 bsscfg_idx,
 	wl_iftype_t brcm_iftype, s32 del, u8 *addr);
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)) || defined(WL_COMPAT_WIRELESS)
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 19, 2)) || \
+	defined(DHD_ANDROID_KERNEL5_15_SUPPORT)
+static s32 wl_cfg80211_stop_ap(struct wiphy *wiphy, struct net_device *dev, unsigned int link_id);
+#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)) || \
+	defined(WL_COMPAT_WIRELESS)
 static s32 wl_cfg80211_stop_ap(struct wiphy *wiphy, struct net_device *dev);
 #endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0) */
 #ifdef GTK_OFFLOAD_SUPPORT
@@ -767,6 +779,11 @@ wl_cfg80211_external_auth(struct wiphy *wiphy, struct net_device *dev,
 static int wl_cfg80211_set_cqm_rssi_config(struct wiphy *wiphy, struct net_device *dev,
 	s32 rssi_thold, u32 rssi_hyst);
 #endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4, 11, 0) */
+
+#if defined(WL_OWE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 2, 0))
+static int wl_cfg80211_update_owe_info(struct wiphy *wiphy, struct net_device *dev,
+		struct cfg80211_update_owe_info *owe_info);
+#endif /* WL_OWE && LINUX_VERSION_CODE >= KERNEL_VERSION(5, 2, 0) */
 
 /*
  * event & event Q handlers for cfg80211 interfaces
@@ -812,6 +829,10 @@ static s32 wl_handle_rssi_monitor_event(struct bcm_cfg80211 *wl, bcm_struct_cfgd
 static s32 wl_notify_rssi_change_ind(struct bcm_cfg80211 *cfg, struct wireless_dev *wdev,
         const wl_event_msg_t *e, void *data);
 #endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4, 11, 0) */
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 19, 0))
+static s32 wl_notify_beacon_loss(struct bcm_cfg80211 *cfg, struct wireless_dev *wdev,
+	const wl_event_msg_t *e, void *data);
+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3, 19, 0) */
 static s32 wl_notifier_change_state(struct bcm_cfg80211 *cfg, struct net_info *_net_info,
 	enum wl_status state, bool set);
 #ifdef CUSTOM_EVENT_PM_WAKE
@@ -6908,6 +6929,10 @@ wl_notify_mgmt_frame_tx_complete(struct bcm_cfg80211 *cfg,
 #if defined(WL_6E) || (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0))
 static int wl_cfg80211_set_bitrate(struct wiphy *wiphy,
                                 struct net_device *dev,
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 19, 2)) || \
+	defined(DHD_ANDROID_KERNEL5_15_SUPPORT)
+                               unsigned int link_id,
+#endif // endif
                                 const u8 *addr,
                                 const struct cfg80211_bitrate_mask *mask)
 {
@@ -7534,7 +7559,12 @@ static void wl_cfg80211_disconnect_state_sync(struct bcm_cfg80211 *cfg, struct n
 
 	wdev = dev->ieee80211_ptr;
 	wait_cnt = WAIT_FOR_DISCONNECT_STATE_SYNC;
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 19, 2)) || \
+	defined(DHD_ANDROID_KERNEL5_15_SUPPORT)
+	while ((wdev->connected) && wait_cnt) {
+#else
 	while ((wdev->current_bss) && wait_cnt) {
+#endif // endif
 		WL_DBG(("Waiting for disconnect sync, wait_cnt: %d\n", wait_cnt));
 		wait_cnt--;
 		OSL_SLEEP(50);
@@ -7542,7 +7572,12 @@ static void wl_cfg80211_disconnect_state_sync(struct bcm_cfg80211 *cfg, struct n
 
 	if (wait_cnt == 0) {
 		/* state didn't get cleared within given timeout */
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 19, 2)) || \
+	defined(DHD_ANDROID_KERNEL5_15_SUPPORT)
+		WL_INFORM_MEM(("cfg80211 state. wdev->connected is true\n"));
+#else
 		WL_INFORM_MEM(("cfg80211 state. wdev->current_bss non null\n"));
+#endif // endif
 	} else {
 		WL_MEM(("cfg80211 disconnect state sync done\n"));
 	}
@@ -9276,7 +9311,7 @@ wl_cfg80211_set_pmksa(struct wiphy *wiphy, struct net_device *dev,
 		if (pmksa->pmk_len) {
 			if (memcpy_s(&cfg->pmk_list->pmkids.pmkid[i].pmk, PMK_LEN_MAX, pmksa->pmk,
 				pmksa->pmk_len)) {
-				WL_ERR(("invalid pmk len = %lu", pmksa->pmk_len));
+				WL_ERR(("invalid pmk len = %u", pmksa->pmk_len));
 			} else {
 				cfg->pmk_list->pmkids.pmkid[i].pmk_len = pmksa->pmk_len;
 			}
@@ -10598,7 +10633,7 @@ wl_cfg80211_mgmt_tx(struct wiphy *wiphy, bcm_struct_cfgdev *cfgdev,
 			}
 
 			timeout = wait_for_completion_timeout(&netinfo->mgmt_tx_cpl,
-				MGMT_AUTH_FRAME_WAIT_TIME);
+				msecs_to_jiffies(MGMT_AUTH_FRAME_WAIT_TIME));
 			if ((timeout > 0) || test_bit(MGMT_TX_ACK, &netinfo->mgmt_txstatus)) {
 				WL_DBG(("TX auth frame operation is success\n"));
 				ack = true;
@@ -11224,6 +11259,16 @@ wl_validate_wpa2ie(struct net_device *dev, const bcm_tlv_t *wpa2ie, s32 bssidx)
 			wpa_auth |= WPA3_AUTH_1X_SUITE_B_SHA384;
 			break;
 #endif /* WL_SAE */
+#ifdef WL_OWE
+		case RSN_AKM_OWE:
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 2, 0))
+			wpa_auth |= WPA3_AUTH_OWE;
+#else
+			WL_ERR(("Kernel version 5.2 or higher supports for OWE AP\n"));
+			return BCME_ERROR;
+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(5, 2, 0) */
+		break;
+#endif /* WL_OWE */
 #endif /* MFP */
 		default:
 			WL_ERR(("No Key Mgmt Info\n"));
@@ -12825,11 +12870,14 @@ wl_cfg80211_start_ap(
 	u32 dev_role = 0;
 	dhd_pub_t *dhd = (dhd_pub_t *)(cfg->pub);
 #ifdef WL11AX
-#ifdef IFX_CFG80211_5_4_21
+#if (defined IFX_CFG80211_5_4_21 || (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 7, 0) && \
+	LINUX_VERSION_CODE <= KERNEL_VERSION(5, 18, 19)))
 	uint8 se_he_xtlv[32];
 	int se_he_xtlv_len= sizeof(se_he_xtlv);
 	he_xtlv_v32 v32;
-#endif /* IFX_CFG80211_5_4_21 */
+#endif /* IFX_CFG80211_5_4_21 ||
+	(LINUX_VERSION_CODE >= KERNEL_VERSION(5, 7, 0) &&
+	LINUX_VERSION_CODE <= KERNEL_VERSION(5, 18, 19)) */
 #endif /* WL11AX */
 #ifdef WL11U
 	bcm_tlv_t *interworking_ie;
@@ -12900,7 +12948,12 @@ wl_cfg80211_start_ap(
 
 #if ((LINUX_VERSION_CODE >= KERNEL_VERSION(3, 6, 0)) && !defined(WL_COMPAT_WIRELESS))
 	if ((err = wl_cfg80211_set_channel(wiphy, dev,
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 19, 2)) || \
+	defined(DHD_ANDROID_KERNEL5_15_SUPPORT)
+		dev->ieee80211_ptr->u.ap.preset_chandef.chan,
+#else
 		dev->ieee80211_ptr->preset_chandef.chan,
+#endif // endif
 		NL80211_CHAN_HT20) < 0)) {
 		WL_ERR(("Set channel failed \n"));
 		goto fail;
@@ -13049,7 +13102,12 @@ wl_cfg80211_start_ap(
 #endif /* SUPPORT_AP_RADIO_PWRSAVE */
 
 #ifdef ENABLE_HOGSQS
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 19, 2)) || \
+	defined(DHD_ANDROID_KERNEL5_15_SUPPORT)
+	chan_h = dev->ieee80211_ptr->u.ap.preset_chandef.chan;
+#else
 	chan_h = dev->ieee80211_ptr->preset_chandef.chan;
+#endif // endif
 	if (chan_h->band == IEEE80211_BAND_5GHZ) {
 		s32 value = 0x0;
 
@@ -13070,7 +13128,12 @@ fail:
 	if (err) {
 		WL_ERR(("ADD/SET beacon failed\n"));
 		wl_flush_fw_log_buffer(dev, FW_LOGSET_MASK_ALL);
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 19, 2)) || \
+	defined(DHD_ANDROID_KERNEL5_15_SUPPORT)
+		wl_cfg80211_stop_ap(wiphy, dev, 0);
+#else
 		wl_cfg80211_stop_ap(wiphy, dev);
+#endif // endif
 		if (dev_role == NL80211_IFTYPE_AP) {
 			dhd->op_mode &= ~DHD_FLAG_HOSTAP_MODE;
 #ifdef PKT_FILTER_SUPPORT
@@ -13103,10 +13166,19 @@ fail:
 	return err;
 }
 
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 19, 2)) || \
+	defined(DHD_ANDROID_KERNEL5_15_SUPPORT)
+static s32
+wl_cfg80211_stop_ap(
+	struct wiphy *wiphy,
+	struct net_device *dev,
+	unsigned int link_id)
+#else
 static s32
 wl_cfg80211_stop_ap(
 	struct wiphy *wiphy,
 	struct net_device *dev)
+#endif // endif
 {
 	int err = 0;
 	u32 dev_role = 0;
@@ -13896,6 +13968,9 @@ static struct cfg80211_ops wl_cfg80211_ops = {
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 11, 0))
 	.set_cqm_rssi_config = wl_cfg80211_set_cqm_rssi_config,
 #endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4, 11, 0) */
+#if defined(WL_OWE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 2, 0))
+	.update_owe_info = wl_cfg80211_update_owe_info,
+#endif /* WL_OWE && LINUX_VERSION_CODE > KERNEL_VERSION(5, 2, 0) */
 };
 
 s32 wl_mode_to_nl80211_iftype(s32 mode)
@@ -14112,7 +14187,7 @@ static struct ieee80211_regdomain *wl_get_regdom(struct wiphy *wiphy)
 	}
 	else {
 		/* if failed to get reg_rules, use brcm_regdom */
-		len = struct_size(&brcm_regdom, reg_rules, brcm_regdom.n_reg_rules);
+		len = sizeof(brcm_regdom);
 		regd = kmemdup(&brcm_regdom, len, flags);
 	}
 	kfree(rules);
@@ -14282,18 +14357,9 @@ static s32 wl_setup_wiphy(struct wireless_dev *wdev, struct device *sdiofunc_dev
 #endif /* WL_SUPPORT_BACKPORTED_KPATCHES) || (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)) */
 
 #if (LINUX_VERSION_CODE > KERNEL_VERSION(3, 2, 0)) || defined(WL_COMPAT_WIRELESS)
-	wdev->wiphy->flags |= WIPHY_FLAG_SUPPORTS_TDLS;
+	if (FW_SUPPORTED(dhd, tdls))
+		wdev->wiphy->flags |= WIPHY_FLAG_SUPPORTS_TDLS;
 #endif // endif
-
-#ifdef WL_6E
-#if (defined IFX_CFG80211_5_4_21 || (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 10, 0)))
-	/*
-	 * Enable Split Scan WIPHY flag to let cfg80211 send scan request for
-	 * legacy bands first and then for 6GHz.
-	 */
-	wdev->wiphy->flags |= WIPHY_FLAG_SPLIT_SCAN_6GHZ;
-#endif /* IFX_CFG80211_5_4_21 || (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 10, 0)) */
-#endif /* WL_6E */
 
 #if defined(CONFIG_PM) && defined(WL_CFG80211_P2P_DEV_IF)
 	/*
@@ -14309,18 +14375,12 @@ static s32 wl_setup_wiphy(struct wireless_dev *wdev, struct device *sdiofunc_dev
 	* Note: wiphy->wowlan_config is freed by cfg80211 layer.
 	* so use malloc instead of MALLOC(osh) to avoid false alarm.
 	*/
-	brcm_wowlan_config = kmalloc(sizeof(struct cfg80211_wowlan), GFP_KERNEL);
+	brcm_wowlan_config = kzalloc(sizeof(struct cfg80211_wowlan), GFP_KERNEL);
 	if (brcm_wowlan_config) {
 		brcm_wowlan_config->disconnect = true;
 		brcm_wowlan_config->gtk_rekey_failure = true;
 		brcm_wowlan_config->eap_identity_req = true;
 		brcm_wowlan_config->four_way_handshake = true;
-		brcm_wowlan_config->patterns = NULL;
-		brcm_wowlan_config->n_patterns = 0;
-		brcm_wowlan_config->tcp = NULL;
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 19, 0))
-		brcm_wowlan_config->nd_config = NULL;
-#endif // endif
 	} else {
 		WL_ERR(("Can not allocate memory for brcm_wowlan_config,"
 			" So wiphy->wowlan_config is set to NULL\n"));
@@ -16434,8 +16494,14 @@ wl_handle_roam_exp_event(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev,
 			ndev = cfgdev_to_wlc_ndev(cfgdev, cfg);
 			if (ndev) {
 				wdev = ndev->ieee80211_ptr;
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 19, 2)) || \
+	defined(DHD_ANDROID_KERNEL5_15_SUPPORT)
+				wdev->u.client.ssid_len = min(ssid->SSID_len, (uint32)DOT11_MAX_SSID_LEN);
+				memcpy(wdev->u.client.ssid, ssid->SSID, wdev->u.client.ssid_len);
+#else
 				wdev->ssid_len = min(ssid->SSID_len, (uint32)DOT11_MAX_SSID_LEN);
 				memcpy(wdev->ssid, ssid->SSID, wdev->ssid_len);
+#endif // endif
 				WL_ERR(("SSID is %s\n", ssid->SSID));
 				wl_update_prof(cfg, ndev, NULL, ssid, WL_PROF_SSID);
 			} else {
@@ -16507,6 +16573,43 @@ wl_notify_rssi_change_ind(struct bcm_cfg80211 *cfg, struct wireless_dev *wdev,
 	return 0;
 }
 #endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4, 11, 0) */
+
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 19, 0))
+static s32
+wl_notify_beacon_loss(struct bcm_cfg80211 *cfg, struct wireless_dev *wdev,
+	const wl_event_msg_t *e, void *data)
+{
+	struct cfg80211_bss *bss;
+	struct wiphy *wiphy = bcmcfg_to_wiphy(cfg);
+	struct wl_profile *profile = wl_get_profile_by_netdev(cfg, wdev->netdev);
+
+	if (!profile)
+		return WL_INVALID;
+
+	if (!us_ap_select)
+		return 0;
+
+	WL_DBG(("Enter: event %d (%d), status=%d\n",
+		ntoh32(e->event_type), ntoh32(e->status), ntoh32(e->reason)));
+
+	/* On beacon loss event, supplicant will trigger new scan request
+	 * with NL80211_SCAN_FLAG_FLUSH Flag set, but the flushed AP bss entry
+	 * still remains as it is still held by cfg in associated state. Unlinking this
+	 * current BSS from cfg cached bss list on beacon loss event here
+	 * would allow supplicant to receive new scanned entries
+	 * without current bss and select new bss to trigger roam.
+	 */
+	bss = CFG80211_GET_BSS(wiphy, NULL, profile->bssid, 0, 0);
+	if (bss) {
+		cfg80211_unlink_bss(wiphy, bss);
+		cfg80211_put_bss(wiphy, bss);
+	}
+
+	cfg80211_cqm_beacon_loss_notify(wdev->netdev, GFP_KERNEL);
+
+	return 0;
+}
+#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 19, 0)) */
 
 static s32
 wl_notify_roaming_status(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev,
@@ -17232,8 +17335,14 @@ wl_bss_roaming_done(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 	(LINUX_VERSION_CODE >= KERNEL_VERSION(4, 12, 0)) || defined(WL_FILS_ROAM_OFFLD) || \
 	defined(CFG80211_ROAM_API_GE_4_12)
 	memset(&roam_info, 0, sizeof(struct cfg80211_roam_info));
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 19, 2)) || \
+	defined(DHD_ANDROID_KERNEL5_15_SUPPORT)
+	roam_info.links[0].channel = notify_channel;
+	roam_info.links[0].bssid = curbssid;
+#else
 	roam_info.channel = notify_channel;
 	roam_info.bssid = curbssid;
+#endif // endif
 	roam_info.req_ie = conn_info->req_ie;
 	roam_info.req_ie_len = conn_info->req_ie_len;
 	roam_info.resp_ie = conn_info->resp_ie;
@@ -18188,6 +18297,47 @@ wl_notify_rx_mgmt_frame(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev,
 		}
 		isfree = true;
 #endif /* WL_SAE */
+#if defined(WL_OWE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 2, 0))
+	} else if (event == WLC_E_EXT_ASSOC_FRAME_RX) {
+		struct cfg80211_update_owe_info owe_info;
+		bcm_tlv_t *owe_info_ie = NULL;
+		u8 *ies = NULL;
+		u32 ies_len;
+
+		WL_DBG(("EVENT: WLC_E_EXT_ASSOC_FRAME_RX received\n"));
+
+		if (ndev->ieee80211_ptr->iftype != NL80211_IFTYPE_AP) {
+			WL_ERR(("OWE ASSOC REQ: not AP I/F\n"));
+			return -EINVAL;
+		}
+
+		ies = (u8 *)((wl_event_rx_frame_data_t *)rxframe + 1) + DOT11_MGMT_HDR_LEN;
+		ies_len = mgmt_frame_len - DOT11_MGMT_HDR_LEN;
+
+		ies += DOT11_ASSOC_REQ_FIXED_LEN;
+		if (ies_len <= DOT11_ASSOC_REQ_FIXED_LEN) {
+			WL_ERR(("OWE ASSOC REQ: event data too small. Ignoring event\n"));
+			return -EINVAL;
+		}
+		ies_len -= DOT11_ASSOC_REQ_FIXED_LEN;
+
+		memset(&owe_info, 0, sizeof(struct cfg80211_update_owe_info));
+		memcpy(owe_info.peer, e->addr.octet, ETH_ALEN);
+		owe_info.ie = ies;
+		owe_info.ie_len = ies_len;
+
+		owe_info_ie = bcm_parse_tlvs((const u8 *)owe_info.ie, owe_info.ie_len, DOT11_MNG_RSN_ID);
+		if (owe_info_ie)
+			WL_INFORM(("OWE ASSOC REQ: found RSNIE"));
+
+		owe_info_ie = bcm_parse_tlvs((const u8 *)owe_info.ie, owe_info.ie_len, DOT11_MNG_ID_EXT_ID);
+		if (owe_info_ie && DOT11_OWE_DH_PARAM_IE(owe_info_ie))
+			WL_INFORM(("OWE ASSOC REQ: found OWE DH PARAM"));
+
+		cfg80211_update_owe_info_event(ndev, &owe_info, GFP_KERNEL);
+
+		return 0;
+#endif /* WL_OWE && LINUX_VERSION_CODE >= KERNEL_VERSION(5, 2, 0) */
 	} else {
 		mgmt_frame = (u8 *)((wl_event_rx_frame_data_t *)rxframe + 1);
 
@@ -18384,6 +18534,12 @@ static void wl_init_event_handler(struct bcm_cfg80211 *cfg)
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 11, 0))
 	cfg->evt_handler[WLC_E_RSSI] = wl_notify_rssi_change_ind;
 #endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4, 11, 0) */
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 19, 0))
+	cfg->evt_handler[WLC_E_BCNLOST_MSG] = wl_notify_beacon_loss;
+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3, 19, 0) */
+#if defined(WL_OWE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 2, 0))
+	cfg->evt_handler[WLC_E_EXT_ASSOC_FRAME_RX] = wl_notify_rx_mgmt_frame;
+#endif /* WL_OWE && LINUX_VERSION_CODE >= KERNEL_VERSION(5, 2, 0) */
 }
 
 #if defined(STATIC_WL_PRIV_STRUCT)
@@ -18988,12 +19144,19 @@ static s32 wl_notifier_change_state(struct bcm_cfg80211 *cfg, struct net_info *_
 	u32 chan = 0;
 	struct net_device *primary_dev = bcmcfg_to_prmry_ndev(cfg);
 	dhd_pub_t *dhd = cfg->pub;
+	s32 ifidx = DHD_BAD_IF;
 #ifdef RTT_SUPPORT
 	rtt_status_info_t *rtt_status;
 #endif /* RTT_SUPPORT */
 	if (dhd->busstate == DHD_BUS_DOWN) {
 		WL_ERR(("busstate is DHD_BUS_DOWN!\n"));
 		return 0;
+	}
+
+	ifidx = dhd_net2idx(dhd->info, _net_info->ndev);
+	if (ifidx == DHD_BAD_IF) {
+		WL_ERR(("ifidx is invalid\n"));
+		return BCME_ERROR;
 	}
 	WL_DBG(("Enter state %d set %d _net_info->pm_restore %d iface %s\n",
 		state, set, _net_info->pm_restore, _net_info->ndev->name));
@@ -19085,6 +19248,9 @@ static s32 wl_notifier_change_state(struct bcm_cfg80211 *cfg, struct net_info *_
 			wl_cfg80211_set_frameburst(cfg, FALSE);
 		}
 #endif /* DISABLE_WL_FRAMEBURST_SOFTAP */
+#ifdef WL11AX
+		wl_twt_cleanup_session_records(dhd, (u8)ifidx);
+#endif /* WL11AX */
 	}
 	return err;
 }
@@ -20900,8 +21066,14 @@ static s32 __wl_cfg80211_down(struct bcm_cfg80211 *cfg)
 			u8 *latest_bssid = wl_read_prof(cfg, ndev, WL_PROF_LATEST_BSSID);
 			struct wiphy *wiphy = bcmcfg_to_wiphy(cfg);
 			struct wireless_dev *wdev = ndev->ieee80211_ptr;
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 19, 2)) || \
+	defined(DHD_ANDROID_KERNEL5_15_SUPPORT)
+			struct cfg80211_bss *bss = CFG80211_GET_BSS(wiphy, NULL, latest_bssid,
+				wdev->u.client.ssid, wdev->u.client.ssid_len);
+#else
 			struct cfg80211_bss *bss = CFG80211_GET_BSS(wiphy, NULL, latest_bssid,
 				wdev->ssid, wdev->ssid_len);
+#endif // endif
 
 			BCM_REFERENCE(bss);
 
@@ -23527,7 +23699,11 @@ wl_cfg80211_ch_switch_notify(struct net_device *dev, uint16 chanspec, struct wip
 		WL_ERR(("chspec_chandef failed\n"));
 		return;
 	}
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION (3, 8, 0))
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 19, 2)) || \
+	defined(DHD_ANDROID_KERNEL5_15_SUPPORT)
+	freq = chandef.chan ? chandef.chan->center_freq : chandef.center_freq1;
+	cfg80211_ch_switch_notify(dev, &chandef, 0);
+#elif (LINUX_VERSION_CODE >= KERNEL_VERSION (3, 8, 0))
 	freq = chandef.chan ? chandef.chan->center_freq : chandef.center_freq1;
 	cfg80211_ch_switch_notify(dev, &chandef);
 #elif (LINUX_VERSION_CODE >= KERNEL_VERSION (3, 5, 0) && (LINUX_VERSION_CODE <= (3, 7, \
@@ -26474,3 +26650,41 @@ wl_cfg80211_overtemp_event(struct net_device *ndev)
 	cfg80211_vendor_event(skb, kflags);
 }
 #endif /* LINUX_VERSION_CODE <= KERNEL_VERSION(3, 11, 1) */
+
+#if defined(WL_OWE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 2, 0))
+static int wl_cfg80211_update_owe_info(struct wiphy *wiphy, struct net_device *dev,
+	struct cfg80211_update_owe_info *owe_info)
+{
+	struct bcm_cfg80211 *cfg = wiphy_priv(wiphy);
+	bcm_tlv_t *owe_info_ie = NULL;
+	s32 bssidx = -1;
+	int ret = BCME_OK;
+
+	if (owe_info->status != DOT11_SC_SUCCESS) {
+		/* may need to pass down unsuccessful status to the firmware */
+		WL_DBG(("Update OWE info failure status %d\n", owe_info->status));
+	} else {
+		owe_info_ie = bcm_parse_tlvs((const u8 *)owe_info->ie, owe_info->ie_len, DOT11_MNG_RSN_ID);
+		if (owe_info_ie)
+			WL_INFORM(("Update OWE info found RSNIE"));
+
+		owe_info_ie = bcm_parse_tlvs((const u8 *)owe_info->ie, owe_info->ie_len, DOT11_MNG_ID_EXT_ID);
+		if (owe_info_ie && DOT11_OWE_DH_PARAM_IE(owe_info_ie))
+			WL_INFORM(("Update OWE info found OWE DH PARAM"));
+
+		bssidx = wl_get_bssidx_by_wdev(cfg, dev->ieee80211_ptr);
+		if (bssidx == WL_INVALID) {
+			WL_DBG(("I/F not available. Do nothing.\n"));
+			return -EINVAL;
+		}
+
+		ret = wl_cfg80211_set_mgmt_vndr_ies(cfg, ndev_to_cfgdev(dev), bssidx,
+				VNDR_IE_ASSOCRSP_FLAG, owe_info->ie, owe_info->ie_len);
+		if (ret) {
+			WL_ERR(("error(%d) updating vndr ies\n", ret));
+		}
+	}
+
+	return ret;
+}
+#endif /* WL_OWE && LINUX_VERSION_CODE >= KERNEL_VERSION(5, 2, 0) */

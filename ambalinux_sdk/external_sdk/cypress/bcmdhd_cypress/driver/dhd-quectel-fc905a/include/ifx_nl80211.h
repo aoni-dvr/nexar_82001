@@ -1,7 +1,7 @@
 /*
  * Infineon Technologies OUI and vendor specific assignments
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation,
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation,
  * an Infineon company
  *
  * This program is the proprietary software of infineon and/or
@@ -76,6 +76,10 @@
  * @IFX_VENDOR_SCMD_TWT: Vendor subcommand to configure TWT
  *	Uses attributes defined in enum ifx_vendor_attr_twt.
  *
+ * @IFX_VENDOR_SCMD_OCE_ENABLE: Vendor command to enable/disable OCE Capability
+ *
+ * @IFX_VENDOR_SCMD_RANDMAC: Vendor command to enable/disable RANDMAC Capability
+ *
  * @IFX_VENDOR_SCMD_MAX: This acts as a the tail of cmds list.
  *      Make sure it located at the end of the list.
  */
@@ -88,12 +92,17 @@ enum ifx_nl80211_vendor_subcmds {
 	IFX_VENDOR_SCMD_UNSPEC		= 0,
 	/* Reserved 1-5 */
 	IFX_VENDOR_SCMD_FRAMEBURST	= 6,
-	/* Reserved 7-10 */
+	/* Reserved 7-9 */
+#ifdef P2P_RAND
+	IFX_VENDOR_SCMD_SET_P2P_RAND_MAC = 10,
+#endif /* P2P_RAND */
 	IFX_VENDOR_SCMD_MUEDCA_OPT_ENABLE = 11,
 	IFX_VENDOR_SCMD_LDPC_CAP	= 12,
 	IFX_VENDOR_SCMD_AMSDU		= 13,
 	IFX_VENDOR_SCMD_TWT		= 14,
 	IFX_VENDOR_SCMD_OCE_ENABLE      = 15,
+	/* Reserved 16 */
+	IFX_VENDOR_SCMD_RANDMAC         = 17,
 	IFX_VENDOR_SCMD_MAX
 };
 
@@ -112,6 +121,8 @@ enum ifx_vendor_attr {
 	 * already used by IFX.
 	 */
 	IFX_VENDOR_ATTR_UNSPEC		= 0,
+	IFX_VENDOR_ATTR_PAD		= 1,
+	IFX_VENDOR_ATTR_MAC_ADDR        = 2,
 	/* Reserved 1-10 */
 	IFX_VENDOR_ATTR_MAX		= 11
 };

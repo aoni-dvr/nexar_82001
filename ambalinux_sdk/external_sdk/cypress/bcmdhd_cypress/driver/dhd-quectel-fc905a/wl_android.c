@@ -1,7 +1,7 @@
 /*
  * Linux cfg80211 driver - Android related functions
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *
@@ -91,6 +91,13 @@
 #define CMD_START		"START"
 #define CMD_STOP		"STOP"
 
+#ifdef AUTOMOTIVE_FEATURE
+#define CMD_SCAN_ACTIVE         "SCAN-ACTIVE"
+#define CMD_SCAN_PASSIVE        "SCAN-PASSIVE"
+#define CMD_RSSI                "RSSI"
+#define CMD_LINKSPEED		"LINKSPEED"
+#endif /* AUTOMOTIVE_FEATURE */
+
 #define CMD_RXFILTER_START	"RXFILTER-START"
 #define CMD_RXFILTER_STOP	"RXFILTER-STOP"
 #define CMD_RXFILTER_ADD	"RXFILTER-ADD"
@@ -133,6 +140,11 @@
 #endif /* WL_SUPPORT_AUTO_CHANNEL */
 
 #define CMD_CHANSPEC      "CHANSPEC"
+#ifdef AUTOMOTIVE_FEATURE
+#define CMD_DATARATE      "DATARATE"
+#define CMD_80211_MODE    "MODE"  /* 802.11 mode a/b/g/n/ac */
+#define CMD_ASSOC_CLIENTS "ASSOCLIST"
+#endif /* AUTOMOTIVE_FEATURE */
 #define CMD_SET_CSA       "SETCSA"
 #define CMD_RSDB_MODE	"RSDB_MODE"
 #ifdef WL11AX
@@ -179,6 +191,9 @@
 #define CMD_WLS_BATCHING	"WLS_BATCHING"
 #endif /* PNO_SUPPORT */
 
+#ifdef AUTOMOTIVE_FEATURE
+#define	CMD_HAPD_MAC_FILTER	"HAPD_MAC_FILTER"
+#endif /* AUTOMOTIVE_FEATURE */
 #define CMD_ADDIE		"ADD_IE"
 #define CMD_DELIE		"DEL_IE"
 
@@ -193,6 +208,10 @@
 #define CMD_ROAMSCANPERIOD_GET "GETROAMSCANPERIOD"
 #define CMD_FULLROAMSCANPERIOD_SET "SETFULLROAMSCANPERIOD"
 #define CMD_FULLROAMSCANPERIOD_GET "GETFULLROAMSCANPERIOD"
+#ifdef AUTOMOTIVE_FEATURE
+#define CMD_COUNTRYREV_SET "SETCOUNTRYREV"
+#define CMD_COUNTRYREV_GET "GETCOUNTRYREV"
+#endif /* AUTOMOTIVE_FEATURE */
 #endif /* ROAM_API */
 
 #if defined(SUPPORT_RANDOM_MAC_SCAN)
@@ -969,6 +988,9 @@ wl_android_set_channel_width(struct net_device *dev, char *command, int total_le
 #define M_HOGSQS_DUR_THR (M_HOGSQS_CFG + 0x4)
 #define M_HOGSQS_STAT (M_HOGSQS_CFG + 0x6)
 #define M_HOGSQS_TXCFE_DET_CNT (M_HOGSQS_CFG + 0xe)
+
+/* hidden node recovery command */
+#define HOGSQS_CMD_HNRECOVER 0x9001
 static int
 wl_android_hogsqs(struct net_device *dev, char *command, int total_len)
 {
@@ -997,6 +1019,9 @@ wl_android_hogsqs(struct net_device *dev, char *command, int total_len)
 		} else if (!strncmp(pos, "count", strlen("count"))) {
 			reg = M_HOGSQS_TXCFE_DET_CNT;
 			pos2 = pos + strlen("count");
+		} else if (!strncmp(pos, "hnrecovery", strlen("hnrecovery"))) {
+			reg = HOGSQS_CMD_HNRECOVER;
+			pos2 = pos + strlen("hnrecovery");
 		} else {
 			DHD_ERROR(("%s: Error wrong argument is on %s \n", __FUNCTION__,
 			CMD_AP_HOGSQS));
@@ -1233,6 +1258,111 @@ static int wl_android_set_wfds_hash(
 }
 #endif /* WLWFDS */
 
+#ifdef AUTOMOTIVE_FEATURE
+static int wl_android_get_link_speed(struct net_device *net, char *command, int total_len)
+{
+	int link_speed;
+	int bytes_written;
+	int error;
+
+	error = wldev_get_link_speed(net, &link_speed);
+	if (error) {
+		DHD_ERROR(("Get linkspeed failed \n"));
+		return -1;
+	}
+
+	/* Convert Kbps to Android Mbps */
+	link_speed = link_speed / 1000;
+	bytes_written = snprintf(command, total_len, "LinkSpeed %d", link_speed);
+	DHD_INFO(("wl_android_get_link_speed: command result is %s\n", command));
+	return bytes_written;
+}
+
+static int wl_android_get_rssi(struct net_device *net, char *command, int total_len)
+{
+	wlc_ssid_t ssid = {0, {0}};
+	int bytes_written = 0;
+	int error = 0;
+	scb_val_t scbval;
+	char *delim = NULL;
+	struct net_device *target_ndev = net;
+#ifdef WL_VIRTUAL_APSTA
+	char *pos = NULL;
+	struct bcm_cfg80211 *cfg;
+#endif /* WL_VIRTUAL_APSTA */
+
+	delim = strchr(command, ' ');
+	/* For Ap mode rssi command would be
+	 * driver rssi <sta_mac_addr>
+	 * for STA/GC mode
+	 * driver rssi
+	*/
+	if (delim) {
+		/* Ap/GO mode
+		* driver rssi <sta_mac_addr>
+		*/
+		DHD_TRACE(("wl_android_get_rssi: cmd:%s\n", delim));
+		/* skip space from delim after finding char */
+		delim++;
+		if (!(bcm_ether_atoe((delim), &scbval.ea))) {
+			DHD_ERROR(("wl_android_get_rssi: address err\n"));
+			return -1;
+		}
+		scbval.val = htod32(0);
+		DHD_TRACE(("wl_android_get_rssi: address:"MACDBG, MAC2STRDBG(scbval.ea.octet)));
+#ifdef WL_VIRTUAL_APSTA
+		/* RSDB AP may have another virtual interface
+		 * In this case, format of private command is as following,
+		 * DRIVER rssi <sta_mac_addr> <AP interface name>
+		 */
+
+		/* Current position is start of MAC address string */
+		pos = delim;
+		delim = strchr(pos, ' ');
+		if (delim) {
+			/* skip space from delim after finding char */
+			delim++;
+			if (strnlen(delim, IFNAMSIZ)) {
+				cfg = wl_get_cfg(net);
+				target_ndev = wl_get_ap_netdev(cfg, delim);
+				if (target_ndev == NULL)
+					target_ndev = net;
+			}
+		}
+#endif /* WL_VIRTUAL_APSTA */
+	}
+	else {
+		/* STA/GC mode */
+		bzero(&scbval, sizeof(scb_val_t));
+	}
+
+	error = wldev_get_rssi(target_ndev, &scbval);
+	if (error)
+		return -1;
+
+	error = wldev_get_ssid(target_ndev, &ssid);
+	if (error)
+		return -1;
+	if ((ssid.SSID_len == 0) || (ssid.SSID_len > DOT11_MAX_SSID_LEN)) {
+		DHD_ERROR(("wl_android_get_rssi: wldev_get_ssid failed\n"));
+	} else if (total_len <= ssid.SSID_len) {
+		return -ENOMEM;
+	} else {
+		memcpy(command, ssid.SSID, ssid.SSID_len);
+		bytes_written = ssid.SSID_len;
+	}
+	if ((total_len - bytes_written) < (strlen(" rssi -XXX") + 1))
+		return -ENOMEM;
+
+	bytes_written += scnprintf(&command[bytes_written], total_len - bytes_written,
+		" rssi %d", scbval.val);
+	command[bytes_written] = '\0';
+
+	DHD_TRACE(("wl_android_get_rssi: command result is %s (%d)\n", command, bytes_written));
+	return bytes_written;
+}
+#endif /* AUTOMOTIVE_FEATURE */
+
 static int wl_android_set_suspendopt(struct net_device *dev, char *command)
 {
 	int suspend_flag;
@@ -1277,6 +1407,25 @@ static int wl_android_set_suspendmode(struct net_device *dev, char *command)
 
 	return ret;
 }
+
+#ifdef AUTOMOTIVE_FEATURE
+int wl_android_get_80211_mode(struct net_device *dev, char *command, int total_len)
+{
+	uint8 mode[5];
+	int  error = 0;
+	int bytes_written = 0;
+
+	error = wldev_get_mode(dev, mode, sizeof(mode));
+	if (error)
+		return -1;
+
+	DHD_INFO(("wl_android_get_80211_mode: mode:%s\n", mode));
+	bytes_written = snprintf(command, total_len, "%s %s", CMD_80211_MODE, mode);
+	DHD_INFO(("wl_android_get_80211_mode: command:%s EXIT\n", command));
+	return bytes_written;
+
+}
+#endif /* AUTOMOTIVE_FEATURE */
 
 extern chanspec_t
 wl_chspec_driver_to_host(chanspec_t chanspec);
@@ -1391,6 +1540,64 @@ int wl_android_get_bsscolor(struct net_device *dev, char *command, int total_len
 #endif /* WL11AX */
 
 /* returns current datarate datarate returned from firmware are in 500kbps */
+#ifdef AUTOMOTIVE_FEATURE
+int wl_android_get_datarate(struct net_device *dev, char *command, int total_len)
+{
+	int  error = 0;
+	int datarate = 0;
+	int bytes_written = 0;
+
+	error = wldev_get_datarate(dev, &datarate);
+	if (error)
+		return -1;
+
+	DHD_INFO(("wl_android_get_datarate: datarate:%d\n", datarate));
+
+	bytes_written = snprintf(command, total_len, "%s %d", CMD_DATARATE, (datarate/2));
+	return bytes_written;
+}
+
+int wl_android_get_assoclist(struct net_device *dev, char *command, int total_len)
+{
+	int  error = 0;
+	int bytes_written = 0;
+	uint i;
+	int len = 0;
+	char mac_buf[MAX_NUM_OF_ASSOCLIST *
+		sizeof(struct ether_addr) + sizeof(uint)] = {0};
+	struct maclist *assoc_maclist = (struct maclist *)mac_buf;
+
+	DHD_TRACE(("wl_android_get_assoclist: ENTER\n"));
+
+	assoc_maclist->count = htod32(MAX_NUM_OF_ASSOCLIST);
+
+	error = wldev_ioctl_get(dev, WLC_GET_ASSOCLIST, assoc_maclist, sizeof(mac_buf));
+	if (error)
+		return -1;
+
+	assoc_maclist->count = dtoh32(assoc_maclist->count);
+	bytes_written = snprintf(command, total_len, "%s listcount: %d Stations:",
+		CMD_ASSOC_CLIENTS, assoc_maclist->count);
+
+	for (i = 0; i < assoc_maclist->count; i++) {
+		len = snprintf(command + bytes_written, total_len - bytes_written, " " MACDBG,
+			MAC2STRDBG(assoc_maclist->ea[i].octet));
+		/* A return value of '(total_len - bytes_written)' or more means that the
+		 * output was truncated
+		 */
+		if ((len > 0) && (len < (total_len - bytes_written))) {
+			bytes_written += len;
+		} else {
+			DHD_ERROR(("wl_android_get_assoclist: Insufficient buffer %d,"
+				" bytes_written %d\n",
+				total_len, bytes_written));
+			bytes_written = -1;
+			break;
+		}
+	}
+	return bytes_written;
+}
+#endif /* AUTOMOTIVE_FEATURE */
 static int wl_android_get_channel_list(struct net_device *dev, char *command, int total_len)
 {
 
@@ -2148,6 +2355,83 @@ static int wl_android_get_full_roam_scan_period(
 	return bytes_written;
 }
 
+#ifdef AUTOMOTIVE_FEATURE
+int wl_android_set_country_rev(
+	struct net_device *dev, char* command)
+{
+	int error = 0;
+	wl_country_t cspec = {{0}, 0, {0} };
+	char country_code[WLC_CNTRY_BUF_SZ];
+	char smbuf[WLC_IOCTL_SMLEN];
+	int rev = 0;
+
+	/*
+	 * SETCOUNTRYREV driver command provides support setting the country.
+	 * e.g US, DE, JP etc via supplicant. Once set, band and channels
+	 * too automatically gets updated based on the country.
+	 * Usage:
+	 * > IFNAME=wlan0 DRIVER SETCOUNTRYREV JP
+	 * OK
+	 */
+
+	bzero(country_code, sizeof(country_code));
+	sscanf(command+sizeof("SETCOUNTRYREV"), "%3s %10d", country_code, &rev);
+	WL_TRACE(("country_code = %s, rev = %d\n", country_code, rev));
+
+	memcpy(cspec.country_abbrev, country_code, sizeof(country_code));
+	memcpy(cspec.ccode, country_code, sizeof(country_code));
+	cspec.rev = rev;
+
+	error = wldev_iovar_setbuf(dev, "country", (char *)&cspec,
+		sizeof(cspec), smbuf, sizeof(smbuf), NULL);
+
+	if (error) {
+		DHD_ERROR(("wl_android_set_country_rev: set country '%s/%d' failed code %d\n",
+			cspec.ccode, cspec.rev, error));
+	} else {
+		dhd_bus_country_set(dev, &cspec, true);
+		DHD_INFO(("wl_android_set_country_rev: set country '%s/%d'\n",
+			cspec.ccode, cspec.rev));
+	}
+
+	return error;
+}
+
+static int wl_android_get_country_rev(
+	struct net_device *dev, char *command, int total_len)
+{
+	int error;
+	int bytes_written;
+	char smbuf[WLC_IOCTL_SMLEN];
+	wl_country_t cspec;
+
+	/*
+	 * GETCOUNTRYREV driver command provides support getting the country.
+	 * e.g US, DE, JP etc via supplicant.
+	 * Usage:
+	 * > IFNAME=wlan0 DRIVER GETCOUNTRYREV
+	 * GETCOUNTRYREV JP 0
+	 */
+
+	error = wldev_iovar_getbuf(dev, "country", NULL, 0, smbuf,
+		sizeof(smbuf), NULL);
+
+	if (error) {
+		DHD_ERROR(("wl_android_get_country_rev: get country failed code %d\n",
+			error));
+		return -1;
+	} else {
+		memcpy(&cspec, smbuf, sizeof(cspec));
+		DHD_INFO(("wl_android_get_country_rev: get country '%c%c %d'\n",
+			cspec.ccode[0], cspec.ccode[1], cspec.rev));
+	}
+
+	bytes_written = snprintf(command, total_len, "%s %c%c %d",
+		CMD_COUNTRYREV_GET, cspec.ccode[0], cspec.ccode[1], cspec.rev);
+
+	return bytes_written;
+}
+#endif /* AUTOMOTIVE_FEATURE */
 #endif /* ROAM_API */
 
 #ifdef WES_SUPPORT
@@ -3857,6 +4141,87 @@ wl_android_set_ap_mac_list(struct net_device *dev, int macmode, struct maclist *
  * HAPD_MAC_FILTER mac_mode mac_cnt mac_addr1 mac_addr2
  *
  */
+#ifdef AUTOMOTIVE_FEATURE
+static int
+wl_android_set_mac_address_filter(struct net_device *dev, char* str)
+{
+	int i;
+	int ret = 0;
+	int macnum = 0;
+	int macmode = MACLIST_MODE_DISABLED;
+	struct maclist *list;
+	char eabuf[ETHER_ADDR_STR_LEN];
+	const char *token;
+	struct bcm_cfg80211 *cfg = wl_get_cfg(dev);
+
+	/* string should look like below (macmode/macnum/maclist) */
+	/*   1 2 00:11:22:33:44:55 00:11:22:33:44:ff  */
+
+	/* get the MAC filter mode */
+	token = strsep((char**)&str, " ");
+	if (!token) {
+		return -1;
+	}
+	macmode = bcm_atoi(token);
+
+	if (macmode < MACLIST_MODE_DISABLED || macmode > MACLIST_MODE_ALLOW) {
+		DHD_ERROR(("wl_android_set_mac_address_filter: invalid macmode %d\n", macmode));
+		return -1;
+	}
+
+	token = strsep((char**)&str, " ");
+	if (!token) {
+		return -1;
+	}
+	macnum = bcm_atoi(token);
+	if (macnum < 0 || macnum > MAX_NUM_MAC_FILT) {
+		DHD_ERROR(("wl_android_set_mac_address_filter: invalid number of MAC"
+			" address entries %d\n",
+			macnum));
+		return -1;
+	}
+	/* allocate memory for the MAC list */
+	list = (struct maclist*) MALLOCZ(cfg->osh, sizeof(int) +
+		sizeof(struct ether_addr) * macnum);
+	if (!list) {
+		DHD_ERROR(("wl_android_set_mac_address_filter : failed to allocate memory\n"));
+		return -1;
+	}
+	/* prepare the MAC list */
+	list->count = htod32(macnum);
+	bzero((char *)eabuf, ETHER_ADDR_STR_LEN);
+	for (i = 0; i < list->count; i++) {
+		token = strsep((char**)&str, " ");
+		if (token == NULL) {
+			DHD_ERROR(("wl_android_set_mac_address_filter : No mac address present\n"));
+			ret = -EINVAL;
+			goto exit;
+		}
+		strlcpy(eabuf, token, sizeof(eabuf));
+		if (!(ret = bcm_ether_atoe(eabuf, &list->ea[i]))) {
+			DHD_ERROR(("wl_android_set_mac_address_filter : mac parsing err index=%d,"
+				" addr=%s\n",
+				i, eabuf));
+			list->count = i;
+			break;
+		}
+		DHD_INFO(("wl_android_set_mac_address_filter : %d/%d MACADDR=%s",
+			i, list->count, eabuf));
+	}
+	if (i == 0)
+		goto exit;
+
+	/* set the list */
+	if ((ret = wl_android_set_ap_mac_list(dev, macmode, list)) != 0)
+		DHD_ERROR(("wl_android_set_mac_address_filter: Setting MAC list failed error=%d\n",
+			ret));
+
+exit:
+	MFREE(cfg->osh, list, sizeof(int) + sizeof(struct ether_addr) * macnum);
+
+	return ret;
+}
+#endif /* AUTOMOTIVE_FEATURE */
 /**
  * Global function definitions (declared in wl_android.h)
  */
@@ -8870,6 +9235,20 @@ wl_handle_private_cmd(struct net_device *net, char *command, u32 cmd_len)
 #endif /* BT_OVER_SDIO */
 #endif /* SUPPORT_DEEP_SLEEP */
 	}
+#ifdef AUTOMOTIVE_FEATURE
+	else if (strnicmp(command, CMD_SCAN_ACTIVE, strlen(CMD_SCAN_ACTIVE)) == 0) {
+		wl_cfg80211_set_passive_scan(net, command);
+	}
+	else if (strnicmp(command, CMD_SCAN_PASSIVE, strlen(CMD_SCAN_PASSIVE)) == 0) {
+		wl_cfg80211_set_passive_scan(net, command);
+	}
+	else if (strnicmp(command, CMD_RSSI, strlen(CMD_RSSI)) == 0) {
+		bytes_written = wl_android_get_rssi(net, command, priv_cmd.total_len);
+	}
+	else if (strnicmp(command, CMD_LINKSPEED, strlen(CMD_LINKSPEED)) == 0) {
+		bytes_written = wl_android_get_link_speed(net, command, priv_cmd.total_len);
+	}
+#endif /* AUTOMOTIVE_FEATURE */
 #ifdef PKT_FILTER_SUPPORT
 	else if (strnicmp(command, CMD_RXFILTER_START, strlen(CMD_RXFILTER_START)) == 0) {
 		bytes_written = net_os_enable_packet_filter(net, 1);
@@ -8992,6 +9371,15 @@ wl_handle_private_cmd(struct net_device *net, char *command, u32 cmd_len)
 	} else if (strnicmp(command, CMD_BLOCKASSOC, strlen(CMD_BLOCKASSOC)) == 0) {
                bytes_written = wl_android_block_associations(net, command, priv_cmd.total_len);
 	}
+#ifdef AUTOMOTIVE_FEATURE
+	 else if (strnicmp(command, CMD_DATARATE, strlen(CMD_DATARATE)) == 0) {
+		bytes_written = wl_android_get_datarate(net, command, priv_cmd.total_len);
+	} else if (strnicmp(command, CMD_80211_MODE, strlen(CMD_80211_MODE)) == 0) {
+		bytes_written = wl_android_get_80211_mode(net, command, priv_cmd.total_len);
+	} else if (strnicmp(command, CMD_ASSOC_CLIENTS, strlen(CMD_ASSOC_CLIENTS)) == 0) {
+		bytes_written = wl_android_get_assoclist(net, command, priv_cmd.total_len);
+	}
+#endif /* AUTOMOTIVE_FEATURE */
 	 else if (strnicmp(command, CMD_RSDB_MODE, strlen(CMD_RSDB_MODE)) == 0) {
 		bytes_written = wl_android_get_rsdb_mode(net, command, priv_cmd.total_len);
 	}
@@ -9028,6 +9416,24 @@ wl_handle_private_cmd(struct net_device *net, char *command, u32 cmd_len)
 		bytes_written = wl_android_get_full_roam_scan_period(net, command,
 		priv_cmd.total_len);
 	}
+#ifdef AUTOMOTIVE_FEATURE
+	 else if (strnicmp(command, CMD_COUNTRYREV_SET,
+		strlen(CMD_COUNTRYREV_SET)) == 0) {
+		bytes_written = wl_android_set_country_rev(net, command);
+#ifdef FCC_PWR_LIMIT_2G
+		if (wldev_iovar_setint(net, "fccpwrlimit2g", FALSE)) {
+			DHD_ERROR(("wl_handle_private_cmd: fccpwrlimit2g"
+				" deactivation is failed\n"));
+		} else {
+			DHD_ERROR(("wl_handle_private_cmd: fccpwrlimit2g is deactivated\n"));
+		}
+#endif /* FCC_PWR_LIMIT_2G */
+	} else if (strnicmp(command, CMD_COUNTRYREV_GET,
+		strlen(CMD_COUNTRYREV_GET)) == 0) {
+		bytes_written = wl_android_get_country_rev(net, command,
+		priv_cmd.total_len);
+	}
+#endif /* AUTOMOTIVE_FEATURE */
 #endif /* ROAM_API */
 #ifdef WES_SUPPORT
 	else if (strnicmp(command, CMD_GETROAMSCANCONTROL, strlen(CMD_GETROAMSCANCONTROL)) == 0) {
@@ -9339,6 +9745,12 @@ wl_handle_private_cmd(struct net_device *net, char *command, u32 cmd_len)
 		wl_android_set_hide_ssid(net, (const char*)(command+skip));
 	}
 #endif /* SUPPORT_HIDDEN_AP */
+#ifdef AUTOMOTIVE_FEATURE
+	else if (strnicmp(command, CMD_HAPD_MAC_FILTER, strlen(CMD_HAPD_MAC_FILTER)) == 0) {
+		int skip = strlen(CMD_HAPD_MAC_FILTER) + 1;
+		wl_android_set_mac_address_filter(net, command+skip);
+	}
+#endif /* AUTOMOTIVE_FEATURE */
 	else if (strnicmp(command, CMD_SETROAMMODE, strlen(CMD_SETROAMMODE)) == 0)
 		bytes_written = wl_android_set_roam_mode(net, command);
 #if defined(BCMFW_ROAM_ENABLE)

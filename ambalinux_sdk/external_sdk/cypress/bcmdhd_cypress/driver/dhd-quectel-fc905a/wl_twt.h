@@ -1,7 +1,7 @@
 /*
  * Target Wake Time header
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation,
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation,
  * an Infineon company
  *
  * This program is the proprietary software of infineon and/or
@@ -52,14 +52,25 @@
 #define _wl_twt_h_
 
 #include <typedefs.h>
+#include <bcmendian.h>
 #include <net/cfg80211.h>
+#include <dhd_dbg.h>
+#include <dhd_linux.h>
+#include <802.11ah.h>
+#include "dhd_linux_priv.h"
 #include "wlioctl.h"
 #include "wldev_common.h"
 #include "wl_cfg80211.h"
+#include "wl_cfgvendor.h"
 #include "bcmutils.h"
 #include "ifx_nl80211.h"
 
-struct wl_twt {
+enum wl_twt_session_state {
+	TWT_SESSION_SETUP_COMPLETE,
+	TWT_SESSION_TEARDOWN_COMPLETE
+};
+
+typedef struct wl_twt_param {
 	uint8 twt_oper;
 	enum ifx_twt_param_nego_type negotiation_type;
 	enum ifx_twt_oper_setup_cmd_type setup_cmd;
@@ -80,10 +91,25 @@ struct wl_twt {
 	uint8 twt_info_frame_disabled;
 	uint8 min_twt_unit;
 	uint8 teardown_all_twt;
-};
+} wl_twt_param_t;
 
-int wl_twt_setup(struct wireless_dev *wdev, struct wl_twt wl_twt);
-int wl_twt_teardown(struct wireless_dev *wdev, struct wl_twt wl_twt);
-int wl_twt_oper(struct wireless_dev *wdev, struct wl_twt wl_twt);
+typedef struct wl_twt_session {
+	uint8 ifidx;
+	uint8 state;
+	wl_twt_param_t twt_param;
+	struct list_head list;
+} wl_twt_session_t;
+
+typedef struct wl_twt_ctx {
+	dhd_pub_t *dhd;
+	struct list_head twt_session_list;
+} wl_twt_ctx_t;
+
+int wl_twt_cleanup_session_records(dhd_pub_t *dhd, u8 ifidx);
+int wl_twt_oper(struct net_device *pri_ndev,
+		struct wireless_dev *wdev, wl_twt_param_t twt_param);
+int wl_twt_event(dhd_pub_t *dhd, wl_event_msg_t *event, void *event_data);
+int wl_twt_init(dhd_pub_t *dhd);
+int wl_twt_deinit(dhd_pub_t *dhd);
 
 #endif /* _wl_twt_h_ */

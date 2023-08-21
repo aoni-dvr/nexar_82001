@@ -2,7 +2,7 @@
  * Broadcom Dongle Host Driver (DHD), Generic work queue framework
  * Generic interface to handle dhd deferred work events
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *

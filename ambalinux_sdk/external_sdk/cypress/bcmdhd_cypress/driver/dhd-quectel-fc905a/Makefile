@@ -1,6 +1,6 @@
 # bcmdhd
 #
-# Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+# Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
 #
 # Copyright (C) 1999-2016, Broadcom Corporation
 #
@@ -34,9 +34,8 @@ CONFIG_BCM4373 = y
 CONFIG_BCMDHD_SDIO = y
 CONFIG_BCMDHD_SDMMC = y
 CONFIG_ANDROID = y
-CONFIG_WL_AP_IF = y
+#CONFIG_WL_AP_IF = y
 #CONFIG_HAVE_IMX8_SOC = y
-CONFIG_BCMDHD_VENDOR_EXT = y
 
 DHDCFLAGS += -Wall -Wstrict-prototypes -Dlinux -DLINUX -DBCMDRIVER            \
 	-DBCMDONGLEHOST -DUNRELEASEDCHIP -DBCMDMA32 -DBCMFILEIMAGE            \
@@ -44,10 +43,11 @@ DHDCFLAGS += -Wall -Wstrict-prototypes -Dlinux -DLINUX -DBCMDRIVER            \
 	-DWIFI_ACT_FRAME -DARP_OFFLOAD_SUPPORT                                \
 	-DKEEP_ALIVE -DCSCAN -DPKT_FILTER_SUPPORT                             \
 	-DEMBEDDED_PLATFORM -DPNO_SUPPORT -DSHOW_LOGTRACE                     \
-	-DGET_CUSTOM_MAC_ENABLE      \
 	-DSEC_ENHANCEMENT -DDHD_FW_COREDUMP -DCHIPS_CUSTOMER_HW6	\
 	-DDHD_RND_DEBUG -DDHD_DUMP_FILE_WRITE_FROM_KERNEL		\
 	-DDHD_DONOT_FORWARD_BCMEVENT_AS_NETWORK_PKT
+
+DHDCFLAGS += -DGET_CUSTOM_MAC_ENABLE -DCUSTOMER_HW_AMBATW
 
 GCCVERSIONGTEQ9 := $(shell expr `$(CROSS_COMPILE)gcc -dumpversion | cut -f1 -d.` \>= 9)
 ifeq "$(GCCVERSIONGTEQ9)" "1"
@@ -167,10 +167,10 @@ DHDCFLAGS += -DWBTEXT
 DHDCFLAGS += -DDHD_LOSSLESS_ROAMING
 
 # Hog flags
-#DHDCFLAGS += -DENABLE_HOGSQS
-#ifeq ($(ENABLE_HOGSQS), y)
-#DHDCFLAGS += -DM_HOGSQS_CFG=0x1910
-#endif // endif
+ifeq ($(CONFIG_ENABLE_HOGSQS), y)
+DHDCFLAGS += -DENABLE_HOGSQS
+DHDCFLAGS += -DM_HOGSQS_CFG=0x1910
+endif
 
 # For special PNO Event keep wake lock for 10sec
 DHDCFLAGS += -DCUSTOM_PNO_EVENT_LOCK_xTIME=10
@@ -240,7 +240,8 @@ ifeq ($(CONFIG_ANDROID),y)
   DHDCFLAGS += -Wno-date-time
 
 #Android features
-#ifeq ($(shell expr $(CONFIG_ANDROID_VERSION) \>= 12), 1)
+ifeq ($(shell expr $(CONFIG_ANDROID_VERSION) \>= 12), 1)
+ DHDCFLAGS += -DCONFIG_ANDROID_VERSION=$(CONFIG_ANDROID_VERSION)
  DHDCFLAGS += -DP2P_RAND
  DHDCFLAGS += -DSOFTAP_RAND
 #To support Android12 CDD [C-1-7] [C-1-8] [C-1-9] [C-1-10]
@@ -253,15 +254,19 @@ ifeq ($(CONFIG_ANDROID),y)
 
 # To support ACS on hostapd
 # DHDCFLAGS += -DWL_SUPPORT_ACS_OFFLOAD
-#endif
+endif
 endif
 
+# add for kernel 5.15 ifconfig wlan0 up hang
+ DHDCFLAGS += -DP2P_RAND
+ DHDCFLAGS += -DSOFTAP_RAND
+ DHDCFLAGS += -DWL_SELF_MANAGED_REGDOM
 # SoftAP
 DHDCFLAGS += -DSET_RANDOM_MAC_SOFTAP
 DHDCFLAGS += -DWL_CFG80211_ACL
 ifeq ($(CONFIG_WL_AP_IF),y)
   DHDCFLAGS += -DWL_STATIC_IF
-  DHDCFLAGS += -DDHD_NUM_STATIC_IFACES=0
+  DHDCFLAGS += -DDHD_NUM_STATIC_IFACES=1
 endif
 
 # QT support
@@ -348,10 +353,15 @@ ifneq ($(CONFIG_HAVE_IMX8_SOC),)
   	-DCONFIG_DTS \
 	-DOEM_EMBEDDED_LINUX \
 	-DPLATFORM_IMX \
-	-DSDIO_ISR_THREAD \
-	-DWL_VIF_SUPPORT
+	-DSDIO_ISR_THREAD 
+endif
+
+ifeq ($(CONFIG_SOC_ROCKCHIP),y)
+DHDCFLAGS += -DRK_SDIO_TUNE
 endif
 endif
+
+#-DPLATFORM_IMX \ #remove for read firmware log
 
 ifeq ($(CONFIG_BCMDHD_SDIOH_STD),y)
   DHDCFLAGS += -DBCMSDIOH_STD
@@ -411,7 +421,9 @@ endif
 ifeq ($(CONFIG_DHD_USE_STATIC_BUF),y)
   DHDCFLAGS += -DDHD_USE_STATIC_IOCTLBUF
 endif
-
+ifeq ($(CONFIG_BCMDHD_COHERENT_MEM_RING),y)
+DHDCFLAGS += -DDHD_USE_COHERENT_MEM_FOR_RING
+endif
 # Enable health check event handling
   DHDCFLAGS += -DDNGL_EVENT_SUPPORT
   DHDCFLAGS += -DHCHK_COMMON_SW_EVENT

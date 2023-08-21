@@ -1,8 +1,8 @@
 diff --git a/src/ap/sta_info.c b/src/ap/sta_info.c
-index 51d7884..f17cc1d 100644
+index 179cf43..05eb915 100644
 --- a/src/ap/sta_info.c
 +++ b/src/ap/sta_info.c
-@@ -36,6 +36,7 @@
+@@ -35,6 +35,7 @@
  #include "wnm_ap.h"
  #include "mbo_ap.h"
  #include "ndisc_snoop.h"
@@ -10,8 +10,8 @@ index 51d7884..f17cc1d 100644
  #include "sta_info.h"
  #include "vlan.h"
  #include "wps_hostapd.h"
-@@ -1215,6 +1216,17 @@ const char * ap_sta_wpa_get_keyid(struct hostapd_data *hapd,
- }
+@@ -1165,6 +1166,17 @@ void ap_sta_stop_sa_query(struct hostapd_data *hapd, struct sta_info *sta)
+ #endif /* CONFIG_IEEE80211W */
  
  
 +
@@ -28,16 +28,16 @@ index 51d7884..f17cc1d 100644
  void ap_sta_set_authorized(struct hostapd_data *hapd, struct sta_info *sta,
  			   int authorized)
  {
-@@ -1277,6 +1289,8 @@ void ap_sta_set_authorized(struct hostapd_data *hapd, struct sta_info *sta,
- 		wpa_msg(hapd->msg_ctx, MSG_INFO, AP_STA_CONNECTED "%s%s%s",
- 			buf, ip_addr, keyid_buf);
+@@ -1217,6 +1229,8 @@ void ap_sta_set_authorized(struct hostapd_data *hapd, struct sta_info *sta,
+ 		wpa_msg(hapd->msg_ctx, MSG_INFO, AP_STA_CONNECTED "%s%s",
+ 			buf, ip_addr);
  
 +		wifi_connected_hook(AP_STA_CONNECTED, buf);
 +
  		if (hapd->msg_ctx_parent &&
  		    hapd->msg_ctx_parent != hapd->msg_ctx)
  			wpa_msg_no_global(hapd->msg_ctx_parent, MSG_INFO,
-@@ -1285,6 +1299,8 @@ void ap_sta_set_authorized(struct hostapd_data *hapd, struct sta_info *sta,
+@@ -1225,6 +1239,8 @@ void ap_sta_set_authorized(struct hostapd_data *hapd, struct sta_info *sta,
  	} else {
  		wpa_msg(hapd->msg_ctx, MSG_INFO, AP_STA_DISCONNECTED "%s", buf);
  

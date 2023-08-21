@@ -1,0 +1,12 @@
+diff --git a/wpa_supplicant/main.c b/wpa_supplicant/main.c
+--- a/wpa_supplicant/main.c	2018-12-03 03:34:59.000000000 +0800
++++ b/wpa_supplicant/main.c	2020-04-29 13:56:51.522573472 +0800
+@@ -345,7 +345,7 @@ int main(int argc, char *argv[])
+ 		exitcode = -1;
+ 		goto out;
+ 	} else {
+-		wpa_printf(MSG_INFO, "Successfully initialized "
++		wpa_printf(MSG_DEBUG, "Successfully initialized "
+ 			   "wpa_supplicant");
+ 	}
+ 

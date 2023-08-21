@@ -2,7 +2,7 @@
  * OS Abstraction Layer Extension - the APIs defined by the "extension" API
  * are only supported by a subset of all operating systems.
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *

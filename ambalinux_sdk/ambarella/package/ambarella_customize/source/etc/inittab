@@ -28,7 +28,8 @@ null::sysinit:/bin/ln -sf /proc/self/fd/2 /dev/stderr
 ::sysinit:/etc/init.d/rcS
 
 # Put a getty on the serial port
-::respawn:-/bin/sh
+#::respawn:-/bin/sh
+ttyS4::respawn:-/sbin/getty  115200 ttyS4
 
 # ttyUSB0 on usb host.
 # ttyUSB0::respawn:-/sbin/getty  115200 ttyUSB0

@@ -1,0 +1,30 @@
+diff --git a/src/drivers/driver_nl80211.c b/src/drivers/driver_nl80211.c
+--- a/src/drivers/driver_nl80211.c	2018-12-03 03:34:59.000000000 +0800
++++ b/src/drivers/driver_nl80211.c	2020-04-29 13:58:21.910752789 +0800
+@@ -2654,7 +2654,7 @@ static void wpa_driver_nl80211_deinit(st
+ 	struct wpa_driver_nl80211_data *drv = bss->drv;
+ 	unsigned int i;
+ 
+-	wpa_printf(MSG_INFO, "nl80211: deinit ifname=%s disabled_11b_rates=%d",
++	wpa_printf(MSG_DEBUG, "nl80211: deinit ifname=%s disabled_11b_rates=%d",
+ 		   bss->ifname, drv->disabled_11b_rates);
+ 
+ 	bss->in_deinit = 1;
+@@ -10470,7 +10470,7 @@ static int nl80211_write_to_file(const c
+ 
+ 	fd = open(name, O_RDWR);
+ 	if (fd < 0) {
+-		wpa_printf(MSG_ERROR, "nl80211: Failed to open %s: %s",
++		wpa_printf(MSG_DEBUG, "nl80211: Failed to open %s: %s",
+ 			   name, strerror(errno));
+ 		return fd;
+ 	}
+@@ -10519,7 +10519,7 @@ static int nl80211_configure_data_frame_
+ 				       WPA_DATA_FRAME_FILTER_FLAG_GTK));
+ 
+ 	if (ret) {
+-		wpa_printf(MSG_ERROR,
++		wpa_printf(MSG_DEBUG,
+ 			   "nl80211: Failed to set IPv6 unicast in multicast filter");
+ 		return ret;
+ 	}

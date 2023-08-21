@@ -2,7 +2,7 @@
  * Misc utility routines for accessing chip-specific features
  * of the SiliconBackplane-based Broadcom chips.
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *
@@ -2044,6 +2044,7 @@ si_chip_hostif(si_t *sih)
 	switch (CHIPID(sih->chip)) {
 	case BCM43018_CHIP_ID:
 	case BCM43430_CHIP_ID:
+	case BCM43439_CHIP_ID:
 		hosti = CHIP_HOSTIF_SDIOMODE;
 		break;
 	case BCM43012_CHIP_ID:
@@ -3114,6 +3115,7 @@ si_socram_srmem_size(si_t *sih)
 	uint memsize = 0;
 
 	if (CHIPID(sih->chip) == BCM43430_CHIP_ID ||
+		CHIPID(sih->chip) == BCM43439_CHIP_ID ||
 		CHIPID(sih->chip) == BCM43018_CHIP_ID) {
 		return (64 * 1024);
 	}
@@ -3365,6 +3367,7 @@ si_is_sprom_available(si_t *sih)
 	switch (CHIPID(sih->chip)) {
 	case BCM43018_CHIP_ID:
 	case BCM43430_CHIP_ID:
+	case BCM43439_CHIP_ID:
 		return FALSE;
 	case BCM4335_CHIP_ID:
 	CASE_BCM4345_CHIP:
@@ -3668,6 +3671,7 @@ si_pll_closeloop(si_t *sih)
 #ifdef SAVERESTORE
 		case BCM43018_CHIP_ID:
 		case BCM43430_CHIP_ID:
+		case BCM43439_CHIP_ID:
 			if (SR_ENAB() && sr_isenab(sih)) {
 				/* read back the pll openloop state */
 				data = si_pmu_pllcontrol(sih, PMU1_PLL0_PLLCTL8, 0, 0);

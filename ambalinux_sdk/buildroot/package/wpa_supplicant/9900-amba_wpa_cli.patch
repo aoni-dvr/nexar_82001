@@ -1,17 +1,6 @@
-From 7fa78b922f7ded99f3024ef3253ebdd6181dc5e4 Mon Sep 17 00:00:00 2001
-From: "Sam Ho (chho)" <chho@ambarella.com>
-Date: Thu, 21 Jan 2021 16:37:22 +0800
-Subject: [PATCH] 9900
-
----
- wpa_supplicant/wpa_cli.c | 30 ++++++++++++++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
-
-diff --git a/wpa_supplicant/wpa_cli.c b/wpa_supplicant/wpa_cli.c
-index 43ac427..e7ee653 100644
---- a/wpa_supplicant/wpa_cli.c
-+++ b/wpa_supplicant/wpa_cli.c
-@@ -54,6 +54,7 @@ static const char *pid_file = NULL;
+--- wpa_supplicant-2.7/wpa_supplicant/wpa_cli.c	2018-12-03 03:34:59.000000000 +0800
++++ wpa_supplicant-2.7_new/wpa_supplicant/wpa_cli.c	2021-03-01 15:15:22.741735350 +0800
+@@ -53,6 +53,7 @@ static const char *pid_file = NULL;
  static const char *action_file = NULL;
  static int ping_interval = 5;
  static int interactive = 0;
@@ -19,7 +8,7 @@ index 43ac427..e7ee653 100644
  static char *ifname_prefix = NULL;
  
  static DEFINE_DL_LIST(bsses); /* struct cli_txt_entry */
-@@ -91,6 +92,7 @@ static void usage(void)
+@@ -89,6 +90,7 @@ static void usage(void)
  	       "  -a = run in daemon mode executing the action file based on "
  	       "events from\n"
  	       "       wpa_supplicant\n"
@@ -27,7 +16,15 @@ index 43ac427..e7ee653 100644
  	       "  -B = run a daemon in the background\n"
  	       "  default path: " CONFIG_CTRL_IFACE_DIR "\n"
  	       "  default interface: first interface found in socket path\n");
-@@ -3991,6 +3993,9 @@ static void wpa_cli_action_process(const char *msg)
+@@ -2394,6 +2396,7 @@ static char ** wpa_cli_complete_p2p_set(
+ 		"managed",
+ 		"listen_channel",
+ 		"ssid_postfix",
++		"passphrase",
+ 		"noa",
+ 		"ps",
+ 		"oppps",
+@@ -3927,6 +3930,9 @@ static void wpa_cli_action_process(const
  		wpa_cli_exec(action_file, ctrl_ifname, pos);
  	} else if (str_starts(pos, MESH_PEER_DISCONNECTED)) {
  		wpa_cli_exec(action_file, ctrl_ifname, pos);
@@ -37,23 +34,23 @@ index 43ac427..e7ee653 100644
  	} else if (str_starts(pos, P2P_EVENT_GROUP_STARTED)) {
  		wpa_cli_exec(action_file, ifname, pos);
  	} else if (str_starts(pos, P2P_EVENT_GROUP_REMOVED)) {
-@@ -4040,6 +4045,8 @@ static void wpa_cli_action_process(const char *msg)
+@@ -3960,6 +3966,8 @@ static void wpa_cli_action_process(const
  	} else if (str_starts(pos, WPA_EVENT_TERMINATING)) {
  		printf("wpa_supplicant is terminating - stop monitoring\n");
  		wpa_cli_quit = 1;
-+	} else {
-+		syslog(0, "%s:%s", __func__, pos);
++	//} else {
++		//syslog(0, "%s:%s", __func__, pos);
  	}
  }
  
-@@ -4209,8 +4216,13 @@ static void wpa_cli_recv_pending(struct wpa_ctrl *ctrl, int action_monitor)
+@@ -4093,8 +4101,13 @@ static void wpa_cli_recv_pending(struct
  		size_t len = sizeof(buf) - 1;
  		if (wpa_ctrl_recv(ctrl, buf, &len) == 0) {
  			buf[len] = '\0';
 -			if (action_monitor)
 +			if (action_monitor) {
 +				if (scan_autoquit && (NULL != strstr(buf, WPA_EVENT_SCAN_RESULTS))) {
-+					syslog(0, "%s %s", __func__, buf);
++					//syslog(0, "%s %s", __func__, buf);
 +					eloop_terminate();
 +				}
  				wpa_cli_action_process(buf);
@@ -61,7 +58,7 @@ index 43ac427..e7ee653 100644
  			else {
  				cli_event(buf);
  				if (wpa_cli_show_event(buf)) {
-@@ -4655,10 +4667,14 @@ int main(int argc, char *argv[])
+@@ -4540,10 +4553,14 @@ int main(int argc, char *argv[])
  		return -1;
  
  	for (;;) {
@@ -77,7 +74,7 @@ index 43ac427..e7ee653 100644
  		case 'a':
  			action_file = optarg;
  			break;
-@@ -4737,11 +4753,21 @@ int main(int argc, char *argv[])
+@@ -4652,11 +4669,21 @@ int main(int argc, char *argv[])
  		if (daemonize && os_daemonize(pid_file) && eloop_sock_requeue())
  			return -1;
  
@@ -99,6 +96,3 @@ index 43ac427..e7ee653 100644
  	}
  
  	os_free(ctrl_ifname);
--- 
-2.7.4
-

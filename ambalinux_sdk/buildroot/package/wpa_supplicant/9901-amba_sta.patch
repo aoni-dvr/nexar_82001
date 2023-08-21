@@ -1,0 +1,39 @@
+--- wpa_supplicant-2.7/wpa_supplicant/ctrl_iface.c	2018-12-03 03:34:59.000000000 +0800
++++ wpa_supplicant-2.7_new/wpa_supplicant/ctrl_iface.c	2021-03-01 15:16:30.201966145 +0800
+@@ -2793,6 +2793,7 @@ static int wpa_supplicant_ctrl_iface_sca
+ 	char *pos, *end;
+ 	int ret;
+ 	const u8 *ie, *ie2, *osen_ie, *p2p, *mesh, *owe;
++	char ssid_txt[32 * 4 + 1];
+ 
+ 	mesh = wpa_bss_get_ie(bss, WLAN_EID_MESH_ID);
+ 	p2p = wpa_bss_get_vendor_ie(bss, P2P_IE_VENDOR_TYPE);
+@@ -2912,9 +2913,15 @@ static int wpa_supplicant_ctrl_iface_sca
+ 		pos += ret;
+ 	}
+ #endif /* CONFIG_FST */
+-
++#if 0
+ 	ret = os_snprintf(pos, end - pos, "\t%s",
+ 			  wpa_ssid_txt(bss->ssid, bss->ssid_len));
++#else
++	/* Added by Ambarella for script Chinese SSID grep-able */
++	os_snprintf(ssid_txt, bss->ssid_len + 1, "%s", bss->ssid);
++	ret = os_snprintf(pos, end - pos, "\t%s",
++			  ssid_txt);
++#endif
+ 	if (os_snprintf_error(end - pos, ret))
+ 		return -1;
+ 	pos += ret;
+@@ -6575,6 +6582,11 @@ static int p2p_ctrl_set(struct wpa_suppl
+ 					    os_strlen(param));
+ 	}
+ 
++	if (os_strcmp(cmd, "passphrase") == 0) {
++		return p2p_set_passphrase(wpa_s->global->p2p, (u8 *) param,
++					    os_strlen(param));
++	}
++
+ 	if (os_strcmp(cmd, "noa") == 0) {
+ 		char *pos;
+ 		int count, start, duration;

@@ -3,7 +3,7 @@
  *     export functions to client drivers
  *     abstract OS and BUS specific details of SDIO
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *
@@ -238,6 +238,7 @@ extern int bcmsdh_oob_intr_register(bcmsdh_info_t *bcmsdh, bcmsdh_cb_fn_t oob_ir
 extern void bcmsdh_oob_intr_unregister(bcmsdh_info_t *sdh);
 extern void bcmsdh_oob_intr_set(bcmsdh_info_t *sdh, bool enable);
 #endif /* defined(OOB_INTR_ONLY) || defined(BCMSPI_ANDROID) */
+extern void *bcmsdh_get_dev(bcmsdh_info_t *sdh);
 extern void bcmsdh_dev_pm_stay_awake(bcmsdh_info_t *sdh);
 extern void bcmsdh_dev_relax(bcmsdh_info_t *sdh);
 extern bool bcmsdh_dev_pm_enabled(bcmsdh_info_t *sdh);

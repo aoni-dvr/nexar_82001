@@ -1,7 +1,7 @@
 /*
  * otpdefs.h SROM/OTP definitions.
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright 2016 Broadcom
  *

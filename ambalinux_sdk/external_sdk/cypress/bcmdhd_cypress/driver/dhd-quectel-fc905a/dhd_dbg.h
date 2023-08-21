@@ -1,7 +1,7 @@
 /*
  * Debug/trace/assert driver definitions for Dongle Host Driver.
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *
@@ -366,7 +366,7 @@ do {	\
 #define DHD_BLOG(cp, size)
 
 #define DHD_NONE(args)
-extern int dhd_msg_level;
+extern uint dhd_msg_level;
 #ifdef DHD_LOG_PRINT_RATE_LIMIT
 extern int log_print_threshold;
 #endif /* DHD_LOG_PRINT_RATE_LIMIT */

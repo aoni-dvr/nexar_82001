@@ -1,7 +1,7 @@
 /*
  * Broadcom Dongle Host Driver (DHD), common DHD core.
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *
@@ -116,7 +116,7 @@
 #ifdef DHD_LOG_PRINT_RATE_LIMIT
 int log_print_threshold = 0;
 #endif /* DHD_LOG_PRINT_RATE_LIMIT */
-int dhd_msg_level = DHD_ERROR_VAL | DHD_FWLOG_VAL;// | DHD_EVENT_VAL
+uint dhd_msg_level = DHD_ERROR_VAL | DHD_FWLOG_VAL; //| DHD_EVENT_VAL
 	/* For CUSTOMER_HW4 do not enable DHD_IOVAR_MEM_VAL by default */
 #if !defined(BOARD_HIKEY)
 	//| DHD_IOVAR_MEM_VAL
@@ -141,6 +141,12 @@ int dhd_msg_level = DHD_ERROR_VAL | DHD_FWLOG_VAL;// | DHD_EVENT_VAL
 #ifdef DHD_PCIE_NATIVE_RUNTIMEPM
 #include <linux/pm_runtime.h>
 #endif /* DHD_PCIE_NATIVE_RUNTIMEPM */
+
+#ifdef WL11AX
+#include "wl_twt.h"
+#endif /* WL11AX */
+
+#include <bcmiov.h>
 
 #ifdef SOFTAP
 char fw_path2[MOD_PARAM_PATHLEN];
@@ -3667,11 +3673,11 @@ wl_process_host_event(dhd_pub_t *dhd_pub, int *ifidx, void *pktdata, uint pktlen
 #endif /* BCMSDIO */
 #ifdef WL11AX
 	case WLC_E_TWT_SETUP:
-		DHD_EVENT(("%s: WLC_E_TWT_SETUP event received \n", __FUNCTION__));
-		break;
-
 	case WLC_E_TWT_TEARDOWN:
-		DHD_EVENT(("%s: WLC_E_TWT_TEARDOWN event received \n", __FUNCTION__));
+		DHD_EVENT(("%s: %u event received\n", __FUNCTION__, type));
+		if (wl_twt_event(dhd_pub, event, event_data)) {
+			DHD_ERROR(("%s: TWT event handling failure\n", __FUNCTION__));
+		}
 		break;
 #endif /* WL11AX */
 	case WLC_E_LINK:
@@ -5843,8 +5849,14 @@ dhd_parse_logstrs_file(osl_t *osh, char *raw_fmts, int logstrs_size,
 	int32 i = 0;
 	uint8 *pfw_id = NULL;
 	uint32 fwid = 0;
+#ifdef DHD_SUPPORT_REQFW_FOR_EVTLOG
+	const struct firmware *fw = NULL;
+	int err = 0;
+	uint fwid_size = 0;
+#else	/* DHD_SUPPORT_REQFW_FOR_EVTLOG */
 	void *file = NULL;
 	int file_len = 0;
+#endif	/* DHD_SUPPORT_REQFW_FOR_EVTLOG */
 	char fwid_str[FWID_STR_LEN];
 	uint32 hdr_logstrs_size = 0;
 
@@ -5876,7 +5888,20 @@ dhd_parse_logstrs_file(osl_t *osh, char *raw_fmts, int logstrs_size,
 			/* For ver. 2 of the header, need to match fwid of
 			 *  both logstrs.bin and fw bin
 			 */
-
+#ifdef DHD_SUPPORT_REQFW_FOR_EVTLOG
+			if (dhd_os_open_reqfw(&fw, st_str_file_path)) {
+				goto error;
+			}
+			memset(fwid_str, 0, sizeof(fwid_str));
+			fwid_size = sizeof(fwid_str) - 1;
+			err = memcpy_s(fwid_str, fwid_size, &(fw->data[fw->size - fwid_size]),
+				fwid_size);
+			if (err) {
+				DHD_ERROR(("%s: failed to copy data, err=%d\n",
+					__FUNCTION__, err));
+				goto error;
+			}
+#else	/* DHD_SUPPORT_REQFW_FOR_EVTLOG */
 			/* read the FWID from fw bin */
 			file = dhd_os_open_image1(NULL, st_str_file_path);
 			if (!file) {
@@ -5899,6 +5924,7 @@ dhd_parse_logstrs_file(osl_t *osh, char *raw_fmts, int logstrs_size,
 				DHD_ERROR(("%s: read fw file failed !\n", __FUNCTION__));
 				goto error;
 			}
+#endif	/* DHD_SUPPORT_REQFW_FOR_EVTLOG */
 			pfw_id = (uint8 *)bcmstrnstr(fwid_str, sizeof(fwid_str) - 1,
 					FWID_STR_1, strlen(FWID_STR_1));
 			if (!pfw_id) {
@@ -5936,9 +5962,14 @@ dhd_parse_logstrs_file(osl_t *osh, char *raw_fmts, int logstrs_size,
 			hdr_logstrs_size = hdr->logstrs_size;
 
 error:
+#ifdef DHD_SUPPORT_REQFW_FOR_EVTLOG
+			if (fw)
+				release_firmware(fw);
+#else	/* DHD_SUPPORT_REQFW_FOR_EVTLOG */
 			if (file) {
 				dhd_os_close_image1(NULL, file);
 			}
+#endif /* DHD_SUPPORT_REQFW_FOR_EVTLOG */
 			if (match_fail) {
 				return BCME_DECERR;
 			}
@@ -6007,6 +6038,11 @@ int dhd_parse_map_file(osl_t *osh, void *file, uint32 *ramstart, uint32 *rodata_
 	char * cptr = NULL;
 	char c;
 	uint8 count = 0;
+#ifdef DHD_SUPPORT_REQFW_FOR_EVTLOG
+	const struct firmware *fw = file;
+	uint32 offset = 0;
+	uint32 size = (uint32)fw->size;
+#endif	/* DHD_SUPPORT_REQFW_FOR_EVTLOG */
 
 	*ramstart = 0;
 	*rodata_start = 0;
@@ -6022,12 +6058,25 @@ int dhd_parse_map_file(osl_t *osh, void *file, uint32 *ramstart, uint32 *rodata_
 	/* read ram start, rodata_start and rodata_end values from map  file */
 	while (count != ALL_MAP_VAL)
 	{
+#ifdef DHD_SUPPORT_REQFW_FOR_EVTLOG
+		if ((offset + read_size) > size) {
+			read_size = size - offset;
+		}
+
+		error = memcpy_s(raw_fmts, read_size, ((char *)(fw->data) + offset), read_size);
+
+		if (error) {
+			DHD_ERROR(("%s: Failed to copy data, err=%d\n", __FUNCTION__, error));
+			goto fail;
+		}
+#else	/* DHD_SUPPORT_REQFW_FOR_EVTLOG */
 		error = dhd_os_read_file(file, raw_fmts, read_size);
 		if (error < 0) {
 			DHD_ERROR(("%s: map file read failed err:%d \n", __FUNCTION__,
 					error));
 			goto fail;
 		}
+#endif	/* DHD_SUPPORT_REQFW_FOR_EVTLOG */
 
 		/* End raw_fmts with NULL as strstr expects NULL terminated strings */
 		raw_fmts[read_size] = '\0';
@@ -6062,6 +6111,13 @@ int dhd_parse_map_file(osl_t *osh, void *file, uint32 *ramstart, uint32 *rodata_
 			count |= RDEND_BIT;
 		}
 
+#ifdef DHD_SUPPORT_REQFW_FOR_EVTLOG
+		if ((offset + read_size) >= size) {
+			break;
+		}
+		memset(raw_fmts, 0, read_size);
+		offset += (read_size - GO_BACK_FILE_POS_NUM_BYTES);
+#else	/* DHD_SUPPORT_REQFW_FOR_EVTLOG */
 		if (error < (int)read_size) {
 			/*
 			* since we reset file pos back to earlier pos by
@@ -6078,6 +6134,7 @@ int dhd_parse_map_file(osl_t *osh, void *file, uint32 *ramstart, uint32 *rodata_
 		* the string and  addr even if it comes as splited in next read.
 		*/
 		dhd_os_seek_file(file, -GO_BACK_FILE_POS_NUM_BYTES);
+#endif	/* DHD_SUPPORT_REQFW_FOR_EVTLOG */
 	}
 
 fail:
@@ -7852,3 +7909,87 @@ dhd_control_he_enab(dhd_pub_t * dhd, uint8 he_enab)
 	return ret;
 }
 #endif /* DISABLE_HE_ENAB || CUSTOM_CONTROL_HE_ENAB */
+
+#ifdef CUSTOM_CONTROL_MBO_DISABLE
+int
+dhd_control_mbo_enab(dhd_pub_t * dhd, uint8 enable)
+{
+	int ret = BCME_OK;
+	uint8 *pxtlv_data = NULL;
+	bcm_iov_buf_t *iov_buf = NULL;
+	uint8 buf_xtlv[WLC_IOCTL_SMLEN] = {0x0};
+	uint16 buflen = 0, buflen_start = 0;
+
+	iov_buf = (bcm_iov_buf_t *)buf_xtlv;
+	iov_buf->version = WL_MBO_IOV_VERSION;
+	iov_buf->id = WL_MBO_CMD_ENABLE;
+
+	pxtlv_data = (uint8 *)&iov_buf->data[0];
+	buflen = buflen_start = WLC_IOCTL_SMLEN - sizeof(bcm_iov_buf_t);
+
+	ret = bcm_pack_xtlv_entry(&pxtlv_data, &buflen, WL_MBO_XTLV_ENABLE,
+	                sizeof(enable), &enable, BCM_XTLV_OPTION_ALIGN32);
+
+	if (ret != BCME_OK) {
+		ret = -EINVAL;
+		DHD_ERROR(("%s failed to pack mbo enab, err: %s\n",
+		           __FUNCTION__, bcmerrorstr(ret)));
+	        return ret;
+	}
+
+	iov_buf->len = buflen_start - buflen;
+
+	ret = dhd_iovar(dhd, 0, "mbo", (char *)&buf_xtlv, sizeof(buf_xtlv), NULL, 0, TRUE);
+
+	if (ret < 0) {
+		DHD_ERROR(("%s mbo_enab (%d) set failed, err: %s\n",
+		           __FUNCTION__, enable, bcmerrorstr(ret)));
+	} else {
+	        DHD_ERROR(("%s mbo_enab (%d) set successed\n", __FUNCTION__, enable));
+	}
+
+	return ret;
+}
+#endif /* CUSTOM_CONTROL_MBO_DISABLE */
+
+#ifdef CUSTOM_CONTROL_OCE_DISABLE
+int
+dhd_control_oce_enab(dhd_pub_t * dhd, uint8 enable)
+{
+	int ret = BCME_OK;
+	uint8 *pxtlv_data = NULL;
+	bcm_iov_buf_t *iov_buf = NULL;
+	uint8 buf_xtlv[WLC_IOCTL_SMLEN] = {0x0};
+	uint16 buflen = 0, buflen_start = 0;
+
+	iov_buf = (bcm_iov_buf_t *)buf_xtlv;
+	iov_buf->version = WL_OCE_IOV_VERSION;
+	iov_buf->id = WL_OCE_CMD_ENABLE;
+
+	pxtlv_data = (uint8 *)&iov_buf->data[0];
+	buflen = buflen_start = WLC_IOCTL_SMLEN - sizeof(bcm_iov_buf_t);
+
+	ret = bcm_pack_xtlv_entry(&pxtlv_data, &buflen, WL_OCE_XTLV_ENABLE,
+	                sizeof(enable), &enable, BCM_XTLV_OPTION_ALIGN32);
+
+	if (ret != BCME_OK) {
+		ret = -EINVAL;
+		DHD_ERROR(("%s failed to pack oce enab, err: %s\n",
+		           __FUNCTION__, bcmerrorstr(ret)));
+	        return ret;
+	}
+
+	iov_buf->len = buflen_start - buflen;
+
+	ret = dhd_iovar(dhd, 0, "oce", (char *)&buf_xtlv, sizeof(buf_xtlv), NULL, 0, TRUE);
+
+	if (ret < 0) {
+		DHD_ERROR(("%s oce_enab (%d) set failed, err: %s\n",
+		           __FUNCTION__, enable, bcmerrorstr(ret)));
+	} else {
+	        DHD_ERROR(("%s oce_enab (%d) set successed\n", __FUNCTION__, enable));
+	}
+
+	return ret;
+}
+#endif /* CUSTOM_CONTROL_OCE_DISABLE */

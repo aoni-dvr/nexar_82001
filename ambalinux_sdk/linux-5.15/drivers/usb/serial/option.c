@@ -262,6 +262,7 @@ static void option_instat_callback(struct urb *urb);
 #define QUECTEL_PRODUCT_RM500K			0x7001
 #define QUECTEL_PRODUCT_EG95			0x0195
 #define QUECTEL_PRODUCT_EG915Q			0x6007
+#define QUECTEL_PRODUCT_EG915N			0x6002
 
 #define CMOTECH_VENDOR_ID			0x16d8
 #define CMOTECH_PRODUCT_6001			0x6001
@@ -603,6 +604,7 @@ static void option_instat_callback(struct urb *urb);
 
 
 static const struct usb_device_id option_ids[] = {
+	{ USB_DEVICE(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_EG915N) },
 	{ USB_DEVICE(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_EG915Q) },
 	{ USB_DEVICE(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_EG95) },
 	{ USB_DEVICE(OPTION_VENDOR_ID, OPTION_PRODUCT_COLT) },

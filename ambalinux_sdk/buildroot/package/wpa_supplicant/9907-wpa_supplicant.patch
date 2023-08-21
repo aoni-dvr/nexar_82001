@@ -1,0 +1,14 @@
+diff --git a/wpa_supplicant/wpa_supplicant.c b/wpa_supplicant/wpa_supplicant.c
+--- a/wpa_supplicant/wpa_supplicant.c	2018-12-03 03:34:59.000000000 +0800
++++ b/wpa_supplicant/wpa_supplicant.c	2020-04-29 17:28:32.146625912 +0800
+@@ -5781,8 +5781,8 @@ static void wpa_supplicant_deinit_iface(
+ 	if (notify)
+ 		wpas_notify_iface_removed(wpa_s);
+ 
+-	if (terminate)
+-		wpa_msg(wpa_s, MSG_INFO, WPA_EVENT_TERMINATING);
++	//if (terminate)
++		//wpa_msg(wpa_s, MSG_INFO, WPA_EVENT_TERMINATING);
+ 
+ 	if (wpa_s->ctrl_iface) {
+ 		wpa_supplicant_ctrl_iface_deinit(wpa_s->ctrl_iface);

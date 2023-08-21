@@ -4,7 +4,7 @@
  * Provides type definitions and function prototypes used to link the
  * DHD OS, bus, and protocol modules.
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *
@@ -827,8 +827,8 @@ extern void copy_debug_dump_time(char *dest, char *src);
 #define DHD_COMMON_DUMP_PATH	"/data/misc/wifi/"
 #elif defined(OEM_ANDROID) && (defined(BOARD_PANDA) || defined(__ARM_ARCH_7A__))
 #define DHD_COMMON_DUMP_PATH	"/data/vendor/wifi/"
-#elif defined(OEM_ANDROID) /* For Brix Live Image */
-#define DHD_COMMON_DUMP_PATH	"/installmedia/"
+#elif defined(OEM_ANDROID)  	/* For other Android platforms such as Brix Live Image */
+#define DHD_COMMON_DUMP_PATH	"/data/vendor/wifi/wifi_dumps/"
 #else /* Default */
 #define DHD_COMMON_DUMP_PATH	"/root/"
 #endif // endif
@@ -1424,6 +1424,9 @@ typedef struct dhd_pub {
 #ifdef REVERSE_AIFSN
 	bool aifsn_reverse;
 #endif /* REVERSE_AIFSN */
+#ifdef WL11AX
+	void *twt_ctx;
+#endif /* WL11AX */
 } dhd_pub_t;
 
 typedef struct {
@@ -2200,7 +2203,8 @@ typedef struct {
 
 #ifdef KEEP_ALIVE
 extern int dhd_dev_start_mkeep_alive(dhd_pub_t *dhd_pub, uint8 mkeep_alive_id, uint8 *ip_pkt,
-	uint16 ip_pkt_len, uint8* src_mac_addr, uint8* dst_mac_addr, uint32 period_msec);
+	uint16 ip_pkt_len, uint8* src_mac_addr, uint8* dst_mac_addr, uint32 period_msec,
+	uint16 ether_type);
 extern int dhd_dev_stop_mkeep_alive(dhd_pub_t *dhd_pub, uint8 mkeep_alive_id);
 #endif /* KEEP_ALIVE */
 
@@ -3484,6 +3488,13 @@ extern void dhd_set_tid_based_on_uid(dhd_pub_t *dhdp, void *pkt);
 extern int dhd_control_he_enab(dhd_pub_t * dhd, uint8 he_enab);
 extern uint8 control_he_enab;
 #endif /* DISABLE_HE_ENAB  || CUSTOM_CONTROL_HE_ENAB */
+
+#ifdef CUSTOM_CONTROL_MBO_DISABLE
+extern int dhd_control_mbo_enab(dhd_pub_t * dhd, uint8 mbo_enab);
+#endif /* CUSTOM_CONTROL_MBO_DISABLE */
+#ifdef CUSTOM_CONTROL_OCE_DISABLE
+extern int dhd_control_oce_enab(dhd_pub_t * dhd, uint8 oce_enab);
+#endif /* CUSTOM_CONTROL_OCE_DISABLE */
 
 #if defined(BCMSDIO)
 void dhd_set_role(dhd_pub_t *dhdp, int role, int bssidx);

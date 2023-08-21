@@ -4,7 +4,7 @@
  *
  * Definitions subject to change without notice.
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *
@@ -2368,7 +2368,7 @@
 #define VS_EMPTY_ACTION 0xac
 
 #define H2_OCL_RSSI_DELTA	10	/* hysteresis rssi delta */
-#define	H2_OCL_RSSI_THRESHOLD	-80	/**< Low value, e.g. for forcing roam */
+#define	H2_OCL_RSSI_THRESHOLD	-70	/**< Low value, e.g. for forcing roam */
 #define	H2_OCL_RSSI_INVALID	0	/* invalid RSSI value */
 #define H2_OCL_DISABLED_RSSI	0x02   /* Disabled because of ocl_rssi_threshold */
 

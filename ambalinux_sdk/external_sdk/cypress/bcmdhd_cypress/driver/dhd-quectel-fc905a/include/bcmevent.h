@@ -3,7 +3,7 @@
  *
  * Dependencies: bcmeth.h
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *
@@ -313,9 +313,10 @@ typedef union bcm_event_msg_u {
 #define WLC_E_DLTRO         193     /*   DHCP lease time renew offload */
 #define WLC_E_OVERTEMP			194	/* Overtemp notification */
 #define WLC_E_TWT_TEARDOWN		195	/* TWT Teardown Complete Event */
-#define WLC_E_LAST			196	/* highest val + 1 for range checking */
-#if (WLC_E_LAST > 196)
-#error "WLC_E_LAST: Invalid value for last event; must be <= 196."
+#define WLC_E_EXT_ASSOC_FRAME_RX 	196     /* association requeste received */
+#define WLC_E_LAST			197	/* highest val + 1 for range checking */
+#if (WLC_E_LAST > 197)
+#error "WLC_E_LAST: Invalid value for last event; must be <= 197."
 #endif /* WLC_E_LAST */
 
 /* define an API for getting the string name of an event */

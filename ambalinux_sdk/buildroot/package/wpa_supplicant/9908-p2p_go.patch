@@ -1,0 +1,80 @@
+diff -uprN wpa_supplicant-2.7/src/p2p/p2p.c wpa_supplicant-2.7_new/src/p2p/p2p.c
+--- wpa_supplicant-2.7/src/p2p/p2p.c	2018-12-03 03:34:59.000000000 +0800
++++ wpa_supplicant-2.7_new/src/p2p/p2p.c	2021-03-04 09:33:40.938720478 +0800
+@@ -1780,10 +1780,13 @@ void p2p_add_dev_info(struct p2p_data *p
+ void p2p_build_ssid(struct p2p_data *p2p, u8 *ssid, size_t *ssid_len)
+ {
+ 	os_memcpy(ssid, P2P_WILDCARD_SSID, P2P_WILDCARD_SSID_LEN);
+-	p2p_random((char *) &ssid[P2P_WILDCARD_SSID_LEN], 2);
+-	os_memcpy(&ssid[P2P_WILDCARD_SSID_LEN + 2],
++	//p2p_random((char *) &ssid[P2P_WILDCARD_SSID_LEN], 2);
++	//os_memcpy(&ssid[P2P_WILDCARD_SSID_LEN + 2],
++		  //p2p->cfg->ssid_postfix, p2p->cfg->ssid_postfix_len);
++	//*ssid_len = P2P_WILDCARD_SSID_LEN + 2 + p2p->cfg->ssid_postfix_len;
++	os_memcpy(&ssid[P2P_WILDCARD_SSID_LEN],
+ 		  p2p->cfg->ssid_postfix, p2p->cfg->ssid_postfix_len);
+-	*ssid_len = P2P_WILDCARD_SSID_LEN + 2 + p2p->cfg->ssid_postfix_len;
++	*ssid_len = P2P_WILDCARD_SSID_LEN + p2p->cfg->ssid_postfix_len;
+ }
+ 
+ 
+@@ -1797,7 +1800,8 @@ int p2p_go_params(struct p2p_data *p2p,
+ 	}
+ 	p2p->ssid_set = 0;
+ 
+-	p2p_random(params->passphrase, p2p->cfg->passphrase_len);
++	//p2p_random(params->passphrase, p2p->cfg->passphrase_len);
++	memcpy(params->passphrase, p2p->cfg->passphrase, p2p->cfg->passphrase_len);
+ 	return 0;
+ }
+ 
+@@ -1829,7 +1833,8 @@ void p2p_go_complete(struct p2p_data *p2
+ 					       p2p->op_channel);
+ 		os_memcpy(res.ssid, p2p->ssid, p2p->ssid_len);
+ 		res.ssid_len = p2p->ssid_len;
+-		p2p_random(res.passphrase, p2p->cfg->passphrase_len);
++		//p2p_random(res.passphrase, p2p->cfg->passphrase_len);		
++		memcpy(res.passphrase, p2p->cfg->passphrase, p2p->cfg->passphrase_len);
+ 	} else {
+ 		res.freq = peer->oper_freq;
+ 		if (p2p->ssid_len) {
+@@ -4824,6 +4829,19 @@ int p2p_set_ssid_postfix(struct p2p_data
+ 	return 0;
+ }
+ 
++int p2p_set_passphrase(struct p2p_data *p2p, const u8 *passphrase, size_t len)
++{
++	if (passphrase == NULL) {
++		p2p->cfg->passphrase_len = 0;
++		return 0;
++	}
++	p2p_dbg(p2p, "New Passphrase: %s", passphrase);
++	if (len > sizeof(p2p->cfg->passphrase))
++		return -1;
++	os_memcpy(p2p->cfg->passphrase, passphrase, len);
++	p2p->cfg->passphrase_len = len;
++	return 0;
++}
+ 
+ int p2p_set_oper_channel(struct p2p_data *p2p, u8 op_reg_class, u8 op_channel,
+ 			 int cfg_op_channel)
+diff -uprN wpa_supplicant-2.7/src/p2p/p2p.h wpa_supplicant-2.7_new/src/p2p/p2p.h
+--- wpa_supplicant-2.7/src/p2p/p2p.h	2021-03-01 14:44:16.802220515 +0800
++++ wpa_supplicant-2.7_new/src/p2p/p2p.h	2021-03-01 14:46:21.649438950 +0800
+@@ -573,6 +573,7 @@ struct p2p_config {
+ 	 * This parameter controls the length of the random passphrase that is
+ 	 * generated at the GO.
+ 	 */
++	u8 passphrase[64];
+ 	unsigned int passphrase_len;
+ 
+ 	/**
+@@ -2021,6 +2022,8 @@ u8 p2p_get_listen_channel(struct p2p_dat
+ 
+ int p2p_set_ssid_postfix(struct p2p_data *p2p, const u8 *postfix, size_t len);
+ 
++int p2p_set_passphrase(struct p2p_data *p2p, const u8 *passphrase, size_t len);
++
+ int p2p_get_interface_addr(struct p2p_data *p2p, const u8 *dev_addr,
+ 			   u8 *iface_addr);
+ int p2p_get_dev_addr(struct p2p_data *p2p, const u8 *iface_addr,

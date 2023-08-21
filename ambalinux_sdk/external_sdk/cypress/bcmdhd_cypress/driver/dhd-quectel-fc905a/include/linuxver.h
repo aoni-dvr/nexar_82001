@@ -2,7 +2,7 @@
  * Linux-specific abstractions to gain some independence from linux kernel versions.
  * Pave over some 2.2 versus 2.4 versus 2.6 kernel differences.
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *
@@ -880,6 +880,53 @@ static inline struct inode *file_inode(const struct file *f)
 }
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3, 9, 0)) */
 
+/* Android GKI kernel does not allow direct file access by driver. */
+#ifdef DHD_DENY_DIRECT_FS_ACCESS
+static inline
+ssize_t __kernel_does_not_allow_write(struct file *file,
+                                      const char __user *buf,
+                                      size_t count, loff_t *pos) {
+	return -EPERM;
+}
+static inline
+ssize_t __kernel_does_not_allow_read(struct file *file,
+                                     char __user *buf,
+                                     size_t count, loff_t *pos) {
+	return -EPERM;
+}
+static inline
+int __kernel_does_not_allow_unlink(struct user_namespace *mnt_userns,
+                                   struct inode *dir,
+                                   struct dentry *dentry,
+                                   struct inode **delegated_inode) {
+	return -EPERM;
+}
+static inline
+int __kernel_does_not_allow_kern_path(const char *name,
+                                      unsigned flag, struct path *path) {
+	return -EPERM;
+}
+static inline
+struct file *__kernel_does_not_allow_filp_open(const char *filename,
+                                               int flags, umode_t mode) {
+	return ERR_PTR(-EPERM);
+}
+
+#define vfs_read(fp, buf, len, pos) __kernel_does_not_allow_read(fp, buf, len, pos)
+#define vfs_write(fp, buf, len, pos) __kernel_does_not_allow_write(fp, buf, len, pos)
+#define kernel_read(fp, buf, len, pos) __kernel_does_not_allow_read(fp, buf, len, pos)
+#define kernel_write(fp, buf, len, pos) __kernel_does_not_allow_read(fp, buf, len, pos)
+
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 13, 0))
+#define vfs_unlink(a, b)  __kernel_does_not_allow_unlink(a, b, 0, NULL)
+#elif (LINUX_VERSION_CODE < KERNEL_VERSION(5, 12, 0))
+#define vfs_unlink(a, b, c)  __kernel_does_not_allow_unlink(NULL, a, b, c)
+#else
+#define vfs_unlink(a, b, c, d)  __kernel_does_not_allow_unlink(a, b, c, d)
+#endif // endif
+#define kern_path(a, b, c)  __kernel_does_not_allow_kern_path(a, b, c)
+#define filp_open(a, b, c)  __kernel_does_not_allow_filp_open(a, b, c)
+#else
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 14, 0)
 #define vfs_write(fp, buf, len, pos) kernel_write(fp, buf, len, pos)
 #define vfs_read(fp, buf, len, pos) kernel_read(fp, buf, len, pos)
@@ -887,6 +934,7 @@ int kernel_read_compat(struct file *file, loff_t offset, char *addr, unsigned lo
 #else /* LINUX_VERSION_CODE >= KERNEL_VERSION(4, 14, 0) */
 #define kernel_read_compat(file, offset, addr, count) kernel_read(file, offset, addr, count)
 #endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(4, 14, 0) */
+#endif /* DHD_SUPPORT_ANDROID_GKI_KERNEL */
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(3, 17, 0)
 #define timespec64 timespec
@@ -894,8 +942,8 @@ int kernel_read_compat(struct file *file, loff_t offset, char *addr, unsigned lo
 #define ktime_to_timespec64(timespec) ktime_to_timespec(timespec)
 #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3, 17, 0) */
 
-#if 0//LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
-#define rtc_time_to_tm(time, tm) rtc_time64_to_tm(time, tm)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
+//#define rtc_time_to_tm(time, tm) rtc_time64_to_tm(time, tm)
 #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(5, 6, 0) */
 
 #endif /* _linuxver_h_ */

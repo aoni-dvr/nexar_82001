@@ -7,7 +7,7 @@
  *
  * $Id: sbchipc.h 701163 2017-05-23 22:21:03Z $
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *

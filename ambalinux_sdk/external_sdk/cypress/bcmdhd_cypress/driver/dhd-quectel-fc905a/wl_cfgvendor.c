@@ -1,7 +1,7 @@
 /*
  * Linux cfg80211 Vendor Extension Code
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *
@@ -1474,7 +1474,7 @@ exit:
 	}
 	return ret;
 }
-#elif 0//se
+#else
 static int
 wl_cfgvendor_get_wake_reason_stats(struct wiphy *wiphy,
         struct wireless_dev *wdev, const void *data, int len)
@@ -7474,29 +7474,29 @@ static int wl_cfgvendor_priv_band(struct wiphy *wiphy,
 static int wl_cfgvendor_priv_muedca_opt_enable(struct wiphy *wiphy,
                 struct wireless_dev *wdev, const void *data, int len)
 {
-        int ret = BCME_OK;
-        uint val = *(uint *)data;
-        struct net_device *dev;
+	int ret = BCME_OK;
+	uint val = *(uint *)data;
+	struct net_device *dev;
 	uint8 se_he_xtlv[32];
-        bcm_xtlv_t read_he_xtlv_subcmd;
+	bcm_xtlv_t read_he_xtlv_subcmd;
 	int se_he_xtlv_len = sizeof(se_he_xtlv);
 	s32 bssidx = 0;
-        int err = 0;
-        int ioctl_buf[WLC_IOCTL_SMLEN] = {0};
-        struct bcm_cfg80211 *cfg = wiphy_priv(wiphy);
-        read_he_xtlv_subcmd.id = WL_HE_CMD_MUEDCA_OPT;
-        read_he_xtlv_subcmd.len = 0;
-        dev = wdev_to_ndev(wdev);
+	int err = 0;
+	int ioctl_buf[WLC_IOCTL_SMLEN/2] = {0};
+	struct bcm_cfg80211 *cfg = wiphy_priv(wiphy);
+    read_he_xtlv_subcmd.id = WL_HE_CMD_MUEDCA_OPT;
+    read_he_xtlv_subcmd.len = 0;
+    dev = wdev_to_ndev(wdev);
 
-        if (val == 0xa) {
-                /* To get fw iovars of the form "wl he muedca_opt_enable" using iw,call the
-                   parent iovar "he" with the subcmd filled and passed along
-		   ./iw dev wlan0 vendor recv 0x000319 0xb 0xa */
-                ret = wldev_iovar_getbuf(dev, "he", &read_he_xtlv_subcmd, sizeof(read_he_xtlv_subcmd),
-                                        ioctl_buf, sizeof(ioctl_buf), NULL);
-                if (ret) {
-                        WL_ERR(("Failed : %d\n", ret));
-                } else {
+	if (val == 0xa) {
+		/* To get fw iovars of the form "wl he muedca_opt_enable" using iw,call the
+			parent iovar "he" with the subcmd filled and passed along
+			./iw dev wlan0 vendor recv 0x000319 0xb 0xa */
+		ret = wldev_iovar_getbuf(dev, "he", &read_he_xtlv_subcmd, sizeof(read_he_xtlv_subcmd),
+									ioctl_buf, sizeof(ioctl_buf), NULL);
+		if (ret) {
+			WL_ERR(("Failed : %d\n", ret));
+		} else {
 			WL_DBG(("Get muedca_opt_enable : %d\n", *(int *)ioctl_buf));
 			err =  wl_cfgvendor_send_cmd_reply(wiphy,ioctl_buf, sizeof(int));
 			if (unlikely(err)) {
@@ -7794,6 +7794,7 @@ static int wl_cfgvendor_start_mkeep_alive(struct wiphy *wiphy, struct wireless_d
 	uint8 src_mac[ETHER_ADDR_LEN];
 	uint8 dst_mac[ETHER_ADDR_LEN];
 	uint32 period_msec = 0;
+	uint16 ether_type = ETHERTYPE_IP;
 	const struct nlattr *iter;
 	struct bcm_cfg80211 *cfg = wiphy_priv(wiphy);
 	dhd_pub_t *dhd_pub = cfg->pub;
@@ -7839,6 +7840,15 @@ static int wl_cfgvendor_start_mkeep_alive(struct wiphy *wiphy, struct wireless_d
 			case MKEEP_ALIVE_ATTRIBUTE_PERIOD_MSEC:
 				period_msec = nla_get_u32(iter);
 				break;
+			case MKEEP_ALIVE_ATTRIBUTE_ETHER_TYPE:
+				ether_type = nla_get_u16(iter);
+				if (!((ether_type == ETHERTYPE_IP) ||
+						(ether_type == ETHERTYPE_IPV6))) {
+					WL_ERR(("Invalid ether type, %2x\n", ether_type));
+					ret = BCME_BADARG;
+					goto exit;
+				}
+				break;
 			default:
 				WL_ERR(("Unknown type: %d\n", type));
 				ret = BCME_BADARG;
@@ -7853,7 +7863,7 @@ static int wl_cfgvendor_start_mkeep_alive(struct wiphy *wiphy, struct wireless_d
 	}
 
 	ret = dhd_dev_start_mkeep_alive(dhd_pub, mkeep_alive_id, ip_pkt, ip_pkt_len, src_mac,
-		dst_mac, period_msec);
+		dst_mac, period_msec, ether_type);
 	if (ret < 0) {
 		WL_ERR(("start_mkeep_alive is failed ret: %d\n", ret));
 	}
@@ -8200,7 +8210,7 @@ wl_cfgvendor_set_p2p_rand_mac(struct wiphy *wiphy,
 
 	BCM_REFERENCE(cfg);
 	type = nla_type(data);
-	if (type == BRCM_ATTR_DRIVER_MAC_ADDR) {
+	if (type == BRCM_ATTR_DRIVER_MAC_ADDR || type == IFX_VENDOR_ATTR_MAC_ADDR) {
 		if (nla_len(data) != ETHER_ADDR_LEN) {
 			WL_ERR(("%s nla_len is not ethernet address \n",__FUNCTION__));
 			err = -EINVAL;
@@ -8705,71 +8715,71 @@ done:
 
 #ifdef WL11AX
 static void
-wl_cfgvendor_twt_parse_params(const struct nlattr *attr_iter, struct wl_twt *wl_twt)
+wl_cfgvendor_twt_parse_params(const struct nlattr *attr_iter, wl_twt_param_t *twt_param)
 {
-	int tmp, twt_param;
+	int tmp, twt_param_attr;
 	const struct nlattr *twt_param_iter;
 
 	nla_for_each_nested(twt_param_iter, attr_iter, tmp) {
-		twt_param = nla_type(twt_param_iter);
-		switch (twt_param) {
+		twt_param_attr = nla_type(twt_param_iter);
+		switch (twt_param_attr) {
 			case IFX_VENDOR_ATTR_TWT_PARAM_NEGO_TYPE:
-				wl_twt->negotiation_type = nla_get_u8(twt_param_iter);
+				twt_param->negotiation_type = nla_get_u8(twt_param_iter);
 				break;
 			case IFX_VENDOR_ATTR_TWT_PARAM_SETUP_CMD_TYPE:
-				wl_twt->setup_cmd = nla_get_u8(twt_param_iter);
+				twt_param->setup_cmd = nla_get_u8(twt_param_iter);
 				break;
 			case IFX_VENDOR_ATTR_TWT_PARAM_DIALOG_TOKEN:
-				wl_twt->dialog_token = nla_get_u8(twt_param_iter);
+				twt_param->dialog_token = nla_get_u8(twt_param_iter);
 				break;
 			case IFX_VENDOR_ATTR_TWT_PARAM_WAKE_TIME:
-				wl_twt->twt = nla_get_u64(twt_param_iter);
+				twt_param->twt = nla_get_u64(twt_param_iter);
 				break;
 			case IFX_VENDOR_ATTR_TWT_PARAM_WAKE_TIME_OFFSET:
-				wl_twt->twt_offset = nla_get_u64(twt_param_iter);
+				twt_param->twt_offset = nla_get_u64(twt_param_iter);
 				break;
 			case IFX_VENDOR_ATTR_TWT_PARAM_MIN_WAKE_DURATION:
-				wl_twt->min_twt = nla_get_u8(twt_param_iter);
+				twt_param->min_twt = nla_get_u8(twt_param_iter);
 				break;
 			case IFX_VENDOR_ATTR_TWT_PARAM_WAKE_INTVL_EXPONENT:
-				wl_twt->exponent = nla_get_u8(twt_param_iter);
+				twt_param->exponent = nla_get_u8(twt_param_iter);
 				break;
 			case IFX_VENDOR_ATTR_TWT_PARAM_WAKE_INTVL_MANTISSA:
-				wl_twt->mantissa = nla_get_u16(twt_param_iter);
+				twt_param->mantissa = nla_get_u16(twt_param_iter);
 				break;
 			case IFX_VENDOR_ATTR_TWT_PARAM_REQUESTOR:
-				wl_twt->requestor = nla_get_u8(twt_param_iter);
+				twt_param->requestor = nla_get_u8(twt_param_iter);
 				break;
 			case IFX_VENDOR_ATTR_TWT_PARAM_TRIGGER:
-				wl_twt->trigger = nla_get_u8(twt_param_iter);
+				twt_param->trigger = nla_get_u8(twt_param_iter);
 				break;
 			case IFX_VENDOR_ATTR_TWT_PARAM_IMPLICIT:
-				wl_twt->implicit = nla_get_u8(twt_param_iter);
+				twt_param->implicit = nla_get_u8(twt_param_iter);
 				break;
 			case IFX_VENDOR_ATTR_TWT_PARAM_FLOW_TYPE:
-				wl_twt->flow_type = nla_get_u8(twt_param_iter);
+				twt_param->flow_type = nla_get_u8(twt_param_iter);
 				break;
 			case IFX_VENDOR_ATTR_TWT_PARAM_FLOW_ID:
-				wl_twt->flow_id = nla_get_u8(twt_param_iter);
+				twt_param->flow_id = nla_get_u8(twt_param_iter);
 				break;
 			case IFX_VENDOR_ATTR_TWT_PARAM_BCAST_TWT_ID:
-				wl_twt->bcast_twt_id = nla_get_u8(twt_param_iter);
+				twt_param->bcast_twt_id = nla_get_u8(twt_param_iter);
 				break;
 			case IFX_VENDOR_ATTR_TWT_PARAM_PROTECTION:
-				wl_twt->protection = nla_get_u8(twt_param_iter);
+				twt_param->protection = nla_get_u8(twt_param_iter);
 				break;
 			case IFX_VENDOR_ATTR_TWT_PARAM_CHANNEL:
-				wl_twt->twt_channel = nla_get_u8(twt_param_iter);
+				twt_param->twt_channel = nla_get_u8(twt_param_iter);
 				break;
 			case IFX_VENDOR_ATTR_TWT_PARAM_TWT_INFO_FRAME_DISABLED:
-				wl_twt->twt_info_frame_disabled =
+				twt_param->twt_info_frame_disabled =
 					nla_get_u8(twt_param_iter);
 				break;
 			case IFX_VENDOR_ATTR_TWT_PARAM_MIN_WAKE_DURATION_UNIT:
-				wl_twt->min_twt_unit = nla_get_u8(twt_param_iter);
+				twt_param->min_twt_unit = nla_get_u8(twt_param_iter);
 				break;
 			case IFX_VENDOR_ATTR_TWT_PARAM_TEARDOWN_ALL_TWT:
-				wl_twt->teardown_all_twt =
+				twt_param->teardown_all_twt =
 					nla_get_u8(twt_param_iter);
 				break;
 			default:
@@ -8784,8 +8794,10 @@ int wl_cfgvendor_twt(struct wiphy *wiphy, struct wireless_dev *wdev,
 {
 	int tmp, attr_type;
 	const struct nlattr *attr_iter;
+	struct bcm_cfg80211 *cfg = wiphy_priv(wiphy);
+	struct net_device *pri_ndev = bcmcfg_to_prmry_ndev(cfg);
 
-	struct wl_twt wl_twt = {
+	wl_twt_param_t twt_param = {
 		.twt_oper = 0,
 		.negotiation_type = IFX_TWT_PARAM_NEGO_TYPE_ITWT,
 		.setup_cmd = IFX_TWT_OPER_SETUP_CMD_TYPE_REQUEST,
@@ -8810,10 +8822,10 @@ int wl_cfgvendor_twt(struct wiphy *wiphy, struct wireless_dev *wdev,
 
 		switch (attr_type) {
 			case IFX_VENDOR_ATTR_TWT_OPER:
-				wl_twt.twt_oper = nla_get_u8(attr_iter);
+				twt_param.twt_oper = nla_get_u8(attr_iter);
 				break;
 			case IFX_VENDOR_ATTR_TWT_PARAMS:
-				wl_cfgvendor_twt_parse_params(attr_iter, &wl_twt);
+				wl_cfgvendor_twt_parse_params(attr_iter, &twt_param);
 				break;
 			default:
 				WL_INFORM(("Unknown TWT attribute %d, skipping",
@@ -8822,8 +8834,9 @@ int wl_cfgvendor_twt(struct wiphy *wiphy, struct wireless_dev *wdev,
 		}
 	}
 
-	return wl_twt_oper(wdev, wl_twt);
+	return wl_twt_oper(pri_ndev, wdev, twt_param);
 }
+
 #endif /* WL11AX */
 
 static int wl_cfgvendor_oce_enable(struct wiphy *wiphy,
@@ -8834,7 +8847,7 @@ static int wl_cfgvendor_oce_enable(struct wiphy *wiphy,
 	struct net_device *dev;
 	s32 bssidx = 0;
 	int err = 0;
-	uint8 oce_xtlv[WLC_IOCTL_MEDLEN] = {0};
+	uint8 oce_xtlv[WLC_IOCTL_SMLEN] = {0};
 	bcm_iov_buf_t iov_buf_data, *iov_buf = NULL;
 	struct bcm_cfg80211 *cfg = wiphy_priv(wiphy);
 	dev = wdev_to_ndev(wdev);
@@ -8869,7 +8882,7 @@ static int wl_cfgvendor_oce_enable(struct wiphy *wiphy,
 		iov_buf->version = WL_OCE_IOV_VERSION;
 		iov_buf->id = WL_OCE_CMD_ENABLE;
 		pxtlv_data = (uint8 *)&iov_buf->data[0];
-		buflen = buflen_start = WLC_IOCTL_MEDLEN - sizeof(bcm_iov_buf_t);
+		buflen = buflen_start = WLC_IOCTL_SMLEN - sizeof(bcm_iov_buf_t);
 
 		ret = bcm_pack_xtlv_entry(&pxtlv_data, &buflen, WL_OCE_XTLV_ENABLE,
 				sizeof(val), &val, BCM_XTLV_OPTION_ALIGN32);
@@ -8891,6 +8904,74 @@ static int wl_cfgvendor_oce_enable(struct wiphy *wiphy,
 		}
 	}
 	return ret;
+}
+
+static int wl_cfgvendor_randmac(struct wiphy *wiphy,
+              struct wireless_dev *wdev, const void *data, int len)
+{
+        int ret = BCME_OK;
+	wl_randmac_t *iov_buf = NULL;
+        uint8 val = *(uint8 *)data;
+        struct net_device *dev;
+        s32 bssidx = 0;
+        int err = 0;
+        uint8 randmac_xtlv[WLC_IOCTL_SMLEN] = {0};
+        struct bcm_cfg80211 *cfg = wiphy_priv(wiphy);
+        dev = wdev_to_ndev(wdev);
+
+	iov_buf = (wl_randmac_t *)randmac_xtlv;
+        iov_buf->version = WL_RANDMAC_API_VERSION;
+        iov_buf->subcmd_id = WL_RANDMAC_SUBCMD_ENABLE;
+        iov_buf->len = WL_RANDMAC_IOV_HDR_SIZE;
+
+        if (val == 0x1) {
+                /* To set fw iovars of the form "wl randmac enable" using iw,call the
+                 * parent iovar "randmac" with the subcmd filled and passed along
+                 * ./iw dev wlan0 vendor send 0x000319 0x11 0x1 */
+		ret = wldev_iovar_setbuf_bsscfg(dev, "randmac", (void *)iov_buf, iov_buf->len,
+                                        cfg->ioctl_buf, WLC_IOCTL_SMLEN, bssidx, &cfg->ioctl_buf_sync);
+                if (ret) {
+                        WL_ERR(("Failed to set randmac enable: %d\n", ret));
+			return ret;
+                }
+        } else if (val == 0x0) {
+		iov_buf->subcmd_id = WL_RANDMAC_SUBCMD_DISABLE;
+
+                /* To set fw iovars of the form "wl randmac disable" using iw,call the
+                 * parent iovar "randmac" with the subcmd filled and passed along
+                 * ./iw dev wlan0 vendor send 0x000319 0x11 0x0 */
+		ret = wldev_iovar_setbuf_bsscfg(dev, "randmac", (void *)iov_buf, iov_buf->len,
+					cfg->ioctl_buf, WLC_IOCTL_SMLEN, bssidx, &cfg->ioctl_buf_sync);
+		if (ret) {
+                        WL_ERR(("Failed to set randmac disable: %d\n", ret));
+			return ret;
+                }
+        } else if (val == 0xa) {
+		int result_data = 0;
+		wl_randmac_t *iov_resp = NULL;
+		uint8 resp_xtlv[WLC_IOCTL_SMLEN] = {0};
+
+                /* To get fw iovars of the form "wl randmac" using iw,call the
+                 * parent iovar "randmac" with the subcmd filled and passed along
+                 * ./iw dev wlan0 vendor recv 0x000319 0x11 0xa */
+                ret = wldev_iovar_getbuf(dev, "randmac", (void *)iov_buf, iov_buf->len,
+                                resp_xtlv, sizeof(resp_xtlv), NULL);
+                if (ret) {
+                        WL_ERR(("Failed to get randmac enable or disable: %d\n", ret));
+			return ret;
+                } else {
+			iov_resp = (wl_randmac_t *)resp_xtlv;
+			if(iov_resp->subcmd_id == WL_RANDMAC_SUBCMD_ENABLE) {
+				result_data = 1;
+			}
+			err = wl_cfgvendor_send_cmd_reply(wiphy, &result_data, sizeof(int));
+			if (unlikely(err)) {
+				WL_ERR(("Vendor Command reply failed ret:%d \n", err));
+				return err;
+			}
+                }
+	}
+        return ret;
 }
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 3, 0))
@@ -8984,6 +9065,52 @@ const struct nla_policy debug_attr_policy[DEBUG_ATTRIBUTE_MAX] = {
 	[DEBUG_ATTRIBUTE_PKT_FATE_DATA] = {.type = NLA_U64},
 	[DEBUG_ATTRIBUTE_HANG_REASON] = {.type = NLA_BINARY},
 };
+
+#ifdef DHD_LOG_DUMP
+const struct nla_policy google_file_dump_event_policy[DUMP_EVENT_ATTR_MAX] = {
+	[DUMP_LEN_ATTR_MEMDUMP]							= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_SSSR_C0_D11_BEFORE]				= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_SSSR_C0_D11_AFTER]				= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_SSSR_C1_D11_BEFORE]				= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_SSSR_C1_D11_AFTER]				= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_SSSR_C2_D11_BEFORE]				= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_SSSR_C2_D11_AFTER]				= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_SSSR_DIG_BEFORE]					= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_SSSR_DIG_AFTER]					= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_TIMESTAMP]						= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_GENERAL_LOG]						= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_ECNTRS]							= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_SPECIAL_LOG]						= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_DHD_DUMP]						= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_EXT_TRAP]						= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_HEALTH_CHK]						= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_PRESERVE_LOG]					= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_COOKIE]							= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_FLOWRING_DUMP]					= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_PKTLOG]							= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_PKTLOG_DEBUG]					= {.type = NLA_BINARY},
+	[DUMP_FILENAME_ATTR_DEBUG_DUMP]					= {.type = NLA_BINARY},
+	[DUMP_FILENAME_ATTR_MEM_DUMP]					= {.type = NLA_BINARY},
+	[DUMP_FILENAME_ATTR_SSSR_CORE_0_BEFORE_DUMP]	= {.type = NLA_BINARY},
+	[DUMP_FILENAME_ATTR_SSSR_CORE_0_AFTER_DUMP]		= {.type = NLA_BINARY},
+	[DUMP_FILENAME_ATTR_SSSR_CORE_1_BEFORE_DUMP]	= {.type = NLA_BINARY},
+	[DUMP_FILENAME_ATTR_SSSR_CORE_1_AFTER_DUMP]		= {.type = NLA_BINARY},
+	[DUMP_FILENAME_ATTR_SSSR_CORE_2_BEFORE_DUMP]	= {.type = NLA_BINARY},
+	[DUMP_FILENAME_ATTR_SSSR_CORE_2_AFTER_DUMP]		= {.type = NLA_BINARY},
+	[DUMP_FILENAME_ATTR_SSSR_DIG_BEFORE_DUMP]		= {.type = NLA_BINARY},
+	[DUMP_FILENAME_ATTR_SSSR_DIG_AFTER_DUMP]		= {.type = NLA_BINARY},
+	[DUMP_FILENAME_ATTR_PKTLOG_DUMP]				= {.type = NLA_BINARY},
+	[DUMP_FILENAME_ATTR_PKTLOG_DEBUG_DUMP]			= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_STATUS_LOG]						= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_AXI_ERROR]						= {.type = NLA_BINARY},
+	[DUMP_FILENAME_ATTR_AXI_ERROR_DUMP]				= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_RTT_LOG]							= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_SDTC_ETB_DUMP]					= {.type = NLA_BINARY},
+	[DUMP_FILENAME_ATTR_SDTC_ETB_DUMP]				= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_PKTID_MAP_LOG]					= {.type = NLA_BINARY},
+	[DUMP_LEN_ATTR_PKTID_UNMAP_LOG]					= {.type = NLA_BINARY}
+};
+#endif /* DHD_LOG_DUMP */
 
 const struct nla_policy hal_start_attr_policy[SET_HAL_START_ATTRIBUTE_MAX] = {
 	[SET_HAL_START_ATTRIBUTE_DEINIT] = {.type = NLA_UNSPEC},
@@ -9086,6 +9213,10 @@ const struct nla_policy ifx_vendor_attr_twt_policy[IFX_VENDOR_ATTR_TWT_MAX + 1] 
 };
 #endif /* WL11AX */
 
+const struct nla_policy ifx_vendor_attr_policy[IFX_VENDOR_ATTR_MAX + 1] = {
+	[IFX_VENDOR_ATTR_MAC_ADDR] = {.type = NLA_BINARY, .len = ETHER_ADDR_LEN},
+};
+
 static const struct wiphy_vendor_command wl_vendor_cmds [] = {
 	{
 		{
@@ -9153,6 +9284,7 @@ static const struct wiphy_vendor_command wl_vendor_cmds [] = {
 		.maxattr = BRCM_ATTR_DRIVER_MAX
 #endif // endif
 	},
+#endif /* WL_SAE */
 #ifdef P2P_RAND
 	{
 		{
@@ -9166,9 +9298,20 @@ static const struct wiphy_vendor_command wl_vendor_cmds [] = {
 		.maxattr = BRCM_ATTR_DRIVER_MAX
 #endif /* LINUX_VERSION >= 5.3 */
 	},
-#endif /* P2P_RAND */
 
-#endif /* WL_SAE */
+	{
+                {
+                        .vendor_id = OUI_IFX,
+                        .subcmd = IFX_VENDOR_SCMD_SET_P2P_RAND_MAC
+                },
+                .flags = WIPHY_VENDOR_CMD_NEED_WDEV,
+                .doit = wl_cfgvendor_set_p2p_rand_mac,
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 3, 0))
+                .policy = ifx_vendor_attr_policy,
+                .maxattr = IFX_VENDOR_ATTR_MAX
+#endif /* LINUX_VERSION >= 5.3 */
+        },
+#endif /* P2P_RAND */
 	{
 		{
 			.vendor_id = OUI_GOOGLE,
@@ -9488,7 +9631,12 @@ static const struct wiphy_vendor_command wl_vendor_cmds [] = {
 		},
 		.flags = WIPHY_VENDOR_CMD_NEED_WDEV | WIPHY_VENDOR_CMD_NEED_NETDEV,
 		.doit = wl_cfgvendor_dbg_file_dump,
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 3, 0))
+		.policy = google_file_dump_event_policy,
+		.maxattr = DUMP_EVENT_ATTR_MAX
+#else
 		WL_VENDOR_POLICY_RAW_DATA
+#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 3, 0)) */
 	},
 #endif /* DHD_LOG_DUMP */
 	{
@@ -9608,7 +9756,12 @@ static const struct wiphy_vendor_command wl_vendor_cmds [] = {
 		},
 		.flags = WIPHY_VENDOR_CMD_NEED_WDEV | WIPHY_VENDOR_CMD_NEED_NETDEV,
 		.doit = wl_cfgvendor_start_mkeep_alive,
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 3, 0))
+		.policy = mkeep_alive_attr_policy,
+		.maxattr = MKEEP_ALIVE_ATTRIBUTE_MAX
+#else
 		WL_VENDOR_POLICY_RAW_DATA
+#endif  /* (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 3, 0)) */
 	},
 	{
 		{
@@ -9617,7 +9770,12 @@ static const struct wiphy_vendor_command wl_vendor_cmds [] = {
 		},
 		.flags = WIPHY_VENDOR_CMD_NEED_WDEV | WIPHY_VENDOR_CMD_NEED_NETDEV,
 		.doit = wl_cfgvendor_stop_mkeep_alive,
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 3, 0))
+                .policy = mkeep_alive_attr_policy,
+                .maxattr = MKEEP_ALIVE_ATTRIBUTE_MAX
+#else
 		WL_VENDOR_POLICY_RAW_DATA
+#endif  /* (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 3, 0)) */
 	},
 #endif /* KEEP_ALIVE */
 #ifdef WL_NAN
@@ -10052,6 +10210,15 @@ static const struct wiphy_vendor_command wl_vendor_cmds [] = {
                 .doit = wl_cfgvendor_oce_enable,
                 WL_VENDOR_POLICY_RAW_DATA
         },
+	{
+                {
+                        .vendor_id = OUI_IFX,
+                        .subcmd = IFX_VENDOR_SCMD_RANDMAC
+                },
+                .flags = WIPHY_VENDOR_CMD_NEED_WDEV | WIPHY_VENDOR_CMD_NEED_NETDEV,
+                .doit = wl_cfgvendor_randmac,
+                WL_VENDOR_POLICY_RAW_DATA
+        },
 };
 
 static const struct  nl80211_vendor_cmd_info wl_vendor_events [] = {
@@ -10099,6 +10266,7 @@ static const struct  nl80211_vendor_cmd_info wl_vendor_events [] = {
 		{ OUI_BRCM, BRCM_VENDOR_EVENT_RCC_INFO},
 		{ OUI_BRCM, BRCM_VENDOR_EVENT_ACS},
 		{ OUI_BRCM, BRCM_VENDOR_EVENT_OVERTEMP},
+		{ OUI_IFX, IFX_VENDOR_SCMD_TWT},
 };
 
 int wl_cfgvendor_attach(struct wiphy *wiphy, dhd_pub_t *dhd)

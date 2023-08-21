@@ -2,7 +2,7 @@
  * Structure used by apps whose drivers access SDIO drivers.
  * Pulled out separately so dhdu and wlu can both use it.
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *

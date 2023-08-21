@@ -1,7 +1,7 @@
 /*
  * Customer code to add GPIO control during WLAN start/stop
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *
@@ -106,6 +106,40 @@ dhd_customer_gpio_wlan_ctrl(void *adapter, int onoff)
 	return err;
 }
 
+#ifdef CUSTOMER_HW_AMBATW
+// Patch from Ambarella ---- start
+char* amba_initmac = 0;
+module_param(amba_initmac, charp, 0644);
+
+int amba_get_mac(uint8 *mac)
+{
+	int err = 0;
+
+	if (amba_initmac) {
+		/* TODO: Defend buffer overflow and toupper string. */
+		int tmp[6], i;
+
+		/* /proc/ambarella/board_info using upper case */
+		err = sscanf(amba_initmac, "%X:%X:%X:%X:%X:%X",
+				&tmp[0], &tmp[1], &tmp[2],
+				&tmp[3], &tmp[4], &tmp[5]);
+		if ((err <= 0) || (err != ETH_ALEN)) {
+			printk("%s: Read soft-mac failed: %d \n",
+						__FUNCTION__, err);
+		} else {
+			for (i = 0; i < 6; i++)
+				mac[i] = tmp[i];
+			printk("mac: %02X:%02X:%02X:%02X:%02X:%02X\n",
+						mac[0], mac[1], mac[2],
+						mac[3], mac[4], mac[5]);
+			return 0;
+		}
+	}
+	return -1;
+}
+// Patch from Ambarella ---- end
+#endif
+
 #ifdef GET_CUSTOM_MAC_ENABLE
 /* Function to get custom MAC address */
 int
@@ -130,6 +164,10 @@ dhd_custom_get_mac_address(void *adapter, unsigned char *buf)
 		bcopy((char *)&ea_example, buf, sizeof(struct ether_addr));
 	}
 #endif /* EXAMPLE_GET_MAC */
+
+#ifdef CUSTOMER_HW_AMBATW
+	ret = amba_get_mac(buf);
+#endif
 
 	return ret;
 }

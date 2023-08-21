@@ -2,7 +2,7 @@
  * Minimal debug/trace/assert driver definitions for
  * Broadcom 802.11 Networking Adapter.
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *

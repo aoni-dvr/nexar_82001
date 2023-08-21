@@ -42,7 +42,7 @@ build_ambalink()
 	rm -rf ipcdef-*
 	rm -rf bcmdhd-* ../target/usr/local/bcmdhd
 	rm -rf cypress-* ../target/usr/local/cypress
-	#rm -rf wpa_supplicant-* hostapd-* rtl8188fu-* rtl8821au-*
+	rm -rf wpa_supplicant-* hostapd-* rtl8188fu-* rtl8821au-*
 	rm -rf rtl8188fu-*
 	rm -rf bluez5_utils-*
 	#rm -rf busybox-*

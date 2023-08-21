@@ -1,7 +1,7 @@
 /*
  * DHD Bus Module for SDIO
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *
@@ -79,6 +79,12 @@
 #ifdef BT_OVER_SDIO
 #include <dhd_bt_interface.h>
 #endif /* BT_OVER_SDIO */
+
+#ifdef RK_SDIO_TUNE
+#include <linux/mmc/sdio_func.h>
+#include <linux/mmc/host.h>
+#include "bcmsdh_sdmmc.h"
+#endif
 
 #if defined(DEBUGGER) || defined(DHD_DSCOPE)
 #include <debugger.h>
@@ -595,7 +601,11 @@ static const uint max_roundup = 512;
 /* Try doing readahead */
 static bool dhd_readahead;
 
+#ifdef AUTOMOTIVE_FEATURE
+#define TXCTL_CREDITS 1
+#else
 #define TXCTL_CREDITS 2
+#endif /* AUTOMOTIVE_FEATURE */
 
 /* To check if there's window offered */
 #define DATAOK(bus) \
@@ -942,6 +952,7 @@ dhdsdio_sr_cap(dhd_bus_t *bus)
 	}
 
 	if (bus->sih->chip == BCM43430_CHIP_ID ||
+		bus->sih->chip == BCM43439_CHIP_ID ||
 		bus->sih->chip == BCM43018_CHIP_ID) {
 		/* check if fw initialized sr engine */
 		addr = SI_ENUM_BASE(bus->sih) + OFFSETOF(chipcregs_t, sr_control1);
@@ -1038,6 +1049,7 @@ dhdsdio_sr_init(dhd_bus_t *bus)
 #endif /* USE_CMD14 */
 
 	if (CHIPID(bus->sih->chip) == BCM43430_CHIP_ID ||
+		CHIPID(bus->sih->chip) == BCM43439_CHIP_ID ||
 		CHIPID(bus->sih->chip) == BCM43018_CHIP_ID ||
 		CHIPID(bus->sih->chip) == BCM4339_CHIP_ID ||
 		CHIPID(bus->sih->chip) == BCM43012_CHIP_ID ||
@@ -1117,7 +1129,14 @@ dhdsdio_clk_kso_enab(dhd_bus_t *bus, bool on)
 	uint8 wr_val = 0, rd_val, cmp_val, bmask;
 	int err = 0;
 	int try_cnt = 0;
+#ifdef RK_SDIO_TUNE
+	struct mmc_host *host;
+	struct sdioh_info *sd = (struct sdioh_info *)(bus->sdh->sdioh);
+	struct sdio_func *func = sd->func[SDIO_FUNC_0];
 
+	host = func->card->host;
+	mmc_retune_disable(host);
+#endif
 	KSO_DBG(("%s> op:%s\n", __FUNCTION__, (on ? "KSO_SET" : "KSO_CLR")));
 
 	wr_val |= (on << SBSDIO_FUNC1_SLEEPCSR_KSO_SHIFT);
@@ -3458,6 +3477,7 @@ dhdsdio_readshared(dhd_bus_t *bus, sdpcm_shared_t *sh)
 		}
 	}
 	if ((CHIPID(bus->sih->chip) == BCM43430_CHIP_ID ||
+		CHIPID(bus->sih->chip) == BCM43439_CHIP_ID ||
 		CHIPID(bus->sih->chip) == BCM43018_CHIP_ID) && !dhdsdio_sr_cap(bus))
 		bus->srmemsize = 0;
 
@@ -3527,10 +3547,6 @@ dhdsdio_readshared_console(dhd_bus_t *bus)
 	int retry = 10;
 #endif /* BCMSPI */
 
-	/* This temporary WAR for now */
-#if defined(PLATFORM_IMX)
-	return BCME_OK;
-#endif /* defined(PLATFORM_IMX) */
 	shaddr = bus->dongle_ram_base + bus->ramsize - 4;
 	i = 0;
 
@@ -4857,6 +4873,7 @@ dhdsdio_download_state(dhd_bus_t *bus, bool enter)
 				dhdsdio_devram_remap(bus, FALSE);
 
 			if (CHIPID(bus->sih->chip) == BCM43430_CHIP_ID ||
+				CHIPID(bus->sih->chip) == BCM43439_CHIP_ID ||
 				CHIPID(bus->sih->chip) == BCM43018_CHIP_ID) {
 				/* Disabling Remap for SRAM_3 */
 				si_socram_set_bankpda(bus->sih, 0x3, 0x0);
@@ -5624,7 +5641,19 @@ dhd_bus_init(dhd_pub_t *dhdp, bool enforce_mutex)
 		}
 #endif /* DHD_DEBUG */
 	}
-#endif
+#endif /* 0 */
+
+#if defined(PLATFORM_IMX)
+	/* dhdsdio_readshared_console is failed sometimes in i.MX platform
+	 * unless wait the time with specific chips so it treat as fine.
+	 */
+	if ((ret < 0) &&
+		((CHIPID(bus->sih->chip) == BCM43430_CHIP_ID) ||
+		(CHIPID(bus->sih->chip) == BCM43439_CHIP_ID))) {
+			ret = BCME_OK;
+	}
+#endif /* defined(PLATFORM_IMX) */
+
 	if (enforce_mutex)
 		dhd_os_sdlock(bus->dhd);
 
@@ -7538,8 +7567,10 @@ clkwait:
 #endif /* DHD_ULP */
 	}
 	/* Resched the DPC if ctrl cmd is pending on bus credit */
-	if (bus->ctrl_frame_stat)
+	if (bus->ctrl_frame_stat) {
 		resched = TRUE;
+		bus->ipend = TRUE;
+	}
 
 	/* Resched if events or tx frames are pending, else await next interrupt */
 	/* On failed register access, all bets are off: no resched or interrupts */
@@ -8004,6 +8035,11 @@ void dhd_bus_oob_intr_set(dhd_pub_t *dhdp, bool enable)
 #endif // endif
 }
 
+struct device * dhd_bus_to_dev(struct dhd_bus *bus)
+{
+	return (struct device *)bcmsdh_get_dev(bus->sdh);
+}
+
 void dhd_bus_dev_pm_stay_awake(dhd_pub_t *dhdpub)
 {
 	bcmsdh_dev_pm_stay_awake(dhdpub->bus->sdh);
@@ -8056,8 +8092,7 @@ dhd_bus_watchdog(dhd_pub_t *dhdp)
 	dhd_os_sdlock(bus->dhd);
 
 	/* Poll period: check device if appropriate. */
-	//if (!SLPAUTO_ENAB(bus) && (bus->poll && (++bus->polltick >= bus->pollrate))) {
-	if (1) { //geng.hui
+	if (!SLPAUTO_ENAB(bus) && (bus->poll && (++bus->polltick >= bus->pollrate))) {
 		uint32 intstatus = 0;
 
 		/* Reset poll tick */
@@ -8303,6 +8338,8 @@ dhdsdio_chipmatch(uint16 chipid)
 	if (chipid == BCM4358_CHIP_ID)
 		return TRUE;
 	if (chipid == BCM43430_CHIP_ID)
+		return TRUE;
+	if (chipid == BCM43439_CHIP_ID)
 		return TRUE;
 	if (chipid == BCM43018_CHIP_ID)
 		return TRUE;
@@ -9109,7 +9146,7 @@ dhd_bus_download_firmware(struct dhd_bus *bus, osl_t *osh,
 #if defined(BCMSPI) && defined(GSPI_DWORD_MODE)
 	/* Enable the dwordmode in gSPI before first F2 transaction */
 	if (((bus->sih->chip == BCM4329_CHIP_ID) && (bus->sih->chiprev > 1)) ||
-		(bus->sih->chip == BCM43430_CHIP_ID)) {
+		(bus->sih->chip == BCM43430_CHIP_ID || bus->sih->chip == BCM43439_CHIP_ID)) {
 			bcmsdh_dwordmode(bus->sdh, TRUE);
 			bus->dwordmode = TRUE;
 			DHD_INFO(("DHD:SPI DWORD mode enabled\n"));

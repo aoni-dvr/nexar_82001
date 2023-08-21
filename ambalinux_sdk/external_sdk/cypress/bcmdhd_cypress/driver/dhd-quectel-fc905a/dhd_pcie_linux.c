@@ -1,7 +1,7 @@
 /*
  * Linux DHD Bus Module for PCIE
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *
@@ -267,6 +267,7 @@ static struct pci_driver dhdpcie_driver = {
 #endif /* DHD_PCIE_RUNTIMEPM || DHD_PCIE_NATIVE_RUNTIMEPM */
 };
 
+extern char pcie_dev_bus_name[MOD_PARAM_INFOLEN];
 int dhdpcie_init_succeeded = FALSE;
 
 #ifdef USE_SMMU_ARCH_MSM
@@ -1042,10 +1043,23 @@ static int dhdpcie_resume_dev(struct pci_dev *dev)
 {
 	int err = 0;
 	dhdpcie_info_t *pch = pci_get_drvdata(dev);
+
+	DHD_ERROR(("%s: Enter\n", __FUNCTION__));
+
+	err = pci_set_power_state(dev, PCI_D0);
+	if (err) {
+		printf("%s:pci_set_power_state error %d \n", __FUNCTION__, err);
+		goto out;
+	}
+	err = pci_enable_device(dev);
+	if (err) {
+		printf("%s:pci_enable_device error %d \n", __FUNCTION__, err);
+		goto out;
+	}
+	pci_set_master(dev);
 #if defined(OEM_ANDROID) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 0, 0))
 	pci_load_and_free_saved_state(dev, &pch->state);
 #endif /* OEM_ANDROID && LINUX_VERSION_CODE >= KERNEL_VERSION(3, 0, 0) */
-	DHD_ERROR(("%s: Enter\n", __FUNCTION__));
 #ifdef OEM_ANDROID
 	dev->state_saved = TRUE;
 #endif /* OEM_ANDROID */
@@ -1055,17 +1069,6 @@ static int dhdpcie_resume_dev(struct pci_dev *dev)
 		dhd_bus_set_tpoweron(pch->bus, tpoweron_scale);
 	}
 #endif /* FORCE_TPOWERON */
-	err = pci_enable_device(dev);
-	if (err) {
-		printf("%s:pci_enable_device error %d \n", __FUNCTION__, err);
-		goto out;
-	}
-	pci_set_master(dev);
-	err = pci_set_power_state(dev, PCI_D0);
-	if (err) {
-		printf("%s:pci_set_power_state error %d \n", __FUNCTION__, err);
-		goto out;
-	}
 	BCM_REFERENCE(pch);
 	dhdpcie_suspend_dump_cfgregs(pch->bus, "AFTER_EP_RESUME");
 out:
@@ -1510,9 +1513,21 @@ dhdpcie_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 			return -ENODEV;
 	}
 
-	printf("PCI_PROBE:  bus %X, slot %X,vendor %X, device %X"
-		"(good PCI location)\n", pdev->bus->number,
-		PCI_SLOT(pdev->devfn), pdev->vendor, pdev->device);
+	DHD_ERROR(("%s: PCI_PROBE: bus %X, slot %X,vendor %X, device %X"
+			"(good PCI location), name %s\n", dhdpcie_driver.name, pdev->bus->number,
+			PCI_SLOT(pdev->devfn), pdev->vendor, pdev->device, pdev->bus->name));
+
+	if (strlen(pcie_dev_bus_name)) {
+		if (!strncmp(pdev->bus->name,
+			pcie_dev_bus_name, strlen(pcie_dev_bus_name))) {
+			DHD_ERROR(("%s: PCI_PROBE: bus name (%s) matched (%s)\n",
+					dhdpcie_driver.name, pcie_dev_bus_name, pdev->bus->name));
+		} else {
+			DHD_ERROR(("%s: PCI_PROBE: bus name (%s) did not match (%s)\n",
+					dhdpcie_driver.name, pcie_dev_bus_name, pdev->bus->name));
+			return -ENODEV;
+		}
+	}
 
 	if (dhdpcie_init_succeeded == TRUE) {
 		DHD_ERROR(("%s(): === Driver Already attached to a BRCM device === \r\n",
@@ -1797,10 +1812,11 @@ int dhdpcie_get_resource(dhdpcie_info_t *dhdpcie_info)
 			goto err;
 		}
 
-		dhdpcie_info->regs = (volatile char *) REG_MAP(bar0_addr, DONGLE_REG_MAP_SIZE);
+		dhdpcie_info->regs = (volatile char *) REG_MAP_XBIT(bar0_addr, DONGLE_REG_MAP_SIZE);
 		dhdpcie_info->bar1_size =
 			(bar1_size > DONGLE_TCM_MAP_SIZE) ? bar1_size : DONGLE_TCM_MAP_SIZE;
-		dhdpcie_info->tcm = (volatile char *) REG_MAP(bar1_addr, dhdpcie_info->bar1_size);
+		dhdpcie_info->tcm = (volatile char *) REG_MAP_XBIT(bar1_addr,
+			dhdpcie_info->bar1_size);
 
 		if (!dhdpcie_info->regs || !dhdpcie_info->tcm) {
 			DHD_ERROR(("%s:ioremap() failed\n", __FUNCTION__));
@@ -2528,7 +2544,7 @@ dhdpcie_alloc_resource(dhd_bus_t *bus)
 			break;
 		}
 
-		dhdpcie_info->regs = (volatile char *) REG_MAP(bar0_addr, DONGLE_REG_MAP_SIZE);
+		dhdpcie_info->regs = (volatile char *) REG_MAP_XBIT(bar0_addr, DONGLE_REG_MAP_SIZE);
 		if (!dhdpcie_info->regs) {
 			DHD_ERROR(("%s: ioremap() for regs is failed\n", __FUNCTION__));
 			break;
@@ -2537,7 +2553,8 @@ dhdpcie_alloc_resource(dhd_bus_t *bus)
 		bus->regs = dhdpcie_info->regs;
 		dhdpcie_info->bar1_size =
 			(bar1_size > DONGLE_TCM_MAP_SIZE) ? bar1_size : DONGLE_TCM_MAP_SIZE;
-		dhdpcie_info->tcm = (volatile char *) REG_MAP(bar1_addr, dhdpcie_info->bar1_size);
+		dhdpcie_info->tcm = (volatile char *) REG_MAP_XBIT(bar1_addr,
+			dhdpcie_info->bar1_size);
 		if (!dhdpcie_info->tcm) {
 			DHD_ERROR(("%s: ioremap() for regs is failed\n", __FUNCTION__));
 			REG_UNMAP(dhdpcie_info->regs);

@@ -4,7 +4,7 @@
  * This file describes the payloads of event log entries that are data buffers
  * rather than formatted string entries. The contents are generally XTLVs.
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *

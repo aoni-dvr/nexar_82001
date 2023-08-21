@@ -2,7 +2,7 @@
  * Basic types and constants relating to 802.11ax/HE STA
  * This is a portion of 802.11ax definition. The rest are in 802.11.h.
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *

@@ -1,7 +1,7 @@
 /*
  * SDIO access interface for drivers - linux specific (pci only)
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *
@@ -309,6 +309,12 @@ bcmsdh_unregister(void)
 #endif // endif
 
 	bcmsdh_unregister_client_driver();
+}
+
+void *bcmsdh_get_dev(bcmsdh_info_t *sdh)
+{
+	bcmsdh_os_info_t *bcmsdh_osinfo = sdh->os_cxt;
+	return bcmsdh_osinfo->dev;
 }
 
 void bcmsdh_dev_pm_stay_awake(bcmsdh_info_t *bcmsdh)

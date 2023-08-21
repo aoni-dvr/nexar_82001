@@ -28,6 +28,16 @@ print_help()
 
 wifi_iface="wlan0"
 usb_wifi_iface="rtl0"
+at_dev="/dev/ttyUSB3"
+
+get_at_dev()
+{
+if [ "`lsusb | grep 2c7c:6002`" != "" ]; then
+    at_dev="/dev/ttyUSB1"
+else
+    at_dev="/dev/ttyUSB3"
+fi
+}
 
 get_serial()
 {
@@ -69,7 +79,7 @@ get_sim()
     PIN_STATE="N/A"
     usb_devices=$(lsusb) || { echo "N/A"; return 1; }
     if echo "${usb_devices}" | grep -q '2c7c:'; then #Quectel
-        at_dev='/dev/ttyUSB3'
+        get_at_dev
         PIN_STATE=$(send_at_cmd_rtr "AT+CPIN?" || echo "N/A")
     fi
     if [ "${PIN_STATE}" = "N/A" ]; then
@@ -84,7 +94,7 @@ get_imei()
     imei="N/A"
     usb_devices=$(lsusb) || { echo "N/A"; return 1; }
     if echo "${usb_devices}" | grep -q '2c7c:'; then #Quectel
-        at_dev='/dev/ttyUSB3'
+        get_at_dev
         imei=$(send_at_cmd_rtr "AT+GSN" || echo "N/A")
     fi
     if [ "${imei}" = "N/A" ]; then
@@ -99,7 +109,7 @@ get_iccid()
     iccid="N/A"
     usb_devices=$(lsusb) || { echo "N/A"; return 1; }
     if echo "${usb_devices}" | grep -q '2c7c:'; then #Quectel
-        at_dev='/dev/ttyUSB3'
+        get_at_dev
         iccid=$(send_at_cmd_rtr "AT+QCCID" || echo "N/A")
     fi
     if [ "${iccid}" = "N/A" ]; then
@@ -114,7 +124,7 @@ get_imsi()
     imsi="N/A"
     usb_devices=$(lsusb) || { echo "N/A"; return 1; }
     if echo "${usb_devices}" | grep -q '2c7c:'; then #Quectel
-        at_dev='/dev/ttyUSB3'
+        get_at_dev
         imsi=$(send_at_cmd_rtr "AT+CIMI" || echo "N/A")
     fi
     if [ "${imsi}" = "N/A" ]; then
@@ -200,7 +210,7 @@ get_lte_ver()
     lte_ver="N/A"
     usb_devices=$(lsusb) || { echo "N/A"; return 1; }
     if echo "${usb_devices}" | grep -q '2c7c:'; then #Quectel
-        at_dev='/dev/ttyUSB3'
+        get_at_dev
         lte_ver=$(send_at_cmd_rtr "AT+QGMR" || echo "N/A")
     fi
     if [ "${lte_ver}" = "N/A" ]; then
@@ -215,7 +225,7 @@ get_csq()
     csq="N/A"
     usb_devices=$(lsusb) || { echo "N/A"; return 1; }
     if echo "${usb_devices}" | grep -q '2c7c:'; then #Quectel
-        at_dev='/dev/ttyUSB3'
+        get_at_dev
         csq=$(send_at_cmd_rtr "AT+CSQ" || echo "N/A")
     fi
     if [ "${csq}" = "N/A" ]; then

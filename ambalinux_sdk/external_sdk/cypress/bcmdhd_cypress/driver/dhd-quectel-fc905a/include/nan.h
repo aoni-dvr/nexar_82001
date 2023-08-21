@@ -2,7 +2,7 @@
  * Fundamental types and constants relating to WFA NAN
  * (Neighbor Awareness Networking)
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *

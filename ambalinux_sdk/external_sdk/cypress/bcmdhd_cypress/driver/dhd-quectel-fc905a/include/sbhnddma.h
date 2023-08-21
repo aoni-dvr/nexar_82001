@@ -2,7 +2,7 @@
  * Generic Broadcom Home Networking Division (HND) DMA engine HW interface
  * This supports the following chips: BCM42xx, 44xx, 47xx .
  *
- * Portions of this code are copyright (c) 2022 Cypress Semiconductor Corporation
+ * Portions of this code are copyright (c) 2023 Cypress Semiconductor Corporation
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  *
