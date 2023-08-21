@@ -768,12 +768,14 @@ static int linux_boot_pre_check(void)
         int timeout = 50;
         while (timeout >= 0) {
             if (app_helper.sd_init_done) {
+                SvcLog_NG(SVC_LOG_CONTROL_TASK, "sd_init_done", 0U, 0U);
                 break;
             }
             msleep(100);
             timeout--;
         }
     }
+    SvcLog_NG(SVC_LOG_CONTROL_TASK, "usb_uvc_mode=%d", dqa_test_script.usb_uvc_mode, 0U);
     if (dqa_test_script.usb_uvc_mode) {
 #if defined(CONFIG_BSP_CV25_NEXAR_D161) || defined(CONFIG_BSP_CV25_NEXAR_D161V2)
         unsigned char value = 0;

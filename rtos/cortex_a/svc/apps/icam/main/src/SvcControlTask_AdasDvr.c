@@ -275,6 +275,9 @@ static UINT32 ControlTask_AdasDvrCmdMode(void)
 {
     UINT32 RetVal = SVC_OK;
     RetVal |= SvcFlowControl_Exec("icam_cmdmode");
+#if defined(CONFIG_APP_FLOW_CARDV_AONI)
+    RetVal |= SvcFlowControl_Exec("lnxboot");
+#endif
 
     return RetVal;
 }
