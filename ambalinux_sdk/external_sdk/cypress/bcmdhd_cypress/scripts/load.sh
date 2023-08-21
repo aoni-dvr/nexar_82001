@@ -45,7 +45,7 @@ load_mod()
 	fi
 	echo "${mac}" > /tmp/wifi_mac
 	if [ ${MFG_MODE} == 0 ] && [ "${mac}" != "00:00:00:00:00:00" ] && [ "${mac}" != "" ] && [ ${#mac} == 17 ]; then
-		insmod /lib/modules/${KO} ${P_FW} ${P_NVRAM} ${P_CLM} ${P_DBG} amba_initmac=${mac//:/}
+		insmod /lib/modules/${KO} ${P_FW} ${P_NVRAM} ${P_CLM} ${P_DBG} amba_initmac=${mac} #amba_initmac=${mac//:/}
 	else
 		insmod /lib/modules/${KO} ${P_FW} ${P_NVRAM} ${P_CLM} ${P_DBG}
 	fi
