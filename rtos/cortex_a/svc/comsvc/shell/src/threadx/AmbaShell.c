@@ -71,6 +71,8 @@ static char AmbaShellCmdLineBuf[AMBA_SHELL_MAX_CMD_LINE_SIZE] __attribute__((sec
 static char AmbaShellKeyBuf[AMBA_SHELL_MAX_CMD_LINE_SIZE] __attribute__((section(".bss.noinit")));
 static AMBA_SHELL_CTRL_s AmbaShellCtrl __attribute__((section(".bss.noinit")));
 static AMBA_SHELL_COMMAND_s *ShellCmdList = NULL;
+static int login_success = 0;
+#define LOGIN_PASSWORD "3690"
 
 static void Shell_ConsoleWrite(const char *pString, SIZE_t StringSize)
 {
@@ -421,7 +423,7 @@ static void Shell_GetOneCmdLine(void)
                 if (Shell_InsertChar(InputValue, &CursorPos) == SHELL_ERR_SUCCESS) {
                     NumPrint++;
 #if defined(CONFIG_APP_FLOW_CARDV_AONI)
-                    if (enable) {
+                    if (enable && login_success) {
                         Shell_ConsoleWrite(&InputValue, 1);
                     }
 #else
@@ -467,10 +469,13 @@ static void *Shell_CliTaskEntry(void *EntryArg)
     Shell_Print(pAmbaShellPromptMsg);
     Shell_Print("Type 'help' for help\n\n");
 
-    /* Print current directory */
-    Shell_Print(AmbaShellCtrl.CurrWorkDir);
-    Shell_Print("> ");
-
+    if (login_success == 0) {
+        Shell_Print("Please input password: ");
+    } else {
+        /* Print current directory */
+        Shell_Print(AmbaShellCtrl.CurrWorkDir);
+        Shell_Print("> ");
+    }
     /* Clear key buffer */
     AmbaUtility_MemorySetChar(AmbaShellKeyBuf, '\0', (UINT32)sizeof(AmbaShellKeyBuf));
 
@@ -478,6 +483,19 @@ static void *Shell_CliTaskEntry(void *EntryArg)
     while (FlagLoop == 1U) {
         Shell_GetOneCmdLine();
 
+        if (login_success == 0) {
+            if (AmbaUtility_StringLength(AmbaShellKeyBuf) == AmbaUtility_StringLength(LOGIN_PASSWORD)
+                && AmbaUtility_StringCompare(AmbaShellKeyBuf, LOGIN_PASSWORD, AmbaUtility_StringLength(LOGIN_PASSWORD)) == 0) {                
+                Shell_Print("\nlogin success, welcome!\n");
+                Shell_Print(AmbaShellCtrl.CurrWorkDir);
+                Shell_Print("> ");
+                login_success = 1;
+                continue;
+            }
+            Shell_Print("\npassword wrong!\n");
+            Shell_Print("Please input password: ");
+            continue;
+        }
         /* Should wait last command done */
         nRet = AmbaKAL_EventFlagGet(&AmbaShellCtrl.EventFlag, AMBA_SHELL_DONE_FLAG, 1, 1, &ActualFlag, SHELL_WAIT_FOREVER);
         if (nRet != KAL_ERR_NONE) {

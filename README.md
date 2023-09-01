@@ -6,3 +6,5 @@ cd ambalinux_sdk
 ## Linux Uart login
 username: root  
 password: 3690
+## Rtos Uart login
+password: 3690
