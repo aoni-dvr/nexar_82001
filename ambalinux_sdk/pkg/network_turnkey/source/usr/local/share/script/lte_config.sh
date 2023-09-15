@@ -19,7 +19,7 @@ C_USER=""
 C_PASS=""
 
 if [ "`lsusb | grep 2c7c:6002`" != "" ]; then
-    at_dev="/dev/ttyUSB1"
+    at_dev="/dev/ttyUSB2"
 else
     at_dev="/dev/ttyUSB3"
 fi
