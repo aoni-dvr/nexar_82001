@@ -123,5 +123,6 @@ UINT32 AmbaShell_ExecCommand(char *pCmdLine);
 #if defined(CONFIG_APP_FLOW_CARDV_AONI)
 int AmbaShell_EnableEcho(int enable);
 UINT32 AmbaShell_ExecThirdCommand(const char *cmdline);
+int AmbaShell_SetPasswordEnable(int flag);
 #endif
 #endif

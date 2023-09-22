@@ -259,8 +259,10 @@ static UINT32 RefOD_CvfChan2Inst(UINT32 CvfChan, UINT32 *pInst)
 #ifdef CONFIG_AMBALINK_BOOT_OS
 static UINT32 RefOD_Init_Callback(UINT32 Channel, UINT32 OutType)
 {
-    UINT32 Rval = SVC_OK;
-
+    UINT32 Rval = SVC_OK;    
+#if defined(CONFIG_APP_FLOW_CARDV_AONI)
+    static int Cvboot = 0;
+#endif
     AmbaPrint_PrintUInt5("RefOD_Init_Callback(%u)", Channel, 0U, 0U, 0U, 0U);
 
     for (UINT32 i = 0; i < SVC_REFOD_MAX_INSTANCE; i++) {
@@ -269,7 +271,23 @@ static UINT32 RefOD_Init_Callback(UINT32 Channel, UINT32 OutType)
                 Rval = SvcCvFlow_StatusEventIssue(g_RefODCtrl[i].CvfChan, SVC_CV_EVT_IPC_CHAN_READY, NULL);
             }
         }
+    }    
+#if defined(CONFIG_APP_FLOW_CARDV_AONI)
+    if (Cvboot == 0) {
+        extern UINT32 SvcCvMainTask_Ctrl(const char *pCmd);
+        SvcCvMainTask_Ctrl("continue");
+        Cvboot = 1;
+    } else {
+        extern UINT32 SvcImgFeeder_ReEnable(UINT32 FeederID);
+        UINT32 Inst = 0;
+        SVC_REFOD_CTRL_s *pCtrl = NULL;
+        RefOD_CvfChan2Inst(Channel, &Inst);
+        pCtrl = &g_RefODCtrl[Inst];
+        pCtrl->SrcSeqNum = 0;
+        SvcImgFeeder_ReEnable(Channel);
+        RefOD_SemGive(Inst);
     }
+#endif
 
     AmbaMisra_TouchUnused(&OutType);
 

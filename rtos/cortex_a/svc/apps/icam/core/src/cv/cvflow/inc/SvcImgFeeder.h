@@ -102,5 +102,8 @@ UINT32 SvcImgFeeder_Disconnect(SVC_IMG_FEEDER_PORT_s *pPort);
 UINT32 SvcImgFeeder_MsgToFeeder(SVC_IMG_FEEDER_PORT_s *pPort, UINT32 Msg, void *pInfo);
 
 void SvcImgFeeder_DebugEnable(UINT32 DebugEnable);
+#if defined(CONFIG_APP_FLOW_CARDV_AONI)
+UINT32 SvcImgFeeder_ReEnable(UINT32 FeederID);
+#endif
 
 #endif /* SVC_IMG_FEEDER_H */

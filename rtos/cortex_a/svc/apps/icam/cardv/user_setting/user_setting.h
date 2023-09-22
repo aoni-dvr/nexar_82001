@@ -8,7 +8,7 @@
 #define USER_SETTING_UVC_MODE2              USER_SETTING_PREF_DIR"\\uvc_mode2.txt"
 #define USER_SETTING_DEVINFO_PATH           USER_SETTING_PREF_DIR"\\devinfo"
 
-#define USER_SETTING_VER_NUM                (21)
+#define USER_SETTING_VER_NUM                (22)
 
 enum {
     INI_SECTION_INTERNAL_CAMERA = 0,

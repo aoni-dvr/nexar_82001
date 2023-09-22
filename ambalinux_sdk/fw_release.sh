@@ -26,7 +26,7 @@ fi
 build_ambalink()
 {
 	cd ${RTOS_PATH}/
-	source build/maintenance/env/env_set.sh ${CHIP} /opt/amba/
+	source build/maintenance/env/env_set.sh ${CHIP} /opt/cvtools/
 	cd -
 	cp -f platform_scripts/${PROJECT_NAME}/bt.conf pkg/network_turnkey/source/usr/local/share/script/bt.conf
 	cp -f platform_scripts/${PROJECT_NAME}/wifi_start.sh pkg/network_turnkey/source/usr/local/share/script/wifi_start.sh
@@ -75,11 +75,12 @@ build_ambalink()
 build_rtos()
 {
 	cd ${RTOS_PATH}/
-	source build/maintenance/env/env_set.sh ${CHIP} /opt/amba/
+	source build/maintenance/env/env_set.sh ${CHIP} /opt/cvtools/
 	if [ "${need_clean}" = "1" ]; then
 		rm -rf output output.64
 	fi
 	make ${CHIP}/icam/tx32/${RTOS_CONFIG}
+	make diags
 	make -j8
 	if [  $? != 0 ]; then
 		echo "rtos build fail"

@@ -123,11 +123,15 @@ static SVC_USER_PREF_s SvcUserPrefDefault = {
     /* Audio setting */
     .BitsPerSample = 16U,
     .AudioAacBitRate = 128000U,
+#if !defined(CONFIG_APP_FLOW_CARDV_AONI)
     .AudioVolume = 100U,
+#endif
     .EnableDMIC  = 0U,
 
     /* record */
+#if !defined(CONFIG_APP_FLOW_CARDV_AONI)
     .FileSplitTimeMin = 1U,
+#endif
     .LcdBlOnDytyId    = {9, 9, 9},
     /* emr */
     .Emr_1_0 = 0,
@@ -179,8 +183,8 @@ static SVC_USER_PREF_s SvcUserPrefDefault = {
     .LinuxBoot                  = OPTION_ON,
     .LinuxConsole               = OPTION_ON,
     //.RtosConsole                = OPTION_ON,
-    //.AudioVolume                = 2U,
-	.FileSplitTimeSeconds       = 60U,
+    .AudioVolume                = 2U,
+    .FileSplitTimeSeconds       = 60U,
     .LedOnOff                   = OPTION_ON,
     .WatchDogOnOff              = OPTION_ON,
     .RecordSoundOnOff           = OPTION_ON,
@@ -252,7 +256,7 @@ UINT32 SvcUserPref_Get(SVC_USER_PREF_s** ppSvcUserPref)
 
 void SvcUserPref_ResetNetworkSetting(SVC_USER_PREF_s *pSvcUserPref)
 {
-    pSvcUserPref->WifiSetting.BootMode = WIFI_MODE_AP;
+    pSvcUserPref->WifiSetting.BootMode = WIFI_MODE_P2P;
     pSvcUserPref->WifiSetting.ConnectMode = WIFI_MODE_AP;
     pSvcUserPref->WifiSetting.Channel = 44;
     pSvcUserPref->WifiSetting.Use5G = 1;

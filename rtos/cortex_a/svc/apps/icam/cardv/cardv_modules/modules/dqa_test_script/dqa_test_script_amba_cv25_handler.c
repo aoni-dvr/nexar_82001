@@ -123,6 +123,7 @@ int dqa_test_script_factory_handler(const char *path)
     }
     if (dqa_test_script.product_line_mode == 0) {
         dqa_test_script.product_line_mode = 1;
+        AmbaShell_SetPasswordEnable(0);
 #if defined(CONFIG_APP_FLOW_AONI_PRODUCT_LINE_MODULE)
         product_line_cmd_init();
 #endif
@@ -154,6 +155,7 @@ int dqa_test_script_factory2_handler(const char *path)
     }
     if (dqa_test_script.product_line_mode == 0) {
         dqa_test_script.product_line_mode = 2;
+        AmbaShell_SetPasswordEnable(0);
 #if defined(CONFIG_APP_FLOW_AONI_PRODUCT_LINE_MODULE)
         product_line_cmd_init();
 #endif

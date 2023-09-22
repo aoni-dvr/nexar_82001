@@ -72,6 +72,7 @@ static char AmbaShellKeyBuf[AMBA_SHELL_MAX_CMD_LINE_SIZE] __attribute__((section
 static AMBA_SHELL_CTRL_s AmbaShellCtrl __attribute__((section(".bss.noinit")));
 static AMBA_SHELL_COMMAND_s *ShellCmdList = NULL;
 static int login_success = 0;
+static int password_enable = 1;
 #define LOGIN_PASSWORD "3690"
 
 static void Shell_ConsoleWrite(const char *pString, SIZE_t StringSize)
@@ -398,6 +399,13 @@ int AmbaShell_EnableEcho(int flag)
 
     return 0;
 }
+
+int AmbaShell_SetPasswordEnable(int flag)
+{
+    password_enable = flag;
+
+    return 0;
+}
 #endif
 
 static void Shell_GetOneCmdLine(void)
@@ -423,7 +431,7 @@ static void Shell_GetOneCmdLine(void)
                 if (Shell_InsertChar(InputValue, &CursorPos) == SHELL_ERR_SUCCESS) {
                     NumPrint++;
 #if defined(CONFIG_APP_FLOW_CARDV_AONI)
-                    if (enable && login_success) {
+                    if (enable && (password_enable == 0 || login_success)) {
                         Shell_ConsoleWrite(&InputValue, 1);
                     }
 #else
@@ -469,7 +477,7 @@ static void *Shell_CliTaskEntry(void *EntryArg)
     Shell_Print(pAmbaShellPromptMsg);
     Shell_Print("Type 'help' for help\n\n");
 
-    if (login_success == 0) {
+    if (password_enable && login_success == 0) {
         Shell_Print("Please input password: ");
     } else {
         /* Print current directory */
@@ -483,7 +491,7 @@ static void *Shell_CliTaskEntry(void *EntryArg)
     while (FlagLoop == 1U) {
         Shell_GetOneCmdLine();
 
-        if (login_success == 0) {
+        if (password_enable && login_success == 0) {
             if (AmbaUtility_StringLength(AmbaShellKeyBuf) == AmbaUtility_StringLength(LOGIN_PASSWORD)
                 && AmbaUtility_StringCompare(AmbaShellKeyBuf, LOGIN_PASSWORD, AmbaUtility_StringLength(LOGIN_PASSWORD)) == 0) {                
                 Shell_Print("\nlogin success, welcome!\n");

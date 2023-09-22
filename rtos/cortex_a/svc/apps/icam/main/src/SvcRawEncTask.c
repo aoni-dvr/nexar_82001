@@ -5472,8 +5472,12 @@ void SvcRawEncTask_StrmCapCreate(UINT32 RecBits, UINT8 *pBuf, UINT32 BufSize)
                     if ((RecBits & SvcRawEnc_BitGet(RecId)) > 0U) {
                         pCapCtrl->RecSelectBits |= SvcRawEnc_BitGet(RecId);
 
+#if defined(CONFIG_APP_FLOW_CARDV_AONI)
+                        CurSplitCnt  = pCurPref->FileSplitTimeSeconds;
+#else
                         CurSplitCnt  = pCurPref->FileSplitTimeMin;
                         CurSplitCnt *= 60U;
+#endif
                         CurSplitCnt *= GetRoundUpValU32(pResCfg->RecStrm[RecIdx].RecSetting.FrameRate.TimeScale,
                                                         pResCfg->RecStrm[RecIdx].RecSetting.FrameRate.NumUnitsInTick);
                         if (CurSplitCnt > 0U) {

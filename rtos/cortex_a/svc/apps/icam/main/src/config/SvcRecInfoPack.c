@@ -293,7 +293,11 @@ static void FillRecBox(const SVC_REC_MAIN_INFO_s *pInfo, const SVC_RES_CFG_s *pC
     #else
                 pUsrCfg->IsEncrypt    = 0U;
     #endif
+#if defined(CONFIG_APP_FLOW_CARDV_AONI)
+                pUsrCfg->SplitTime    = pPref->FileSplitTimeSeconds;
+#else 
                 pUsrCfg->SplitTime    = pPref->FileSplitTimeMin;
+#endif
                 NumRbx++;
             }
         }

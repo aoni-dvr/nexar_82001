@@ -646,7 +646,8 @@ int AmbaIPC_SvcRegister(INT32 prog,
             AmbaPrint_Flush();
             return -1;
         } else {
-            rval = AmbaKAL_TaskSetSmpAffinity(&svc->thread, 0x1U << CONFIG_BOOT_CORE_SRTOS);
+            //rval = AmbaKAL_TaskSetSmpAffinity(&svc->thread, 0x1U << CONFIG_BOOT_CORE_SRTOS);
+            rval = AmbaKAL_TaskSetSmpAffinity(&svc->thread, 0x2U);
             if (rval != OK) {
                 AmbaPrint_ModulePrintStr5(AMBALINK_MODULE_ID, "%s: Failed to Specify core task %s", __func__, name, NULL, NULL, NULL);
                 AmbaPrint_Flush();

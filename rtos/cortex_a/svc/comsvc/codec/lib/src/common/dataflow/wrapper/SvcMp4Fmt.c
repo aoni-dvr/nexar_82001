@@ -72,8 +72,13 @@ static inline void Wrapper_Perror(const char *Func, UINT32 Line, const char *Mes
 
 #define ATOM_HDR_SIZE               (8U)    /**< Atom Size(4) + Atom Type(4) */
 
+#if defined(CONFIG_APP_FLOW_CARDV_AONI)
+#define SAMPLE_DESC_TOLERANCE       (70U)   /**< Sample descriptors tolerance 70% */
+#define SAMPLE_BRATE_TOLERANCE      (20U)   /**< Sample bitrate tolerance 20% */
+#else
 #define SAMPLE_DESC_TOLERANCE       (50U)   /**< Sample descriptors tolerance 50% */
 #define SAMPLE_BRATE_TOLERANCE      (10U)   /**< Sample bitrate tolerance 10% */
+#endif
 
 /**
  *  Track information

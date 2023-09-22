@@ -83,6 +83,7 @@ int sd_bad_or_not_exist = 0;
 
 static device_info_s device_info;
 static AMBA_KAL_MUTEX_t led_mutex;
+static AMBA_KAL_MUTEX_t linux_time_mutex;
 int app_helper_init(void)
 {
     app_helper.linux_console_enable = -1;
@@ -184,6 +185,9 @@ int app_helper_init(void)
     memcpy(device_info.build_timestamp, PROJECT_INFO_BUILD_TIMESTAMP, strlen(PROJECT_INFO_BUILD_TIMESTAMP));
     if (AmbaKAL_MutexCreate(&led_mutex, "led_mutex") != KAL_ERR_NONE) {
         debug_line("%s: led_mutex create fail", __func__);
+    }
+    if (AmbaKAL_MutexCreate(&linux_time_mutex, "linux_time_mutex") != KAL_ERR_NONE) {
+        debug_line("%s: linux_time_mutex create fail", __func__);
     }
 
     return 0;
@@ -1316,75 +1320,82 @@ static int get_linux_time_impl(linux_time_s *linux_time)
     SvcUserPref_Get(&pSvcUserPref);
     time_offset = pSvcUserPref->TimeZone;
 
+    AmbaKAL_MutexTake(&linux_time_mutex, AMBA_KAL_WAIT_FOREVER);
     if (ClientID == NULL) {
         ClientID = AmbaIPC_ClientCreate((INT32)AMBA_IPC_HOST_LINUX,
                                          (INT32)AMBA_RPC_PROG_LU_LINUX_TIME_SERVICE_PROG_ID,
                                          (INT32)AMBA_RPC_PROG_LU_LINUX_TIME_SERVICE_VER);
         if (ClientID == NULL) {
+            AmbaKAL_MutexGive(&linux_time_mutex);
             //debug_line("[%s] AmbaIPC_ClientCreate failed", __func__);
-            return -1;
+            goto fail_handler;
         }
     }
     Status = AmbaIPC_ClientCall(ClientID, (INT32)AMBA_RPC_PROG_LU_LINUX_TIME_SERVICE_IPC,
                                 &time_offset, sizeof(time_offset) + 1,
                                 &response_time, sizeof(response_time), 2000);
     if (Status != AMBA_IPC_REPLY_SUCCESS) {
-        if(fail_tick == 0 || (tick() - fail_tick) > 5000) {
+        AmbaIPC_ClientDestroy(ClientID);
+        ClientID = NULL;
+        AmbaKAL_MutexGive(&linux_time_mutex);
+        if (fail_tick == 0 || (tick() - fail_tick) > 5000) {
             fail_tick = tick();
             debug_line("[%s] AmbaIPC_ClientCall failed: %d", __func__, Status);
         }
-        //debug_line("[%s] AmbaIPC_ClientCall failed: %d", __func__, Status);
-        if (map_flag) {
-            unsigned int cur_tick = tick();
-            unsigned int pass_seconds = (cur_tick - time_map.tick) / 1000;
-            unsigned int pass_useconds = (cur_tick - time_map.tick) % 1000 * 1000;
-            if (time_map.linux_time.usec + pass_useconds > 1000000U) {
-                pass_seconds += 1;
-                pass_useconds = time_map.linux_time.usec + pass_useconds - 1000000U;
-            }
-            //debug_line("time map=%d.%.6d, tick=%d, cur_tick=%d, tick_passed:%d, ofsset=%d.%.6d", time_map.linux_time.sec, time_map.linux_time.usec, time_map.tick,
-                //cur_tick, cur_tick - time_map.tick, pass_seconds, pass_useconds);
-            linux_time->sec = time_map.linux_time.sec + pass_seconds;
-            linux_time->usec = time_map.linux_time.usec + pass_useconds;
-            AmbaTime_UtcTimeStamp2DateTime(linux_time->sec, &rtc_time);
-            linux_time->utc_time.year = rtc_time.Year;
-            linux_time->utc_time.month = rtc_time.Month;
-            linux_time->utc_time.day = rtc_time.Day;
-            linux_time->utc_time.hour = rtc_time.Hour;
-            linux_time->utc_time.minute = rtc_time.Minute;
-            linux_time->utc_time.second = rtc_time.Second;
-            AmbaTime_UtcTimeStamp2DateTime(linux_time->sec + time_offset, &rtc_time);
-            linux_time->local_time.year = rtc_time.Year;
-            linux_time->local_time.month = rtc_time.Month;
-            linux_time->local_time.day = rtc_time.Day;
-            linux_time->local_time.hour = rtc_time.Hour;
-            linux_time->local_time.minute = rtc_time.Minute;
-            linux_time->local_time.second = rtc_time.Second;
-            //debug_line("time map=%d-%d-%d %.2d:%.2d:%.2d, new_time:%d-%d-%d %.2d:%.2d:%.2d",
-                //time_map.linux_time.local_time.year, time_map.linux_time.local_time.month, time_map.linux_time.local_time.day,
-                //time_map.linux_time.local_time.hour, time_map.linux_time.local_time.minute, time_map.linux_time.local_time.second,
-                //linux_time->local_time.year, linux_time->local_time.month, linux_time->local_time.day,
-                //linux_time->local_time.hour, linux_time->local_time.minute, linux_time->local_time.second);
-            return 0;
-        }
+    } else {
+        AmbaKAL_MutexGive(&linux_time_mutex);
+        time_map.tick = tick();
+        linux_time->sec = response_time.tv_sec;
+        linux_time->usec = response_time.tv_usec;
+        linux_time->utc_time.year = response_time.utc_time.year;
+        linux_time->utc_time.month = response_time.utc_time.month;
+        linux_time->utc_time.day = response_time.utc_time.day;
+        linux_time->utc_time.hour = response_time.utc_time.hour;
+        linux_time->utc_time.minute = response_time.utc_time.minute;
+        linux_time->utc_time.second = response_time.utc_time.second;
+        linux_time->local_time.year = response_time.local_time.year;
+        linux_time->local_time.month = response_time.local_time.month;
+        linux_time->local_time.day = response_time.local_time.day;
+        linux_time->local_time.hour = response_time.local_time.hour;
+        linux_time->local_time.minute = response_time.local_time.minute;
+        linux_time->local_time.second = response_time.local_time.second;
+        memcpy(&(time_map.linux_time), linux_time, sizeof(linux_time_s));
+        map_flag = 1;
+        return 0;
     }
-    time_map.tick = tick();
-    linux_time->sec = response_time.tv_sec;
-    linux_time->usec = response_time.tv_usec;
-    linux_time->utc_time.year = response_time.utc_time.year;
-    linux_time->utc_time.month = response_time.utc_time.month;
-    linux_time->utc_time.day = response_time.utc_time.day;
-    linux_time->utc_time.hour = response_time.utc_time.hour;
-    linux_time->utc_time.minute = response_time.utc_time.minute;
-    linux_time->utc_time.second = response_time.utc_time.second;
-    linux_time->local_time.year = response_time.local_time.year;
-    linux_time->local_time.month = response_time.local_time.month;
-    linux_time->local_time.day = response_time.local_time.day;
-    linux_time->local_time.hour = response_time.local_time.hour;
-    linux_time->local_time.minute = response_time.local_time.minute;
-    linux_time->local_time.second = response_time.local_time.second;
-    memcpy(&(time_map.linux_time), linux_time, sizeof(linux_time_s));
-    map_flag = 1;
+fail_handler:
+    if (map_flag) {
+        unsigned int cur_tick = tick();
+        unsigned int pass_seconds = (cur_tick - time_map.tick) / 1000;
+        unsigned int pass_useconds = (cur_tick - time_map.tick) % 1000 * 1000;
+        if (time_map.linux_time.usec + pass_useconds > 1000000U) {
+            pass_seconds += 1;
+            pass_useconds = time_map.linux_time.usec + pass_useconds - 1000000U;
+        }
+        //debug_line("time map=%d.%.6d, tick=%d, cur_tick=%d, tick_passed:%d, ofsset=%d.%.6d", time_map.linux_time.sec, time_map.linux_time.usec, time_map.tick,
+            //cur_tick, cur_tick - time_map.tick, pass_seconds, pass_useconds);
+        linux_time->sec = time_map.linux_time.sec + pass_seconds;
+        linux_time->usec = time_map.linux_time.usec + pass_useconds;
+        AmbaTime_UtcTimeStamp2DateTime(linux_time->sec, &rtc_time);
+        linux_time->utc_time.year = rtc_time.Year;
+        linux_time->utc_time.month = rtc_time.Month;
+        linux_time->utc_time.day = rtc_time.Day;
+        linux_time->utc_time.hour = rtc_time.Hour;
+        linux_time->utc_time.minute = rtc_time.Minute;
+        linux_time->utc_time.second = rtc_time.Second;
+        AmbaTime_UtcTimeStamp2DateTime(linux_time->sec + time_offset, &rtc_time);
+        linux_time->local_time.year = rtc_time.Year;
+        linux_time->local_time.month = rtc_time.Month;
+        linux_time->local_time.day = rtc_time.Day;
+        linux_time->local_time.hour = rtc_time.Hour;
+        linux_time->local_time.minute = rtc_time.Minute;
+        linux_time->local_time.second = rtc_time.Second;
+        //debug_line("time map=%d-%d-%d %.2d:%.2d:%.2d, new_time:%d-%d-%d %.2d:%.2d:%.2d",
+            //time_map.linux_time.local_time.year, time_map.linux_time.local_time.month, time_map.linux_time.local_time.day,
+            //time_map.linux_time.local_time.hour, time_map.linux_time.local_time.minute, time_map.linux_time.local_time.second,
+            //linux_time->local_time.year, linux_time->local_time.month, linux_time->local_time.day,
+            //linux_time->local_time.hour, linux_time->local_time.minute, linux_time->local_time.second);
+    }
 #endif
 
     return 0;

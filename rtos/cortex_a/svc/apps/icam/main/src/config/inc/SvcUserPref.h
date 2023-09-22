@@ -181,8 +181,11 @@ typedef struct {
     UINT32          EnableDMIC;
 
     /* record */
-    UINT32          FileSplitTimeMin;
+#if defined(CONFIG_APP_FLOW_CARDV_AONI)
     UINT32          FileSplitTimeSeconds;
+#else
+    UINT32          FileSplitTimeMin;
+#endif
 
     #define SVC_MAX_NUM_PANEL       (3U)
     UINT32          LcdBlOnDytyId[SVC_MAX_NUM_PANEL];

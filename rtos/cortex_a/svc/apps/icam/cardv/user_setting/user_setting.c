@@ -1213,8 +1213,9 @@ int user_setting_init(void)
     ini_register_callback(user_setting_section_item_handler);
     ini_load(USER_SETTING_SAVE_PATH);
     SvcUserPref_Get(&pSvcUserPref);
-    if (pSvcUserPref->SettingVersion < 21) {
+    if (pSvcUserPref->SettingVersion < 22) {
         pSvcUserPref->SettingVersion = USER_SETTING_VER_NUM;
+        pSvcUserPref->AudioVolume = 2U;
         SvcUserPref_Reset();
     }
 

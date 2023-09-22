@@ -622,6 +622,22 @@ UINT32 SvcImgFeeder_Init(SVC_IMG_FEEDER_INIT_CFG_s *pCfg)
     return RetVal;
 }
 
+#if defined(CONFIG_APP_FLOW_CARDV_AONI)
+UINT32 SvcImgFeeder_ReEnable(UINT32 FeederID)
+{
+    SVC_IMG_FEEDER_HANDLE_s *pHandle;
+
+    pHandle = &FeederHandle[FeederID];
+    ImgFeeder_MutexTake(&pHandle->Mutex);
+    //pHandle->DataUpdateFlag = 1;
+    pHandle->PortRdyFlag = SVC_IMG_FEEDER_ADD_BIT(pHandle->PortRdyFlag, FeederID);
+    AmbaKAL_EventFlagSet(&pHandle->CtrlFlagId, SVC_IMG_FEEDER_FLAG_PORT_READY);
+    ImgFeeder_MutexGive(&pHandle->Mutex);
+
+    return SVC_OK;
+}
+#endif
+
 /**
 * Create image feeder
 * @param [in] FeederID feeder ID

@@ -64,14 +64,14 @@ static const SVC_RES_CFG_s g_ResCfg_GC4653_Gc2053[] = {
                 [0] = {
                     .SensorMode = GC4653_2560_1440_30P,
                     .SensorGroup = 0,
-                    .IQTable = IQ_SSR_IMX577,
+                    .IQTable = IQ_SSR_GC4653,
                 },   /* sensor idx 0 */
             },
             [1] = { /* sensor on VIN_1 */
                 [0] = {
                     .SensorMode = GC2053_1920_1080_30P,
                     .SensorGroup = 0,
-                    .IQTable = IQ_SSR_IMX577,
+                    .IQTable = IQ_SSR_GC2053,
                 },   /* sensor idx 1 */
             }
         },
@@ -187,7 +187,7 @@ static const SVC_RES_CFG_s g_ResCfg_GC4653_Gc2053[] = {
         .CvFlow = {
             [0] = {
                 .Chan = 0U, .pCvObj = &SvcCvFlow_RefODObj,
-                .CvModeID = REFOD_FDAG_LINUX_SSD,
+                .CvModeID = REFOD_FDAG_LINUX_OSDBUF,
                 .PrivFlag = 0U,
                 .InputCfg = {
                     .InputNum = 1U,
@@ -203,14 +203,14 @@ static const SVC_RES_CFG_s g_ResCfg_GC4653_Gc2053[] = {
             },
             [1] = {
                 .Chan = 1U, .pCvObj = &SvcCvFlow_RefODObj,
-                .CvModeID = REFOD_FDAG_LINUX_SSD,
+                .CvModeID = REFOD_FDAG_LINUX_OSDBUF,
                 .PrivFlag = 1U,
                 .InputCfg = {
                     .InputNum = 1U,
                     .Input = {
                         [0] = {
                             .DataSrc = SVC_CV_DATA_SRC_PYRAMID, .StrmId = 1U,   /* input is FOV_1 */
-                            .FrameWidth = 1280U, .FrameHeight = 720U, .NumRoi = 0U
+                            .FrameWidth = GC2053_MAIN_W, .FrameHeight = GC2053_MAIN_H, .NumRoi = 0U
                         },
                     },
                     .EnableFeeder = 1U, .FeederID = 1U, .FeederFlag = 0U,
@@ -245,7 +245,7 @@ static const SVC_RES_CFG_s g_ResCfg_GC4653[] = {
                 [0] = {
                     .SensorMode = GC4653_2560_1440_30P,
                     .SensorGroup = 0,
-                    .IQTable = IQ_SSR_IMX577,
+                    .IQTable = IQ_SSR_GC4653,
                 },   /* sensor idx 0 */
             }
         },
@@ -322,7 +322,7 @@ static const SVC_RES_CFG_s g_ResCfg_GC4653[] = {
         .CvFlow = {
             [0] = {
                 .Chan = 0U, .pCvObj = &SvcCvFlow_RefODObj,
-                .CvModeID = REFOD_FDAG_LINUX_SSD,
+                .CvModeID = REFOD_FDAG_LINUX_OSDBUF,
                 .InputCfg = {
                     .InputNum = 1U,
                     .Input = {
@@ -363,7 +363,7 @@ static const SVC_RES_CFG_s g_ResCfg_Gc2053[] = {
                 [0] = {
                     .SensorMode = GC2053_1920_1080_30P,
                     .SensorGroup = 0,
-                    .IQTable = IQ_SSR_IMX577,
+                    .IQTable = IQ_SSR_GC2053,
                 },   /* sensor idx 0 */
             }
         },
@@ -415,18 +415,18 @@ static const SVC_RES_CFG_s g_ResCfg_Gc2053[] = {
             },
         },
         .StillCfg.EnableStill = 1,
-#if 0//defined(CONFIG_BUILD_CV)
+#if defined(CONFIG_BUILD_CV)
         .CvFlowNum = 0, .CvFlowBits = 0x0U,
         .CvFlow = {
             [0] = {
                 .Chan = 0U, .pCvObj = &SvcCvFlow_RefODObj,
-                .CvModeID = REFOD_FDAG_LINUX_SSD,
+                .CvModeID = REFOD_FDAG_LINUX_OSDBUF,
                 .InputCfg = {
                     .InputNum = 1U,
                     .Input = {
                         [0] = {
                             .DataSrc = SVC_CV_DATA_SRC_PYRAMID, .StrmId = 0U,	/* input is FOV_0 */
-                            .FrameWidth = 2560U, .FrameHeight = 1440U, .NumRoi = 0U
+                            .FrameWidth = GC2053_MAIN_W, .FrameHeight = GC2053_MAIN_H, .NumRoi = 0U
                         },
                     },
                     .EnableFeeder = 1U, .FeederID = 0U, .FeederFlag = 0U,

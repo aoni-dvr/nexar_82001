@@ -5269,13 +5269,22 @@ static void CmdAppEntry(UINT32 ArgCount, char * const *pArgVector, AMBA_SHELL_PR
 
             if (SVC_OK == SvcWrap_strtoul(pArgVector[2U], &Value)) {
                 if (SVC_OK == SvcUserPref_Get(&pSvcUserPref)) {
+#if defined(CONFIG_APP_FLOW_CARDV_AONI)
+                    pSvcUserPref->FileSplitTimeSeconds = Value; /* Unit: Second */
+#else
                     pSvcUserPref->FileSplitTimeMin = Value; /* Unit: Mins */
+#endif
                     SvcPref_GetPrefBuf(&PrefBufAddr, &PrefBufSize);
                     Rval = SvcPref_Save(PrefBufAddr, PrefBufSize);
                     if (SVC_OK != Rval) {
                         SvcLog_NG(SVC_LOG_CMDAPP, "SvcPref_Save() 'FileSplitTimeMin' failed %d ", Rval, 0U);
                     } else {
+#if defined(CONFIG_APP_FLOW_CARDV_AONI)
+                        SvcLog_OK(SVC_LOG_CMDAPP, "SvcPref_Save() 'FileSplitTimeSeconds' = %d to preference", pSvcUserPref->FileSplitTimeSeconds, 0U);
+
+#else
                         SvcLog_OK(SVC_LOG_CMDAPP, "SvcPref_Save() 'FileSplitTimeMin' = %d to preference", pSvcUserPref->FileSplitTimeMin, 0U);
+#endif
                     }
                     IsReboot = 1U;
                     Rval = SVC_OK;

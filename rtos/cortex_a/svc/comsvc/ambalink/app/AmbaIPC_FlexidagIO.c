@@ -63,6 +63,25 @@ AMBA_IPC_FLEXIDAGIO_RESULT_f FlexidagIOResultFun[AMBA_RPC_PROG_RT_FLEXIDAGIO_NUM
 
 static void AmbaIPC_FlexidagIO_Svc_Config(void *pMsg, AMBA_IPC_SVC_RESULT_s *pRet)
 {
+#if defined(CONFIG_APP_FLOW_CARDV_AONI)
+    AMBA_RPC_LU_FLEXIDAGIO_CONFIG_s *pConfig = pMsg;
+    UINT32 Result = 0;
+    AMBA_IPC_REPLY_STATUS_e reply = AMBA_IPC_REPLY_SUCCESS;
+
+    if (FlexidagIOConfigFun[pConfig->Channel] != NULL){
+        Result = FlexidagIOConfigFun[pConfig->Channel](pConfig->Channel, pConfig->OutType);
+    }
+    if (Result) {
+        AmbaPrint_ModulePrintUInt5(AMBALINK_MODULE_ID, "AmbaIPC_FlexidagIO_Svc_Config FlexidagIOConfigFun() fail (%d)", Result, 0U, 0U, 0U, 0U);
+        pRet->Length = sizeof(Result);
+        *((UINT32 *) pRet->pResult) = Result;
+        reply = AMBA_IPC_IS_NOT_READY;
+    }
+
+    //send ipc reply
+    pRet->Status = reply;
+    pRet->Mode = AMBA_IPC_SYNCHRONOUS;
+#else
     AMBA_RPC_LU_FLEXIDAGIO_CONFIG_s *pConfig = pMsg;
 
     if (FlexidagIOConfigFun[pConfig->Channel] != NULL){
@@ -72,6 +91,7 @@ static void AmbaIPC_FlexidagIO_Svc_Config(void *pMsg, AMBA_IPC_SVC_RESULT_s *pRe
     //send ipc reply
     pRet->Status = AMBA_IPC_REPLY_SUCCESS;
     pRet->Mode = AMBA_IPC_SYNCHRONOUS;
+#endif
 }
 
 static void AmbaIPC_FlexidagIO_Svc_Result(void *pMsg, AMBA_IPC_SVC_RESULT_s *pRet)
@@ -132,7 +152,13 @@ UINT32 AmbaIPC_FlexidagIO_Init(UINT32 Channel, AMBA_IPC_FLEXIDAGIO_CONFIG_f Conf
     AMBA_IPC_PROG_INFO_s prog_info[AMBA_RPC_PROG_RT_FLEXIDAGIO_NUM];
     AMBA_IPC_PROC_s ProcInfo[AMBA_RPC_PROG_RT_FLEXIDAGIO_PROC_NUM];
     static UINT32 FlexidagIOResultIdxBlk[AMBA_RPC_PROG_RT_FLEXIDAGIO_NUM*FLEXIDAGIO_RESULT_QUEUE_NUM];
+#if defined(CONFIG_APP_FLOW_CARDV_AONI)
+    static UINT32 inited [2] = {0};
 
+    if (inited[Channel]) {
+        return FLEXIDAGIO_OK;
+    }
+#endif
     if (Channel >= AMBA_RPC_PROG_RT_FLEXIDAGIO_NUM) {
         AmbaPrint_ModulePrintUInt5(AMBALINK_MODULE_ID, "AmbaIPC_FlexidagIO_Init Channel(%d) is big than %d\n", Channel, AMBA_RPC_PROG_RT_FLEXIDAGIO_NUM, 0U, 0U, 0U);
         ret = FLEXIDAGIO_ERR;
@@ -165,6 +191,9 @@ UINT32 AmbaIPC_FlexidagIO_Init(UINT32 Channel, AMBA_IPC_FLEXIDAGIO_CONFIG_f Conf
 
         FlexidagIOConfigFun[Channel] = ConfigFun;
     }
+#if defined(CONFIG_APP_FLOW_CARDV_AONI)
+    inited[Channel] = 1;
+#endif
 
     return ret;
 }
@@ -179,6 +208,7 @@ UINT32 AmbaIPC_FlexidagIO_Deinit(UINT32 Channel)
     }
 
     if(ret == FLEXIDAGIO_OK) {
+#if !defined(CONFIG_APP_FLOW_CARDV_AONI)
         if (AmbaKAL_MsgQueueDelete(&FlexidagIOResultIdxQueue[Channel]) != FLEXIDAGIO_OK){
             AmbaPrint_ModulePrintUInt5(AMBALINK_MODULE_ID, "AmbaIPC_FlexidagIO_Deinit AmbaKAL_MsgQueueDelete fail", 0U, 0U, 0U, 0U, 0U);
             ret = FLEXIDAGIO_ERR;
@@ -202,6 +232,7 @@ UINT32 AmbaIPC_FlexidagIO_Deinit(UINT32 Channel)
             AmbaPrint_ModulePrintUInt5(AMBALINK_MODULE_ID, "AmbaIPC_FlexidagIO_Deinit AmbaIPC_SvcUnregister fail", 0U, 0U, 0U, 0U, 0U);
             ret = FLEXIDAGIO_ERR;
         }
+#endif
     }
 
     return ret;
@@ -248,6 +279,13 @@ UINT32 AmbaIPC_FlexidagIO_SetInput(UINT32 Channel, void *pData, UINT32 Len)
             if(status != AMBA_IPC_REPLY_SUCCESS) {
                 AmbaPrint_ModulePrintUInt5(AMBALINK_MODULE_ID, "AmbaIPC_FlexidagIO_SetInput AmbaIPC_ClientCall fail (%d)\n", status, 0U, 0U, 0U, 0U);
                 ret = FLEXIDAGIO_ERR;
+#if defined(CONFIG_APP_FLOW_CARDV_AONI)
+                if (AmbaIPC_ClientDestroy(RpcFlexidagIOClient[Channel]) != 0) {
+                    AmbaPrint_ModulePrintUInt5(AMBALINK_MODULE_ID, "AmbaIPC_FlexidagIO_Input AmbaIPC_ClientDestroy fail (%d)\n", status, 0U, 0U, 0U, 0U);
+                }
+                /* ignore ClientDestroy() result :o( */
+                RpcFlexidagIOClient[Channel] = NULL;
+#endif
             }
         }
     }

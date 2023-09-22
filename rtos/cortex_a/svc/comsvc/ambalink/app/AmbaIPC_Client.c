@@ -362,10 +362,12 @@ CLIENT_ID_t AmbaIPC_ClientCreate(INT32 host, INT32 prog, INT32 vers)
         }
     }
     else {
+#if !defined(CONFIG_APP_FLOW_CARDV_AONI)
         AmbaPrint_ModulePrintUInt5(AMBALINK_MODULE_ID, "binding info: host = %d, prog = %d, vers = %d ! Client needs to bind again next time!", host, prog, vers, 0U, 0U);
         AmbaPrint_Flush();
         AmbaIPC_ClientDestroy((CLIENT_ID_t) client);
         return 0;
+#endif
     }
 
     return (CLIENT_ID_t) client;
@@ -439,6 +441,7 @@ AMBA_IPC_REPLY_STATUS_e AmbaIPC_ClientCall(CLIENT_ID_t client_id, INT32 proc,
                     goto BIND_DONE;
                 }
             }
+#if !defined(CONFIG_APP_FLOW_CARDV_AONI)
             else if( bind_status == AMBA_IPC_REPLY_TIMEOUT) {
                 AmbaPrint_ModulePrintStr5(AMBALINK_MODULE_ID, "Binding svc program timeout!", NULL, NULL, NULL, NULL, NULL);
                 AmbaPrint_Flush();
@@ -451,6 +454,7 @@ AMBA_IPC_REPLY_STATUS_e AmbaIPC_ClientCall(CLIENT_ID_t client_id, INT32 proc,
                 AmbaPrint_ModulePrintStr5(AMBALINK_MODULE_ID, "Other binding problem.", NULL, NULL, NULL, NULL, NULL);
                 AmbaPrint_Flush();
             }
+#endif
 BIND_DONE:
             UNLOCK_PORT(client->port);
             return bind_status;
