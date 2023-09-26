@@ -66,7 +66,7 @@ AMBA_PARTITION_CONFIG_s AmbaNAND_UserPartConfig[AMBA_NUM_USER_PARTITION] = {
 
     [AMBA_USER_PARTITION_VIDEO_REC_INDEX]       = {"", 0, 0},       /* Video Recording Index*/
     [AMBA_USER_PARTITION_FAT_DRIVE_A]           = {"DRIVE_A",         0x10, 10 * 1024 * 1024},       /* Internal Storage FAT Drive 'A': need to assign the size */
-    [AMBA_USER_PARTITION_FAT_DRIVE_B]           = {"DRIVE_B",         0x10, 105 * 1024 * 102},       /* Internal Storage FAT Drive 'B' */
+    [AMBA_USER_PARTITION_FAT_DRIVE_B]           = {"DRIVE_B",         0x10, 105 * 1024 * 1024},       /* Internal Storage FAT Drive 'B' */
 #if !defined(CONFIG_APP_FLOW_CARDV_AONI)
 #if defined(CONFIG_ICAM_PROJECT_SHMOO)
     [AMBA_USER_PARTITION_RESERVED0]             = {"AdvShmoo",        0x10, 128 * 1024},         /* Advance Shmoo Data */

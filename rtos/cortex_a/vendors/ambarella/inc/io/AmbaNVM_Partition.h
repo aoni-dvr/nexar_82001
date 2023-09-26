@@ -212,7 +212,7 @@ typedef struct {
 
 #define AMBA_USER_PTB_MAGIC            (0x1732dfe7U)
 
-#define USERPTB_VERSION (0x2005U)
+#define USERPTB_VERSION (0x2006U)
 
 typedef struct {
     UINT32  Version;                    /* the version of the Partition Table */
