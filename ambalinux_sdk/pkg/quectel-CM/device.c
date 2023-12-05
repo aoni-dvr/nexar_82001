@@ -339,6 +339,11 @@ BOOL qmidevice_detect(char *qmichannel, char *usbnet_adapter, unsigned bufsize, 
         {
             int atIntf = -1;
 
+            if (profile->usb_dev.idVendor == 0x2c7c && profile->usb_dev.idProduct == 0x6007) {                
+                extern void atc_set_flag(int value);
+                atc_set_flag(1);
+            }
+
             if (profile->usb_dev.idVendor == 0x2c7c) { //Quectel
                 switch (profile->usb_dev.idProduct) { //EC200U
                 case 0x0901: //EC200U

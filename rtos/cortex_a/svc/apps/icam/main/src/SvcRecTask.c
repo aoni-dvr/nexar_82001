@@ -246,8 +246,10 @@ static void RecMonNotify(UINT32 NotifyCode, UINT32 StrmBits)
         SvcLog_DBG(SVC_LOG_REC_TASK, "\n", 0U, 0U);
 
         SvcRecMain_Stop(StrmBits, 1U);
-#if 0//defined(CONFIG_APP_FLOW_CARDV_AONI)
-        Pmic_SoftReset();
+#if defined(CONFIG_APP_FLOW_CARDV_AONI)
+        if (dqa_test_script.product_line_mode == 0) {
+            Pmic_SoftReset();
+        }
 #endif
     }
 }

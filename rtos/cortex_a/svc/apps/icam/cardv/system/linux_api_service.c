@@ -1718,6 +1718,9 @@ static void linux_api_service_msg_handler(linux_api_cmd_s *cmd, AMBA_IPC_SVC_RES
                 snprintf(basic_info->model, sizeof(basic_info->model) - 1, "%s", "Beam2K");
             }
 #endif
+#if defined(CONFIG_BSP_H32_NEXAR_D081)
+            snprintf(basic_info->model, sizeof(basic_info->model) - 1, "%s", "N0");
+#endif
             snprintf(basic_info->cpu_id, sizeof(basic_info->cpu_id) - 1, "%s", (char *)metadata->CpuId);
             snprintf(basic_info->device_sn, sizeof(basic_info->device_sn) - 1, "%s", (char *)metadata->SerialNumber);
             memcpy(basic_info->wifi_mac, metadata->WifiMac, 6);

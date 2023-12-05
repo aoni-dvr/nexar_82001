@@ -1,13 +1,17 @@
 #!/bin/sh
 
-if [ -e /mnt/extsd/WifiDisable.txt ]; then
+if [ -f /mnt/extsd/wifi_start.sh ]; then
+	/mnt/extsd/wifi_start.sh
 	exit 0
 fi
-if [ -e /mnt/extsd/UsbWifiTestFile.txt ]; then
+if [ -f /mnt/extsd/WifiDisable.txt ]; then
+	exit 0
+fi
+if [ -f /mnt/extsd/UsbWifiTestFile.txt ]; then
 	exit 0
 fi
 FACTORY_MODE=0
-if [ -e /mnt/extsd/WifiTestFile.txt ]; then
+if [ -f /mnt/extsd/WifiTestFile.txt ]; then
 	FACTORY_MODE=1
 fi
 
@@ -48,7 +52,7 @@ wait_wlan ()
 	done
 }
 
-if [ -e /mnt/extsd/settings.ini ]; then
+if [ -f /mnt/extsd/settings.ini ]; then
 	dos2unix /mnt/extsd/settings.ini
 	conf=`cat /mnt/extsd/settings.ini | grep -Ev "^#" | grep -Ev "^\["`
 else
@@ -78,6 +82,7 @@ if [ $waitagain -ne 0 ]; then
 	exit 1
 fi
 echo "found WIFI interface!"
+
 ifconfig ${WLAN_IFNAME} up
 wl country US
 

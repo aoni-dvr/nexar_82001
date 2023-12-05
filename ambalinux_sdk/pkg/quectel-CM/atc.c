@@ -51,6 +51,11 @@ static int s_pdp;
     || p_response->finalResponse == NULL \
     || p_response->success == 0)
 
+void atc_set_flag(int value)
+{
+    asr_style_atc = value;
+}
+
 static int atc_init(PROFILE_T *profile) {
     int err;
     char *cmd;

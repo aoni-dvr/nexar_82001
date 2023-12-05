@@ -36,3 +36,17 @@ nexar_full.bin
 mcu/KF8L15Z20NM_QFN24_05MM_I2C_ADC_AONI/Debug/
 nexar_a.bin
 podman_run.log
+gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu.tar.xz
+flexidag_openod__bub_run_dir
+rtos/cortex_a/soc/vision/cv_common/libs/orc/cvlib/
+rtos/cortex_a/soc/vision/cv_common/libs/orc/cvtask/
+rtos/cortex_a/soc/vision/orc_framework/autom4te.cache/
+rtos/cortex_a/soc/vision/orc_framework/configure
+rtos/cortex_a/soc/vision/orc_framework/flexidag/autom4te.cache/
+rtos/cortex_a/soc/vision/orc_framework/flexidag/configure
+rtos/cortex_a/soc/vision/tests/orc_scheduler/autom4te.cache/
+rtos/cortex_a/soc/vision/tests/orc_scheduler/configure
+rtos/cortex_a/soc/vision/tests/orc_scheduler/flexidag0/autom4te.cache/
+rtos/cortex_a/soc/vision/tests/orc_scheduler/flexidag0/configure
+rtos/cortex_a/soc/vision/tests/orc_scheduler/orc/autom4te.cache/
+rtos/cortex_a/soc/vision/tests/orc_scheduler/orc/configure

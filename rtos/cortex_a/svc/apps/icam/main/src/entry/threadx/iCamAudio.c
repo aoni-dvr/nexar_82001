@@ -41,7 +41,11 @@
 #include "AmbaAudio_CODEC.h"
 #include "AmbaI2S.h"
 #if defined(CONFIG_BSP_H32_NEXAR_D081)
+#if defined(CONFIG_PCBA_DVT)
+#include "AmbaAudio_CL1009.h"
+#else
 #include "AmbaAudio_MAX98090.h"
+#endif
 #elif defined(CONFIG_BSP_CV25_NEXAR_D080)
 #include "AmbaAudio_ES7210_ES8516.h"
 #endif

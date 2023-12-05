@@ -131,7 +131,7 @@ static const SVC_RES_CFG_s g_ResCfg_K351P[] = {
     .RecStrm = {
         [0] = {
             .RecSetting = {
-                .SrcBits = SVC_REC_SRC_VIDEO,
+                .SrcBits = SVC_REC_SRC_VIDEO | SVC_REC_SRC_AUDIO,
                 .DestBits = SVC_REC_DST_FILE,
                 .RecId = 0, .M = 1, .N = 30, .IdrInterval = 1, 
                 .FrameRate = {.TimeScale = 30000U, .NumUnitsInTick = 1000U, .Interlace = 0U},
@@ -147,8 +147,8 @@ static const SVC_RES_CFG_s g_ResCfg_K351P[] = {
         },
         [1] = {
             .RecSetting = {
-                .SrcBits = SVC_REC_SRC_VIDEO,
-                .DestBits = SVC_REC_DST_EMGEVT,
+                .SrcBits = SVC_REC_SRC_VIDEO | SVC_REC_SRC_AUDIO,
+                .DestBits = SVC_REC_DST_NET,
                 .RecId = 1, .M = 1, .N = 30, .IdrInterval = 1, 
                 .FrameRate = {.TimeScale = 30000U, .NumUnitsInTick = 1000U, .Interlace = 0U},
             },

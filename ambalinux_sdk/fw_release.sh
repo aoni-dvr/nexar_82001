@@ -50,6 +50,7 @@ build_ambalink()
 	rm -rf http_control_server-*
 	rm -rf iot_device_sdk_app-*
 	rm -rf ambacv-*
+	rm -rf qconnect_manager-*
 	##rm -rf webrtc-*
 	#rm -rf openssh-*
 	#rm -rf iot_device_sdk_app-*

@@ -358,6 +358,9 @@ static void t_app_cmd_handler(unsigned int argc, char * const *argv, AMBA_SHELL_
             debug_line("model: Beam2K");
         }
 #endif
+#if defined(CONFIG_BSP_H32_NEXAR_D081)
+        debug_line("model: N0");
+#endif
 #ifdef CONFIG_PCBA_DVT
         debug_line("fw: dvt");
 #else

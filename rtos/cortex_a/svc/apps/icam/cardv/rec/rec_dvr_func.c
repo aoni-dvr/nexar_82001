@@ -318,8 +318,10 @@ static void rec_dvr_hot_config_auto_record_handler(int tid)
         rec_dvr_status.channels[CAMERA_CHANNEL_INTERNAL].rec_status = REC_STATUS_IDLE;
         rec_dvr_status.channels[CAMERA_CHANNEL_EXTERNAL].rec_status = REC_STATUS_IDLE;
         if (pSvcUserPref->CvOnOff == OPTION_ON) {
+#if !defined(CONFIG_SOC_H32)
             UINT32 SvcCvMainTask_Ctrl(const char *pCmd, void *pParam);
             SvcCvMainTask_Ctrl("continue", NULL);
+#endif
         }
         rec_dvr_record_start(CAMERA_CHANNEL_BOTH);
         hot_config_busy = 0;

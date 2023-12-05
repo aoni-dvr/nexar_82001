@@ -19,5 +19,9 @@ config AUDIO_AMBA_SOC_DMIC
 config AUDIO_MAX98090
 	bool "MAX98090"
 	default n
+	
+config AUDIO_CL1009
+    bool "MAX98090"
+    default n
 endmenu
 

@@ -87,12 +87,12 @@ extern int AmbaUserSD_PhyCtrl_GetDebug(void);
 #define BATTERY_METER_I2C_SLAVE_ADDR      (0x6c)
 #define BATTERY_METER_I2C_CHANNEL         (AMBA_I2C_CHANNEL2)
 
-#define MAIN_MCU_I2C_SLAVE_ADDR      (0xC4)
+#define MAIN_MCU_I2C_SLAVE_ADDR      (0x14)
 #define MAIN_MCU_I2C_CHANNEL         (AMBA_I2C_CHANNEL3)
 
 #define IMU_I2C_CHANNEL      (AMBA_I2C_CHANNEL0)
 
-#define BUTTON_GPIO_PIN             (GPIO_PIN_21)
+#define BUTTON_GPIO_PIN             (GPIO_PIN_28)
 #define IMU_IRQ_PIN                 (GPIO_PIN_77)
 #define GNSS_PPS_PIN                (GPIO_PIN_26)
 

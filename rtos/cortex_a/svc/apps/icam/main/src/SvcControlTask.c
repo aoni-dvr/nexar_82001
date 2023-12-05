@@ -801,7 +801,7 @@ static int linux_boot_pre_check(void)
         return -1;
     }
     SvcUserPref_Get(&pSvcUserPref);
-#if 0
+#if 1
     gnss_task_start();
     if (dqa_test_script.gps_debug) {
         gnss_debug_task_start();

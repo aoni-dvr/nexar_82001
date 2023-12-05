@@ -61,6 +61,7 @@ int battery_task_set_low_power_check(int enable)
 
 int battery_task_check_charger_ic_stat(unsigned char *is_charge, unsigned char *power_good, unsigned char *thermal_protect, unsigned char *charge_full)
 {
+#if !defined(CONFIG_BSP_H32_NEXAR_D081)
     unsigned char value = 0;
 
     i2c_read_reg(CHARGER_I2C_CHANNEL, CHARGER_I2C_SLAVE_ADDR, 0x08, &value);
@@ -92,12 +93,13 @@ int battery_task_check_charger_ic_stat(unsigned char *is_charge, unsigned char *
             *thermal_protect = 0;
         }
     }
-
+#endif
     return 0;
 }
 
 int battery_power_on_check(void)
 {
+#if !defined(CONFIG_BSP_H32_NEXAR_D081)
     if (Pmic_CheckUsbConnected() == 0) {
         unsigned int data = 0, i = 0, sum = 0;
         for (i = 0; i < 10; i++) {
@@ -128,6 +130,7 @@ int battery_power_on_check(void)
             }
         }
     }
+#endif
     return 0;
 }
 
@@ -139,7 +142,8 @@ void battery_task_get_adc_impl(void)
 {
     unsigned int data = 0, i = 0, adc_sum = 0, cable_adc_sum = 0;
     unsigned int max = 0, min = 4096;
-
+    
+#if !defined(CONFIG_BSP_H32_NEXAR_D081)
     for (i = 0; i < 5; i++) {
         AmbaADC_SingleRead(AMBA_ADC_CHANNEL1, &data);
         adc_sum += data;
@@ -155,7 +159,19 @@ void battery_task_get_adc_impl(void)
 
         msleep(10);
     }
-
+#else
+    for (i = 0; i < 5; i++) {
+       AmbaADC_SingleRead(AMBA_ADC_CHANNEL2, &data);
+       adc_sum += data;
+       if (data > max) {
+           max = data;
+       }
+       if (data < min) {
+           min = data;
+       }
+       msleep(10);
+   }
+#endif
     cur_adc = (adc_sum - max - min) / 3;
     cur_cable_adc = cable_adc_sum / 5;
 }
@@ -167,6 +183,7 @@ unsigned int battery_task_get_cable_adc(void)
 
 unsigned int battery_task_get_mcu_adc(void)
 {
+#if !defined(CONFIG_BSP_H32_NEXAR_D081)
     unsigned char data[2] = {0};
     static unsigned char version = 0xff;
 
@@ -180,7 +197,7 @@ unsigned int battery_task_get_mcu_adc(void)
         i2c_read_reg(MAIN_MCU_I2C_CHANNEL, MAIN_MCU_I2C_SLAVE_ADDR, 0x10, data + 1);
         return (data[1] << 8) + data[0];
     }
-
+#endif
     return 0;
 }
 
@@ -219,11 +236,11 @@ static void *battery_task_entry(void *arg)
     unsigned int low_battery_count = 0, i = 0, cnt = 0;
     int is_charge = 0;
     unsigned int adc_sample_array[ADC_SAMPLE_NUM] = {0};
-    int adc_sample_num = 0;
+    unsigned int adc_sample_num = 0;
     unsigned int adc_sample_sum = 0;
     unsigned int cur_battery_voltage_mv = 0;
     unsigned char charge = 0, power_good = 0, thermal_protect = 0, full = 0;
-
+#if !defined(CONFIG_BSP_H32_NEXAR_D081)
     //init charger ETA6953
     if (dqa_test_script.usb_uvc_mode
         || app_helper.usb_mass_storage_mode) {
@@ -237,7 +254,7 @@ static void *battery_task_entry(void *arg)
         i2c_modify_reg(CHARGER_I2C_CHANNEL, CHARGER_I2C_SLAVE_ADDR, 0x06, 0x0F, 0x00);
         i2c_modify_reg(CHARGER_I2C_CHANNEL, CHARGER_I2C_SLAVE_ADDR, 0x07, 0x04, 0x00);
     }
-
+#endif
     while (running) {
         //battery_value_s *battery_values = NULL;
         //int len = 0;
@@ -307,7 +324,11 @@ static void *battery_task_entry(void *arg)
             if (cur_adc < max_adc) {
                 cur_adc = max_adc;
             }
+#if !defined(CONFIG_BSP_H32_NEXAR_D081)     
             cur_battery_voltage_mv = 3.3 * cur_adc * 1.0 / 4095 * 1000 * 3 / 2;
+#else
+            cur_battery_voltage_mv = 3.3 * cur_adc * 1.0 / 4095 * 1000 * 4.7 / 2 * 1036 / 1000;
+#endif
             battery_task_check_charger_ic_stat(&charge, &power_good, &thermal_protect, &full);
         } else {
             if (cur_adc < min_adc) {
@@ -316,14 +337,19 @@ static void *battery_task_entry(void *arg)
             if (cur_adc > min_adc) {
                 cur_adc = min_adc;
             }
+#if !defined(CONFIG_BSP_H32_NEXAR_D081)            
             cur_battery_voltage_mv = cur_adc * 1.244;
+#else
+            cur_battery_voltage_mv = cur_adc * 2.050;
+#endif
             charge = 0;
             power_good = 0;
             thermal_protect = 0;
             full = 0;
         }
         battery_voltage_mv = cur_battery_voltage_mv;
-
+        
+#if !defined(CONFIG_BSP_H32_NEXAR_D081) 
         if (is_charge) {
             if (full) {
                 battery_percentage = 100;
@@ -345,6 +371,29 @@ static void *battery_task_entry(void *arg)
                 battery_percentage = 100;
             }
         }
+#else
+        if (is_charge) {
+            if (full) {
+                battery_percentage = 100;
+            } else {
+                if (battery_voltage_mv <= 3700) {
+                    battery_percentage = 0;
+                } else if (battery_voltage_mv <= 4100) {
+                    battery_percentage = (battery_voltage_mv - 3700) * 24 / 100;
+                } else {
+                    battery_percentage = 98;
+                }
+            }
+        } else {
+            if (battery_voltage_mv <= 3650) {
+                battery_percentage = 0;
+            } else if (battery_voltage_mv <= 4095) {
+                battery_percentage = (battery_voltage_mv - 3650) * 10 / 45;
+            } else {
+                battery_percentage = 100;
+            }
+        }
+#endif
         if (debug_enable) {
             debug_line("battery adc: %d, raw_adc: %d, mcu_adc:%d cable_adc: %d percentage: %d, voltage: %dmv, charge: %d, power_good: %d, thermal_protect: %d, full: %d",
                         cur_adc, raw_adc, battery_task_get_mcu_adc(), battery_task_get_cable_adc(),

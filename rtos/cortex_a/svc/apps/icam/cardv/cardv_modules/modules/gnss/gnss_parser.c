@@ -20,9 +20,14 @@ int gnss_parser_init(void)
     return 0;
 }
 
+static unsigned int update_tick = 0;
+
 int gnss_parser_get_data(gnss_data_s *data)
 {
     gnss_parser_get_muxer();
+    if (tick() - update_tick > 1500) {
+        memset(&gnss_data, 0, sizeof(gnss_data_s));
+    }
     memcpy(data, &gnss_data, sizeof(gnss_data_s));
     gnss_parser_release_muxer();
 
@@ -43,6 +48,9 @@ int gnss_parser_get_connected(void)
     int connected = 0;
 
     gnss_parser_get_muxer();
+    if (tick() - update_tick > 1500) {
+        memset(&gnss_data, 0, sizeof(gnss_data_s));
+    }
     connected = gnss_data.ready;
     gnss_parser_release_muxer();
 
@@ -51,6 +59,9 @@ int gnss_parser_get_connected(void)
 
 int gnss_parser_set_connected(int connected)
 {
+    if (connected) {
+        update_tick = tick();
+    }
     gnss_parser_get_muxer();
     gnss_data.ready = connected;
     gnss_parser_release_muxer();
@@ -223,6 +234,11 @@ static int gsv_parse(const char *gsv)
         return 0;
     }
 
+    for (i = 0; i < 21; i++) {
+        memset(&(field[i]), 0, 32);
+    }
+
+    i = 0;
     while (*p != '*') {
         if (*p == ',') {
             if (j >= 32) {
@@ -243,6 +259,11 @@ static int gsv_parse(const char *gsv)
         if (i > 20) {
             break;
         }
+    }
+
+    if (atoi(field[i]) != 1) {
+        //debug_line(DEBUG_TAG"ignore %s", gsv);
+        return 0;
     }
 
     if (strspn(field[3], "1234567890") != strlen(field[3])) {

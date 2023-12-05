@@ -555,9 +555,12 @@ endif
 libsvc_icam-objs += $(CARDV_O_PREFIX)/cardv/peripheral_task/agnss_task.o
 libsvc_icam-objs += $(CARDV_O_PREFIX)/cardv/peripheral_task/ir_task.o
 libsvc_icam-objs += $(CARDV_O_PREFIX)/cardv/peripheral_task/button_task.o
-ifdef CONFIG_BSP_CV25_NEXAR_D161
+ifeq ($(CONFIG_BSP_CV25_NEXAR_D161),y) 
 libsvc_icam-objs += $(CARDV_O_PREFIX)/cardv/peripheral_task/battery_task.o
 libsvc_icam-objs += $(CARDV_O_PREFIX)/cardv/system/mcu_update.o
+else ifeq ($(CONFIG_BSP_H32_NEXAR_D081),y)
+libsvc_icam-objs += $(CARDV_O_PREFIX)/cardv/peripheral_task/battery_task.o
+libsvc_icam-objs += $(CARDV_O_PREFIX)/cardv/system/mcu_update_new.o
 else
 libsvc_icam-objs += $(CARDV_O_PREFIX)/cardv/peripheral_task/battery_task_new.o
 libsvc_icam-objs += $(CARDV_O_PREFIX)/cardv/system/mcu_update_new.o

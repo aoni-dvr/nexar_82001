@@ -429,14 +429,15 @@ static UINT32 K351P_SetStandbyOff(UINT32 VinID)
  *  @Return     ::
  *          INT32 : SENSOR_ERR_NONE(0)/NG(-1)
 \*-----------------------------------------------------------------------------------------------*/
-static UINT32 K351P_ChangeReadoutMode(UINT32 VinID)
+static UINT32 K351P_ChangeReadoutMode(UINT32 VinID, UINT32 ModeID)
 {
+    K351P_READOUT_MODE_e ReadoutMode = K351PModeInfoList[ModeID].ReadoutMode;
     UINT32 RetVal = SENSOR_ERR_NONE;
     UINT32 i;
 	//void*(ModeID);
-    
+
     for (i = 0; i < K351P_NUM_READOUT_MODE_REG; i ++) {
-        RetVal |= RegWrite(VinID, K351PRegTable[i].Addr, &K351PRegTable[i].Data, 1U);
+        RetVal |= RegWrite(VinID, K351PRegTable[i].Addr, &K351PRegTable[i].Data[ReadoutMode], 1U);
 //        AmbaPrint_ModulePrintUInt5(SENSOR_MODULE_ID, "Addr = 0x%04x, Data = 0x%02x, Ret: %d", K351PRegTable[i].Addr,
 //                             K351PRegTable[i].Data[ModeID], RetVal, 0U, 0U);
     }
@@ -1216,7 +1217,7 @@ static UINT32 K351P_Config(const AMBA_SENSOR_CHANNEL_s *pChan, const AMBA_SENSOR
         RetVal = SENSOR_ERR_ARG;
     } else {
 
-        AmbaPrint_PrintUInt5("[K351P 2lane] yyue 2023061201 Config Mode: %d",ModeID, 0U, 0U, 0U, 0U);
+        AmbaPrint_PrintUInt5("[K351P 2lane] yyue 2023061201 Config Mode: %d, VinID: %d",ModeID, pChan->VinID, 0U, 0U, 0U);
 
         /* update status */
         K351P_PrepareModeInfo(pMode, pModeInfo);
@@ -1235,7 +1236,7 @@ static UINT32 K351P_Config(const AMBA_SENSOR_CHANNEL_s *pChan, const AMBA_SENSOR
 
                                 if (RetVal == ERR_NONE) {
                                     /* Write registers of mode change to sensor */
-                                    RetVal = K351P_ChangeReadoutMode(pChan->VinID);
+                                    RetVal = K351P_ChangeReadoutMode(pChan->VinID, ModeID);
                                     if (RetVal == ERR_NONE) {
                                         RetVal = K351P_SetStandbyOff(pChan->VinID);
                                         if (RetVal == ERR_NONE) {

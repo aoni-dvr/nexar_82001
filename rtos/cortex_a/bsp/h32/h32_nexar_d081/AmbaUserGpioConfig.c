@@ -33,7 +33,7 @@ const AMBA_GPIO_DEFAULT_s GpioPinGrpConfig = {
                 [1] = 0x03000318U,                  /* GPIO pin [31:0]: GPIO(0) or Alternate functions */
                 [2] = 0x00000000U,                  /* GPIO pin [31:0]: GPIO(0) or Alternate functions */
             },
-            .PinIoTypeRegVal = 0x10001003U,         /* GPIO pin [31:0]: Input(0) or Output(1) pin */
+            .PinIoTypeRegVal = 0x00001003U,         /* GPIO pin [31:0]: Input(0) or Output(1) pin */
             .PinStateProtectRegVal = 0xffffffffU,   /* GPIO pin [31:0]: Read-only(0) or Read-writeable(1) pin state */
             .PinStateRegVal = 0x00000001U,          /* GPIO pin [31:0]: Low(0) or High(1) pin state */
             .PinPullFuncEnableRegVal = 0x00000000U,
@@ -118,11 +118,11 @@ const AMBA_GPIO_DEFAULT_s GpioPinGrpConfig = {
 #else
         [AMBA_GPIO_GROUP2] = {
             .PinFuncRegVal = {
-                [0] = 0x003f87fbU,                  /* GPIO pin [95:64]: GPIO(0) or Alternate functions */
+                [0] = 0x002787fbU,                  /* GPIO pin [95:64]: GPIO(0) or Alternate functions */
                 [1] = 0x0001e140U,                  /* GPIO pin [95:64]: GPIO(0) or Alternate functions */
                 [2] = 0x00001800U,                  /* GPIO pin [95:64]: GPIO(0) or Alternate functions */
             },
-            .PinIoTypeRegVal = 0x00000004U,         /* GPIO pin [95:64]: Input(0) or Output(1) pin */
+            .PinIoTypeRegVal = 0x00080004U,         /* GPIO pin [95:64]: Input(0) or Output(1) pin */
             .PinStateProtectRegVal = 0xffffffffU,   /* GPIO pin [95:64]: Read-only(0) or Read-writeable(1) pin state */
             .PinStateRegVal = 0x00000000U,          /* GPIO pin [95:64]: Low(0) or High(1) pin state */
             .PinPullFuncEnableRegVal = 0x00000000U,

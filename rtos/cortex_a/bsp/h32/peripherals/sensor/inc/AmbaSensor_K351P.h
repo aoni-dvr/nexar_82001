@@ -43,20 +43,21 @@
  * Control registers
 \*-----------------------------------------------------------------------------------------------*/
 
-#define K351P_NUM_READOUT_MODE_REG        100U
+#define K351P_NUM_READOUT_MODE_REG        108U
 
 #define K351P_MODE_SEL_REG				   0x12
 #define K351P_ANA_GAIN_GLOBAL_MSB_REG	   0x00
 #define K351P_COARSE_INTEG_TIME_LSB_REG	   0x01
 
-
-
-#define K351P_2000_2000_30P_10BIT            0U   /* RAW10, Normal, 2.1Gbps */
-#define K351P_NUM_MODE                		 1U
+typedef enum _K351P_READOUT_MODE_e_ {
+    K351P_2000_2000_30P_10BIT=0U,   
+    K351P_1920_1080_5P_10BIT, 
+    K351P_NUM_MODE,
+} K351P_READOUT_MODE_e;
 
 typedef struct {
     UINT8  Addr;
-    UINT8  Data;
+    UINT8  Data[K351P_NUM_MODE];
 } K351P_REG_s;
 
 
@@ -69,6 +70,8 @@ typedef struct {
 } K351P_FRAME_TIMING_s;
 
 typedef struct {
+    
+    K351P_READOUT_MODE_e   ReadoutMode;
     K351P_FRAME_TIMING_s   FrameTiming;
     FLOAT                   RowTime;        /* Calculated in K351P_Init */
 } K351P_MODE_INFO_s;

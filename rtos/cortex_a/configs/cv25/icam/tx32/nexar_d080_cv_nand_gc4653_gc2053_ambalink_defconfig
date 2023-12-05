@@ -86,7 +86,9 @@ CONFIG_ATT_MAP="AmbaUserMemProt"
 #
 # Peripheral Drivers
 #
+CONFIG_ENABLE_PMIC=y
 CONFIG_PMIC_CHIPON=y
+# CONFIG_PMIC_AMBA_PWC is not set
 
 # CONFIG_GNSS_PPS_TIME_SYNC_ENABLE is not set
 

@@ -1,13 +1,17 @@
 menu "Pmic Driver"
 
-choice
-	prompt "Select Pmic Driver"
-	default PMIC_AMBA_PWC
-	help
-		Select Pmic Driver
-	config PMIC_AMBA_PWC
-		bool "PMIC_AMBA_PWC"
-	config PMIC_CHIPON
-		bool "PMIC_CHIPON"
-endchoice
+config ENABLE_PMIC
+        bool "enable pmic"
+        default n
+
+if ENABLE_PMIC
+config PMIC_AMBA_PWC
+	bool "PMIC_AMBA_PWC"
+	default n
+
+config PMIC_CHIPON
+	bool "PMIC_CHIPON"
+	default n
+endif
 endmenu
+

@@ -3,6 +3,9 @@
 #include "AmbaSensor_IMX415.h"
 #include "AmbaSensor_GC2053.h"
 #endif
+#if defined(CONFIG_BSP_H32_NEXAR_D081)
+#include "AmbaSensor_K351P.h"
+#endif
 
 extern void t_app_init(void);
 static void *app_handler_entry(void *argv);
@@ -69,6 +72,9 @@ static void gpio_init(void)
     app_helper.set_logo_led_color(2, 255, 255, 255);
     app_helper.set_logo_led_color(3, 255, 255, 255);
     app_helper.set_logo_led_fade(1);
+#endif
+#if defined(CONFIG_BSP_H32_NEXAR_D081) && defined(CONFIG_PCBA_DVT)
+    app_helper.gpio_set(GPIO_PIN_83, 1);
 #endif
 }
 
@@ -248,6 +254,63 @@ void app_init_res_cfg(SVC_RES_CFG_s *resCfg)
             pSvcUserPref->ExternalCamera.Fps = 30;
         }
 #endif
+#endif
+#if defined(CONFIG_BSP_H32_NEXAR_D081)
+        if (internal_frame_sizes[0].width == 1984 && internal_frame_sizes[0].height == 1984) {
+            resCfg->VinCfg[0].CapWin.Width = 1984U;
+            resCfg->VinCfg[0].CapWin.Height = 1984U;
+            resCfg->VinCfg[0].TimeoutCfg.Liveview = 100U;
+            resCfg->FovCfg[0].RawWin.Width = 1984U;
+            resCfg->FovCfg[0].RawWin.Height = 1984U;
+            resCfg->FovCfg[0].MainWin.Width = 1984U;
+            resCfg->FovCfg[0].MainWin.Height = 1984U;
+            resCfg->RecStrm[0].StrmCfg.ChanCfg[0].SrcWin.Width = 1984U;
+            resCfg->RecStrm[0].StrmCfg.ChanCfg[0].SrcWin.Height = 1984U;
+            resCfg->RecStrm[1].StrmCfg.ChanCfg[0].SrcWin.Width = 1984U;
+            resCfg->RecStrm[1].StrmCfg.ChanCfg[0].SrcWin.Height = 1984U;
+
+            resCfg->SensorCfg[0][0].SensorMode = K351P_2000_2000_30P_10BIT;
+            resCfg->VinCfg[0].FrameRate.TimeScale = 30000U;
+            resCfg->VinCfg[0].FrameRate.NumUnitsInTick = 1000U;
+            resCfg->RecStrm[0].RecSetting.FrameRate.TimeScale = 30000U;
+            resCfg->RecStrm[0].RecSetting.FrameRate.NumUnitsInTick = 1000U;
+            resCfg->RecStrm[1].RecSetting.FrameRate.TimeScale = 30000U;
+            resCfg->RecStrm[1].RecSetting.FrameRate.NumUnitsInTick = 1000U;
+
+            //resCfg->CvFlow[0].InputCfg.Input[0].FrameWidth = 1984U;
+            //resCfg->CvFlow[0].InputCfg.Input[0].FrameHeight = 1984U;
+            pSvcUserPref->InternalCamera.Fps = 30;
+            pSvcUserPref->ExternalCamera.Fps = 30;
+            pSvcUserPref->InternalCamera.MainStream.gop_size = 30;
+            pSvcUserPref->InternalCamera.SecStream.gop_size = 30;
+        } else {
+            resCfg->VinCfg[0].CapWin.Width = 1920U;
+            resCfg->VinCfg[0].CapWin.Height = 1080U;
+            resCfg->VinCfg[0].TimeoutCfg.Liveview = 400U;
+            resCfg->FovCfg[0].RawWin.Width = 1920U;
+            resCfg->FovCfg[0].RawWin.Height = 1080U;
+            resCfg->FovCfg[0].MainWin.Width = 1920U;
+            resCfg->FovCfg[0].MainWin.Height = 1080U;
+            resCfg->RecStrm[0].StrmCfg.ChanCfg[0].SrcWin.Width = 1920U;
+            resCfg->RecStrm[0].StrmCfg.ChanCfg[0].SrcWin.Height = 1080U;
+            resCfg->RecStrm[1].StrmCfg.ChanCfg[0].SrcWin.Width = 1920U;
+            resCfg->RecStrm[1].StrmCfg.ChanCfg[0].SrcWin.Height = 1080U;
+
+            resCfg->SensorCfg[0][0].SensorMode = K351P_1920_1080_5P_10BIT;
+            resCfg->VinCfg[0].FrameRate.TimeScale = 5U;
+            resCfg->VinCfg[0].FrameRate.NumUnitsInTick = 1U;
+            resCfg->RecStrm[0].RecSetting.FrameRate.TimeScale = 5U;
+            resCfg->RecStrm[0].RecSetting.FrameRate.NumUnitsInTick = 1U;
+            resCfg->RecStrm[1].RecSetting.FrameRate.TimeScale = 5U;
+            resCfg->RecStrm[1].RecSetting.FrameRate.NumUnitsInTick = 1U;
+
+            //resCfg->CvFlow[0].InputCfg.Input[0].FrameWidth = 1920U;
+            //resCfg->CvFlow[0].InputCfg.Input[0].FrameHeight = 1080U;
+            pSvcUserPref->InternalCamera.Fps = 5;
+            pSvcUserPref->ExternalCamera.Fps = 5;
+            pSvcUserPref->InternalCamera.MainStream.gop_size = 5;
+            pSvcUserPref->InternalCamera.SecStream.gop_size = 5;
+        }
 #endif
         resCfg->FovCfg[0].PipeCfg.RawCompression = (pSvcUserPref->PivOnOff == OPTION_ON) ? 1 : 0;
 

@@ -115,7 +115,7 @@ static void *imu_feed_task_entry(void *arg)
     TEMP_DATA_s temp_data;
     imu_frame_info_s *frame = NULL;
     int index = 0;
-#ifdef CONFIG_PCBA_DVT
+#ifndef CONFIG_PCBA_DVT
     unsigned int ActualFlags = 0;
     int first = 1;
 #else
@@ -131,7 +131,7 @@ static void *imu_feed_task_entry(void *arg)
             msleep(100);
             continue;
         }
-#ifdef CONFIG_PCBA_DVT
+#ifndef CONFIG_PCBA_DVT
         if (first) {
             first = 0;
             Imu_EnableInt();
@@ -181,7 +181,7 @@ static void *imu_feed_task_entry(void *arg)
                                         temp_data.temp_float
                                         );
         imu_record_control(IMU_RECORD_FILE_WRITE, imu_time, NULL, line);
-#ifndef CONFIG_PCBA_DVT
+#ifdef CONFIG_PCBA_DVT
         use_time = tick() - last_tick;
         if ((1000 / 50) > 2 * use_time) {
             msleep(1000 / 50 - 2 * use_time);

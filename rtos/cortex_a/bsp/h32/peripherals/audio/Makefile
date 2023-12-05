@@ -11,6 +11,7 @@ libperif_$(AMBA_CHIP_ID)-objs += $(AUDIOPATH)/AmbaAudio_AK4951EN.o
 libperif_$(AMBA_CHIP_ID)-objs += $(AUDIOPATH)/AmbaAudio_TLV320AIC3007.o
 libperif_$(AMBA_CHIP_ID)-objs += $(AUDIOPATH)/AmbaAudio_NAU8822.o
 libperif_$(AMBA_CHIP_ID)-objs += $(AUDIOPATH)/AmbaAudio_MAX98090.o
+libperif_$(AMBA_CHIP_ID)-objs += $(AUDIOPATH)/AmbaAudio_CL1009.o
 
 else
 
@@ -30,6 +31,10 @@ endif
 
 ifdef CONFIG_AUDIO_MAX98090
 libperif_$(AMBA_CHIP_ID)-objs += $(AUDIOPATH)/AmbaAudio_MAX98090.o
+endif
+
+ifdef CONFIG_AUDIO_CL1009
+libperif_$(AMBA_CHIP_ID)-objs += $(AUDIOPATH)/AmbaAudio_CL1009.o
 endif
 
 endif

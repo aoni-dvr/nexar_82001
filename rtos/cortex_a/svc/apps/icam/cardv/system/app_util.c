@@ -295,8 +295,10 @@ int app_util_check_lte_usb_mass_storage(void)
     msleep(50);
     //enable pwr_key
     app_helper.gpio_set(GPIO_PIN_29, 1);//4g_pwr_key
+#if !defined(CONFIG_PCBA_DVT)
     msleep(500);
     app_helper.gpio_set(GPIO_PIN_29, 0);//4g_pwr_key
+#endif
 #endif
 
     return 0;

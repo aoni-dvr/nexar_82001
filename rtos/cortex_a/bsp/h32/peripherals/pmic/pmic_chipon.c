@@ -118,8 +118,17 @@ static int pmic_chipon_reset(void)
 
 static int pmic_chipon_check_usb_connected(void)
 {
+    int value = 0;
+#if defined(CONFIG_BSP_H32_NEXAR_D081)
+    unsigned char data = 0;
+    pmic_chipon_read(0x13, &data);
+    value = data;
+#else
     extern UINT32 AmbaRTSL_UsbVbusVicRawStaus(void);
-    return AmbaRTSL_UsbVbusVicRawStaus();
+    value = AmbaRTSL_UsbVbusVicRawStaus();
+#endif
+
+    return value;
 }
 
 static int pmic_chipon_set_led(int on)
